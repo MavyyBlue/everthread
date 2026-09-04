@@ -1,0 +1,36 @@
+{
+  "name": "everthread-life-unwritten",
+  "private": true,
+  "version": "0.9.4",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "tsx src/tests/runRegression.ts",
+    "test:watch": "vitest",
+    "sim": "tsx src/tests/runSimulation.ts 1000 bulk",
+    "typecheck": "tsc --noEmit",
+    "sim:10k": "tsx src/tests/runSimulation.ts 10000 bulk",
+    "sim:100k": "tsx src/tests/runSimulation.ts 100000 bulk",
+    "typecheck:engine": "tsc -p tsconfig.engine.json --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.tests.json --noEmit",
+    "sim:full": "tsx src/tests/runSimulation.ts 1000 full",
+    "content:audit": "tsx src/tests/runContentAudit.ts",
+    "sim:neutral": "tsx src/tests/runSimulation.ts 1000 bulk neutral",
+    "sim:policies": "tsx src/tests/runSimulation.ts 1000 bulk mixed"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4",
+    "vitest": "^3.2.4"
+  }
+}
