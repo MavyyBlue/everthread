@@ -28,6 +28,7 @@ export function processMarketYear(state:GameState) {
 export function portfolioValue(state:GameState) { return state.investments.positions.reduce((sum,p)=>sum+p.units*(state.investments.prices[p.securityId]??0),0); }
 
 export function buySecurity(state:GameState,securityId:string,amount:number):EngineResult {
+  if(state.character.age<18)return{success:false,messages:[{text:'Investing becomes available at age 18.'}]};
   initializeMarket(state); const sec=securities.find(s=>s.id===securityId); if(!sec)return{success:false,messages:[{text:'Unknown security.'}]};
   amount=Math.max(0,Math.min(state.finances.cash,amount)); if(amount<10)return{success:false,messages:[{text:'Choose an amount of at least 10 in game currency.'}]};
   const price=state.investments.prices[securityId]!; const units=amount/price; const existing=state.investments.positions.find(p=>p.securityId===securityId);
@@ -36,6 +37,7 @@ export function buySecurity(state:GameState,securityId:string,amount:number):Eng
 }
 
 export function sellSecurity(state:GameState,securityId:string,units?:number):EngineResult {
+  if(state.character.age<18)return{success:false,messages:[{text:'Investment trading becomes available at age 18.'}]};
   const pos=state.investments.positions.find(p=>p.securityId===securityId); if(!pos)return{success:false,messages:[{text:'You do not own that security.'}]};
   const sellUnits=clamp(units??pos.units,0,pos.units); const value=sellUnits*(state.investments.prices[securityId]??0); pos.units-=sellUnits;state.finances.cash+=value;state.flags.investmentWithdrawals=Number(state.flags.investmentWithdrawals??0)+value;
   if(pos.units<.000001) state.investments.positions=state.investments.positions.filter(p=>p!==pos);

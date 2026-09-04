@@ -52,7 +52,10 @@ export function seekTreatment(state:GameState,conditionId:string,kind:'general'|
   return{success,messages:[{text:success?`Treatment for ${condition.name} was effective.`:`Treatment helped only a little this time. This is a game outcome, not medical guidance.`}]};
 }
 
-export function performWellnessActivity(state:GameState,activity:'gym'|'running'|'walking'|'martial_arts'|'meditation'|'diet'):EngineResult {
+export const WELLNESS_MIN_AGES={gym:13,running:5,walking:3,martial_arts:6,meditation:6,diet:10} as const;
+
+export function performWellnessActivity(state:GameState,activity:keyof typeof WELLNESS_MIN_AGES):EngineResult {
+  const minimumAge=WELLNESS_MIN_AGES[activity];if(state.character.age<minimumAge)return{success:false,messages:[{text:`${activity.replace('_',' ')} becomes available at age ${minimumAge}.`}]};
   const gate=consumeAction(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:activity}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const effects={gym:[5,1,2],running:[6,1,1],walking:[3,2,-1],martial_arts:[5,2,3],meditation:[0,4,-7],diet:[2,2,-1]}[activity];
   state.health.fitness=clamp(state.health.fitness+effects[0]);state.character.stats.health=clamp(state.character.stats.health+effects[1]);state.character.secondary.stress=clamp(state.character.secondary.stress+effects[2]);

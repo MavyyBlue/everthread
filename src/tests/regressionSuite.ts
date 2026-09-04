@@ -15,7 +15,7 @@ import { enforceStateInvariants, validateState } from '../core/invariants';
 import { availableCrimes, commitCrime, resolveLegalCase } from '../systems/CrimeSystem';
 import { continueAsChild } from '../systems/GenerationSystem';
 import { migrateSave } from '../services/SaveSystem';
-import { processMarketYear } from '../systems/InvestmentSystem';
+import { buySecurity, processMarketYear, sellSecurity } from '../systems/InvestmentSystem';
 import { runSimulation } from './simulationHarness';
 import { formatMoney } from '../core/format';
 import { actionAllowed, actionUsesThisAge, consumeAction } from '../core/actionEconomy';
@@ -23,6 +23,8 @@ import { performWellnessActivity } from '../systems/HealthSystem';
 import { fameActivity } from '../systems/FameSystem';
 import { addBusinessProduct, startBusiness } from '../systems/BusinessSystem';
 import { GameEngine } from '../engine/GameEngine';
+import { adoptPet } from '../systems/PetSystem';
+import { travel } from '../systems/TravelSystem';
 
 export interface RegressionResult {name:string;passed:boolean;error?:string;}
 export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
@@ -62,6 +64,43 @@ export const regressionCases:RegressionCase[]=[
       const choice=state.pendingEvent?.choices[0];assert(choice,'forced event has no choice');resolvePendingEvent(state,choice.id);finalizeAgeUp(state);
       equal(ageUp(state).success,true,'age up should succeed after event resolution');equal(state.character.age,1,'age did not increment exactly once');
       if(state.pendingEvent){const c=state.pendingEvent.choices[0];assert(c,'random event missing choice');resolvePendingEvent(state,c.id);finalizeAgeUp(state);}
+    }
+  },
+  {
+    name:'newborns cannot trade investments or initiate vacations',
+    run:()=>{
+      const state=createNewGame({seed:'newborn-adult-actions'});state.finances.cash=10000;
+      equal(buySecurity(state,'broad_market_fund',1000).success,false,'newborn could buy a security');
+      state.investments.positions.push({securityId:'broad_market_fund',units:2,averageCost:100});state.investments.prices['broad_market_fund']=100;
+      equal(sellSecurity(state,'broad_market_fund').success,false,'newborn could sell a security');
+      equal(travel(state,state.character.countryId).success,false,'newborn could initiate an independent vacation');
+      equal(travel(state,state.character.countryId,undefined,true).success,false,'newborn could initiate a family trip');
+      equal(adoptPet(state,'dog_labrador').success,false,'newborn could adopt a pet');
+      equal(buyCollectible(state,'collectible_jewelry_7').success,false,'newborn could buy from the collectible market');
+    }
+  },
+  {
+    name:'wellness activities unlock at age-appropriate childhood and teen stages',
+    run:()=>{
+      const state=createNewGame({seed:'wellness-age-gates'});
+      equal(performWellnessActivity(state,'walking').success,false,'newborn could perform a structured walking activity');
+      equal(performWellnessActivity(state,'gym').success,false,'newborn could use the gym');
+      state.character.age=3;assert(performWellnessActivity(state,'walking').success,'walking did not unlock at age 3');
+      state.character.age=12;equal(performWellnessActivity(state,'gym').success,false,'gym unlocked before age 13');
+      state.character.age=13;assert(performWellnessActivity(state,'gym').success,'gym did not unlock at age 13');
+    }
+  },
+  {
+    name:'dependent minors do not accumulate ordinary personal insolvency debt',
+    run:()=>{
+      const state=createNewGame({seed:'minor-finance'});state.finances.cash=0;state.economy.inflationIndex=1;
+      for(let age=1;age<=17;age++){state.character.age=age;state.currentYear=2026+age;processAnnualFinance(state);equal(state.finances.taxesPaid,0,`minor with no income paid tax at age ${age}`);assert(!state.finances.liabilities.some(l=>l.kind==='personal'),`minor accumulated personal debt at age ${age}`);equal(state.finances.cash,0,`minor finance drifted below zero at age ${age}`);}
+    }
+  },
+  {
+    name:'negative dependent-minor cash is covered by guardians instead of converted to debt',
+    run:()=>{
+      const state=createNewGame({seed:'minor-shortfall-support'});state.character.age=10;state.finances.cash=-2400;processAnnualFinance(state);equal(state.finances.cash,0,'minor shortfall was not normalized to zero');assert(!state.finances.liabilities.some(l=>l.kind==='personal'),'minor shortfall created unsecured debt');assert(Number(state.flags.guardianSupportReceived)>=2400,'guardian support was not tracked');
     }
   },
   {

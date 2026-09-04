@@ -2,6 +2,38 @@
 
 Everthread is pre-release. Versions below are development milestones, not public release promises.
 
+## 0.9.7 — 2026-09-04 — Childhood Eligibility & Dependent Finances
+
+### Added
+
+- Explicit age eligibility for investment trading, travel, structured wellness, pet adoption, and collectible-market purchases at both engine and mobile-UI layers.
+- Childhood wellness unlocks by activity: walking at 3, running at 5, martial arts/meditation at 6, intentional diet activity at 10, and gym at 13.
+- Regression coverage for newborn investment/travel blocking, age-staged wellness unlocks, dependent-minor finance, and guardian-supported shortfalls.
+
+### Changed
+
+- Investment buying and selling now require age 18. Pet adoption unlocks at age 5, and collectible-market purchases at age 12.
+- Independent vacations now require age 18. Family trips become available at age 5, require a living parent/stepparent/grandparent while under 18, and draw the trip cost from the guardian's simulated household wealth rather than the child's personal cash.
+- Dependent minors no longer pay ordinary baseline living, lifestyle, child, pet, property, vehicle, or debt-service costs from personal cash. Taxes still apply to actual taxable teen income.
+- Negative cash while under 18 is normalized through tracked guardian support instead of being converted into an unsecured personal loan.
+- Student or other explicit liabilities can still exist in state, but ordinary annual debt payments do not begin while the player is a dependent minor.
+
+### Fixed
+
+- Newborn characters could buy and sell securities.
+- Newborn characters could initiate vacations and family trips.
+- Newborns could use gym/running/walking/meditation/diet/martial-arts actions before any age eligibility existed.
+- Newborns could also initiate pet adoption and collectible-market purchases if starting household cash happened to be high enough.
+- A dependent child could reach adulthood already carrying ordinary personal insolvency debt because year-end shortfall handling treated minors like independent adults.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 51/51 regression cases pass.
+- Neutral 1,000-life bulk run: median lifespan 81, median net worth 637,451, millionaire rate 40.5%, zero anomalies and zero forced terminal deaths.
+- Mixed-policy 1,000-life bulk run: median lifespan 82, median net worth 840,742, millionaire rate 45.3%, zero anomalies and zero forced terminal deaths.
+
 ## 0.9.6 — 2026-09-04 — Action Economy & Exploit Hardening
 
 ### Added

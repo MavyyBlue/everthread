@@ -8,6 +8,7 @@ import { consumeAction } from '../core/actionEconomy';
 const petNames=['Mochi','Pepper','Bean','Sunny','Nova','Pip','Clover','Miso','Juniper','Scout','Maple','Echo','Biscuit','Pixel','Waffles','Luna','Otis','Birdie','Noodle','Toast'];
 
 export function adoptPet(state:GameState,variantId:string,name?:string):EngineResult {
+  if(state.character.age<5)return{success:false,messages:[{text:'Choosing and adopting a pet becomes available at age 5.'}]};
   const def=petVariants.find(p=>p.id===variantId);if(!def)return{success:false,messages:[{text:'Pet type not found.'}]};if(def.legalTier==='restricted'&&state.character.age<21)return{success:false,messages:[{text:'Restricted exotic pets require age 21 under the game’s simplified rules.'}]};if(state.finances.cash<def.price)return{success:false,messages:[{text:`You need ${def.price.toLocaleString()} in game currency.`}]};const gate=consumeAction(state,{policy:'pet.adopt'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(`${state.seed}-pet`,state.rngCounter);state.finances.cash-=def.price;const petName=name?.trim()||rng.pick(petNames);state.pets.push({id:makeStateId(state,'pet'),variantId:def.id,name:petName,species:def.species,breed:def.breed,age:0,health:rng.int(75,100),happiness:rng.int(65,95),craziness:rng.int(5,95),relationship:55,alive:true});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You adopted ${petName}, a ${def.breed}.`}]};
 }

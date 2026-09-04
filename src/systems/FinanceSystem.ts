@@ -122,6 +122,10 @@ function declareBankruptcy(state:GameState){
 }
 
 function handleCashShortfall(state:GameState,grossIncome:number){
+  if(state.character.age<18){
+    if(state.finances.cash<0){const support=-state.finances.cash;state.finances.cash=0;state.flags.guardianSupportReceived=Number(state.flags.guardianSupportReceived??0)+support;}
+    state.flags.cashShortfallYears=0;state.flags.mortgageMisses=0;return;
+  }
   if(state.finances.cash>=0){state.flags.cashShortfallYears=0;state.flags.mortgageMisses=0;return;}
   let shortfall=-state.finances.cash;
   state.finances.cash=0;
@@ -162,20 +166,21 @@ export function processAnnualFinance(state:GameState) {
   const gross=salary+specialIncome+rentalIncome+businessDistribution;
   const taxes=Math.round(gross*(country?.taxRate??.24));
   const age=state.character.age;
-  const baseline=age<18?0:Math.round((15500+age*90)*state.economy.inflationIndex);
+  const dependentMinor=age<18;
+  const baseline=dependentMinor?0:Math.round((15500+age*90)*state.economy.inflationIndex);
   const children=state.relationships.filter(r=>r.type==='child'&&state.npcs[r.npcId]?.alive&&state.npcs[r.npcId]!.age<18).length;
-  const childCosts=Math.round(children*6500*state.economy.inflationIndex);
+  const childCosts=dependentMinor?0:Math.round(children*6500*state.economy.inflationIndex);
   // Ordinary leisure, clothing, local transport, subscriptions and other discretionary consumption rise with means.
   // Explicit player purchases/travel remain separate; this prevents high earners from unrealistically banking every unused salary dollar.
   const afterTaxIncome=Math.max(0,gross-taxes);
   const lifestyleRate=gross<35000?.03:gross<80000?.07:gross<160000?.10:.14;
-  const lifestyleCosts=age<18?0:Math.round(afterTaxIncome*lifestyleRate);
-  const petCosts=Math.round(state.pets.filter(p=>p.alive).length*900*state.economy.inflationIndex);
-  const propertyCosts=Math.round(state.assets.properties.reduce((s,p)=>s+p.marketValue*.018,0));
-  const vehicleCosts=Math.round(state.assets.vehicles.reduce((s,v)=>s+Math.max(450,v.value*.025),0));
+  const lifestyleCosts=dependentMinor?0:Math.round(afterTaxIncome*lifestyleRate);
+  const petCosts=dependentMinor?0:Math.round(state.pets.filter(p=>p.alive).length*900*state.economy.inflationIndex);
+  const propertyCosts=dependentMinor?0:Math.round(state.assets.properties.reduce((s,p)=>s+p.marketValue*.018,0));
+  const vehicleCosts=dependentMinor?0:Math.round(state.assets.vehicles.reduce((s,v)=>s+Math.max(450,v.value*.025),0));
   let debtPayments=0;
   for(const loan of state.finances.liabilities){
-    if(loan.balance<=0)continue;const interest=loan.balance*loan.annualRate;const payment=Math.min(loan.balance+interest,loan.annualPayment);
+    if(loan.balance<=0)continue;if(dependentMinor)continue;const interest=loan.balance*loan.annualRate;const payment=Math.min(loan.balance+interest,loan.annualPayment);
     loan.balance=Math.max(0,loan.balance+interest-payment);loan.remainingYears=Math.max(0,loan.remainingYears-1);debtPayments+=payment;
   }
   state.finances.liabilities=state.finances.liabilities.filter(l=>l.balance>.5);

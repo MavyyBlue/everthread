@@ -57,5 +57,6 @@ export function repairVehicle(state:GameState,vehicleId:string):EngineResult {
 }
 
 export function buyCollectible(state:GameState,itemId:string):EngineResult {
+  if(state.character.age<12)return{success:false,messages:[{text:'Collectible-market purchases become available at age 12.'}]};
   const def=collectibleDefinitions.find(i=>i.id===itemId);if(!def)return{success:false,messages:[{text:'Collectible not found.'}]};const rng=createRng(state.seed,state.rngCounter);const price=Math.round(def.baseValue*rng.int(70,145)/100);if(state.finances.cash<price)return{success:false,messages:[{text:`You need ${price.toLocaleString()} cash.`}]};const gate=consumeAction(state,[{policy:'collectible.purchase.total'},{policy:'collectible.purchase.item',target:itemId}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=price;const authentic=!rng.chance(def.fakeChance);state.assets.collectibles.push({id:makeStateId(state,'collectible'),itemId:def.id,name:def.name,estimatedValue:authentic?Math.round(price*rng.int(90,160)/100):Math.round(price*.1),authenticity:authentic?rng.int(88,100):rng.int(5,35),condition:rng.int(55,98),rarity:def.rarity});state.rngCounter=rng.counter();return{success:true,messages:[{text:`Purchased ${def.name} for ${price.toLocaleString()}. Authenticity is not guaranteed until appraised.`}]};
 }

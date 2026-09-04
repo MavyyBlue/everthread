@@ -113,3 +113,7 @@ Before release, expand naming data substantially and consider country/subregion-
 8. Parenting milestones from infancy through adult children.
 9. Old-age, retirement, caregiving and legacy events.
 10. Specialized organization content for museums, zoos, casino/resort, commune, and fictional intelligence agency systems.
+
+## 0.9.7 systems note
+
+No content-database counts changed in 0.9.7. The milestone adds age eligibility for investments/travel/wellness and dependent-minor finance handling; these are systemic rules rather than new content entries.

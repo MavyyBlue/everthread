@@ -1,7 +1,7 @@
 # Everthread — Development Status
 
 Last updated: 2026-09-04  
-Current build line: 0.9.6 pre-release  
+Current build line: 0.9.7 pre-release  
 Save schema: 6
 
 ## Product direction
@@ -69,6 +69,17 @@ The first live human playtest exposed same-year action exploits that headless si
 - PWA navigation now prefers the network while retaining an offline fallback, and service-worker cache versioning/update checks make new phone builds surface more reliably after deployment.
 - Validation after these changes: 37/37 regressions; neutral and mixed-policy 1,000-life runs both completed with zero anomalies and zero forced terminal deaths.
 
+### Childhood eligibility and dependent finances (0.9.7)
+
+The second live playtest exposed a separate class of bug from same-year spam: some systems had frequency limits but no concept of whether the player was old enough to perform the action at all.
+
+- Investment trading is adult-only at age 18+ at the system layer and presents a locked mobile state before adulthood. Pet adoption unlocks at age 5 and collectible-market purchases at age 12.
+- Independent vacations are adult-only. Family trips unlock at age 5, require a living guardian while the player is a minor, and charge the guardian NPC's simulated household wealth instead of the child's personal cash.
+- Structured wellness now unlocks in stages: walking 3+, running 5+, martial arts/meditation 6+, intentional diet activity 10+, gym 13+.
+- Dependent minors do not personally absorb ordinary baseline/lifestyle/dependent/pet/property/vehicle costs or annual loan payments. Teen income can still be taxed when actual taxable income exists.
+- A negative under-18 cash balance is covered by tracked guardian support instead of becoming an unsecured 12% personal loan.
+- Validation after this pass: 51/51 regressions; neutral and mixed-policy 1,000-life populations both completed with zero anomalies and zero forced terminal deaths.
+
 ### Action economy and anti-reroll hardening (0.9.6)
 
 The first human playtest showed that isolated cooldown fixes were not enough: many buttons represented a full year of meaningful effort but could be tapped repeatedly until the random result became favorable. Everthread now treats yearly opportunity/time as a first-class simulation resource.
@@ -88,7 +99,7 @@ The first human playtest showed that isolated cooldown fixes were not enough: ma
 
 Added in the current hardening pass:
 
-- Framework-independent deterministic regression suite: 47 passing tests.
+- Framework-independent deterministic regression suite: 51 passing tests.
 - Multi-life simulation harness with `full` and faster `bulk` modes, independent aspiration profiles, six behavior policies, and wealth-percentile reporting.
 - 1,000-life bulk run completed with zero detected structural state anomalies.
 - Content audit executable from source data.
@@ -111,35 +122,35 @@ Added in the current hardening pass:
 
 ### Latest 1,000-life balance samples
 
-Neutral-policy sample after 0.9.6 action-economy hardening:
+Neutral-policy sample after 0.9.7 childhood-eligibility hardening:
 
-- Average / median lifespan: 78.9 / 81
-- Average / median net worth: 1,229,119 / 655,640
-- Wealth p10 / p25 / p75 / p90 / p99: 1,800 / 196,106 / 1,638,238 / 3,090,763 / 7,571,363
-- Millionaire ending net worth: 40.7%
-- Marriage frequency: 51.4%
+- Average / median lifespan: 78.6 / 81
+- Average / median net worth: 1,210,543 / 637,451
+- Wealth p10 / p25 / p75 / p90 / p99: 95 / 196,880 / 1,586,107 / 3,038,895 / 6,699,815
+- Millionaire ending net worth: 40.5%
+- Marriage frequency: 51.9%
 - Average children: 0.53
 - Any crime / conviction: 6.8% / 6.7%
 - Fame 25+: 5.7%
-- Average ending wealth sources: 707,998 cash / 118,756 property equity / 387,385 investments / 16,612 businesses / 1,632 other debt
-- Average investing: 126,820 lifetime contributions / 125,901 held cost basis / 261,483 held unrealized gain
-- Inheritance: 95.3% of lives receive some inheritance / 133,928 average lifetime inheritance
+- Average ending wealth sources: 707,011 cash / 117,743 property equity / 372,394 investments / 15,046 businesses / 1,651 other debt
+- Average investing: 125,965 lifetime contributions / 125,034 held cost basis / 247,360 held unrealized gain
+- Inheritance: 94.6% of lives receive some inheritance / 131,793 average lifetime inheritance
 - Forced terminal-age deaths / anomalies: 0 / 0
 
 Mixed-policy sample:
 
-- Average / median lifespan: 78.8 / 82
-- Average / median net worth: 1,447,735 / 823,294
-- Wealth p10 / p25 / p75 / p90 / p99: 4,000 / 246,758 / 1,794,397 / 3,452,353 / 9,186,177
-- Millionaire ending net worth: 44.5%
-- Marriage frequency: 54.4%
-- Average children: 0.68
-- Average ending wealth sources: 831,571 cash / 123,116 property equity / 451,046 investments / 43,609 businesses / 1,607 other debt
-- Average investing: 159,439 lifetime contributions / 158,348 held cost basis / 292,697 held unrealized gain
-- Inheritance: 94.4% of lives / 132,800 average lifetime inheritance
+- Average / median lifespan: 79.1 / 82
+- Average / median net worth: 1,461,598 / 840,742
+- Wealth p10 / p25 / p75 / p90 / p99: 4,863 / 244,661 / 1,759,906 / 3,533,598 / 9,083,312
+- Millionaire ending net worth: 45.3%
+- Marriage frequency: 54.8%
+- Average children: 0.69
+- Average ending wealth sources: 841,672 cash / 122,984 property equity / 455,253 investments / 43,318 businesses / 1,629 other debt
+- Average investing: 161,931 lifetime contributions / 160,911 held cost basis / 294,342 held unrealized gain
+- Inheritance: 93.8% of lives / 132,348 average lifetime inheritance
 - Forced terminal-age deaths / anomalies: 0 / 0
 
-The market-calibration conclusion from 0.9.4 still holds: inheritance is not the dominant wealth source, and the headless policies underuse optional lifestyle consumption compared with a human. The 0.9.6 action economy is intended to prevent retry/grind exploits, not to force an arbitrary millionaire percentage.
+The market-calibration conclusion from 0.9.4 still holds: inheritance is not the dominant wealth source, and the headless policies underuse optional lifestyle consumption compared with a human. The 0.9.6 action economy prevents retry/grind exploits; 0.9.7 adds age eligibility and dependent-finance semantics without attempting to force an arbitrary millionaire percentage.
 
 ## Partially complete / needs deeper implementation
 
