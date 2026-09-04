@@ -25,6 +25,9 @@ import { addBusinessProduct, startBusiness } from '../systems/BusinessSystem';
 import { GameEngine } from '../engine/GameEngine';
 import { adoptPet } from '../systems/PetSystem';
 import { travel } from '../systems/TravelSystem';
+import { buildPeopleRelationshipGraph, peopleFolderSummaries } from '../systems/PeopleGraphSystem';
+import { racingAction } from '../systems/SpecialCareerSystem';
+import { relatedMiniGameSkill, skipMiniGame } from '../minigames/framework';
 
 export interface RegressionResult {name:string;passed:boolean;error?:string;}
 export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
@@ -459,6 +462,41 @@ export const regressionCases:RegressionCase[]=[
       processAnnualFinance(state);state.character.age+=1;state.currentYear+=1;processAnnualFinance(state);
       equal(state.assets.properties.length,0,'property survived foreclosure threshold');assert(!state.finances.liabilities.some(l=>l.id==='mortgage'),'foreclosed mortgage survived');assert(Number(state.flags.foreclosures??0)>=1,'foreclosure was not recorded');assert(state.finances.cash>=0,'foreclosure created negative cash');
       const expectedResidualFloor=50000;assert(state.finances.cash>=expectedResidualFloor||!state.finances.liabilities.some(l=>l.kind==='personal'),'residual equity appears to have been consumed incorrectly');
+    }
+  },
+  {
+    name:'people folders separate immediate family, extended relatives, and friends without losing real NPC links',
+    run:()=>{
+      const state=highStatAdult('people-folders');
+      const parent=state.relationships.find(rel=>rel.type==='parent');assert(parent,'test life has no parent');
+      const parentNpc=state.npcs[parent.npcId]!;
+      const sibling=makeChild(state,'graph-sibling',23);sibling.firstName='Sami';sibling.parentIds=[parentNpc.id];state.npcs[sibling.id]=sibling;parentNpc.childIds.push(sibling.id);state.relationships.push({id:'graph-sibling-rel',npcId:sibling.id,type:'sibling',score:72,attraction:0,compatibility:66,yearsKnown:20});
+      const niece=makeChild(state,'graph-niece',3);niece.firstName='Nia';niece.parentIds=[sibling.id];state.npcs[niece.id]=niece;sibling.childIds.push(niece.id);state.relationships.push({id:'graph-niece-rel',npcId:niece.id,type:'niece_nephew',score:60,attraction:0,compatibility:64,yearsKnown:3});
+      const friend=makeChild(state,'graph-friend',25);friend.firstName='Jo';friend.parentIds=[];state.npcs[friend.id]=friend;state.relationships.push({id:'graph-friend-rel',npcId:friend.id,type:'friend',score:80,attraction:0,compatibility:75,yearsKnown:5});
+      const summaries=peopleFolderSummaries(state);assert((summaries.find(folder=>folder.id==='player_family')?.count??0)>=2,'player-family folder lost parents');equal(summaries.find(folder=>folder.id==='relatives')?.count,2,'extended-relative count is wrong');equal(summaries.find(folder=>folder.id==='friends')?.count,1,'friend folder count is wrong');
+      const relatives=buildPeopleRelationshipGraph(state,'relatives');assert(relatives.nodes.some(node=>node.id===sibling.id),'sibling missing from relatives graph');assert(relatives.nodes.some(node=>node.id===niece.id),'niece/nephew missing from relatives graph');assert(relatives.edges.some(edge=>edge.kind==='parent_child'&&edge.from===sibling.id&&edge.to===niece.id),'known sibling→child link was not represented in relatives tree');assert(!relatives.edges.some(edge=>edge.kind==='direct'&&edge.to===niece.id),'niece/nephew received a redundant direct player edge instead of hanging from the known parent');assert(!relatives.nodes.some(node=>node.id===friend.id),'friend leaked into relatives graph');
+    }
+  },
+  {
+    name:'relationship graph does not invent NPC-to-NPC links between unrelated friends',
+    run:()=>{
+      const state=highStatAdult('people-no-invented-links');
+      for(const [id,name] of [['friend-a','Ari'],['friend-b','Bea']] as const){const npc=makeChild(state,id,24);npc.firstName=name;npc.parentIds=[];npc.childIds=[];npc.partnerId=undefined;state.npcs[id]=npc;state.relationships.push({id:`${id}-rel`,npcId:id,type:'friend',score:60,attraction:0,compatibility:60,yearsKnown:2});}
+      const graph=buildPeopleRelationshipGraph(state,'friends');const npcEdges=graph.edges.filter(edge=>edge.from!==state.character.id&&edge.to!==state.character.id);equal(npcEdges.length,0,'graph invented a relationship between unrelated friends');equal(graph.edges.filter(edge=>edge.kind==='direct').length,2,'friends were not connected directly to the player root');
+    }
+  },
+  {
+    name:'minigame score modifies world outcomes without replacing character progression',
+    run:()=>{
+      const low=highStatAdult('minigame-racing');const high=structuredClone(low);for(const state of [low,high]){state.character.age=24;state.specialCareers.racing={active:true,skill:42,seasons:0};}
+      const lowResult=racingAction(low,'race',0);const highResult=racingAction(high,'race',100);const finish=(text:string)=>Number(text.match(/finished (\d+)/)?.[1]??99);const lowFinish=finish(lowResult.messages[0]?.text??'');const highFinish=finish(highResult.messages[0]?.text??'');assert(highFinish<=lowFinish,`higher minigame score worsened identical racing outcome (${lowFinish} -> ${highFinish})`);assert(highFinish-lowFinish<=0,'minigame modifier did not preserve monotonic direction');
+    }
+  },
+  {
+    name:'accessibility minigame skip is seeded, bounded, and improves with character skill',
+    run:()=>{
+      const weak=highStatAdult('minigame-skip');weak.character.talents.acting=10;weak.character.secondary.creativity=10;weak.specialCareers.acting={skill:5};const strong=structuredClone(weak);strong.character.talents.acting=95;strong.character.secondary.creativity=95;strong.specialCareers.acting={skill:90};
+      const weakRngBefore=weak.rngCounter;const weakScore=skipMiniGame(weak,'acting',relatedMiniGameSkill(weak,'acting')).score;const strongScore=skipMiniGame(strong,'acting',relatedMiniGameSkill(strong,'acting')).score;equal(weak.rngCounter,weakRngBefore,'accessibility skip mutated core simulation RNG outside the engine action');assert(weakScore>=0&&weakScore<=100&&strongScore>=0&&strongScore<=100,'skip score escaped 0–100 bounds');assert(strongScore>weakScore,`higher character skill did not improve skip resolution (${weakScore} -> ${strongScore})`);
     }
   },
   {

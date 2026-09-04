@@ -117,3 +117,7 @@ Before release, expand naming data substantially and consider country/subregion-
 ## 0.9.7 systems note
 
 No content-database counts changed in 0.9.7. The milestone adds age eligibility for investments/travel/wellness and dependent-minor finance handling; these are systemic rules rather than new content entries.
+
+## 0.9.8 systems note
+
+No content-database counts changed in 0.9.8. The milestone adds relationship-folder/tree presentation derived from persistent NPC state and the first playable minigame mechanics. Future content work should populate School and Work folders with persistent classmates/teachers/bosses/coworkers and add path-specific minigame prompt/variant libraries rather than duplicating the framework.

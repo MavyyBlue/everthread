@@ -1,7 +1,7 @@
 # Everthread — Development Status
 
 Last updated: 2026-09-04  
-Current build line: 0.9.7 pre-release  
+Current build line: 0.9.8 pre-release  
 Save schema: 6
 
 ## Product direction
@@ -20,7 +20,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/services/SaveSystem.ts` — IndexedDB/local fallback, schema migration, JSON import/export.
 - `src/screens/` and `src/components/` — mobile UI only; critical state is not intended to be mutated here.
 - `src/tests/` — deterministic regression suite, content audit, and multi-life simulation harness.
-- `src/minigames/` — reusable minigame contract/framework; full game implementations remain incomplete.
+- `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
 ## Implemented foundations
 
@@ -69,6 +69,19 @@ The first live human playtest exposed same-year action exploits that headless si
 - PWA navigation now prefers the network while retaining an offline fallback, and service-worker cache versioning/update checks make new phone builds surface more reliably after deployment.
 - Validation after these changes: 37/37 regressions; neutral and mixed-policy 1,000-life runs both completed with zero anomalies and zero forced terminal deaths.
 
+### Relationship graph and playable minigames (0.9.8)
+
+The People tab now uses the persistent NPC graph as a navigation surface instead of presenting every relationship as one flat list. The first real minigame layer also connects player execution to existing simulation outcomes without replacing character progression.
+
+- People now opens into relationship folders: Player Family, Relatives, Friends & Social, Romantic History, School, and Work. Search still spans all direct player relationships.
+- Opening a folder renders a mobile relationship tree rooted on the player. Structural edges come only from persisted `parentIds`, `childIds`, and `partnerId`; disconnected direct relationships receive a player link so the tree stays navigable without inventing NPC-to-NPC connections.
+- Extended-family branches prefer known intermediate connections. For example, a niece/nephew with a known sibling parent hangs beneath that sibling instead of also receiving a redundant direct edge to the player.
+- NPC detail sheets now expose known parent, child, and partner connections alongside memories and interactions.
+- The reusable minigame layer now supports timing, sequence-memory, grid-memory, and safety-oriented decision mechanics. Reduced-motion environments automatically substitute a non-motion sequence challenge for timing games.
+- Acting auditions, pro-sports contract attempts, combat bouts, motorsport races, and prison-escape attempts now accept minigame performance scores as bounded modifiers. Character stats/skills and seeded world RNG remain part of the final outcome.
+- License quizzes remain interactive; when the minigame preference is disabled, licenses and supported special challenges resolve from character skill plus a pure seeded challenge score. Accessibility skip resolution does not mutate the core RNG outside the engine action.
+- Validation after this pass: 55/55 regressions; neutral and mixed-policy 1,000-life populations both completed with zero anomalies and zero forced terminal deaths.
+
 ### Childhood eligibility and dependent finances (0.9.7)
 
 The second live playtest exposed a separate class of bug from same-year spam: some systems had frequency limits but no concept of whether the player was old enough to perform the action at all.
@@ -99,7 +112,7 @@ The first human playtest showed that isolated cooldown fixes were not enough: ma
 
 Added in the current hardening pass:
 
-- Framework-independent deterministic regression suite: 51 passing tests.
+- Framework-independent deterministic regression suite: 55 passing tests.
 - Multi-life simulation harness with `full` and faster `bulk` modes, independent aspiration profiles, six behavior policies, and wealth-percentile reporting.
 - 1,000-life bulk run completed with zero detected structural state anomalies.
 - Content audit executable from source data.
@@ -122,7 +135,7 @@ Added in the current hardening pass:
 
 ### Latest 1,000-life balance samples
 
-Neutral-policy sample after 0.9.7 childhood-eligibility hardening:
+Neutral-policy sample after the 0.9.8 relationship/minigame pass (headless balance behavior unchanged):
 
 - Average / median lifespan: 78.6 / 81
 - Average / median net worth: 1,210,543 / 637,451
@@ -209,7 +222,12 @@ The state tracks and basic actions are real, but most special paths are not yet 
 
 ### Minigames
 
-Only the reusable framework exists. Full touch/keyboard/skippable implementations are still needed for driving, flight, prison escape, deployment, combat, racing, acting, and sports challenges.
+The first reusable interactive layer is now implemented. Timing, sequence-memory, grid-memory, and decision mechanics are available; acting auditions, pro-sports attempts, combat bouts, motorsport races, prison escape, and license checks are wired into live gameplay. Remaining depth:
+
+- Direct interactive deployment and flight-specific challenge flows beyond the current reusable sequence/decision mechanics and license path.
+- More sport-specific, acting-specific, and racing-specific variants so repeated careers do not feel like the same skin over one mechanic.
+- Haptics/sound feedback, richer difficulty scaling, and device/accessibility QA.
+- Event-driven minigame hooks where a challenge is optional and consequences remain valid when minigames are disabled.
 
 ### Events / consequences
 
@@ -269,7 +287,7 @@ Added the persisted centralized `actionLedger` with per-age usage, last-used age
 4. Add richer autonomous descendant education, health, legal and household histories so generation handoffs preserve more than career/family state.
 5. Add asset-specific wills plus fictionalized estate administration/tax rules without breaking the current multi-heir settlement.
 6. Deepen special-career modules one family at a time without replacing working core systems.
-7. Implement minigames through the existing framework.
+7. Expand the minigame framework with deployment/flight variants, event hooks, richer path-specific challenge sets, and full accessibility/device QA.
 8. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
 9. Expand regional names substantially and verify long-dynasty repetition rates.
 10. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

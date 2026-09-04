@@ -1,5 +1,33 @@
 # Everthread Changelog
 
+## 0.9.8 — 2026-09-04 — Relationship Trees & First Playable Minigames
+
+### Added
+
+- Relationship folders in the People tab: Player Family, Relatives, Friends & Social, Romantic History, School, and Work.
+- Mobile relationship-tree view rooted on the player, with persisted NPC parent/child/partner edges and direct fallback edges only when a folder member would otherwise be disconnected.
+- Known connection details in NPC sheets so parent, child, and partner links are visible outside the tree.
+- Reusable full-screen minigame overlay with timing, sequence-memory, grid-memory, and decision challenge mechanics.
+- Interactive minigame integration for acting auditions, professional-sports attempts, combat bouts, motorsport races, and prison escape.
+- Character-skill accessibility resolution for minigames and license tests when the minigame preference is disabled.
+- Regression coverage for folder classification, non-invented NPC graph edges, extended-family tree linkage, minigame outcome direction, and seeded accessibility resolution.
+
+### Changed
+
+- People search remains global, while the default People surface now prioritizes relationship folders over one long flat list.
+- Minigame scores are bounded modifiers to existing simulation formulas; character skill, circumstances, and seeded RNG still resolve final outcomes.
+- Timing challenges fall back to sequence-memory play when the device reports a reduced-motion preference.
+- Career-screen job/program derivation is recalculated on each engine render instead of being memoized against mutable `GameState` identity.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 55/55 regression cases pass.
+- React/TSX source passes a shimmed TypeScript UI compile in the dependency-limited workspace; the dependency-backed Vite production build remains the GitHub Actions deployment gate.
+- Neutral 1,000-life bulk run: median lifespan 81, median net worth 637,451, millionaire rate 40.5%, zero anomalies and zero forced terminal deaths.
+- Mixed-policy 1,000-life bulk run: median lifespan 82, median net worth 840,742, millionaire rate 45.3%, zero anomalies and zero forced terminal deaths.
+
 Everthread is pre-release. Versions below are development milestones, not public release promises.
 
 ## 0.9.7 — 2026-09-04 — Childhood Eligibility & Dependent Finances
