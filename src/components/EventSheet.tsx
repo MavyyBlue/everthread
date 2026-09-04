@@ -1,0 +1,4 @@
+import type { EngineResult, GameState } from '../types/game';
+import { gameEngine } from '../stores/gameStore';
+
+export function EventSheet({state,onResult}:{state:GameState;onResult:(r:EngineResult)=>void}){const event=state.pendingEvent;if(!event)return null;return <div className="sheet-backdrop event-backdrop"><section className="event-sheet" role="alertdialog" aria-modal="true" aria-labelledby="event-title"><div className="event-mark" aria-hidden="true">✦</div><p className="eyebrow">Age {state.character.age} · life event</p><h2 id="event-title">{event.title}</h2><p className="event-description">{event.description}</p><div className="event-choices">{event.choices.map(choice=><button key={choice.id} onClick={()=>onResult(gameEngine.resolveEvent(choice.id))}>{choice.label}</button>)}</div></section></div>}

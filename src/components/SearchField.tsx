@@ -1,0 +1,1 @@
+export function SearchField({value,onChange,placeholder='Search'}:{value:string;onChange:(v:string)=>void;placeholder?:string}){return <label className="search-field"><span aria-hidden="true">⌕</span><input value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>{value&&<button onClick={()=>onChange('')} aria-label="Clear search">×</button>}</label>}
