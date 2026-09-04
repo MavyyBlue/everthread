@@ -33,11 +33,12 @@ jobs:
 
           if [ -f everthread-source.zip ]; then
             echo "Everthread source bundle found. Importing it..."
-            rm -rf .everthread-import
-            mkdir .everthread-import
-            unzip -q everthread-source.zip -d .everthread-import
+            IMPORT_DIR="$RUNNER_TEMP/everthread-import"
+            rm -rf "$IMPORT_DIR"
+            mkdir -p "$IMPORT_DIR"
+            unzip -q everthread-source.zip -d "$IMPORT_DIR"
 
-            if [ ! -f .everthread-import/package.json ]; then
+            if [ ! -f "$IMPORT_DIR/package.json" ]; then
               echo "The uploaded ZIP is not an Everthread source bundle: package.json is missing."
               exit 1
             fi
@@ -46,9 +47,9 @@ jobs:
             rsync -a --delete \
               --exclude='.git/' \
               --exclude='.github/workflows/' \
-              .everthread-import/ ./
+              "$IMPORT_DIR/" ./
 
-            rm -rf .everthread-import
+            rm -rf "$IMPORT_DIR"
             rm -f everthread-source.zip
 
             git config user.name "everthread-build-bot"
