@@ -1,7 +1,7 @@
 # Everthread — Development Status
 
 Last updated: 2026-09-04  
-Current build line: 0.9.8 pre-release  
+Current build line: 0.9.9 pre-release  
 Save schema: 6
 
 ## Product direction
@@ -17,7 +17,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/core/` — RNG, math, deterministic IDs, invariant enforcement, and the centralized action-economy ledger/policies.
 - `src/systems/` — isolated simulation domains.
 - `src/data/` — external content definitions for events, jobs, education, countries, health, crime, assets, achievements, and challenges.
-- `src/services/SaveSystem.ts` — IndexedDB/local fallback, schema migration, JSON import/export.
+- `src/services/SaveSystem.ts` — IndexedDB/local fallback, schema migration, account-level multi-slot life saves, active-slot tracking, JSON import/export.
 - `src/screens/` and `src/components/` — mobile UI only; critical state is not intended to be mutated here.
 - `src/tests/` — deterministic regression suite, content audit, and multi-life simulation harness.
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
@@ -48,7 +48,7 @@ These are functioning systems rather than navigation placeholders, though some s
 - Pets with annual aging/health and interactions.
 - Travel, emigration, visited locations, and license checks.
 - Acting, music, sports, combat sports, military, politics, royalty, modeling, racing, directing, organized-crime, museum, zoo, fictional intelligence agency, commune, and casino state tracks.
-- Achievements, challenges, progress UI, past-life cemetery, legacy statistics, death records, and descendant continuation.
+- Achievements, challenges, progress UI, multi-slot Life Saves, aggregated past-life history, dynamic best-life Family Legacy showcase, death records, and descendant continuation.
 - Rewind snapshots for rewind-enabled saves.
 - Theme, accent, text scaling, reduced motion, high contrast, sound, haptics, optional notification preference, profanity preference, minigame preference, and autosave preference.
 - PWA manifest/service worker scaffolding and app-background autosave.
@@ -68,6 +68,19 @@ The first live human playtest exposed same-year action exploits that headless si
 - Mobile money labels use compact notation for million-plus values so debug/sandbox/extreme-save values cannot widen cards off-screen.
 - PWA navigation now prefers the network while retaining an offline fallback, and service-worker cache versioning/update checks make new phone builds surface more reliably after deployment.
 - Validation after these changes: 37/37 regressions; neutral and mixed-policy 1,000-life runs both completed with zero anomalies and zero forced terminal deaths.
+
+### Life Saves and dynamic Family Legacy (0.9.9)
+
+The former single-slot `Past Lives` surface is now a true account-level save manager without changing the authoritative per-life `GameState` model.
+
+- Independent new lives allocate stable `slot-N` identifiers in the existing save store instead of replacing `slot-1`. The last selected slot is remembered separately from simulation state.
+- The Life Saves tab exposes Ongoing Lives for switching/deleting independent lineages and Past Lives for completed characters aggregated from every surviving lineage.
+- Pending autosaves are flushed before switching or deleting. Current state is explicitly persisted before normal switches/new-life creation, preventing queued writes from crossing slot boundaries.
+- Imported save JSON becomes a new independent slot rather than overwriting a matching source slot ID.
+- Completed deaths record their generation going forward; older saves infer completed-life generation from chronological lineage order, so schema 6 remains compatible without a migration bump.
+- Family Legacy is derived from all surviving current/completed lives. Its bounded score combines longevity, primary stats, logarithmic net worth, fame, family, career, and major milestones; a stronger Generation 2 can therefore remain featured while a weaker Generation 4 is active.
+- Deleting the save that owns the current featured life automatically removes those candidates and promotes the next-highest surviving life. Individual ancestors inside a surviving lineage are not independently deletable, preserving generation/inheritance continuity.
+- Validation after this pass: 57/57 regressions; neutral and mixed-policy 1,000-life populations both completed with zero anomalies and zero forced terminal deaths.
 
 ### Relationship graph and playable minigames (0.9.8)
 

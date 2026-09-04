@@ -1,5 +1,36 @@
 # Everthread Changelog
 
+## 0.9.9 — 2026-09-04 — Life Saves & Dynamic Family Legacy
+
+### Added
+
+- Real multi-slot life saves backed by the existing IndexedDB/local fallback store. Independent new lives no longer overwrite `slot-1`.
+- Account-level active-save tracking so Everthread reopens the last selected life and safely falls back to another surviving slot when needed.
+- `Life Saves` tab with an expandable Ongoing Lives folder for switching between independent lives and deleting saved lineages, plus an account-level Past Lives folder aggregated from surviving saves.
+- Dynamic Family Legacy showcase that ranks living and completed lives using a bounded legacy score across longevity, primary stats, logarithmic wealth, fame, family, career, and major milestones.
+- Completed-life generation metadata for new deaths, with index-based generation inference for older saves.
+- Regression coverage for collision-free slot allocation, earlier-generation legacy selection, and automatic best-life fallback when the featured save is removed.
+
+### Changed
+
+- The former `Past Lives` meta tab is now `Life Saves`.
+- Creating a custom or random independent life allocates a separate save slot and preserves account-level settings.
+- Switching saves flushes pending writes and saves the current life before loading the target slot.
+- Imported JSON is installed as a new independent life save instead of silently overwriting an existing slot ID.
+- Deleting the only remaining life save is blocked; create another life first so the runtime always retains one authoritative state.
+- The Family Legacy card keeps its existing visual role but can feature any surviving generation, including an earlier completed generation when that life scores better than the current protagonist.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 57/57 regression cases pass.
+- Neutral 1,000-life bulk run: median lifespan 81, median net worth 637,451, millionaire rate 40.5%, zero anomalies and zero forced terminal deaths.
+- Mixed-policy 1,000-life bulk run: median lifespan 82, median net worth 840,742, millionaire rate 45.3%, zero anomalies and zero forced terminal deaths.
+- Dependency-backed React/Vite production build remains the GitHub Actions deployment gate.
+
+Everthread is pre-release. Versions below are development milestones, not public release promises.
+
 ## 0.9.8 — 2026-09-04 — Relationship Trees & First Playable Minigames
 
 ### Added
@@ -27,8 +58,6 @@
 - React/TSX source passes a shimmed TypeScript UI compile in the dependency-limited workspace; the dependency-backed Vite production build remains the GitHub Actions deployment gate.
 - Neutral 1,000-life bulk run: median lifespan 81, median net worth 637,451, millionaire rate 40.5%, zero anomalies and zero forced terminal deaths.
 - Mixed-policy 1,000-life bulk run: median lifespan 82, median net worth 840,742, millionaire rate 45.3%, zero anomalies and zero forced terminal deaths.
-
-Everthread is pre-release. Versions below are development milestones, not public release promises.
 
 ## 0.9.7 — 2026-09-04 — Childhood Eligibility & Dependent Finances
 

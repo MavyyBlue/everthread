@@ -3,7 +3,7 @@ import { enforceStateInvariants, validateState } from '../core/invariants';
 import { jobById, jobs } from '../data/jobs';
 import { countryById } from '../data/countries';
 
-const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';export const SAVE_VERSION=6;
+const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';const ACTIVE_SLOT_KEY='everthread-active-save-slot';export const SAVE_VERSION=6;
 
 function canUseIndexedDb(){return typeof indexedDB!=='undefined';}
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE,{keyPath:'slotId'});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
@@ -80,7 +80,25 @@ export async function saveGame(state:GameState):Promise<void>{state.lastSavedAt=
 
 export async function loadGame(slotId='slot-1'):Promise<GameState|undefined>{let raw:unknown;if(!canUseIndexedDb()){const text=localStorage.getItem(`everthread-save-${slotId}`);raw=text?JSON.parse(text):undefined;}else{const db=await openDb();raw=await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly');const req=tx.objectStore(STORE).get(slotId);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});db.close();}return raw?migrateSave(raw):undefined;}
 
-export async function listSaveSlots():Promise<Array<{slotId:string;name:string;age:number;alive:boolean;lastSavedAt?:string}>>{if(!canUseIndexedDb()){return Object.keys(localStorage).filter(k=>k.startsWith('everthread-save-')).map(k=>JSON.parse(localStorage.getItem(k)!) as GameState).map(s=>({slotId:s.slotId,name:`${s.character.firstName} ${s.character.lastName}`,age:s.character.age,alive:s.character.alive,lastSavedAt:s.lastSavedAt}));}const db=await openDb();const all=await new Promise<GameState[]>((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();req.onsuccess=()=>resolve(req.result as GameState[]);req.onerror=()=>reject(req.error);});db.close();return all.map(s=>({slotId:s.slotId,name:`${s.character.firstName} ${s.character.lastName}`,age:s.character.age,alive:s.character.alive,lastSavedAt:s.lastSavedAt}));}
+export async function loadAllGames():Promise<GameState[]>{
+  let raw:unknown[]=[];
+  if(!canUseIndexedDb()){
+    const keys:string[]=[];for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key?.startsWith('everthread-save-'))keys.push(key);}
+    raw=keys.map(k=>{const text=localStorage.getItem(k);return text?JSON.parse(text):undefined;}).filter(Boolean);
+  }else{
+    const db=await openDb();raw=await new Promise<unknown[]>((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();req.onsuccess=()=>resolve(req.result as unknown[]);req.onerror=()=>reject(req.error);});db.close();
+  }
+  const games:GameState[]=[];
+  for(const item of raw){try{games.push(migrateSave(item));}catch(error){console.warn('Skipping unreadable Everthread save',error);}}
+  return games.sort((a,b)=>(b.lastSavedAt??'').localeCompare(a.lastSavedAt??''));
+}
+
+export async function listSaveSlots():Promise<Array<{slotId:string;name:string;age:number;alive:boolean;generation:number;lastSavedAt?:string}>>{return (await loadAllGames()).map(s=>({slotId:s.slotId,name:`${s.character.firstName} ${s.character.lastName}`,age:s.character.age,alive:s.character.alive,generation:s.legacy.generation,lastSavedAt:s.lastSavedAt}));}
+
+export function nextSaveSlotId(existingIds:string[]):string{const used=new Set(existingIds);for(let index=1;index<100000;index++){const id=`slot-${index}`;if(!used.has(id))return id;}throw new Error('No save slot is available.');}
+export async function allocateSaveSlotId():Promise<string>{return nextSaveSlotId((await listSaveSlots()).map(slot=>slot.slotId));}
+export function getActiveSaveSlotId():string|undefined{if(typeof localStorage==='undefined')return undefined;return localStorage.getItem(ACTIVE_SLOT_KEY)??undefined;}
+export function setActiveSaveSlotId(slotId:string|undefined){if(typeof localStorage==='undefined')return;if(slotId)localStorage.setItem(ACTIVE_SLOT_KEY,slotId);else localStorage.removeItem(ACTIVE_SLOT_KEY);}
 
 export async function deleteSave(slotId:string):Promise<void>{if(!canUseIndexedDb()){localStorage.removeItem(`everthread-save-${slotId}`);return;}const db=await openDb();await new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(slotId);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();}
 

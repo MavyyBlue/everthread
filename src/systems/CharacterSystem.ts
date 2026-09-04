@@ -13,6 +13,7 @@ const eyeColors = ['brown','dark brown','hazel','green','blue','gray','amber'];
 const birthCircumstances = ['a quiet morning','a thunderstorm','a clear winter night','a humid summer afternoon','a rainy spring morning','a crowded holiday weekend','just before sunrise','late in the evening'];
 
 export interface CharacterCreationOptions {
+  slotId?: string;
   seed?: string;
   firstName?: string;
   middleName?: string;
@@ -81,7 +82,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
   ];
   const familyCash = {poor:100,working:500,middle:1800,comfortable:7000,wealthy:30000}[familyWealthTier];
   const state: GameState = {
-    saveVersion:6,slotId:'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
+    saveVersion:6,slotId:options.slotId??'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
     education:[], employment:{history:[],partTimeJobIds:[],freelanceReputation:10,retired:false},
     finances:{cash:familyCash,annualIncome:0,annualExpenses:0,taxesPaid:0,liabilities:[]},
     assets:{properties:[],vehicles:[],collectibles:[]}, investments:{positions:[],prices:{},marketRegime:'neutral',history:{}}, businesses:[],

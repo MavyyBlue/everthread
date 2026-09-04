@@ -32,7 +32,8 @@ export class GameEngine {
   getRevision(){return this.revision;}
   subscribe(listener:Listener){this.listeners.add(listener);return()=>this.listeners.delete(listener);}
   replaceState(state:GameState){this.state=enforceStateInvariants(state);this.emit();}
-  newLife(options:CharacterCreationOptions={}){this.state=createNewGame(options);this.emit(true);return this.state;}
+  newLife(options:CharacterCreationOptions={}){const settings=structuredClone(this.state.settings);this.state=createNewGame(options);Object.assign(this.state.settings,settings);this.emit(true);return this.state;}
+  async flushSaves(){await this.saveQueue.catch(()=>undefined);}
   private emit(save=false){enforceStateInvariants(this.state);this.revision+=1;for(const listener of this.listeners)listener();if(save||this.state.settings.autoSave)this.queueSave();}
   private queueSave(){this.saveQueue=this.saveQueue.catch(()=>undefined).then(()=>saveGame(this.state)).catch(err=>console.error('Autosave failed',err));}
   private run(action:()=>EngineResult,save=true){const beforeRng=this.state.rngCounter;const beforeId=this.state.idCounter;const beforeActionRevision=this.state.actionLedger?.revision??0;const result=action();const mutatedOnOutcome=this.state.rngCounter!==beforeRng||this.state.idCounter!==beforeId||(this.state.actionLedger?.revision??0)!==beforeActionRevision;if(result.success||result.stateChanges||mutatedOnOutcome)this.emit(save);return result;}

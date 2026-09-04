@@ -14,7 +14,7 @@ import { eventById } from '../data/events';
 import { enforceStateInvariants, validateState } from '../core/invariants';
 import { availableCrimes, commitCrime, resolveLegalCase } from '../systems/CrimeSystem';
 import { continueAsChild } from '../systems/GenerationSystem';
-import { migrateSave } from '../services/SaveSystem';
+import { migrateSave, nextSaveSlotId } from '../services/SaveSystem';
 import { buySecurity, processMarketYear, sellSecurity } from '../systems/InvestmentSystem';
 import { runSimulation } from './simulationHarness';
 import { formatMoney } from '../core/format';
@@ -28,6 +28,7 @@ import { travel } from '../systems/TravelSystem';
 import { buildPeopleRelationshipGraph, peopleFolderSummaries } from '../systems/PeopleGraphSystem';
 import { racingAction } from '../systems/SpecialCareerSystem';
 import { relatedMiniGameSkill, skipMiniGame } from '../minigames/framework';
+import { featuredLife } from '../systems/LifeSaveSystem';
 
 export interface RegressionResult {name:string;passed:boolean;error?:string;}
 export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
@@ -497,6 +498,25 @@ export const regressionCases:RegressionCase[]=[
     run:()=>{
       const weak=highStatAdult('minigame-skip');weak.character.talents.acting=10;weak.character.secondary.creativity=10;weak.specialCareers.acting={skill:5};const strong=structuredClone(weak);strong.character.talents.acting=95;strong.character.secondary.creativity=95;strong.specialCareers.acting={skill:90};
       const weakRngBefore=weak.rngCounter;const weakScore=skipMiniGame(weak,'acting',relatedMiniGameSkill(weak,'acting')).score;const strongScore=skipMiniGame(strong,'acting',relatedMiniGameSkill(strong,'acting')).score;equal(weak.rngCounter,weakRngBefore,'accessibility skip mutated core simulation RNG outside the engine action');assert(weakScore>=0&&weakScore<=100&&strongScore>=0&&strongScore<=100,'skip score escaped 0–100 bounds');assert(strongScore>weakScore,`higher character skill did not improve skip resolution (${weakScore} -> ${strongScore})`);
+    }
+  },
+  {
+    name:'independent life saves allocate stable non-colliding slot ids',
+    run:()=>{
+      equal(nextSaveSlotId([]),'slot-1','first save slot should be slot-1');equal(nextSaveSlotId(['slot-1','slot-3']),'slot-2','deleted slot was not safely reusable');equal(nextSaveSlotId(['legacy-name','slot-1','slot-2']),'slot-3','nonstandard imported ids confused slot allocation');
+    }
+  },
+  {
+    name:'family legacy showcase can feature a stronger earlier generation and falls back after its save is removed',
+    run:()=>{
+      const primary=createNewGame({seed:'featured-primary',slotId:'slot-1'});primary.character.age=8;primary.character.stats={health:45,happiness:45,intelligence:45,appearance:45};primary.finances.cash=100;primary.legacy.generation=3;primary.legacy.totalYearsSimulated=150;primary.legacy.totalFamilyWealth=900000;primary.completedLives=[];
+      const gen1Char=structuredClone(primary.character);gen1Char.id='featured-gen-1';gen1Char.firstName='Mara';gen1Char.age=70;gen1Char.stats={health:55,happiness:60,intelligence:60,appearance:55};
+      const gen2Char=structuredClone(primary.character);gen2Char.id='featured-gen-2';gen2Char.firstName='Ari';gen2Char.age=88;gen2Char.stats={health:90,happiness:92,intelligence:96,appearance:88};
+      primary.completedLives.push({id:'life-gen-1',generation:1,character:gen1Char,ageAtDeath:70,cause:'old age',netWorth:120000,career:'Teacher',children:2,fame:8,milestones:['Graduated'],epitaph:'One life.',timeline:[]});
+      primary.completedLives.push({id:'life-gen-2',generation:2,character:gen2Char,ageAtDeath:88,cause:'old age',netWorth:2500000,career:'Surgeon',children:3,fame:55,milestones:['Graduated','Married','Career peak','Legacy'],epitaph:'Another life.',timeline:[]});
+      const secondary=createNewGame({seed:'featured-secondary',slotId:'slot-2'});secondary.character.firstName='Niko';secondary.character.age=72;secondary.character.stats={health:78,happiness:82,intelligence:84,appearance:76};secondary.finances.cash=600000;secondary.fame.fame=20;secondary.legacy.generation=1;
+      const best=featuredLife([primary,secondary]);assert(best,'no featured life was selected');equal(best.lifeId,'life-gen-2','stronger Generation 2 life was not selected over weaker current generations');equal(best.generation,2,'featured completed life lost its generation');
+      const fallback=featuredLife([secondary]);assert(fallback,'no fallback life was selected');equal(fallback.slotId,'slot-2','deleting the featured save did not promote the next surviving life');
     }
   },
   {

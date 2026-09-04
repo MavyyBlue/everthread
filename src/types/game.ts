@@ -390,6 +390,7 @@ export interface LegacyState {
 
 export interface CompletedLife {
   id: Id;
+  generation?: number;
   character: Character;
   ageAtDeath: number;
   cause: string;
