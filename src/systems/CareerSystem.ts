@@ -6,7 +6,7 @@ import type { JobDefinition as ContentJob } from '../types/content';
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
-import { actionUsedThisAge, markActionThisAge } from '../core/ageActions';
+import { actionGateStatus, consumeAction } from '../core/actionEconomy';
 
 function completedPrograms(state:GameState) { return state.education.filter(e=>e.graduated).map(e=>e.programId).filter(Boolean) as string[]; }
 function hasSecondary(state:GameState) { return state.education.some(e=>e.stage==='secondary'&&e.graduated); }
@@ -55,8 +55,9 @@ export function availableJobs(state:GameState) {
 export function applyForJob(state:GameState,jobId:string):EngineResult {
   const job=jobById[jobId]; if(!job) return {success:false,messages:[{text:'That job listing is no longer available.'}]};
   if(state.legal.imprisoned) return {success:false,messages:[{text:'You cannot apply for ordinary jobs while imprisoned.'}]};
-  if(actionUsedThisAge(state,'lastJobStartAge')) return {success:false,messages:[{text:'You already started a new job this year. Age up before changing roles again.'}]};
+  const startGate=actionGateStatus(state,{policy:'career.job_start'});if(!startGate.allowed)return{success:false,messages:[{text:startGate.message!}]};
   if(!qualifiesForJob(state,job)) return {success:false,messages:[{text:`You do not currently meet the requirements for ${job.title}.`}]};
+  const applicationGate=consumeAction(state,[{policy:'career.application.total'},{policy:'career.application.job',target:job.id}]);if(!applicationGate.allowed)return{success:false,messages:[{text:applicationGate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const interviewScore=state.character.secondary.charisma*.25+state.character.secondary.discipline*.15+state.character.stats.intelligence*.2+state.character.secondary.reputation*.15+rng.int(0,35);
   const legalPenalty=state.legal.criminalRecord.filter(r=>r.convicted).length*8;
@@ -69,7 +70,7 @@ export function applyForJob(state:GameState,jobId:string):EngineResult {
   if(state.employment.current){ state.employment.current.endAge=state.character.age; state.employment.history.push(state.employment.current); }
   const country=countryById[state.character.countryId]; const salary=Math.round(rng.int(job.salaryRange[0],job.salaryRange[1])*(country?.salaryMultiplier??1)*state.economy.salaryIndex);
   state.employment.current={jobId:job.id,title:job.title,company:generateCompany(job.industry,rng.int(0,999)),startAge:state.character.age,salary,performance:55,level:Number(job.id.match(/_(\d+)$/)?.[1]??1)};
-  markActionThisAge(state,'lastJobStartAge');
+  consumeAction(state,{policy:'career.job_start'});
   state.character.secondary.workPerformance=55;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You accepted a position as ${job.title} at ${state.employment.current.company}.`,moneyDelta:salary});
   return {success:true,messages:[{text:`Hired as ${job.title} for ${salary.toLocaleString()} per year.`}]};
@@ -110,21 +111,19 @@ export function processCareerYear(state:GameState) {
 
 export function workHarder(state:GameState):EngineResult {
   const current=state.employment.current; if(!current) return {success:false,messages:[{text:'You do not have a job to work harder at.'}]};
-  if(actionUsedThisAge(state,'lastWorkHarderAge'))return{success:false,messages:[{text:'You already made an extra push at work this year.'}]};
-  markActionThisAge(state,'lastWorkHarderAge');
+  const gate=consumeAction(state,{policy:'career.work_harder'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   current.performance=clamp(current.performance+7); state.character.secondary.workPerformance=current.performance; state.character.secondary.stress=clamp(state.character.secondary.stress+5); state.character.stats.happiness=clamp(state.character.stats.happiness-1);
   return {success:true,messages:[{text:'You put in extra effort. Performance rose, and so did stress.'}]};
 }
 
 export function askForRaise(state:GameState):EngineResult {
   const current=state.employment.current;if(!current)return{success:false,messages:[{text:'You are not currently employed.'}]};
-  if(actionUsedThisAge(state,'lastRaiseRequestAge'))return{success:false,messages:[{text:'You already asked for a raise this year.'}]};
-  markActionThisAge(state,'lastRaiseRequestAge');
   const job=jobById[current.jobId];
   if(job){
     const ceiling=salaryCeiling(state,job);
     if(current.salary>=ceiling)return{success:false,messages:[{text:'Your pay is already at the top of this role’s current salary band.'}]};
   }
+  const gate=consumeAction(state,{policy:'career.raise'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter); const success=rng.chance(clamp(current.performance+state.character.secondary.charisma/2-45,8,78)/100);
   if(success){const pct=rng.int(4,12); const proposed=Math.round(current.salary*(1+pct/100));current.salary=job?Math.min(proposed,salaryCeiling(state,job)):proposed;}
   else current.performance=clamp(current.performance-rng.int(0,3));
@@ -147,6 +146,7 @@ export function retire(state:GameState):EngineResult {
 
 export function takeFreelanceGig(state:GameState,category:'writing'|'programming'|'design'|'tutoring'|'photography'|'music'|'consulting'):EngineResult {
   if(state.character.age<14)return{success:false,messages:[{text:'You are too young for freelance work.'}]};
+  const gate=consumeAction(state,{policy:'career.freelance'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const skill={writing:state.character.stats.intelligence,programming:state.character.stats.intelligence,design:state.character.secondary.creativity,tutoring:state.character.stats.intelligence,photography:state.character.secondary.creativity,music:state.character.talents.music,consulting:state.character.secondary.charisma}[category];
   const rng=createRng(state.seed,state.rngCounter); const success=rng.chance(clamp(skill+state.employment.freelanceReputation-35,10,90)/100);
   const pay=success?Math.round(rng.int(80,850)*(1+state.employment.freelanceReputation/100)):0;

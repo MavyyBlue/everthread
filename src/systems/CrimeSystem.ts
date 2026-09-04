@@ -3,11 +3,13 @@ import type { EngineResult, GameState } from '../types/game';
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
+import { consumeAction } from '../core/actionEconomy';
 
 export function availableCrimes(state:GameState){return crimes.filter(c=>state.character.age>=c.minAge);}
 
 export function commitCrime(state:GameState,crimeId:string):EngineResult {
-  const crime=crimeById[crimeId];if(!crime)return{success:false,messages:[{text:'Unknown crime.'}]};if(state.character.age<crime.minAge)return{success:false,messages:[{text:'That crime is not available at your age.'}]};if(state.legal.imprisoned&&crimeId!=='prison_contraband'&&crimeId!=='escape_attempt')return{success:false,messages:[{text:'That action is unavailable while imprisoned.'}]};
+  const crime=crimeById[crimeId];if(!crime)return{success:false,messages:[{text:'Unknown crime.'}]};if(state.character.age<crime.minAge)return{success:false,messages:[{text:'That crime is not available at your age.'}]};if(state.legal.imprisoned&&crimeId!=='prison_contraband'&&crimeId!=='escape_attempt')return{success:false,messages:[{text:'That action is unavailable while imprisoned.'}]};if(state.flags.pendingCharge)return{success:false,messages:[{text:'Resolve your current criminal case before creating another major incident.'}]};
+  const gate=consumeAction(state,[{policy:'crime.total'},{policy:'crime.kind',target:crimeId}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(`${state.seed}-crime`,state.rngCounter);const aptitude=state.character.talents.crime/100;const notorietyPenalty=state.character.secondary.criminalNotoriety/260;const successChance=clamp((crime.baseSuccess+aptitude*.22-notorietyPenalty)*100,5,92)/100;const success=rng.chance(successChance);
   let reward=0;if(success&&crime.rewardRange[1]>0){reward=rng.int(crime.rewardRange[0],crime.rewardRange[1]);state.finances.cash+=reward;}
   const injured=rng.chance(crime.injuryChance*(success?.7:1.2));if(injured){const damage=rng.int(4,20);state.character.stats.health=clamp(state.character.stats.health-damage);}
@@ -39,18 +41,18 @@ export function processLegalYear(state:GameState){
 }
 
 export function prisonActivity(state:GameState,activity:'exercise'|'work'|'befriend'|'behave'|'trouble'|'appeal'):EngineResult {
-  if(!state.legal.imprisoned)return{success:false,messages:[{text:'You are not in prison.'}]};const rng=createRng(`${state.seed}-prison`,state.rngCounter);let text='';
+  if(!state.legal.imprisoned)return{success:false,messages:[{text:'You are not in prison.'}]};if(activity==='appeal'&&state.finances.cash<2500)return{success:false,messages:[{text:'You cannot afford an appeal.'}]};const gate=consumeAction(state,[{policy:'prison.total'},{policy:'prison.kind',target:activity}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-prison`,state.rngCounter);let text='';
   if(activity==='exercise'){state.health.fitness=clamp(state.health.fitness+5);state.character.secondary.athleticism=clamp(state.character.secondary.athleticism+2);text='You exercised in prison.';}
   if(activity==='work'){const pay=rng.int(5,35);state.finances.cash+=pay;state.character.secondary.discipline=clamp(state.character.secondary.discipline+2);text=`You worked a prison job and earned ${pay}.`;}
   if(activity==='befriend'){state.character.stats.happiness=clamp(state.character.stats.happiness+2);state.character.secondary.charisma=clamp(state.character.secondary.charisma+2);text='You made an effort to get along with other prisoners.';}
   if(activity==='behave'){state.character.secondary.reputation=clamp(state.character.secondary.reputation+2);if(state.legal.paroleEligible&&rng.chance(.22)){state.legal.sentenceRemaining=Math.max(0,state.legal.sentenceRemaining-1);text='Your good behavior earned sentence credit.';}else text='You kept your head down and behaved.';}
   if(activity==='trouble'){state.character.secondary.criminalNotoriety=clamp(state.character.secondary.criminalNotoriety+4);if(rng.chance(.45)){state.legal.sentenceRemaining+=1;text='You started trouble and had a year added to your sentence.';}else text='You started trouble and avoided extra time this time.';}
-  if(activity==='appeal'){const cost=2500;if(state.finances.cash<cost)return{success:false,messages:[{text:'You cannot afford an appeal.'}]};state.finances.cash-=cost;if(rng.chance(.18)){state.legal.sentenceRemaining=Math.max(0,Math.floor(state.legal.sentenceRemaining*.6));text='Your appeal reduced the remaining sentence.';}else text='Your appeal was denied.';}
+  if(activity==='appeal'){const cost=2500;state.finances.cash-=cost;if(rng.chance(.18)){state.legal.sentenceRemaining=Math.max(0,Math.floor(state.legal.sentenceRemaining*.6));text='Your appeal reduced the remaining sentence.';}else text='Your appeal was denied.';}
   state.rngCounter=rng.counter();return{success:true,messages:[{text}]};
 }
 
 export function attemptEscape(state:GameState,score:number):EngineResult {
-  if(!state.legal.imprisoned)return{success:false,messages:[{text:'You are not imprisoned.'}]};const rng=createRng(`${state.seed}-escape`,state.rngCounter);const security={juvenile:20,minimum:35,medium:55,maximum:72}[state.legal.prisonSecurity??'minimum'];const success=rng.chance(clamp(score+state.character.talents.crime*.25+state.character.secondary.athleticism*.15-security,5,80)/100);
+  if(!state.legal.imprisoned)return{success:false,messages:[{text:'You are not imprisoned.'}]};const gate=consumeAction(state,{policy:'prison.escape'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-escape`,state.rngCounter);const security={juvenile:20,minimum:35,medium:55,maximum:72}[state.legal.prisonSecurity??'minimum'];const success=rng.chance(clamp(score+state.character.talents.crime*.25+state.character.secondary.athleticism*.15-security,5,80)/100);
   if(success){state.legal.imprisoned=false;state.flags.fugitive=true;state.character.secondary.criminalNotoriety=clamp(state.character.secondary.criminalNotoriety+15);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'legal',importance:3,text:'You escaped from custody and became a fugitive.'});}
   else{state.legal.sentenceRemaining+=rng.int(1,4);state.character.stats.health=clamp(state.character.stats.health-rng.int(0,8));}
   state.rngCounter=rng.counter();return{success,messages:[{text:success?'You escaped. The game now tracks your fugitive status.':'The escape failed and your sentence increased.'}]};

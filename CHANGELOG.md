@@ -2,6 +2,38 @@
 
 Everthread is pre-release. Versions below are development milestones, not public release promises.
 
+## 0.9.6 — 2026-09-04 — Action Economy & Exploit Hardening
+
+### Added
+
+- Central persisted action ledger with data-defined per-age limits and multi-year cooldowns. A single action can claim multiple limits atomically, such as both a yearly application budget and a one-attempt-per-listing rule.
+- Save schema v6 with v5→v6 migration. Existing annual career/family action markers are preserved in the new ledger so updating a save cannot refresh already-used attempts.
+- Read-only action-gate queries for React so mobile buttons can disable when their meaningful yearly opportunity has been spent, while the engine remains the authoritative enforcement layer.
+- Anti-reroll regression coverage for job applications, wellness/stat grinding, NPC interaction grinding, publicity income, business launches/products, property renovation, collectible hunting, action-ledger migration, and failed-outcome engine notifications.
+
+### Changed
+
+- Job applications are limited to five serious attempts per age and one attempt per exact listing; a failed interview consumes the attempt instead of allowing infinite RNG retries.
+- Freelance work, school effort, enrollment, wellness, treatment, rehab, risky habits, meeting people, NPC interactions, relationship milestones, fame posts/opportunities, travel, licenses, crime/prison actions, pet care, collectible hunting, business founding/product launches, and major special-career actions now use explicit yearly opportunity budgets or cooldowns.
+- Time-intensive special-career actions now model annual opportunity cost: training, auditions, music releases/tours, pro-contract attempts, fights, campaigns, political moves, royal duties, modeling work, races, films, criminal-organization work, and specialized-organization decisions are bounded at the simulation layer.
+- Major property renovations now have a two-age cooldown and improve condition without creating guaranteed immediate net-worth arbitrage.
+- Business founding is limited to one company per age and each business can complete one major product launch per age.
+- Collectible hunting is limited to four major acquisitions per age and one attempt per exact collectible definition.
+- Relationship marriage/reconciliation milestone counters now live in `RelationshipSystem`, not the UI-facing engine wrapper, so headless/system callers cannot bypass them.
+- Acting lessons now check adult affordability before consuming the yearly training opportunity; already-represented actors and already-committed sports paths reject duplicate setup actions.
+- GameEngine now emits/autosaves failed outcomes when RNG, deterministic IDs, or the action ledger changed. A rejection, loss, failed audition, failed crime, or other consumed attempt therefore persists instead of silently becoming rerollable after a render/save boundary.
+- React external-store subscriptions now use a private engine revision snapshot instead of mutable `GameState` object identity, so engine emissions reliably trigger UI updates even without an unrelated local React state change.
+- Career, education, People, Activities, Assets, pet, business, collectible, and special-career mobile controls visually disable when the central engine policy says their opportunity is exhausted.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 47/47 regression cases pass.
+- All 66 TypeScript/TSX source files pass a TypeScript syntax/transpile parse; the dependency-backed React/Vite build remains a GitHub Actions deployment gate.
+- Neutral 1,000-life bulk run: median lifespan 81, median net worth 655,640, millionaire rate 40.7%, zero anomalies and zero forced terminal deaths.
+- Mixed-policy 1,000-life bulk run: median lifespan 82, median net worth 823,294, millionaire rate 44.5%, zero anomalies and zero forced terminal deaths.
+
 ## 0.9.5 — 2026-09-04 — First Mobile Playtest Hardening
 
 ### Added

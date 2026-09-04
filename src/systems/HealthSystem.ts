@@ -3,6 +3,7 @@ import type { EngineResult, GameState } from '../types/game';
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
+import { consumeAction } from '../core/actionEconomy';
 
 export function processHealthYear(state:GameState) {
   const rng=createRng(`${state.seed}-health`,state.rngCounter); const age=state.character.age;
@@ -43,13 +44,16 @@ export function processHealthYear(state:GameState) {
 
 export function seekTreatment(state:GameState,conditionId:string,kind:'general'|'specialist'|'emergency'='general'):EngineResult {
   const condition=state.health.conditions.find(c=>c.id===conditionId);if(!condition)return{success:false,messages:[{text:'Condition not found.'}]};const def=illnessById[condition.illnessId];if(!def)return{success:false,messages:[{text:'Treatment data unavailable.'}]};
-  const mult={general:1,specialist:2.2,emergency:4}[kind];const cost=Math.round(def.treatmentCost*mult);if(state.finances.cash<cost&&state.character.age>=18)return{success:false,messages:[{text:`Treatment would cost ${cost.toLocaleString()} in game currency.`}]};if(state.character.age>=18)state.finances.cash-=cost;
+  const mult={general:1,specialist:2.2,emergency:4}[kind];const cost=Math.round(def.treatmentCost*mult);if(state.finances.cash<cost&&state.character.age>=18)return{success:false,messages:[{text:`Treatment would cost ${cost.toLocaleString()} in game currency.`}]};
+  const gate=consumeAction(state,[{policy:'health.treatment.condition',target:conditionId},{policy:'health.treatment.kind',target:`${conditionId}:${kind}`}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  if(state.character.age>=18)state.finances.cash-=cost;
   const rng=createRng(state.seed,state.rngCounter);const effectiveness=Math.min(.95,def.treatmentEffectiveness+(kind==='specialist'?.14:kind==='emergency'?.08:0));condition.treated=true;
   const success=rng.chance(effectiveness);condition.severity=clamp(condition.severity-(success?rng.int(20,50):rng.int(3,12)));state.character.stats.health=clamp(state.character.stats.health+(success?6:1));state.rngCounter=rng.counter();
   return{success,messages:[{text:success?`Treatment for ${condition.name} was effective.`:`Treatment helped only a little this time. This is a game outcome, not medical guidance.`}]};
 }
 
 export function performWellnessActivity(state:GameState,activity:'gym'|'running'|'walking'|'martial_arts'|'meditation'|'diet'):EngineResult {
+  const gate=consumeAction(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:activity}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const effects={gym:[5,1,2],running:[6,1,1],walking:[3,2,-1],martial_arts:[5,2,3],meditation:[0,4,-7],diet:[2,2,-1]}[activity];
   state.health.fitness=clamp(state.health.fitness+effects[0]);state.character.stats.health=clamp(state.character.stats.health+effects[1]);state.character.secondary.stress=clamp(state.character.secondary.stress+effects[2]);
   state.character.secondary.athleticism=clamp(state.character.secondary.athleticism+(activity==='gym'||activity==='running'||activity==='martial_arts'?2:0));state.character.stats.happiness=clamp(state.character.stats.happiness+2);
@@ -58,11 +62,11 @@ export function performWellnessActivity(state:GameState,activity:'gym'|'running'
 }
 
 export function riskyHabit(state:GameState,kind:'alcohol'|'gambling'|'smoking'|'fictional_substance'):EngineResult {
-  if(state.character.age<16)return{success:false,messages:[{text:'That activity is unavailable at your age.'}]};const existing=state.health.addictions.find(a=>a.kind===kind);const rng=createRng(state.seed,state.rngCounter);
+  if(state.character.age<16)return{success:false,messages:[{text:'That activity is unavailable at your age.'}]};const gate=consumeAction(state,{policy:'habit.kind',target:kind});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const existing=state.health.addictions.find(a=>a.kind===kind);const rng=createRng(state.seed,state.rngCounter);
   const risk=state.character.secondary.addictionSusceptibility/220+(existing?.severity??0)/180;if(existing)existing.severity=clamp(existing.severity+rng.int(1,6));else if(rng.chance(risk))state.health.addictions.push({kind,severity:rng.int(8,22),years:0,recovering:false});
   const cost=kind==='gambling'?rng.int(50,1200):rng.int(20,180);state.finances.cash-=cost;state.character.stats.happiness=clamp(state.character.stats.happiness+rng.int(-2,4));state.rngCounter=rng.counter();return{success:true,messages:[{text:`You engaged in ${kind.replace('_',' ')}. The game tracks health, money, and addiction risk abstractly.`}]};
 }
 
 export function enterRehab(state:GameState,kind:string):EngineResult {
-  const addiction=state.health.addictions.find(a=>a.kind===kind);if(!addiction)return{success:false,messages:[{text:'No matching addiction is active.'}]};const cost=3200;if(state.finances.cash<cost)return{success:false,messages:[{text:`Rehabilitation costs ${cost.toLocaleString()} in game currency.`}]};state.finances.cash-=cost;addiction.recovering=true;state.character.secondary.stress=clamp(state.character.secondary.stress+4);return{success:true,messages:[{text:'You entered rehabilitation. Recovery will progress over future years.'}]};
+  const addiction=state.health.addictions.find(a=>a.kind===kind);if(!addiction)return{success:false,messages:[{text:'No matching addiction is active.'}]};const cost=3200;if(state.finances.cash<cost)return{success:false,messages:[{text:`Rehabilitation costs ${cost.toLocaleString()} in game currency.`}]};const gate=consumeAction(state,{policy:'health.rehab',target:kind});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=cost;addiction.recovering=true;state.character.secondary.stress=clamp(state.character.secondary.stress+4);return{success:true,messages:[{text:'You entered rehabilitation. Recovery will progress over future years.'}]};
 }

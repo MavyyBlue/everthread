@@ -240,6 +240,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.specialCareers={};
   state.pets=[];
   state.familyPlanning={};
+  state.actionLedger={age:state.character.age,uses:{},lastUsedAge:{},revision:0};
   state.delayedEvents=[];
   state.pendingEvent=undefined;
   state.recentEventIds=[];

@@ -209,7 +209,7 @@ function pursueRelationships(state:GameState,profile:SimulationProfile,policy:Si
   if(!romantic)return;
   if(romantic.score<72&&rng.chance(Math.min(.9,.62*relationshipMultiplier)))interactWithNpc(state,romantic.npcId,'spend_time');
   if(romantic.type==='partner'&&romantic.yearsKnown>=2&&romantic.score>=62&&age>=20&&rng.chance(Math.min(.5,.15*relationshipMultiplier)))changeRelationshipType(state,romantic.npcId,'propose');
-  if(romantic.type==='fiance'&&rng.chance(Math.min(.75,.4*relationshipMultiplier))){const married=changeRelationshipType(state,romantic.npcId,'marry');if(married.success)state.flags.marriages=Number(state.flags.marriages??0)+1;}
+  if(romantic.type==='fiance'&&rng.chance(Math.min(.75,.4*relationshipMultiplier))){changeRelationshipType(state,romantic.npcId,'marry');}
   const target=desiredChildren(state.seed,profile,policy);const children=state.relationships.filter(r=>r.type==='child').length;
   if(['partner','fiance','spouse'].includes(romantic.type)&&children<target&&age>=22&&age<=42&&rng.chance(Math.min(.6,.24*(policy==='family'?1.7:policy==='career'?.55:1))))haveChild(state,romantic.npcId,false);
 }

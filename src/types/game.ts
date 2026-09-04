@@ -452,6 +452,13 @@ export interface FamilyPlanningState {
   };
 }
 
+export interface ActionLedgerState {
+  age: number;
+  uses: Record<string, number>;
+  lastUsedAge: Record<string, number>;
+  revision: number;
+}
+
 export interface GameFlags {
   sandbox: boolean;
   rewindEnabled: boolean;
@@ -491,6 +498,7 @@ export interface GameState {
   travel: TravelState;
   inheritance: InheritanceState;
   familyPlanning: FamilyPlanningState;
+  actionLedger: ActionLedgerState;
   economy: EconomyState;
   flags: GameFlags;
   settings: SettingsState;

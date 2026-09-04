@@ -3,7 +3,7 @@ import { enforceStateInvariants, validateState } from '../core/invariants';
 import { jobById, jobs } from '../data/jobs';
 import { countryById } from '../data/countries';
 
-const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';export const SAVE_VERSION=5;
+const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';export const SAVE_VERSION=6;
 
 function canUseIndexedDb(){return typeof indexedDB!=='undefined';}
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE,{keyPath:'slotId'});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
@@ -57,7 +57,23 @@ export function migrateSave(raw:unknown):GameState {
     }
     version=5;
   }
-  if(version>SAVE_VERSION)throw new Error(`Save version ${version} is newer than this build supports.`);state.saveVersion=SAVE_VERSION;state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};return enforceStateInvariants(state);
+  if(version<6){
+    state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};
+    const legacyAgeActions:[string,string][]=[
+      ['lastJobStartAge','career.job_start'],['lastWorkHarderAge','career.work_harder'],['lastRaiseRequestAge','career.raise'],
+      ['lastChildAttemptAge','family.child_attempt'],['lastAdoptionAge','family.adoption'],
+    ];
+    for(const [flagKey,actionKey] of legacyAgeActions){
+      const usedAge=Number(state.flags?.[flagKey]??Number.NaN);
+      if(Number.isFinite(usedAge)){
+        state.actionLedger.lastUsedAge[actionKey]=usedAge;
+        if(usedAge===state.character.age)state.actionLedger.uses[actionKey]=Math.max(1,state.actionLedger.uses[actionKey]??0);
+      }
+    }
+    state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;
+    version=6;
+  }
+  if(version>SAVE_VERSION)throw new Error(`Save version ${version} is newer than this build supports.`);state.saveVersion=SAVE_VERSION;state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};return enforceStateInvariants(state);
 }
 
 export async function saveGame(state:GameState):Promise<void>{state.lastSavedAt=new Date().toISOString();const clean=stripRuntime(state);if(!canUseIndexedDb()){localStorage.setItem(`everthread-save-${state.slotId}`,JSON.stringify(clean));return;}const db=await openDb();await new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(clean);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();}

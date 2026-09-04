@@ -4,6 +4,7 @@ import type { EngineResult, GameState } from '../types/game';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
+import { consumeAction } from '../core/actionEconomy';
 
 function activeRecord(state:GameState) { return [...state.education].reverse().find(r=>!r.graduated&&!r.droppedOut&&!r.endAge); }
 
@@ -49,6 +50,7 @@ export function processEducationYear(state:GameState) {
 export function studyHarder(state:GameState):EngineResult {
   const active=activeRecord(state);
   if(!active) return {success:false,messages:[{text:'You are not currently enrolled in school.'}]};
+  const gate=consumeAction(state,{policy:'education.effort'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   state.character.secondary.academicPerformance=clamp(state.character.secondary.academicPerformance+7);
   state.character.stats.intelligence=clamp(state.character.stats.intelligence+1);
   state.character.secondary.stress=clamp(state.character.secondary.stress+3);
@@ -58,6 +60,7 @@ export function studyHarder(state:GameState):EngineResult {
 
 export function skipClass(state:GameState):EngineResult {
   const active=activeRecord(state); if(!active) return {success:false,messages:[{text:'You are not currently enrolled.'}]};
+  const gate=consumeAction(state,{policy:'education.effort'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   state.character.secondary.academicPerformance=clamp(state.character.secondary.academicPerformance-rng.int(3,8));
   state.character.stats.happiness=clamp(state.character.stats.happiness+3); state.character.secondary.discipline=clamp(state.character.secondary.discipline-2);
@@ -71,6 +74,7 @@ export function enrollProgram(state:GameState,programId:string):EngineResult {
   if(state.character.stats.intelligence<program.minIntelligence) return {success:false,messages:[{text:`Your current academic profile is not competitive for ${program.name}.`}]};
   const requiresDegree=['graduate','professional'].includes(program.kind);
   if(requiresDegree && !state.education.some(e=>e.graduated&&['university','graduate'].includes(e.stage))) return {success:false,messages:[{text:'This program requires a prior university qualification.'}]};
+  const gate=consumeAction(state,{policy:'education.enroll'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const country=countryById[state.character.countryId];
   const annualTuition=Math.round(program.tuition*(country?.universityCost??18000)/18000);
   const rng=createRng(state.seed,state.rngCounter);

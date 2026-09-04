@@ -26,14 +26,16 @@ export class GameEngine {
   private state:GameState;
   private listeners=new Set<Listener>();
   private saveQueue:Promise<void>=Promise.resolve();
+  private revision=0;
   constructor(state?:GameState){this.state=state??createNewGame();}
   getState(){return this.state;}
+  getRevision(){return this.revision;}
   subscribe(listener:Listener){this.listeners.add(listener);return()=>this.listeners.delete(listener);}
   replaceState(state:GameState){this.state=enforceStateInvariants(state);this.emit();}
   newLife(options:CharacterCreationOptions={}){this.state=createNewGame(options);this.emit(true);return this.state;}
-  private emit(save=false){enforceStateInvariants(this.state);for(const listener of this.listeners)listener();if(save||this.state.settings.autoSave)this.queueSave();}
+  private emit(save=false){enforceStateInvariants(this.state);this.revision+=1;for(const listener of this.listeners)listener();if(save||this.state.settings.autoSave)this.queueSave();}
   private queueSave(){this.saveQueue=this.saveQueue.catch(()=>undefined).then(()=>saveGame(this.state)).catch(err=>console.error('Autosave failed',err));}
-  private run(action:()=>EngineResult,save=true){const result=action();if(result.success||result.stateChanges)this.emit(save);return result;}
+  private run(action:()=>EngineResult,save=true){const beforeRng=this.state.rngCounter;const beforeId=this.state.idCounter;const beforeActionRevision=this.state.actionLedger?.revision??0;const result=action();const mutatedOnOutcome=this.state.rngCounter!==beforeRng||this.state.idCounter!==beforeId||(this.state.actionLedger?.revision??0)!==beforeActionRevision;if(result.success||result.stateChanges||mutatedOnOutcome)this.emit(save);return result;}
 
   ageUp(){return this.run(()=>ageUp(this.state),true);}
   resolveEvent(choiceId:string){return this.run(()=>{const result=resolvePendingEvent(this.state,choiceId);if(result.success)finalizeAgeUp(this.state);return result;},true);}
@@ -45,7 +47,7 @@ export class GameEngine {
     };const fn=map[activity];return fn?this.run(fn):{success:false,messages:[{text:`Unknown activity: ${activity}`}]};
   }
   interactWithCharacter(npcId:string,action:string){return this.run(()=>interactWithNpc(this.state,npcId,action));}
-  relationshipAction(npcId:string,action:'ask_out'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'){const result=this.run(()=>changeRelationshipType(this.state,npcId,action));if(result.success){if(action==='marry')this.state.flags.marriages=Number(this.state.flags.marriages??0)+1;if(action==='reconcile')this.state.flags.reconciliations=Number(this.state.flags.reconciliations??0)+1;}return result;}
+  relationshipAction(npcId:string,action:'ask_out'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'){return this.run(()=>changeRelationshipType(this.state,npcId,action));}
   haveChild(partnerId?:string,adopt=false){return this.run(()=>haveChild(this.state,partnerId,adopt));}
   enroll(programId:string){return this.run(()=>enrollProgram(this.state,programId));} dropOut(){return this.run(()=>dropOut(this.state));}
   applyForJob(jobId:string){return this.run(()=>applyForJob(this.state,jobId));} workHarder(){return this.run(()=>workHarder(this.state));} askForRaise(){return this.run(()=>askForRaise(this.state));} resign(){return this.run(()=>resign(this.state));} retire(){return this.run(()=>retire(this.state));}

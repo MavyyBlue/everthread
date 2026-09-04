@@ -1,8 +1,8 @@
 # Everthread — Development Status
 
 Last updated: 2026-09-04  
-Current build line: 0.9.5 pre-release  
-Save schema: 5
+Current build line: 0.9.6 pre-release  
+Save schema: 6
 
 ## Product direction
 
@@ -14,7 +14,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 - `src/engine/GameEngine.ts` — public action façade used by UI.
 - `src/types/` — authoritative state and content contracts.
-- `src/core/` — RNG, math, IDs, invariant enforcement.
+- `src/core/` — RNG, math, deterministic IDs, invariant enforcement, and the centralized action-economy ledger/policies.
 - `src/systems/` — isolated simulation domains.
 - `src/data/` — external content definitions for events, jobs, education, countries, health, crime, assets, achievements, and challenges.
 - `src/services/SaveSystem.ts` — IndexedDB/local fallback, schema migration, JSON import/export.
@@ -69,11 +69,26 @@ The first live human playtest exposed same-year action exploits that headless si
 - PWA navigation now prefers the network while retaining an offline fallback, and service-worker cache versioning/update checks make new phone builds surface more reliably after deployment.
 - Validation after these changes: 37/37 regressions; neutral and mixed-policy 1,000-life runs both completed with zero anomalies and zero forced terminal deaths.
 
+### Action economy and anti-reroll hardening (0.9.6)
+
+The first human playtest showed that isolated cooldown fixes were not enough: many buttons represented a full year of meaningful effort but could be tapped repeatedly until the random result became favorable. Everthread now treats yearly opportunity/time as a first-class simulation resource.
+
+- `src/core/actionEconomy.ts` is the central policy registry and ledger API. Systems claim one or more policies atomically; React only queries the same policies for presentation.
+- Failed random outcomes consume their opportunity when the attempt itself happened. Rejected job applications, failed auditions, lost fights, failed treatment and similar outcomes cannot be rerolled for free in the same age.
+- Career, education, wellness/health, social/relationship, parenting, fame, travel/license, crime/prison, pets, collectibles, business progression, property renovation and major special-career actions now have explicit yearly limits or cooldowns where repetition would otherwise trivialize progression.
+- Pure configuration/reallocation actions that do not generate a new outcome, such as investment allocation or business pricing/pay settings, remain intentionally flexible rather than receiving arbitrary cooldowns.
+- `GameEngine.run()` now detects action-ledger/RNG/ID mutation even when an action returns `success:false`, ensuring a consumed failed attempt still notifies subscribers and autosaves.
+- The React store subscribes to a private engine revision number rather than mutable `GameState` object identity, so every engine emission reliably invalidates the UI snapshot.
+- Save schema v6 persists the ledger and migrates legacy annual career/family markers into it.
+- Relationship marriage/reconciliation counters were moved into the owning relationship domain instead of being patched after the engine action emitted.
+- Mobile controls on the major action surfaces disable once the same engine policy is exhausted, so the player receives immediate feedback instead of learning only from an error toast.
+- Validation after this pass: 47/47 regressions; neutral and mixed-policy 1,000-life populations both completed with zero anomalies and zero forced terminal deaths.
+
 ## Verification milestone
 
 Added in the current hardening pass:
 
-- Framework-independent deterministic regression suite: 37 passing tests.
+- Framework-independent deterministic regression suite: 47 passing tests.
 - Multi-life simulation harness with `full` and faster `bulk` modes, independent aspiration profiles, six behavior policies, and wealth-percentile reporting.
 - 1,000-life bulk run completed with zero detected structural state anomalies.
 - Content audit executable from source data.
@@ -96,35 +111,35 @@ Added in the current hardening pass:
 
 ### Latest 1,000-life balance samples
 
-Neutral-policy sample after market/lifestyle calibration:
+Neutral-policy sample after 0.9.6 action-economy hardening:
 
-- Average / median lifespan: 79.4 / 82
-- Average / median net worth: 1,280,720 / 686,454
-- Wealth p10 / p25 / p75 / p90 / p99: 45 / 183,514 / 1,672,075 / 3,104,409 / 8,001,100
-- Millionaire ending net worth: 41.1%
-- Marriage frequency: 52.1%
-- Average children: 0.55
-- Any crime / conviction: 6.8% / 6.8%
-- Fame 25+: 5.8%
-- Average ending wealth sources: 762,211 cash / 120,700 property equity / 384,676 investments / 14,896 businesses / 1,762 other debt
-- Average investing: 128,290 lifetime contributions / 127,285 held cost basis / 257,391 held unrealized gain
-- Inheritance: 95.0% of lives receive some inheritance / 133,003 average lifetime inheritance
+- Average / median lifespan: 78.9 / 81
+- Average / median net worth: 1,229,119 / 655,640
+- Wealth p10 / p25 / p75 / p90 / p99: 1,800 / 196,106 / 1,638,238 / 3,090,763 / 7,571,363
+- Millionaire ending net worth: 40.7%
+- Marriage frequency: 51.4%
+- Average children: 0.53
+- Any crime / conviction: 6.8% / 6.7%
+- Fame 25+: 5.7%
+- Average ending wealth sources: 707,998 cash / 118,756 property equity / 387,385 investments / 16,612 businesses / 1,632 other debt
+- Average investing: 126,820 lifetime contributions / 125,901 held cost basis / 261,483 held unrealized gain
+- Inheritance: 95.3% of lives receive some inheritance / 133,928 average lifetime inheritance
 - Forced terminal-age deaths / anomalies: 0 / 0
 
 Mixed-policy sample:
 
-- Average / median lifespan: 79.0 / 82
-- Average / median net worth: 1,439,449 / 853,976
-- Wealth p10 / p25 / p75 / p90 / p99: 6,664 / 251,163 / 1,833,612 / 3,428,529 / 8,361,194
-- Millionaire ending net worth: 45.6%
-- Marriage frequency: 55.0%
-- Average children: 0.70
-- Average ending wealth sources: 819,488 cash / 125,593 property equity / 464,355 investments / 31,751 businesses / 1,738 other debt
-- Average investing: 160,502 lifetime contributions / 158,935 held cost basis / 305,420 held unrealized gain
-- Inheritance: 94.6% of lives / 132,856 average lifetime inheritance
+- Average / median lifespan: 78.8 / 82
+- Average / median net worth: 1,447,735 / 823,294
+- Wealth p10 / p25 / p75 / p90 / p99: 4,000 / 246,758 / 1,794,397 / 3,452,353 / 9,186,177
+- Millionaire ending net worth: 44.5%
+- Marriage frequency: 54.4%
+- Average children: 0.68
+- Average ending wealth sources: 831,571 cash / 123,116 property equity / 451,046 investments / 43,609 businesses / 1,607 other debt
+- Average investing: 159,439 lifetime contributions / 158,348 held cost basis / 292,697 held unrealized gain
+- Inheritance: 94.4% of lives / 132,800 average lifetime inheritance
 - Forced terminal-age deaths / anomalies: 0 / 0
 
-The diagnostic pass showed that the previous wealth distortion was primarily excessive long-run investment gain, not inheritance. On the same neutral seeds, average held investment gain fell from roughly 1.54M before calibration to roughly 257k after calibration. Ending cash remains high because the headless policies still use fewer optional consumption activities than a human player; avoid further core-economy tuning until richer lifestyle behavior and player data exist.
+The market-calibration conclusion from 0.9.4 still holds: inheritance is not the dominant wealth source, and the headless policies underuse optional lifestyle consumption compared with a human. The 0.9.6 action economy is intended to prevent retry/grind exploits, not to force an arbitrary millionaire percentage.
 
 ## Partially complete / needs deeper implementation
 
@@ -201,12 +216,13 @@ The shell is mobile-first and has safe-area CSS/accessibility settings, but fina
 
 ## Known architecture / quality issues
 
-1. Exact seeded replay now includes state-scoped runtime IDs and has a 50-year serialization regression. Remaining replay risk is future code introducing wall-clock/random state outside the seeded systems; keep the replay test mandatory.
-2. Relationship milestone counters such as marriages are partly updated by `GameEngine` rather than entirely inside the owning system. Move these into domain actions so headless callers cannot bypass account metrics.
+1. Exact seeded replay includes state-scoped runtime IDs and has a 50-year serialization regression. Remaining replay risk is future code introducing wall-clock/random state outside seeded systems; keep the replay test mandatory.
+2. The centralized action ledger now covers the major profitable/progression-bearing player actions, but every new action must be classified deliberately as unlimited configuration, resource-limited, yearly-limited, cooldown-based, or consequence-escalating. Avoid reintroducing ad-hoc button spam paths.
 3. Simulation policies are separated and wealth-source diagnostics are available. Neutral and mixed populations should remain the balance baseline; do not tune core costs around a headless bot that still underuses optional lifestyle purchases.
 4. Bulk simulation suppresses achievement/challenge evaluation and truncates timeline history intentionally for performance. Full-mode runs remain the correctness reference.
-5. Save schema migration currently covers versions 1→4. Every future persisted state addition needs an explicit default/migration path.
+5. Save schema migration covers versions 1→6. Every future persisted state addition needs an explicit default/migration path, and old rewind snapshots must continue to migrate before restoration.
 6. No runtime error boundary / last-known-good transaction backup exists yet around every important action. IndexedDB persistence is versioned, but crash-safe transactional recovery needs hardening.
+7. Full React/Vite production builds require installed npm dependencies; local engine/tests are compiler-validated in the current workspace and GitHub Actions remains the authoritative dependency-backed mobile deployment gate.
 
 ## Save schema history
 
@@ -222,21 +238,27 @@ Added travel history and license state.
 
 Added inheritance configuration and rewind snapshots; migration fills missing achievements/challenges/completed lives/special-career/flag structures.
 
-### Version 4 — current
+### Version 4
 
 Added persisted `idCounter` for deterministic state-scoped runtime IDs. Migration initializes a deterministic post-legacy counter and rewind restores migrate older snapshot payloads before use.
 
-Next schema change should only occur when a new persisted field cannot be safely represented as an optional/defaulted version-4 field.
+### Version 5
+
+Added persistent family-planning/pregnancy state and targeted repair for obvious pre-fix runaway compensation/career saves from the first live mobile playtest.
+
+### Version 6 — current
+
+Added the persisted centralized `actionLedger` with per-age usage, last-used ages for cooldowns, and a revision counter used by `GameEngine` to detect failed-but-mutating outcomes. v5 migration preserves legacy annual career/family action markers where present.
 
 ## Next development sequence
 
-1. Build persistent school and workplace rosters with teacher/classmate/boss/coworker memories and target-aware event hooks.
-2. Expand delayed consequences into parenting, crime/legal, property, business and special-career content.
-3. Add richer autonomous descendant education, health, legal and household histories so generation handoffs preserve more than career/family state.
-4. Add asset-specific wills plus fictionalized estate administration/tax rules without breaking the current multi-heir settlement.
-5. Deepen special-career modules one family at a time without replacing working core systems.
-6. Implement minigames through the existing framework.
-7. Perform target-device mobile/accessibility/PWA QA.
-8. Add crash-safe last-known-good transaction recovery around major engine actions.
+1. Use continued human mobile playtesting to audit any remaining action that lacks a deliberate time/resource/consequence classification; add policies only where repetition creates an exploit or implausible same-year progression.
+2. Build persistent school and workplace rosters with teacher/classmate/boss/coworker memories and target-aware event hooks.
+3. Expand delayed consequences into parenting, crime/legal, property, business and special-career content.
+4. Add richer autonomous descendant education, health, legal and household histories so generation handoffs preserve more than career/family state.
+5. Add asset-specific wills plus fictionalized estate administration/tax rules without breaking the current multi-heir settlement.
+6. Deepen special-career modules one family at a time without replacing working core systems.
+7. Implement minigames through the existing framework.
+8. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
 9. Expand regional names substantially and verify long-dynasty repetition rates.
 10. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

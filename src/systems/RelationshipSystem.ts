@@ -5,7 +5,7 @@ import type { EngineResult, GameState, Npc, Orientation, Relationship, Relations
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
-import { actionUsedThisAge, markActionThisAge } from '../core/ageActions';
+import { consumeAction } from '../core/actionEconomy';
 
 const interactionEffects: Record<string,{base:number;happiness:number;karma?:number}> = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
@@ -160,11 +160,12 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   if (!npc.alive) return {success:false,messages:[{text:`You cannot interact with ${npc.firstName}; they have died.`}]};
   const spec=interactionEffects[action];
   if (!spec) return {success:false,messages:[{text:'That interaction is not available.'}]};
+  if((action==='give_money'||action==='gift')&&state.finances.cash<(action==='give_money'?500:150))return{success:false,messages:[{text:'You do not have enough cash for that.'}]};
+  const gate=consumeAction(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:${action}`}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   let delta=spec.base+personalityMultiplier(npc,action)+rng.int(-3,3);
   if (action==='give_money' || action==='gift') {
     const cost=action==='give_money'?500:150;
-    if (state.finances.cash<cost) return {success:false,messages:[{text:'You do not have enough cash for that.'}]};
     state.finances.cash-=cost; npc.wealth+=cost;
   }
   if (action==='ask_money') {
@@ -190,6 +191,7 @@ function orientationCompatible(player:GameState['character'],npc:Npc) {
 
 export function meetPotentialPartner(state:GameState):EngineResult {
   if (state.character.age<14) return {success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
+  const gate=consumeAction(state,{policy:'social.meet'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const pool=getNamePool(state.character.countryId);
   const minPartnerAge=state.character.age>=18?18:14;
@@ -211,6 +213,15 @@ export function meetPotentialPartner(state:GameState):EngineResult {
 export function changeRelationshipType(state:GameState,npcId:string,action:'ask_out'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'):EngineResult {
   const npc=state.npcs[npcId]; const rel=state.relationships.find(r=>r.npcId===npcId);
   if(!npc||!rel||!npc.alive) return {success:false,messages:[{text:'That relationship is unavailable.'}]};
+  if(action==='ask_out'&&rel.type!=='friend')return{success:false,messages:[{text:'You can only ask out a current friend.'}]};
+  if(action==='propose'&&rel.type!=='partner')return{success:false,messages:[{text:'You need to be dating before proposing.'}]};
+  if(action==='marry'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'Marriage is not available in this relationship yet.'}]};
+  if(action==='break_up'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'There is no dating relationship to end.'}]};
+  if(action==='divorce'&&rel.type!=='spouse')return{success:false,messages:[{text:'You are not married to this person.'}]};
+  if(action==='reconcile'&&rel.type!=='ex')return{success:false,messages:[{text:'Only an ex can be reconciled with.'}]};
+  if(action==='propose'&&state.relationships.some(r=>r.npcId!==npcId&&['fiance','spouse'].includes(r.type)))return{success:false,messages:[{text:'You are already committed to someone else.'}]};
+  if(action==='marry'&&state.relationships.some(r=>r.npcId!==npcId&&r.type==='spouse'))return{success:false,messages:[{text:'You are already married.'}]};
+  const gate=consumeAction(state,{policy:'relationship.milestone',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const chance=clamp(rel.score*.55+rel.compatibility*.25+rel.attraction*.2+npc.hiddenOpinion*.15,0,100)/100;
   let success=true; let newType:RelationshipType=rel.type; let text='';
@@ -228,7 +239,7 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   if(action==='break_up'||action==='divorce') { if(!['partner','fiance','spouse'].includes(rel.type)) success=false; else {newType='ex';npc.maritalStatus=action==='divorce'?'divorced':'single';rel.score=clamp(rel.score-18);text=`You ${action==='divorce'?'divorced':'broke up with'} ${npc.firstName}.`;} }
   if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,chance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`; }
   if(!success && !text) text='That relationship step is not available right now.';
-  if(success) rel.type=newType;
+  if(success){rel.type=newType;if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:success?3:1,text,npcIds:[npcId]});
   state.rngCounter=rng.counter(); return {success,messages:[{text}]};
 }
@@ -274,17 +285,15 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
   state.familyPlanning=state.familyPlanning??{};
   if(state.familyPlanning.pregnancy)return{success:false,messages:[{text:'You are already expecting a child. Age up to let the pregnancy progress.'}]};
   const hasNewborn=state.relationships.some(rel=>rel.type==='child'&&state.npcs[rel.npcId]?.alive&&state.npcs[rel.npcId]?.age===0);
-  if(hasNewborn||actionUsedThisAge(state,'lastFamilyExpansionAge'))return{success:false,messages:[{text:'Your family already welcomed a child this year. Age up before expanding it again.'}]};
+  if(hasNewborn)return{success:false,messages:[{text:'Your family already welcomed a child this year. Age up before expanding it again.'}]};
   const partner=partnerId?state.npcs[partnerId]:undefined;
   const rel=partnerId?state.relationships.find(r=>r.npcId===partnerId):undefined;
   if(!adopt && (!partner||!rel||!['partner','fiance','spouse'].includes(rel.type))) return {success:false,messages:[{text:'A current partner is required for this path.'}]};
   if(!adopt && partner && partner.age<16) return {success:false,messages:[{text:"Both parents must meet the game's minimum parenting age."}]};
-  if(adopt&&actionUsedThisAge(state,'lastAdoptionAge'))return{success:false,messages:[{text:'You already completed an adoption attempt this year.'}]};
-  if(!adopt&&actionUsedThisAge(state,'lastChildAttemptAge'))return{success:false,messages:[{text:'You already tried for a child this year.'}]};
   const rng=createRng(state.seed,state.rngCounter);
   const fertility=adopt?1:clamp((state.character.secondary.fertility+(partner?.fertility??50))/200,.08,.92);
   if(!adopt){
-    markActionThisAge(state,'lastChildAttemptAge');
+    const gate=consumeAction(state,{policy:'family.child_attempt'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
     if(!rng.chance(fertility)){state.rngCounter=rng.counter();return{success:false,messages:[{text:'You tried for a child, but there was no pregnancy this year.'}]};}
     const expectedChildren=rng.chance(.012)?3:rng.chance(.035)?2:1;
     state.familyPlanning.pregnancy={partnerId:partner!.id,conceivedAge:state.character.age,dueAge:state.character.age+1,expectedChildren};
@@ -292,7 +301,7 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
     state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:2,text:`You and ${partner!.firstName} learned that a child is on the way.`,npcIds:[partner!.id]});
     return{success:true,messages:[{text:`You and ${partner!.firstName} are expecting${expectedChildren>1?` ${expectedChildren===2?'twins':'triplets'}`:' a child'}.`} ]};
   }
-  markActionThisAge(state,'lastAdoptionAge');
+  const gate=consumeAction(state,{policy:'family.adoption'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const pool=getNamePool(state.character.countryId);
   const count=1;
   const names:string[]=[];
@@ -306,6 +315,5 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
   }
   const text=adopt?`You adopted ${count>1?`${count} children`:names[0]}.`:`${count===1?`${names[0]} was born.`:`You welcomed ${count===2?'twins':'triplets'}: ${names.join(', ')}.`}`;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text}); state.rngCounter=rng.counter();
-  markActionThisAge(state,'lastFamilyExpansionAge');
   return {success:true,messages:[{text}]};
 }

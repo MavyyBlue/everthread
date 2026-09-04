@@ -6,9 +6,9 @@ import { deathProbability } from '../systems/DeathSystem';
 import { enrollProgram } from '../systems/EducationSystem';
 import { availableJobs, applyForJob, askForRaise, workHarder } from '../systems/CareerSystem';
 import { processAnnualFinance, netWorth, wealthBreakdown } from '../systems/FinanceSystem';
-import { buyProperty } from '../systems/PropertySystem';
+import { buyCollectible, buyProperty, renovateProperty } from '../systems/PropertySystem';
 import { countryById } from '../data/countries';
-import { meetPotentialPartner, haveChild, ageNpcs, processFamilyPlanningYear } from '../systems/RelationshipSystem';
+import { meetPotentialPartner, haveChild, ageNpcs, interactWithNpc, processFamilyPlanningYear } from '../systems/RelationshipSystem';
 import { jobById } from '../data/jobs';
 import { eventById } from '../data/events';
 import { enforceStateInvariants, validateState } from '../core/invariants';
@@ -18,6 +18,11 @@ import { migrateSave } from '../services/SaveSystem';
 import { processMarketYear } from '../systems/InvestmentSystem';
 import { runSimulation } from './simulationHarness';
 import { formatMoney } from '../core/format';
+import { actionAllowed, actionUsesThisAge, consumeAction } from '../core/actionEconomy';
+import { performWellnessActivity } from '../systems/HealthSystem';
+import { fameActivity } from '../systems/FameSystem';
+import { addBusinessProduct, startBusiness } from '../systems/BusinessSystem';
+import { GameEngine } from '../engine/GameEngine';
 
 export interface RegressionResult {name:string;passed:boolean;error?:string;}
 export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
@@ -103,6 +108,68 @@ export const regressionCases:RegressionCase[]=[
     }
   },
   {
+    name:'central action ledger enforces compound limits atomically and resets by age',
+    run:()=>{
+      const state=highStatAdult('action-ledger');state.character.age=26;
+      const claims=[{policy:'career.application.total' as const},{policy:'career.application.job' as const,target:'retail_1'}];
+      assert(consumeAction(state,claims).allowed,'first compound action claim was rejected');equal(actionUsesThisAge(state,'career.application.total'),1,'total action use was not recorded');equal(actionUsesThisAge(state,'career.application.job','retail_1'),1,'target action use was not recorded');
+      const blocked=consumeAction(state,claims);equal(blocked.allowed,false,'same targeted action was allowed twice');equal(actionUsesThisAge(state,'career.application.total'),1,'blocked compound claim partially consumed the total limit');
+      assert(consumeAction(state,{policy:'property.renovate',target:'house'}).allowed,'first cooldown action was rejected');state.character.age+=1;equal(actionAllowed(state,{policy:'property.renovate',target:'house'}),false,'cooldown expired a year too early');state.character.age+=1;assert(actionAllowed(state,{policy:'property.renovate',target:'house'}),'cooldown did not expire after the configured interval');
+      assert(actionAllowed(state,claims),'per-age action uses did not reset after aging');
+    }
+  },
+  {
+    name:'failed job applications consume the attempt and cannot be rerolled on the same listing',
+    run:()=>{
+      const state=highStatAdult('application-reroll');state.character.age=25;state.character.stats.intelligence=0;state.character.secondary.charisma=25;state.character.secondary.discipline=20;state.character.secondary.reputation=0;
+      const first=applyForJob(state,'retail_1');equal(first.success,false,'guaranteed-low interview unexpectedly succeeded');const counterAfter=state.rngCounter;const second=applyForJob(state,'retail_1');equal(second.success,false,'failed application could be retried on the same listing');equal(state.rngCounter,counterAfter,'blocked retry consumed new randomness');equal(actionUsesThisAge(state,'career.application.total'),1,'blocked retry consumed another application slot');
+    }
+  },
+  {
+    name:'wellness actions cannot be spammed into unlimited same-year stat gains',
+    run:()=>{
+      const state=highStatAdult('wellness-spam');state.health.fitness=30;const before=state.health.fitness;assert(performWellnessActivity(state,'gym').success,'first gym action failed');equal(performWellnessActivity(state,'gym').success,false,'same wellness activity could be repeated in one year');assert(performWellnessActivity(state,'running').success,'second distinct wellness activity failed');assert(performWellnessActivity(state,'walking').success,'third distinct wellness activity failed');equal(performWellnessActivity(state,'meditation').success,false,'fourth major wellness activity exceeded yearly time budget');assert(state.health.fitness<=before+14,'wellness spam produced excessive same-year gains');state.character.age+=1;assert(performWellnessActivity(state,'gym').success,'wellness allowance did not reset after aging');
+    }
+  },
+  {
+    name:'relationship interactions have per-person and per-action yearly limits',
+    run:()=>{
+      const state=highStatAdult('social-spam');const npc=makeChild(state,'friend-spam',25);npc.parentIds=[];state.npcs[npc.id]=npc;const rel:Relationship={id:'friend-spam-rel',npcId:npc.id,type:'friend',score:50,attraction:0,compatibility:70,yearsKnown:3};state.relationships.push(rel);
+      assert(interactWithNpc(state,npc.id,'conversation').success,'first conversation failed');equal(interactWithNpc(state,npc.id,'conversation').success,false,'same interaction could be farmed repeatedly');assert(interactWithNpc(state,npc.id,'compliment').success,'second distinct interaction failed');assert(interactWithNpc(state,npc.id,'spend_time').success,'third distinct interaction failed');equal(interactWithNpc(state,npc.id,'apologize').success,false,'fourth major interaction with same NPC exceeded yearly time budget');
+    }
+  },
+  {
+    name:'publicity income cannot be rerolled indefinitely in one year',
+    run:()=>{
+      const state=highStatAdult('fame-spam');state.fame.fame=80;state.finances.cash=1000;assert(fameActivity(state,'endorsement').success,'first endorsement failed');const after=state.finances.cash;equal(fameActivity(state,'endorsement').success,false,'endorsement could be repeated in the same year');equal(state.finances.cash,after,'blocked endorsement still changed cash');assert(fameActivity(state,'interview').success,'second distinct publicity action failed');equal(fameActivity(state,'commercial').success,false,'third major publicity action exceeded yearly opportunity budget');
+    }
+  },
+  {
+    name:'time-intensive business progression is limited per year',
+    run:()=>{
+      const state=highStatAdult('business-spam');state.finances.cash=2_000_000;assert(startBusiness(state,'software','First Studio').success,'first company startup failed');equal(startBusiness(state,'software','Second Studio').success,false,'multiple companies could be founded in the same year');const business=state.businesses[0];assert(business,'business missing after startup');assert(addBusinessProduct(state,business.id).success,'first product launch failed');equal(addBusinessProduct(state,business.id).success,false,'same business could launch multiple major products in one year');
+    }
+  },
+  {
+    name:'property renovation has a real cooldown and no instant net-worth arbitrage',
+    run:()=>{
+      const state=highStatAdult('renovation-spam');state.finances.cash=100_000;state.assets.properties=[{id:'reno-home',typeId:'starter_house_standard',name:'Reno Home',location:state.character.city,purchasePrice:100000,marketValue:100000,condition:50,age:10,amenities:[]}];const before=netWorth(state);assert(renovateProperty(state,'reno-home').success,'first renovation failed');assert(netWorth(state)<before,'renovation created guaranteed immediate net-worth profit');equal(renovateProperty(state,'reno-home').success,false,'property could be renovated twice at the same age');state.character.age+=1;equal(renovateProperty(state,'reno-home').success,false,'renovation cooldown expired after only one year');state.character.age+=1;assert(renovateProperty(state,'reno-home').success,'renovation remained blocked after cooldown elapsed');
+    }
+  },
+  {
+    name:'collectible hunting cannot reroll the same item indefinitely in one year',
+    run:()=>{
+      const state=highStatAdult('collectible-spam');state.finances.cash=10_000_000;const item='collectible_jewelry_7';const first=buyCollectible(state,item);assert(first.success,'first collectible purchase failed');const count=state.assets.collectibles.length;equal(buyCollectible(state,item).success,false,'same collectible could be rerolled repeatedly');equal(state.assets.collectibles.length,count,'blocked collectible attempt still created an item');
+    }
+  },
+  {
+    name:'failed-but-executed engine actions still emit their mutated state',
+    run:()=>{
+      const g=globalThis as unknown as {localStorage?:Storage};if(!g.localStorage)Object.defineProperty(globalThis,'localStorage',{value:{length:0,clear(){},getItem(){return null;},key(){return null;},removeItem(){},setItem(){}},configurable:true});
+      const state=highStatAdult('engine-failed-outcome');state.character.stats.intelligence=0;state.character.secondary.charisma=25;state.character.secondary.discipline=20;state.character.secondary.reputation=0;const engine=new GameEngine(state);let emits=0;engine.subscribe(()=>{emits+=1;});const result=engine.applyForJob('retail_1');equal(result.success,false,'low interview unexpectedly succeeded');equal(emits,1,'failed outcome mutated state without notifying engine subscribers');equal(actionUsesThisAge(state,'career.application.total'),1,'failed engine action did not persist its consumed attempt');
+    }
+  },
+  {
     name:'annual salary is credited once with predictable baseline expenses',
     run:()=>{
       const state=highStatAdult('finance-once');state.character.age=30;state.currentYear=2056;state.finances.cash=1000;state.finances.liabilities=[];state.assets={properties:[],vehicles:[],collectibles:[]};state.businesses=[];state.pets=[];state.relationships=state.relationships.filter(r=>r.type!=='child');
@@ -114,8 +181,7 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'adult dating does not generate minor partners',
     run:()=>{
-      const state=highStatAdult('adult-dating');state.character.age=18;
-      for(let i=0;i<25;i++){const before=new Set(Object.keys(state.npcs));meetPotentialPartner(state);const added=Object.values(state.npcs).find(n=>!before.has(n.id));assert(added,'dating action did not add NPC');assert(added.age>=18,`adult dating generated age ${added.age}`);}
+      for(let i=0;i<25;i++){const state=highStatAdult(`adult-dating-${i}`);state.character.age=18;const before=new Set(Object.keys(state.npcs));assert(meetPotentialPartner(state).success,'dating action did not complete');const added=Object.values(state.npcs).find(n=>!before.has(n.id));assert(added,'dating action did not add NPC');assert(added.age>=18,`adult dating generated age ${added.age}`);}
     }
   },
   {
@@ -295,14 +361,20 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'rewind migrates legacy snapshots before restoring them',
     run:()=>{
-      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,5,'rewind did not migrate snapshot to schema v5');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
+      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,6,'rewind did not migrate snapshot to schema v6');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
     }
   },
   {
     name:'save migrations restore current required structures',
     run:()=>{
       const current=createNewGame({seed:'migration'});const legacy=structuredClone(current) as GameState;legacy.saveVersion=1;delete (legacy as unknown as {travel?:unknown}).travel;delete (legacy as unknown as {inheritance?:unknown}).inheritance;delete (legacy as unknown as {familyPlanning?:unknown}).familyPlanning;legacy.yearlySnapshots=[];
-      const migrated=migrateSave(legacy);equal(migrated.saveVersion,5,'save did not migrate to version 5');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
+      const migrated=migrateSave(legacy);equal(migrated.saveVersion,6,'save did not migrate to version 6');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');assert(migrated.actionLedger,'action ledger missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
+    }
+  },
+  {
+    name:'v5 migration preserves consumed yearly actions in the central ledger',
+    run:()=>{
+      const legacy=highStatAdult('action-ledger-migration');legacy.saveVersion=5;legacy.flags.lastWorkHarderAge=legacy.character.age;legacy.flags.lastRaiseRequestAge=legacy.character.age;delete (legacy as unknown as {actionLedger?:unknown}).actionLedger;const migrated=migrateSave(legacy);equal(migrated.saveVersion,6,'v5 save did not migrate to schema v6');equal(actionUsesThisAge(migrated,'career.work_harder'),1,'legacy work-effort use was lost');equal(actionUsesThisAge(migrated,'career.raise'),1,'legacy raise use was lost');equal(actionAllowed(migrated,{policy:'career.work_harder'}),false,'migrated save allowed a duplicate yearly work action');
     }
   },
   {
