@@ -4,7 +4,7 @@ import { makeStateId } from '../core/ids';
 import { migrateSave } from '../services/SaveSystem';
 import { processEconomyYear } from './EconomySystem';
 import { processHealthYear } from './HealthSystem';
-import { ageNpcs } from './RelationshipSystem';
+import { ageNpcs, processFamilyPlanningYear } from './RelationshipSystem';
 import { processEducationYear } from './EducationSystem';
 import { processCareerYear } from './CareerSystem';
 import { processMarketYear } from './InvestmentSystem';
@@ -32,6 +32,7 @@ export function ageUp(state:GameState):EngineResult {
     processEconomyYear(state);
     processHealthYear(state);
     ageNpcs(state);
+    processFamilyPlanningYear(state);
     processEducationYear(state);
     processCareerYear(state);
     processMarketYear(state);

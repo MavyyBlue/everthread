@@ -6,9 +6,26 @@ import type { JobDefinition as ContentJob } from '../types/content';
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
+import { actionUsedThisAge, markActionThisAge } from '../core/ageActions';
 
 function completedPrograms(state:GameState) { return state.education.filter(e=>e.graduated).map(e=>e.programId).filter(Boolean) as string[]; }
 function hasSecondary(state:GameState) { return state.education.some(e=>e.stage==='secondary'&&e.graduated); }
+
+export function relevantExperienceYears(state:GameState,job:ContentJob){
+  const records=[...state.employment.history,...(state.employment.current?[state.employment.current]:[])];
+  return records.reduce((years,record)=>{
+    const previous=jobById[record.jobId];
+    if(!previous||previous.industry!==job.industry)return years;
+    const endAge=record.endAge??state.character.age;
+    return years+Math.max(0,endAge-record.startAge);
+  },0);
+}
+
+function salaryCeiling(state:GameState,job:ContentJob){
+  const country=countryById[state.character.countryId];
+  const marketHigh=job.salaryRange[1]*(country?.salaryMultiplier??1)*state.economy.salaryIndex;
+  return Math.max(1,Math.round(marketHigh*1.6));
+}
 
 export function qualifiesForJob(state:GameState, job:ContentJob) {
   if(state.character.age<job.minAge) return false;
@@ -27,6 +44,7 @@ export function qualifiesForJob(state:GameState, job:ContentJob) {
     const actual = key in s.stats ? (s.stats as unknown as Record<string,number>)[key] : (s.secondary as unknown as Record<string,number>)[key];
     if((actual??0) < Number(min)-10) return false;
   }
+  if(job.experienceRequirement>0&&relevantExperienceYears(state,job)<job.experienceRequirement)return false;
   return true;
 }
 
@@ -37,6 +55,7 @@ export function availableJobs(state:GameState) {
 export function applyForJob(state:GameState,jobId:string):EngineResult {
   const job=jobById[jobId]; if(!job) return {success:false,messages:[{text:'That job listing is no longer available.'}]};
   if(state.legal.imprisoned) return {success:false,messages:[{text:'You cannot apply for ordinary jobs while imprisoned.'}]};
+  if(actionUsedThisAge(state,'lastJobStartAge')) return {success:false,messages:[{text:'You already started a new job this year. Age up before changing roles again.'}]};
   if(!qualifiesForJob(state,job)) return {success:false,messages:[{text:`You do not currently meet the requirements for ${job.title}.`}]};
   const rng=createRng(state.seed,state.rngCounter);
   const interviewScore=state.character.secondary.charisma*.25+state.character.secondary.discipline*.15+state.character.stats.intelligence*.2+state.character.secondary.reputation*.15+rng.int(0,35);
@@ -50,6 +69,7 @@ export function applyForJob(state:GameState,jobId:string):EngineResult {
   if(state.employment.current){ state.employment.current.endAge=state.character.age; state.employment.history.push(state.employment.current); }
   const country=countryById[state.character.countryId]; const salary=Math.round(rng.int(job.salaryRange[0],job.salaryRange[1])*(country?.salaryMultiplier??1)*state.economy.salaryIndex);
   state.employment.current={jobId:job.id,title:job.title,company:generateCompany(job.industry,rng.int(0,999)),startAge:state.character.age,salary,performance:55,level:Number(job.id.match(/_(\d+)$/)?.[1]??1)};
+  markActionThisAge(state,'lastJobStartAge');
   state.character.secondary.workPerformance=55;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You accepted a position as ${job.title} at ${state.employment.current.company}.`,moneyDelta:salary});
   return {success:true,messages:[{text:`Hired as ${job.title} for ${salary.toLocaleString()} per year.`}]};
@@ -66,7 +86,7 @@ export function processCareerYear(state:GameState) {
   const job=jobById[current.jobId]; if(!job) return;
   const rng=createRng(state.seed,state.rngCounter);
   const annualWageGrowth=state.economy.lastSalaryGrowthRate??0;
-  if(annualWageGrowth!==0) current.salary=Math.max(1,Math.round(current.salary*(1+annualWageGrowth)));
+  if(annualWageGrowth!==0) current.salary=Math.min(salaryCeiling(state,job),Math.max(1,Math.round(current.salary*(1+annualWageGrowth))));
   current.performance=clamp(current.performance + rng.int(-4,4) + (state.character.secondary.discipline>65?2:0) - Math.round(state.character.secondary.stress/45));
   state.character.secondary.workPerformance=current.performance;
   state.character.secondary.stress=clamp(state.character.secondary.stress+Math.round(job.stress/25)-2);
@@ -74,7 +94,7 @@ export function processCareerYear(state:GameState) {
   const years=state.character.age-current.startAge;
   if(job.promotionPath && years>=Math.max(2,job.experienceRequirement) && current.performance>=70 && rng.chance(.18 + current.performance/500)) {
     const next=jobById[job.promotionPath]; if(next){
-      current.jobId=next.id; current.title=next.title; current.level+=1; current.salary=Math.round(current.salary*rng.int(112,128)/100); current.performance=58;
+      current.jobId=next.id; current.title=next.title; current.level+=1; current.salary=Math.min(salaryCeiling(state,next),Math.round(current.salary*rng.int(112,128)/100)); current.performance=58;
       state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You were promoted to ${next.title}.`,moneyDelta:current.salary});
     }
   } else if(current.performance<22 && rng.chance(.35)) {
@@ -90,14 +110,23 @@ export function processCareerYear(state:GameState) {
 
 export function workHarder(state:GameState):EngineResult {
   const current=state.employment.current; if(!current) return {success:false,messages:[{text:'You do not have a job to work harder at.'}]};
+  if(actionUsedThisAge(state,'lastWorkHarderAge'))return{success:false,messages:[{text:'You already made an extra push at work this year.'}]};
+  markActionThisAge(state,'lastWorkHarderAge');
   current.performance=clamp(current.performance+7); state.character.secondary.workPerformance=current.performance; state.character.secondary.stress=clamp(state.character.secondary.stress+5); state.character.stats.happiness=clamp(state.character.stats.happiness-1);
   return {success:true,messages:[{text:'You put in extra effort. Performance rose, and so did stress.'}]};
 }
 
 export function askForRaise(state:GameState):EngineResult {
   const current=state.employment.current;if(!current)return{success:false,messages:[{text:'You are not currently employed.'}]};
+  if(actionUsedThisAge(state,'lastRaiseRequestAge'))return{success:false,messages:[{text:'You already asked for a raise this year.'}]};
+  markActionThisAge(state,'lastRaiseRequestAge');
+  const job=jobById[current.jobId];
+  if(job){
+    const ceiling=salaryCeiling(state,job);
+    if(current.salary>=ceiling)return{success:false,messages:[{text:'Your pay is already at the top of this role’s current salary band.'}]};
+  }
   const rng=createRng(state.seed,state.rngCounter); const success=rng.chance(clamp(current.performance+state.character.secondary.charisma/2-45,8,78)/100);
-  if(success){const pct=rng.int(4,12); current.salary=Math.round(current.salary*(1+pct/100));}
+  if(success){const pct=rng.int(4,12); const proposed=Math.round(current.salary*(1+pct/100));current.salary=job?Math.min(proposed,salaryCeiling(state,job)):proposed;}
   else current.performance=clamp(current.performance-rng.int(0,3));
   state.rngCounter=rng.counter(); return {success,messages:[{text:success?`Your raise was approved. New salary: ${current.salary.toLocaleString()}.`:'Your raise request was declined.'}]};
 }

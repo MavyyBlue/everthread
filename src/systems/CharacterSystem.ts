@@ -81,7 +81,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
   ];
   const familyCash = {poor:100,working:500,middle:1800,comfortable:7000,wealthy:30000}[familyWealthTier];
   const state: GameState = {
-    saveVersion:4,slotId:'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
+    saveVersion:5,slotId:'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
     education:[], employment:{history:[],partTimeJobIds:[],freelanceReputation:10,retired:false},
     finances:{cash:familyCash,annualIncome:0,annualExpenses:0,taxesPaid:0,liabilities:[]},
     assets:{properties:[],vehicles:[],collectibles:[]}, investments:{positions:[],prices:{},marketRegime:'neutral',history:{}}, businesses:[],
@@ -90,7 +90,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     timeline:[{id:'birth',year:2026,age:0,category:'birth',importance:3,text:`You were born ${character.birthCircumstance} in ${city}, ${country.name}.`}],
     delayedEvents:[],recentEventIds:[],achievements:achievements.map(a=>({id:a.id,completed:false,progress:0})),challenges:[],
     legacy:{generation:1,totalFamilyWealth:familyCash,totalYearsSimulated:0,familyTreeNpcIds:[p1.id,p2.id],accountCollectibleIds:[],completedLifeIds:[]},completedLives:[],
-    travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true},
+    travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true},familyPlanning:{},
     economy:{inflationIndex:1,housingIndex:1,salaryIndex:1,businessDemandIndex:1,year:2026},
     flags:{sandbox:options.sandbox ?? false,rewindEnabled:options.rewindEnabled ?? false,debugEnabled:false},
     settings:{theme:'system',accent:'#7357ff',sound:true,haptics:true,animations:true,textScale:1,notifications:false,minigames:true,profanityFilter:false,autoSave:true,highContrast:false,reducedMotion:false},

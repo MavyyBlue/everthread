@@ -1,4 +1,4 @@
-const CACHE = 'everthread-shell-v2';
+const CACHE = 'everthread-shell-v3';
 const BASE = new URL('./', self.registration.scope).pathname;
 const SHELL = [BASE, `${BASE}manifest.json`];
 
@@ -23,21 +23,27 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.ok) caches.open(CACHE).then(cache => cache.put(BASE, response.clone()));
+          return response;
+        })
+        .catch(() => caches.match(BASE)),
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then(
-      cached =>
-        cached ||
-        fetch(event.request)
-          .then(response => {
-            // Cache successful same-origin assets as they are used so the
-            // installed game remains available after the first online load.
-            if (response.ok && new URL(event.request.url).origin === self.location.origin) {
-              const clone = response.clone();
-              caches.open(CACHE).then(cache => cache.put(event.request, clone));
-            }
-            return response;
-          })
-          .catch(() => caches.match(BASE)),
-    ),
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request).then(response => {
+        if (response.ok && new URL(event.request.url).origin === self.location.origin) {
+          caches.open(CACHE).then(cache => cache.put(event.request, response.clone()));
+        }
+        return response;
+      });
+    }),
   );
 });

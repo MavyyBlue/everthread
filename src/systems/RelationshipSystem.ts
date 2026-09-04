@@ -5,6 +5,7 @@ import type { EngineResult, GameState, Npc, Orientation, Relationship, Relations
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
+import { actionUsedThisAge, markActionThisAge } from '../core/ageActions';
 
 const interactionEffects: Record<string,{base:number;happiness:number;karma?:number}> = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
@@ -232,20 +233,72 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   state.rngCounter=rng.counter(); return {success,messages:[{text}]};
 }
 
+function existingChildFirstNames(state:GameState){
+  return new Set(state.relationships.filter(rel=>rel.type==='child').map(rel=>state.npcs[rel.npcId]?.firstName).filter((name):name is string=>Boolean(name)));
+}
+
+function pickChildName(state:GameState,pool:ReturnType<typeof getNamePool>,rng:ReturnType<typeof createRng>,reserved:Set<string>){
+  const available=pool.first.filter(name=>!reserved.has(name));
+  const name=rng.pick(available.length?available:pool.first);
+  reserved.add(name);
+  return name;
+}
+
+export function processFamilyPlanningYear(state:GameState):void {
+  const pregnancy=state.familyPlanning?.pregnancy;
+  if(!pregnancy||pregnancy.dueAge>state.character.age)return;
+  const partner=state.npcs[pregnancy.partnerId];
+  const rng=createRng(state.seed,state.rngCounter);
+  const pool=getNamePool(state.character.countryId);
+  const reserved=existingChildFirstNames(state);
+  const names:string[]=[];
+  const count=Math.max(1,Math.min(3,Math.floor(pregnancy.expectedChildren||1)));
+  for(let i=0;i<count;i++){
+    const id=makeStateId(state,'child');
+    const firstName=pickChildName(state,pool,rng,reserved);names.push(firstName);
+    const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
+      sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
+    state.npcs[id]=child;state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
+    if(partner&&!partner.childIds.includes(id))partner.childIds.push(id);
+    state.legacy.familyTreeNpcIds.push(id);
+  }
+  const text=count===1?`${names[0]} was born.`:`You welcomed ${count===2?'twins':'triplets'}: ${names.join(', ')}.`;
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text,npcIds:partner?[partner.id]:undefined});
+  delete state.familyPlanning.pregnancy;
+  state.flags.lastFamilyExpansionAge=state.character.age;
+  state.rngCounter=rng.counter();
+}
+
 export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineResult {
   if(state.character.age<16) return {success:false,messages:[{text:'You are too young to become a parent.'}]};
+  state.familyPlanning=state.familyPlanning??{};
+  if(state.familyPlanning.pregnancy)return{success:false,messages:[{text:'You are already expecting a child. Age up to let the pregnancy progress.'}]};
+  const hasNewborn=state.relationships.some(rel=>rel.type==='child'&&state.npcs[rel.npcId]?.alive&&state.npcs[rel.npcId]?.age===0);
+  if(hasNewborn||actionUsedThisAge(state,'lastFamilyExpansionAge'))return{success:false,messages:[{text:'Your family already welcomed a child this year. Age up before expanding it again.'}]};
   const partner=partnerId?state.npcs[partnerId]:undefined;
   const rel=partnerId?state.relationships.find(r=>r.npcId===partnerId):undefined;
   if(!adopt && (!partner||!rel||!['partner','fiance','spouse'].includes(rel.type))) return {success:false,messages:[{text:'A current partner is required for this path.'}]};
   if(!adopt && partner && partner.age<16) return {success:false,messages:[{text:"Both parents must meet the game's minimum parenting age."}]};
+  if(adopt&&actionUsedThisAge(state,'lastAdoptionAge'))return{success:false,messages:[{text:'You already completed an adoption attempt this year.'}]};
+  if(!adopt&&actionUsedThisAge(state,'lastChildAttemptAge'))return{success:false,messages:[{text:'You already tried for a child this year.'}]};
   const rng=createRng(state.seed,state.rngCounter);
   const fertility=adopt?1:clamp((state.character.secondary.fertility+(partner?.fertility??50))/200,.08,.92);
-  if(!adopt && !rng.chance(fertility)) { state.rngCounter=rng.counter(); return {success:false,messages:[{text:'You tried to have a child, but it did not happen this year.'}]}; }
-  const country=countryById[state.character.countryId]; const pool=getNamePool(state.character.countryId);
-  const count=!adopt&&rng.chance(.012)?3:!adopt&&rng.chance(.035)?2:1;
+  if(!adopt){
+    markActionThisAge(state,'lastChildAttemptAge');
+    if(!rng.chance(fertility)){state.rngCounter=rng.counter();return{success:false,messages:[{text:'You tried for a child, but there was no pregnancy this year.'}]};}
+    const expectedChildren=rng.chance(.012)?3:rng.chance(.035)?2:1;
+    state.familyPlanning.pregnancy={partnerId:partner!.id,conceivedAge:state.character.age,dueAge:state.character.age+1,expectedChildren};
+    state.rngCounter=rng.counter();
+    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:2,text:`You and ${partner!.firstName} learned that a child is on the way.`,npcIds:[partner!.id]});
+    return{success:true,messages:[{text:`You and ${partner!.firstName} are expecting${expectedChildren>1?` ${expectedChildren===2?'twins':'triplets'}`:' a child'}.`} ]};
+  }
+  markActionThisAge(state,'lastAdoptionAge');
+  const pool=getNamePool(state.character.countryId);
+  const count=1;
   const names:string[]=[];
+  const reserved=existingChildFirstNames(state);
   for(let i=0;i<count;i++){
-    const id=makeStateId(state,'child'); const firstName=rng.pick(pool.first); names.push(firstName);
+    const id=makeStateId(state,'child'); const firstName=pickChildName(state,pool,rng,reserved); names.push(firstName);
     const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
       sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
     state.npcs[id]=child; state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
@@ -253,5 +306,6 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
   }
   const text=adopt?`You adopted ${count>1?`${count} children`:names[0]}.`:`${count===1?`${names[0]} was born.`:`You welcomed ${count===2?'twins':'triplets'}: ${names.join(', ')}.`}`;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text}); state.rngCounter=rng.counter();
+  markActionThisAge(state,'lastFamilyExpansionAge');
   return {success:true,messages:[{text}]};
 }

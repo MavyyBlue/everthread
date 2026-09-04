@@ -2,6 +2,41 @@
 
 Everthread is pre-release. Versions below are development milestones, not public release promises.
 
+## 0.9.5 — 2026-09-04 — First Mobile Playtest Hardening
+
+### Added
+
+- Save schema v5 with migration support for family-planning state and targeted repair of the pre-0.9.5 runaway salary exploit.
+- One-year pregnancy state for biological parenting; successful conception resolves into birth after the next Age Up rather than creating a child instantly.
+- Compact mobile money formatting for million, billion, trillion and quadrillion-scale values.
+- Regression coverage for senior-career experience gates, annual career-action limits, pregnancy timing, v4 exploit-save repair and extreme mobile money formatting.
+
+### Changed
+
+- Higher-level standard jobs now require actual relevant industry experience before they appear as qualified listings.
+- A successful new hire prevents another job start in the same age.
+- `Work harder` and `Ask for raise` are each annual-focus actions and cannot be spammed repeatedly within one age.
+- Standard-career salary growth and raises respect a role-market ceiling instead of compounding without bound.
+- Sibling first names avoid duplicates while unused regional names are available.
+- PWA navigation uses network-first loading with cached offline fallback; service-worker registration explicitly checks for updates.
+
+### Fixed
+
+- Players can no longer become level-six executives at age 18–20 with no relevant work history simply by passing a difficult interview.
+- Repeated same-year raise requests can no longer turn ordinary salaries into trillion/quadrillion-scale compensation.
+- Repeated same-year `Work harder` actions can no longer instantly max performance/stress.
+- Repeated family taps can no longer generate many independent births in the same year.
+- Existing v4 saves that clearly match the runaway-compensation exploit are repaired on load: salary and impossible role level are normalized and the identifiable exploit-year net cash windfall is reverted. Existing children are never deleted by migration.
+- Extreme money values no longer overflow the Life, Career and Assets mobile cards.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 37/37 regression cases pass.
+- Neutral 1,000-life bulk run: median lifespan 81, median net worth 651,017, millionaire rate 40.7%, zero anomalies and zero forced terminal deaths.
+- Mixed-policy 1,000-life bulk run: median lifespan 82, median net worth 819,767, millionaire rate 44.6%, zero anomalies and zero forced terminal deaths.
+
 ## 0.9.4 — 2026-09-04 — Estate Threads & Economic Calibration
 
 ### Added

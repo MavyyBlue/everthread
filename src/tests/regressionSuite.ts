@@ -4,11 +4,11 @@ import { ageUp, finalizeAgeUp, rewindToAge } from '../systems/AgingSystem';
 import { forceEvent, processDelayedEvents, resolvePendingEvent } from '../systems/EventSystem';
 import { deathProbability } from '../systems/DeathSystem';
 import { enrollProgram } from '../systems/EducationSystem';
-import { availableJobs, applyForJob } from '../systems/CareerSystem';
+import { availableJobs, applyForJob, askForRaise, workHarder } from '../systems/CareerSystem';
 import { processAnnualFinance, netWorth, wealthBreakdown } from '../systems/FinanceSystem';
 import { buyProperty } from '../systems/PropertySystem';
 import { countryById } from '../data/countries';
-import { meetPotentialPartner, haveChild, ageNpcs } from '../systems/RelationshipSystem';
+import { meetPotentialPartner, haveChild, ageNpcs, processFamilyPlanningYear } from '../systems/RelationshipSystem';
 import { jobById } from '../data/jobs';
 import { eventById } from '../data/events';
 import { enforceStateInvariants, validateState } from '../core/invariants';
@@ -17,6 +17,7 @@ import { continueAsChild } from '../systems/GenerationSystem';
 import { migrateSave } from '../services/SaveSystem';
 import { processMarketYear } from '../systems/InvestmentSystem';
 import { runSimulation } from './simulationHarness';
+import { formatMoney } from '../core/format';
 
 export interface RegressionResult {name:string;passed:boolean;error?:string;}
 export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
@@ -84,6 +85,24 @@ export const regressionCases:RegressionCase[]=[
     }
   },
   {
+    name:'senior career listings require actual relevant experience',
+    run:()=>{
+      const state=highStatAdult('career-experience');state.character.age=20;state.currentYear=2046;state.character.secondary.charisma=100;state.character.secondary.discipline=100;
+      assert(!availableJobs(state).some(job=>job.id==='real_estate_6'),'level-six real-estate role was available with no experience');
+      state.character.age=30;state.currentYear=2056;state.employment.history.push({jobId:'real_estate_1',title:'Leasing Assistant',company:'Test Realty',startAge:18,endAge:27,salary:40000,performance:75,level:1});
+      assert(availableJobs(state).some(job=>job.id==='real_estate_6'),'senior role stayed locked after enough relevant experience');
+    }
+  },
+  {
+    name:'career effort and raise requests are limited to one use per year',
+    run:()=>{
+      const state=highStatAdult('career-yearly-gates');state.character.age=30;state.currentYear=2056;state.character.secondary.charisma=100;
+      state.employment.current={jobId:'real_estate_1',title:'Leasing Assistant',company:'Test Realty',startAge:29,salary:42000,performance:90,level:1};
+      assert(workHarder(state).success,'first work-harder action failed');equal(workHarder(state).success,false,'work harder could be spammed in one year');
+      askForRaise(state);const afterFirst=state.employment.current.salary;equal(askForRaise(state).success,false,'second raise request was not blocked');equal(state.employment.current.salary,afterFirst,'blocked raise request changed salary');
+    }
+  },
+  {
     name:'annual salary is credited once with predictable baseline expenses',
     run:()=>{
       const state=highStatAdult('finance-once');state.character.age=30;state.currentYear=2056;state.finances.cash=1000;state.finances.liabilities=[];state.assets={properties:[],vehicles:[],collectibles:[]};state.businesses=[];state.pets=[];state.relationships=state.relationships.filter(r=>r.type!=='child');
@@ -104,6 +123,21 @@ export const regressionCases:RegressionCase[]=[
     run:()=>{
       const state=highStatAdult('parent-age');state.character.age=18;const npc=makeChild(state,'young-partner',15);npc.parentIds=[];state.npcs[npc.id]=npc;state.relationships.push({id:'young-rel',npcId:npc.id,type:'partner',score:90,attraction:90,compatibility:90,yearsKnown:2});
       equal(haveChild(state,npc.id,false).success,false,'underage partner was allowed on biological parenting path');
+    }
+  },
+  {
+    name:'biological parenting creates a one-year pregnancy and blocks same-year retry spam',
+    run:()=>{
+      let state:GameState|undefined;let partner:Npc|undefined;
+      for(let i=0;i<40;i++){
+        const candidate=highStatAdult(`pregnancy-${i}`);candidate.character.age=24;candidate.currentYear=2050;candidate.character.secondary.fertility=100;
+        const npc=makeChild(candidate,`pregnancy-partner-${i}`,25);npc.parentIds=[];npc.fertility=100;candidate.npcs[npc.id]=npc;candidate.relationships.push({id:`pregnancy-rel-${i}`,npcId:npc.id,type:'spouse',score:95,attraction:90,compatibility:95,yearsKnown:4});
+        const result=haveChild(candidate,npc.id,false);if(result.success){state=candidate;partner=npc;break;}
+      }
+      assert(state&&partner,'could not produce deterministic successful pregnancy setup');
+      assert(state.familyPlanning.pregnancy,'successful parenting attempt did not create pregnancy state');equal(state.relationships.filter(rel=>rel.type==='child').length,0,'pregnancy created an immediate child instead of waiting a year');
+      equal(haveChild(state,partner.id,false).success,false,'second parenting attempt in the same year was allowed');
+      state.character.age+=1;state.currentYear+=1;processFamilyPlanningYear(state);const children=state.relationships.filter(rel=>rel.type==='child');assert(children.length>=1&&children.length<=3,'pregnancy did not resolve into a valid birth');assert(children.every(rel=>state!.npcs[rel.npcId]?.age===0),'newborns were not age zero at birth');assert(!state.familyPlanning.pregnancy,'pregnancy state remained after birth');
     }
   },
   {
@@ -261,14 +295,27 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'rewind migrates legacy snapshots before restoring them',
     run:()=>{
-      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,4,'rewind did not migrate snapshot to schema v4');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');
+      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,5,'rewind did not migrate snapshot to schema v5');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
     }
   },
   {
     name:'save migrations restore current required structures',
     run:()=>{
-      const current=createNewGame({seed:'migration'});const legacy=structuredClone(current) as GameState;legacy.saveVersion=1;delete (legacy as unknown as {travel?:unknown}).travel;delete (legacy as unknown as {inheritance?:unknown}).inheritance;legacy.yearlySnapshots=[];
-      const migrated=migrateSave(legacy);equal(migrated.saveVersion,4,'save did not migrate to version 4');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
+      const current=createNewGame({seed:'migration'});const legacy=structuredClone(current) as GameState;legacy.saveVersion=1;delete (legacy as unknown as {travel?:unknown}).travel;delete (legacy as unknown as {inheritance?:unknown}).inheritance;delete (legacy as unknown as {familyPlanning?:unknown}).familyPlanning;legacy.yearlySnapshots=[];
+      const migrated=migrateSave(legacy);equal(migrated.saveVersion,5,'save did not migrate to version 5');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
+    }
+  },
+  {
+    name:'v4 migration repairs the runaway salary exploit and impossible senior role',
+    run:()=>{
+      const legacy=highStatAdult('salary-repair');legacy.saveVersion=4;delete (legacy as unknown as {familyPlanning?:unknown}).familyPlanning;legacy.character.age=20;legacy.currentYear=2046;legacy.finances.cash=1_015_749_743_505_505;legacy.finances.lastYearSummary={income:1_389_534_533_074_026,expenses:165_354_609_608_167,taxes:208_430_179_961_104,investmentReturn:0,businessProfit:0,netChange:1_015_749_743_504_755};legacy.employment.current={jobId:'real_estate_6',title:'Real Estate Executive',company:'Summit Labs',startAge:20,salary:1_389_534_533_074_026,performance:97,level:6};
+      const migrated=migrateSave(legacy);assert((migrated.employment.current?.salary??Infinity)<250_000,'runaway salary was not repaired during v4→v5 migration');equal(migrated.employment.current?.jobId,'real_estate_1','impossible level-six role was not repaired to an experience-appropriate role');equal(migrated.finances.cash,750,'obvious exploit-year cash was not reverted to the pre-year balance');assert(!migrated.finances.lastYearSummary,'corrupted exploit-year financial summary was retained');assert(Boolean(migrated.flags.compensationRepairApplied),'salary repair was not recorded');assert(Boolean(migrated.flags.compensationCashRepairApplied),'cash repair was not recorded');assert(Boolean(migrated.flags.careerProgressionRepairApplied),'career progression repair was not recorded');
+    }
+  },
+  {
+    name:'mobile money formatting keeps extreme sandbox values compact',
+    run:()=>{
+      const label=formatMoney(1_015_749_743_504_755);assert(label.length<=8,`extreme money label is still too wide: ${label}`);assert(label.endsWith('Q'),'quadrillion-scale value did not use compact suffix');equal(formatMoney(686454),'686,454','ordinary six-digit money should remain fully readable');
     }
   },
   {

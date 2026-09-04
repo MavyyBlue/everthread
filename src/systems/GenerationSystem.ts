@@ -239,6 +239,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.fame={fame:inheritedFame,publicReputation:55,followers:Math.round(inheritedFame*500),engagement:25,platforms:{},scandals:[]};
   state.specialCareers={};
   state.pets=[];
+  state.familyPlanning={};
   state.delayedEvents=[];
   state.pendingEvent=undefined;
   state.recentEventIds=[];

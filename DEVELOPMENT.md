@@ -1,8 +1,8 @@
 # Everthread — Development Status
 
 Last updated: 2026-09-04  
-Current build line: 0.9.4 pre-release  
-Save schema: 4
+Current build line: 0.9.5 pre-release  
+Save schema: 5
 
 ## Product direction
 
@@ -55,11 +55,25 @@ These are functioning systems rather than navigation placeholders, though some s
 - JSON save export/import with validation and schema migration.
 - Sandbox/debug surface for age, cash, forced death, RNG inspection, and rewind snapshots.
 
+
+### First mobile playtest hardening (0.9.5)
+
+The first live human playtest exposed same-year action exploits that headless simulations did not reproduce naturally. The 0.9.5 pass hardens those systems at the simulation layer rather than only disabling buttons in React.
+
+- Standard-career applications now enforce actual relevant industry experience for non-entry roles; interview difficulty is no longer a substitute for experience.
+- Starting a new job is limited to once per age after a successful hire, preventing same-year job hopping.
+- `Work harder` and `Ask for raise` are each limited to one use per age, and standard-role compensation is bounded against the current market pay band so annual raises cannot compound into runaway values.
+- Save schema v5 repairs obvious v4 runaway-compensation saves: impossible salary is normalized, an experience-inappropriate current role is corrected, and a clearly identifiable exploit-year cash windfall is reverted without touching ordinary saves or sandbox saves.
+- Biological parenting now creates a one-year pregnancy state instead of an immediate birth. A successful conception resolves after the next Age Up, same-year retry spam is blocked, and sibling names avoid duplicates while unused regional names remain.
+- Mobile money labels use compact notation for million-plus values so debug/sandbox/extreme-save values cannot widen cards off-screen.
+- PWA navigation now prefers the network while retaining an offline fallback, and service-worker cache versioning/update checks make new phone builds surface more reliably after deployment.
+- Validation after these changes: 37/37 regressions; neutral and mixed-policy 1,000-life runs both completed with zero anomalies and zero forced terminal deaths.
+
 ## Verification milestone
 
 Added in the current hardening pass:
 
-- Framework-independent deterministic regression suite: 32 passing tests.
+- Framework-independent deterministic regression suite: 37 passing tests.
 - Multi-life simulation harness with `full` and faster `bulk` modes, independent aspiration profiles, six behavior policies, and wealth-percentile reporting.
 - 1,000-life bulk run completed with zero detected structural state anomalies.
 - Content audit executable from source data.

@@ -443,6 +443,15 @@ export interface InheritanceState {
   inheritProperties: boolean;
 }
 
+export interface FamilyPlanningState {
+  pregnancy?: {
+    partnerId: Id;
+    conceivedAge: number;
+    dueAge: number;
+    expectedChildren: number;
+  };
+}
+
 export interface GameFlags {
   sandbox: boolean;
   rewindEnabled: boolean;
@@ -481,6 +490,7 @@ export interface GameState {
   completedLives: CompletedLife[];
   travel: TravelState;
   inheritance: InheritanceState;
+  familyPlanning: FamilyPlanningState;
   economy: EconomyState;
   flags: GameFlags;
   settings: SettingsState;

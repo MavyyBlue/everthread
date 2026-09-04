@@ -54,7 +54,10 @@ Routine events use multiple description variants and data-defined choices. The 6
 
 The standard job database contains 51 industries/ladders with six positions each (306 positions). Examples include technology, medicine, nursing, dentistry, veterinary medicine, law, education, university research, multiple engineering disciplines, science, finance, accounting, banking, journalism, government, aviation, emergency services, trades, logistics, marketing, design, real estate, manufacturing, social services, mental wellness, aviation maintenance, transit, environmental services, biotechnology, pharmaceutical research, insurance, and customer support.
 
-A numerical job count is not considered sufficient by itself. Remaining career-content work is focused on workplace NPCs, differentiated interview/promotion events, industry-specific hazards/opportunities, part-time work, and richer day-to-day consequences.
+A numerical job count is not considered sufficient by itself. Higher-level positions now enforce relevant experience and annual raise/effort actions are rate-limited at the system layer. Remaining career-content work is focused on workplace NPCs, differentiated interview/promotion events, industry-specific hazards/opportunities, part-time work, and richer day-to-day consequences.
+
+
+Biological parenting now uses a one-year pregnancy state and resolves births on a future Age Up rather than creating unlimited instant children from repeated taps. Existing pre-0.9.5 children are preserved by migration.
 
 ## Education
 
