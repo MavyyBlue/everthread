@@ -284,6 +284,41 @@ function makeFamilyEvents(family:ScenarioFamily): GameEventDefinition[] {
 
 const fixedEvents: GameEventDefinition[] = [
   {
+    id:'school_group_project',category:'school',title:'The Group Project',descriptions:['{NPC_NAME} is assigned to work with you on a project that will affect both of your grades.'],minAge:8,maxAge:28,probability:.055,cooldown:7,tags:['school','requires:school_npc','target:school_peer'],choices:[
+      {id:'share',label:'Share the work fairly',effects:{relationship:{npcSelector:'payload',delta:7},secondary:{academicPerformance:4,discipline:2,stress:2}}},
+      {id:'lead',label:'Take the lead',outcomes:[{weight:68,text:'Your organization keeps the project moving.',effects:{relationship:{npcSelector:'payload',delta:3},secondary:{academicPerformance:5,confidence:3,stress:3}}},{weight:32,text:'Your partner feels steamrolled.',effects:{relationship:{npcSelector:'payload',delta:-6},secondary:{academicPerformance:3,stress:4}}}]},
+      {id:'coast',label:'Let them carry it',effects:{relationship:{npcSelector:'payload',delta:-10},secondary:{academicPerformance:-3,discipline:-3},stats:{happiness:2}}},
+    ]
+  },
+  {
+    id:'school_teacher_feedback',category:'school',title:'Feedback That Stings',descriptions:['{NPC_NAME} gives you blunt feedback on your work in front of the room.'],minAge:7,maxAge:30,probability:.045,cooldown:8,tags:['school','requires:school_npc','target:school_authority'],choices:[
+      {id:'listen',label:'Take the feedback seriously',effects:{relationship:{npcSelector:'payload',delta:5},secondary:{academicPerformance:4,discipline:3,confidence:-1}}},
+      {id:'push',label:'Push back respectfully',outcomes:[{weight:60,text:'You make your point without losing the room.',effects:{relationship:{npcSelector:'payload',delta:2},secondary:{confidence:4,charisma:2}}},{weight:40,text:'It turns into an uncomfortable argument.',effects:{relationship:{npcSelector:'payload',delta:-7},secondary:{stress:4,reputation:-2}}}]},
+      {id:'dismiss',label:'Ignore them',effects:{relationship:{npcSelector:'payload',delta:-4},secondary:{discipline:-2,stress:-1}}},
+    ]
+  },
+  {
+    id:'school_lunch_table_shift',category:'school',title:'A Seat at the Table',descriptions:['{NPC_NAME} waves you toward a different group during lunch. It is a small invitation with surprisingly large social consequences.'],minAge:9,maxAge:22,probability:.05,cooldown:6,tags:['school','requires:school_npc','target:school_peer'],choices:[
+      {id:'join',label:'Join them',effects:{relationship:{npcSelector:'payload',delta:8},stats:{happiness:3},secondary:{charisma:2,confidence:2}}},
+      {id:'bring',label:'Invite someone else too',effects:{relationship:{npcSelector:'payload',delta:5},secondary:{charisma:3,karma:2}}},
+      {id:'decline',label:'Keep your usual routine',effects:{relationship:{npcSelector:'payload',delta:-2},secondary:{willpower:1}}},
+    ]
+  },
+  {
+    id:'school_rumor',category:'school',title:'Hallway Rumor',descriptions:['A rumor about {NPC_NAME} reaches you before it reaches them.'],minAge:11,maxAge:24,probability:.038,cooldown:9,tags:['school','requires:school_npc','target:school_peer'],choices:[
+      {id:'warn',label:'Warn them privately',effects:{relationship:{npcSelector:'payload',delta:9},secondary:{karma:3,reputation:2}}},
+      {id:'repeat',label:'Repeat it',effects:{relationship:{npcSelector:'payload',delta:-12},secondary:{karma:-4,reputation:-3},stats:{happiness:2}}},
+      {id:'ignore',label:'Stay out of it',effects:{secondary:{willpower:2}}},
+    ]
+  },
+  {
+    id:'school_competition',category:'school',title:'Friendly Competition',descriptions:['You and {NPC_NAME} end up competing for recognition on the same school task.'],minAge:10,maxAge:28,probability:.04,cooldown:8,tags:['school','requires:school_npc','target:school_peer'],choices:[
+      {id:'fair',label:'Compete fairly',effects:{relationship:{npcSelector:'payload',delta:3},secondary:{academicPerformance:3,discipline:2,confidence:2}}},
+      {id:'team',label:'Turn it into teamwork',effects:{relationship:{npcSelector:'payload',delta:7},secondary:{academicPerformance:2,charisma:2}}},
+      {id:'obsess',label:'Make winning personal',outcomes:[{weight:50,text:'You come out ahead.',effects:{secondary:{academicPerformance:5,confidence:4,stress:4},relationship:{npcSelector:'payload',delta:-4}}},{weight:50,text:'The rivalry gets in your head.',effects:{secondary:{academicPerformance:-2,stress:6},relationship:{npcSelector:'payload',delta:-7}}}]},
+    ]
+  },
+  {
     id:'romance_boundary_crossed',category:'romance',title:'A Line Gets Blurry',
     descriptions:['A private conversation with someone outside your relationship becomes more flirtatious than you intended. {NPC_FIRST} has no idea.'],
     minAge:18,maxAge:90,probability:.018,cooldown:18,tags:['romance','relationship','requires:romantic','target:romantic'],choices:[

@@ -110,11 +110,12 @@ export interface Npc {
   partnerId?: Id;
   famous?: boolean;
   imprisoned?: boolean;
+  simulationTier?: 'full' | 'background';
 }
 
 export type RelationshipType =
   | 'parent' | 'stepparent' | 'grandparent' | 'sibling' | 'half_sibling' | 'stepsibling' | 'niece_nephew'
-  | 'friend' | 'best_friend' | 'enemy' | 'coworker' | 'classmate' | 'boss' | 'teacher'
+  | 'friend' | 'best_friend' | 'enemy' | 'coworker' | 'classmate' | 'boss' | 'teacher' | 'principal' | 'coach'
   | 'partner' | 'fiance' | 'spouse' | 'ex' | 'child' | 'grandchild';
 
 export interface Relationship {
@@ -154,6 +155,57 @@ export interface EducationRecord {
   droppedOut: boolean;
   scholarship: boolean;
   performance: Percent;
+  admissionScore?: Percent;
+  scholarshipPercent?: number;
+}
+
+export type SocialWorldKind = 'school' | 'workplace' | 'organization';
+export type SchoolGroupKind = 'academic' | 'arts' | 'sport' | 'service' | 'leadership' | 'social';
+export type SocialWorldMemberRole = 'classmate' | 'teacher' | 'principal' | 'coach' | 'coworker' | 'boss' | 'member' | 'leader';
+
+export interface SocialWorldMember {
+  npcId: Id;
+  role: SocialWorldMemberRole;
+  joinedAge: number;
+  leftAge?: number;
+  groupIds: Id[];
+}
+
+export interface SocialWorldGroup {
+  id: Id;
+  name: string;
+  kind: SchoolGroupKind | string;
+  minAge: number;
+  memberNpcIds: Id[];
+  playerJoinedAge?: number;
+  playerLeftAge?: number;
+  playerRole?: 'member' | 'captain' | 'officer' | 'leader';
+  prestige: Percent;
+}
+
+export interface SchoolWorldState {
+  stage: string;
+  educationKey: string;
+  attendance: Percent;
+  conduct: Percent;
+  socialStanding: Percent;
+  honors: number;
+  disciplinaryActions: number;
+  principalNpcId?: Id;
+}
+
+export interface SocialWorld {
+  id: Id;
+  kind: SocialWorldKind;
+  name: string;
+  countryId: Id;
+  city: string;
+  startedAge: number;
+  endedAge?: number;
+  active: boolean;
+  members: SocialWorldMember[];
+  groups: SocialWorldGroup[];
+  school?: SchoolWorldState;
 }
 
 export interface CareerRecord {
@@ -478,6 +530,7 @@ export interface GameState {
   npcs: Record<Id, Npc>;
   relationships: Relationship[];
   education: EducationRecord[];
+  socialWorlds: SocialWorld[];
   employment: EmploymentState;
   finances: FinancesState;
   assets: AssetState;

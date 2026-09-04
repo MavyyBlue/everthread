@@ -1,8 +1,8 @@
 # Everthread — Development Status
 
 Last updated: 2026-09-04  
-Current build line: 0.9.9 pre-release  
-Save schema: 6
+Current build line: 0.10.0 pre-release  
+Save schema: 7
 
 ## Product direction
 
@@ -15,7 +15,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/engine/GameEngine.ts` — public action façade used by UI.
 - `src/types/` — authoritative state and content contracts.
 - `src/core/` — RNG, math, deterministic IDs, invariant enforcement, and the centralized action-economy ledger/policies.
-- `src/systems/` — isolated simulation domains.
+- `src/systems/` — isolated simulation domains, including persistent social-world ownership for schools and future workplaces/organizations.
 - `src/data/` — external content definitions for events, jobs, education, countries, health, crime, assets, achievements, and challenges.
 - `src/services/SaveSystem.ts` — IndexedDB/local fallback, schema migration, account-level multi-slot life saves, active-slot tracking, JSON import/export.
 - `src/screens/` and `src/components/` — mobile UI only; critical state is not intended to be mutated here.
@@ -26,6 +26,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 These are functioning systems rather than navigation placeholders, though some still need additional depth.
 
+### Persistent school social worlds (0.10.0)
+
+School is now the first consumer of a generic persisted Social World layer. Institutions own membership/roles/groups, NPC records own the people, and RelationshipSystem owns the player's evolving relationship with them. This keeps school affiliation intact when a classmate becomes a friend/enemy/partner and gives the upcoming workplace phase the same reusable foundation.
+
+- v6→v7 migration reconstructs school worlds from existing education records without rewriting old education history.
+- Country profiles vary entry/transition/leaving ages while retaining primary/middle/secondary compatibility for existing career/content logic.
+- Persistent rosters include classmates, teachers, coaches, and leadership; People → School is affiliation-driven rather than relationship-type-only.
+- Clubs/teams/groups, attendance, conduct, social standing, honors, discipline, volunteering, academic risk, and admissions/scholarship weighting are implemented.
+- School-targeted events bind exact roster NPCs so event copy, effects, memories, and People history refer to the same person.
+- Ordinary school acquaintances use a cheaper background simulation tier; important relationships automatically receive full autonomy.
+- Compulsory school leaving and school-friend romance age boundaries are enforced at the engine layer.
+- Verification: 64/64 regressions; 1,000 distinct neutral and 1,000 distinct mixed-policy population lives completed with zero anomalies/forced terminal deaths, plus a final 500-life mixed sanity batch.
+
 - Seeded character generation and advanced starting-stat controls.
 - Centralized primary/secondary stats and talents.
 - Ordered one-year Age Up transaction with double-activation lock.
@@ -34,7 +47,7 @@ These are functioning systems rather than navigation placeholders, though some s
 - Mobile life timeline and death summary.
 - Persistent NPC records, relationship scores, memories, personality response modifiers, NPC aging, health drift, real career progression, linked autonomous partnerships, marriage/divorce/widowhood, bounded autonomous children, inheritance, and death.
 - Dating, partner/fiancé/spouse/ex states, marriage/divorce/reconciliation, biological children and adoption.
-- Automatic childhood schooling plus post-secondary programs, tuition, scholarships, student debt, graduation, dropout, and academic performance.
+- Country-profile childhood schooling with persistent classmates/teachers/leaders, clubs/teams/groups, conduct/attendance/honors, admissions profiles, scholarships, student debt, graduation/dropout rules, and post-secondary progression.
 - 51 standard-career ladders / 306 job positions with requirements, interviews, salary, performance, promotion, termination, raises, retirement, and freelance gigs.
 - Annual finances, tax, baseline living costs, dependent/pet/asset costs, loans, net worth, and yearly summaries.
 - Dynamic bounded economy for cost, wage, housing, business-demand, and market-cycle pressure.
@@ -125,7 +138,7 @@ The first human playtest showed that isolated cooldown fixes were not enough: ma
 
 Added in the current hardening pass:
 
-- Framework-independent deterministic regression suite: 55 passing tests.
+- Framework-independent deterministic regression suite: 64 passing tests.
 - Multi-life simulation harness with `full` and faster `bulk` modes, independent aspiration profiles, six behavior policies, and wealth-percentile reporting.
 - 1,000-life bulk run completed with zero detected structural state anomalies.
 - Content audit executable from source data.
@@ -213,12 +226,13 @@ Loans, mortgage underwriting, annual shortfall debt, foreclosure, bankruptcy and
 
 ### Education / school social life
 
-Core progression works. Missing or shallow:
+0.10.0 now provides the persistent school social layer: rosters, teachers/leaders, recurring classmates, activity groups, conduct/attendance/honors, profile-driven stage timing, targeted school events, and richer admissions/scholarship scoring. Remaining depth after this milestone:
 
-- Persistent classmate/teacher/principal rosters.
-- Clubs, student organizations, school sports, and original social groups.
-- School disciplinary events and richer scholarship/admissions flows.
-- Country-specific stage variation beyond current simplified common progression.
+- Larger school-event libraries and multi-year school consequence chains.
+- More nuanced transfers, expulsions/re-entry, boarding/private/public variants, and school-specific facilities/culture.
+- Richer team seasons, competitions, elections, awards, and group-specific minigames.
+- More country/subregion profile variation beyond the current simplified profiles.
+- Alumni reunions and later-life resurfacing events that explicitly leverage archived school worlds.
 
 ### Workplace
 
@@ -244,7 +258,7 @@ The first reusable interactive layer is now implemented. Timing, sequence-memory
 
 ### Events / consequences
 
-679 event definitions exist and routine selection is efficient. The first five multi-year consequence chains now preserve exact NPC/origin-age context. Remaining work:
+684 event definitions exist and routine selection is efficient. The first five multi-year consequence chains now preserve exact NPC/origin-age context. Remaining work:
 
 - Expand delayed consequences across parenting, crime/legal history, property, business, school, and special careers.
 - Event cooldown currently follows recent-event history rather than storing an exact last-trigger year.
@@ -288,19 +302,24 @@ Added persisted `idCounter` for deterministic state-scoped runtime IDs. Migratio
 
 Added persistent family-planning/pregnancy state and targeted repair for obvious pre-fix runaway compensation/career saves from the first live mobile playtest.
 
-### Version 6 — current
+### Version 6
 
 Added the persisted centralized `actionLedger` with per-age usage, last-used ages for cooldowns, and a revision counter used by `GameEngine` to detect failed-but-mutating outcomes. v5 migration preserves legacy annual career/family action markers where present.
 
+
+### Version 7 — current
+
+Added persisted `socialWorlds` for school/workplace/organization membership and school-specific roster/group/conduct state. v6 migration reconstructs school worlds from existing education records so old lives retain their educational history while gaining persistent school affiliations.
+
 ## Next development sequence
 
-1. Use continued human mobile playtesting to audit any remaining action that lacks a deliberate time/resource/consequence classification; add policies only where repetition creates an exploit or implausible same-year progression.
-2. Build persistent school and workplace rosters with teacher/classmate/boss/coworker memories and target-aware event hooks.
-3. Expand delayed consequences into parenting, crime/legal, property, business and special-career content.
-4. Add richer autonomous descendant education, health, legal and household histories so generation handoffs preserve more than career/family state.
-5. Add asset-specific wills plus fictionalized estate administration/tax rules without breaking the current multi-heir settlement.
-6. Deepen special-career modules one family at a time without replacing working core systems.
-7. Expand the minigame framework with deployment/flight variants, event hooks, richer path-specific challenge sets, and full accessibility/device QA.
+1. Complete the 0.10.0 phone/browser playtest and repair any school-world UI, save-migration, or interaction issues before extending the social-world model.
+2. Phase 2: build persistent workplaces on the shared Social World foundation—generated bosses/coworkers, departments/roles, workplace memories, interactions, layoffs/bonuses/demotions/conflict/romance, and part-time-hour constraints.
+3. Phase 3: deepen NPC autonomy across education, health, household moves, crime/legal history, fame, imprisonment, finances, adoption, and memory/opinion-driven decisions.
+4. Phase 4: deepen special-career ecosystems with persistent teams/casts/rivals/staff, contracts, seasons, scandals, awards, retirement, and path-specific events.
+5. Phase 5: deepen generations/estates with asset-specific wills, fictionalized estate administration, richer NPC ownership, and broader kin taxonomy/performance validation.
+6. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
+7. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
 8. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
 9. Expand regional names substantially and verify long-dynasty repetition rates.
 10. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

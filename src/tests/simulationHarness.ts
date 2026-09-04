@@ -336,29 +336,28 @@ export function simulateLife(seed:string,maxAge=125,mode:SimulationMode='full',r
 
 export function runSimulation(options:SimulationOptions):SimulationReport {
   const requested=Math.max(1,Math.floor(options.lives));const maxAge=options.maxAge??125;const prefix=options.seedPrefix??'everthread-sim';const sampleLimit=options.keepAnomalySamples??12;const mode=options.mode??'full';
-  const results:LifeSimulationResult[]=[];
-  const anomalySamples:string[]=[];
+  const lifespans:number[]=[];const wealth:number[]=[];const anomalySamples:string[]=[];
   const educationDistribution:Record<string,number>={};const careerDistribution:Record<string,number>={};const profileDistribution:Record<string,number>={};const policyDistribution:Record<string,number>={};const causeOfDeathDistribution:Record<string,number>={};
-  let anomalyCount=0;
+  let anomalyCount=0,completedLives=0,marriedCount=0,childrenTotal=0,crimeCount=0,convictedCount=0,fameCount=0,forcedTerminalDeaths=0,inheritanceCount=0;
+  let cashTotal=0,propertyEquityTotal=0,vehiclesTotal=0,collectiblesTotal=0,investmentsTotal=0,investmentCostBasisTotal=0,investmentGainTotal=0,investmentContributionsTotal=0,investmentWithdrawalsTotal=0,businessesTotal=0,otherLiabilitiesTotal=0,lifetimeInheritanceTotal=0;
   for(let i=0;i<requested;i++){
-    const result=simulateLife(`${prefix}-${i+1}`,maxAge,mode,options.policy??'mixed');results.push(result);
+    const result=simulateLife(`${prefix}-${i+1}`,maxAge,mode,options.policy??'mixed');completedLives+=1;lifespans.push(result.lifespan);wealth.push(result.netWorth);
     bump(educationDistribution,result.highestEducation);bump(careerDistribution,result.primaryIndustry);bump(profileDistribution,result.profile);bump(policyDistribution,result.policy);bump(causeOfDeathDistribution,result.causeOfDeath);
-    anomalyCount+=result.anomalies.length;
-    if(result.anomalies.length&&anomalySamples.length<sampleLimit)anomalySamples.push(`${result.seed}: ${result.anomalies.join('; ')}`);
+    anomalyCount+=result.anomalies.length;if(result.anomalies.length&&anomalySamples.length<sampleLimit)anomalySamples.push(`${result.seed}: ${result.anomalies.join('; ')}`);
+    if(result.married)marriedCount+=1;childrenTotal+=result.children;if(result.committedCrime)crimeCount+=1;if(result.convictions>0)convictedCount+=1;if(result.peakFame>=25)fameCount+=1;if(result.forcedTerminalDeath)forcedTerminalDeaths+=1;if(result.lifetimeInheritance>0)inheritanceCount+=1;
+    cashTotal+=result.cash;propertyEquityTotal+=result.propertyEquity;vehiclesTotal+=result.vehicleValue;collectiblesTotal+=result.collectibleValue;investmentsTotal+=result.investmentValue;investmentCostBasisTotal+=result.investmentCostBasis;investmentGainTotal+=result.investmentGain;investmentContributionsTotal+=result.investmentContributions;investmentWithdrawalsTotal+=result.investmentWithdrawals;businessesTotal+=result.businessValue;otherLiabilitiesTotal+=result.otherLiabilities;lifetimeInheritanceTotal+=result.lifetimeInheritance;
   }
-  const lifespans=results.map(r=>r.lifespan),wealth=results.map(r=>r.netWorth);
-  const convicted=results.filter(r=>r.convictions>0).length;
-  const average=(pick:(result:LifeSimulationResult)=>number)=>results.reduce((sum,result)=>sum+pick(result),0)/results.length;
+  const denominator=Math.max(1,completedLives);const sum=(values:number[])=>values.reduce((a,b)=>a+b,0);
   return {
-    requestedLives:requested,completedLives:results.length,
-    averageLifespan:lifespans.reduce((a,b)=>a+b,0)/results.length,medianLifespan:median(lifespans),
-    averageNetWorth:wealth.reduce((a,b)=>a+b,0)/results.length,medianNetWorth:median(wealth),wealthPercentiles:{p10:percentile(wealth,.10),p25:percentile(wealth,.25),p75:percentile(wealth,.75),p90:percentile(wealth,.90),p99:percentile(wealth,.99)},millionaireRate:results.filter(r=>r.netWorth>=1_000_000).length/results.length,
-    marriageRate:results.filter(r=>r.married).length/results.length,averageChildren:results.reduce((sum,r)=>sum+r.children,0)/results.length,
-    crimeRate:results.filter(r=>r.committedCrime).length/results.length,convictionRate:convicted/results.length,fameRate:results.filter(r=>r.peakFame>=25).length/results.length,
-    forcedTerminalDeaths:results.filter(r=>r.forcedTerminalDeath).length,anomalyCount,anomalySamples,
+    requestedLives:requested,completedLives,
+    averageLifespan:sum(lifespans)/denominator,medianLifespan:median(lifespans),
+    averageNetWorth:sum(wealth)/denominator,medianNetWorth:median(wealth),wealthPercentiles:{p10:percentile(wealth,.10),p25:percentile(wealth,.25),p75:percentile(wealth,.75),p90:percentile(wealth,.90),p99:percentile(wealth,.99)},millionaireRate:wealth.filter(value=>value>=1_000_000).length/denominator,
+    marriageRate:marriedCount/denominator,averageChildren:childrenTotal/denominator,
+    crimeRate:crimeCount/denominator,convictionRate:convictedCount/denominator,fameRate:fameCount/denominator,
+    forcedTerminalDeaths,anomalyCount,anomalySamples,
     educationDistribution,careerDistribution,profileDistribution,policyDistribution,causeOfDeathDistribution,
-    averageWealthSources:{cash:average(r=>r.cash),propertyEquity:average(r=>r.propertyEquity),vehicles:average(r=>r.vehicleValue),collectibles:average(r=>r.collectibleValue),investments:average(r=>r.investmentValue),investmentCostBasis:average(r=>r.investmentCostBasis),investmentGain:average(r=>r.investmentGain),investmentContributions:average(r=>r.investmentContributions),investmentWithdrawals:average(r=>r.investmentWithdrawals),businesses:average(r=>r.businessValue),otherLiabilities:average(r=>r.otherLiabilities),lifetimeInheritance:average(r=>r.lifetimeInheritance)},
-    inheritanceRate:results.filter(r=>r.lifetimeInheritance>0).length/results.length,
+    averageWealthSources:{cash:cashTotal/denominator,propertyEquity:propertyEquityTotal/denominator,vehicles:vehiclesTotal/denominator,collectibles:collectiblesTotal/denominator,investments:investmentsTotal/denominator,investmentCostBasis:investmentCostBasisTotal/denominator,investmentGain:investmentGainTotal/denominator,investmentContributions:investmentContributionsTotal/denominator,investmentWithdrawals:investmentWithdrawalsTotal/denominator,businesses:businessesTotal/denominator,otherLiabilities:otherLiabilitiesTotal/denominator,lifetimeInheritance:lifetimeInheritanceTotal/denominator},
+    inheritanceRate:inheritanceCount/denominator,
   };
 }
 

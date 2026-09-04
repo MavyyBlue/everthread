@@ -4,6 +4,7 @@ import { ageUp, finalizeAgeUp, rewindToAge } from '../systems/AgingSystem';
 import { resolvePendingEvent, forceEvent } from '../systems/EventSystem';
 import { interactWithNpc, meetPotentialPartner, changeRelationshipType, haveChild } from '../systems/RelationshipSystem';
 import { studyHarder, skipClass, enrollProgram, dropOut } from '../systems/EducationSystem';
+import { attendSchoolGroup, cheatAtSchool, joinSchoolGroup, leaveSchoolGroup, volunteerAtSchool } from '../systems/SchoolWorldSystem';
 import { applyForJob, workHarder, askForRaise, resign, retire, takeFreelanceGig } from '../systems/CareerSystem';
 import { performWellnessActivity, riskyHabit, enterRehab, seekTreatment } from '../systems/HealthSystem';
 import { buyProperty, rentOutProperty, renovateProperty, sellProperty, buyVehicle, repairVehicle, buyCollectible } from '../systems/PropertySystem';
@@ -43,7 +44,7 @@ export class GameEngine {
   performActivity(activity:string,...args:unknown[]):EngineResult{
     const map:Record<string,()=>EngineResult>={
       gym:()=>performWellnessActivity(this.state,'gym'),running:()=>performWellnessActivity(this.state,'running'),walking:()=>performWellnessActivity(this.state,'walking'),martial_arts:()=>performWellnessActivity(this.state,'martial_arts'),meditation:()=>performWellnessActivity(this.state,'meditation'),diet:()=>performWellnessActivity(this.state,'diet'),
-      study:()=>studyHarder(this.state),skip_class:()=>skipClass(this.state),meet_date:()=>meetPotentialPartner(this.state),
+      study:()=>studyHarder(this.state),skip_class:()=>skipClass(this.state),school_cheat:()=>cheatAtSchool(this.state),school_volunteer:()=>volunteerAtSchool(this.state),meet_date:()=>meetPotentialPartner(this.state),
       freelance_writing:()=>takeFreelanceGig(this.state,'writing'),freelance_programming:()=>takeFreelanceGig(this.state,'programming'),freelance_design:()=>takeFreelanceGig(this.state,'design'),
     };const fn=map[activity];return fn?this.run(fn):{success:false,messages:[{text:`Unknown activity: ${activity}`}]};
   }
@@ -51,6 +52,7 @@ export class GameEngine {
   relationshipAction(npcId:string,action:'ask_out'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'){return this.run(()=>changeRelationshipType(this.state,npcId,action));}
   haveChild(partnerId?:string,adopt=false){return this.run(()=>haveChild(this.state,partnerId,adopt));}
   enroll(programId:string){return this.run(()=>enrollProgram(this.state,programId));} dropOut(){return this.run(()=>dropOut(this.state));}
+  joinSchoolGroup(groupId:string){return this.run(()=>joinSchoolGroup(this.state,groupId));} leaveSchoolGroup(groupId:string){return this.run(()=>leaveSchoolGroup(this.state,groupId));} attendSchoolGroup(groupId:string){return this.run(()=>attendSchoolGroup(this.state,groupId));}
   applyForJob(jobId:string){return this.run(()=>applyForJob(this.state,jobId));} workHarder(){return this.run(()=>workHarder(this.state));} askForRaise(){return this.run(()=>askForRaise(this.state));} resign(){return this.run(()=>resign(this.state));} retire(){return this.run(()=>retire(this.state));}
   purchaseProperty(typeId:string,mortgage=true){const r=this.run(()=>buyProperty(this.state,typeId,mortgage));if(r.success)this.state.flags.propertiesEver=Number(this.state.flags.propertiesEver??0)+1;return r;} rentProperty(id:string){return this.run(()=>rentOutProperty(this.state,id));} renovateProperty(id:string){return this.run(()=>renovateProperty(this.state,id));} sellProperty(id:string){return this.run(()=>sellProperty(this.state,id));}
   purchaseVehicle(typeId:string){const r=this.run(()=>buyVehicle(this.state,typeId));if(r.success)this.state.flags.vehiclesOwned=Number(this.state.flags.vehiclesOwned??0)+1;return r;} repairVehicle(id:string){return this.run(()=>repairVehicle(this.state,id));} purchaseCollectible(id:string){return this.run(()=>buyCollectible(this.state,id));}

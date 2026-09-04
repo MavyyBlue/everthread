@@ -1,5 +1,40 @@
 # Everthread Changelog
 
+## 0.10.0 — 2026-09-04 — Persistent School Social Worlds
+
+### Added
+
+- Save schema v7 with a persisted generic `SocialWorld` layer for schools now and workplaces/organizations later. Existing v6 education history reconstructs compatible archived/current school contexts during migration.
+- Country-profile school progression with varied stage start/transition ages and simplified minimum school-leaving ages while preserving the established primary/middle/secondary education record taxonomy.
+- Persistent school rosters with classmates, teachers, coaches, and school leadership stored as ordinary NPCs with memories, relationship state, aging, careers, and later-life continuity.
+- School clubs, teams, service groups, arts, academic organizations, social groups, and leadership paths tied to recurring roster NPCs.
+- Persistent attendance, conduct, social standing, honors, disciplinary history, academic-shortcut consequences, and school volunteering.
+- Admissions profiles that combine academics, intelligence, discipline, conduct, involvement, reputation, school standing, and honors; scholarships can cover different proportions of tuition.
+- Target-aware school events for recurring classmates and school authorities. Event effects and memories bind to the same NPC shown in the event copy.
+- Shared-world history in People sheets so former classmates remain identifiable by the institution/role through which the player knew them.
+- Background NPC simulation tier for ordinary school acquaintances; meaningful friends, rivals, romantic relationships, and family automatically receive the full annual autonomy pass.
+- Explicit simulation seed prefixes for independent population batches plus streaming simulation aggregation to avoid retaining complete result objects for every finished life.
+- Regression coverage for school-world migration, country school profiles, persistent rosters, bounded group activity, conduct/attendance, admissions weighting, compulsory-school leaving rules, and school-friend romance age safety.
+
+### Changed
+
+- School affiliation is no longer encoded solely by `Relationship.type`. A former classmate can become a friend, enemy, partner, or spouse and still remain discoverable in People → School through persisted institutional membership.
+- Childhood education transitions are profile-driven rather than one global 5→11→14→18 schedule.
+- Compulsory school cannot be dropped before the profile's minimum leaving age; post-secondary programs remain voluntarily leaveable.
+- Teen/adult relationship milestone validation now applies to existing school friends too, closing a path that could bypass the normal dating-age rules.
+- School activity effort uses the centralized action ledger, preventing join/participation/academic-risk reroll spam.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 64/64 regression cases pass.
+- 72 TS/TSX source files pass syntax transpilation in the dependency-limited workspace.
+- Two distinct 500-life neutral batches (1,000 unique lives total): zero anomalies and zero forced terminal deaths.
+- Two distinct 500-life mixed-policy batches (1,000 unique lives total): zero anomalies and zero forced terminal deaths.
+- Additional final 500-life mixed-policy sanity batch after age-boundary fixes: zero anomalies and zero forced terminal deaths.
+- Dependency-backed React/Vite production build remains the GitHub Actions deployment gate.
+
 ## 0.9.9 — 2026-09-04 — Life Saves & Dynamic Family Legacy
 
 ### Added

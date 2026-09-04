@@ -39,6 +39,12 @@ export const ACTION_POLICIES = {
 
   'education.effort': { maxPerAge: 1, message: 'You already made your major school-effort choice for this year.' },
   'education.enroll': { maxPerAge: 1, message: 'You already made a post-secondary enrollment decision this year.' },
+  'school.group.join': { maxPerAge: 2, message: 'You have already made enough major school-activity commitments this year.' },
+  'school.group.join.target': { maxPerAge: 1, message: 'You already made a membership decision about that school activity this year.' },
+  'school.group.activity.total': { maxPerAge: 2, message: 'You have already committed substantial extra time to school activities this year.' },
+  'school.group.activity.target': { maxPerAge: 1, message: 'You already gave that school activity extra attention this year.' },
+  'school.risk': { maxPerAge: 1, message: 'You already took a major academic risk this year.' },
+  'school.community': { maxPerAge: 1, message: 'You already completed a major school-community effort this year.' },
 
   'wellness.total': { maxPerAge: 3, message: 'You have already committed most of your spare time to wellness activities this year.' },
   'wellness.activity': { maxPerAge: 1, message: 'You already focused on that wellness activity this year.' },

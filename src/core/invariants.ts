@@ -36,6 +36,25 @@ export function enforceStateInvariants(state: GameState): GameState {
     npc.hiddenOpinion = clamp(npc.hiddenOpinion, -100, 100);
     if (!npc.alive) { npc.imprisoned = false; npc.partnerId = undefined; }
   }
+  state.socialWorlds ??= [];
+  const activeSchoolWorlds = state.socialWorlds.filter(world => world.kind === 'school' && world.active);
+  if (activeSchoolWorlds.length > 1) {
+    const keep = activeSchoolWorlds.slice().sort((a,b)=>b.startedAge-a.startedAge)[0];
+    for (const world of activeSchoolWorlds) if (world !== keep) { world.active = false; world.endedAge ??= state.character.age; }
+  }
+  for (const world of state.socialWorlds) {
+    world.members = (world.members ?? []).filter(member => Boolean(state.npcs[member.npcId]));
+    world.groups ??= [];
+    for (const group of world.groups) group.memberNpcIds = (group.memberNpcIds ?? []).filter(id => Boolean(state.npcs[id]));
+    if (world.school) {
+      world.school.attendance = clamp(world.school.attendance);
+      world.school.conduct = clamp(world.school.conduct);
+      world.school.socialStanding = clamp(world.school.socialStanding);
+      world.school.honors = Math.max(0,Math.floor(world.school.honors));
+      world.school.disciplinaryActions = Math.max(0,Math.floor(world.school.disciplinaryActions));
+    }
+  }
+
   for (const npc of Object.values(state.npcs)) {
     if (!npc.partnerId) continue;
     const partner = state.npcs[npc.partnerId];
@@ -63,6 +82,11 @@ export function validateState(state: GameState): string[] {
     const partner = state.npcs[npc.partnerId];
     if (!partner) errors.push(`NPC ${npc.id} references missing partner ${npc.partnerId}`);
     else if (partner.partnerId !== npc.id) errors.push(`NPC partnership ${npc.id}/${partner.id} is asymmetric`);
+  }
+  if ((state.socialWorlds??[]).filter(world=>world.kind==='school'&&world.active).length>1) errors.push('Multiple active school worlds');
+  for (const world of state.socialWorlds??[]) {
+    for (const member of world.members??[]) if (!state.npcs[member.npcId]) errors.push(`Social world ${world.id} references missing NPC ${member.npcId}`);
+    if (world.school && (world.school.attendance<0||world.school.attendance>100||world.school.conduct<0||world.school.conduct>100||world.school.socialStanding<0||world.school.socialStanding>100)) errors.push(`School world ${world.id} contains invalid bounded stats`);
   }
   return errors;
 }

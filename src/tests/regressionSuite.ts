@@ -3,12 +3,13 @@ import { createNewGame } from '../systems/CharacterSystem';
 import { ageUp, finalizeAgeUp, rewindToAge } from '../systems/AgingSystem';
 import { forceEvent, processDelayedEvents, resolvePendingEvent } from '../systems/EventSystem';
 import { deathProbability } from '../systems/DeathSystem';
-import { enrollProgram } from '../systems/EducationSystem';
+import { admissionProfile, canDropOut, dropOut, enrollProgram, processEducationYear, skipClass } from '../systems/EducationSystem';
 import { availableJobs, applyForJob, askForRaise, workHarder } from '../systems/CareerSystem';
 import { processAnnualFinance, netWorth, wealthBreakdown } from '../systems/FinanceSystem';
 import { buyCollectible, buyProperty, renovateProperty } from '../systems/PropertySystem';
 import { countryById } from '../data/countries';
-import { meetPotentialPartner, haveChild, ageNpcs, interactWithNpc, processFamilyPlanningYear } from '../systems/RelationshipSystem';
+import { educationById } from '../data/education';
+import { meetPotentialPartner, haveChild, ageNpcs, changeRelationshipType, interactWithNpc, processFamilyPlanningYear } from '../systems/RelationshipSystem';
 import { jobById } from '../data/jobs';
 import { eventById } from '../data/events';
 import { enforceStateInvariants, validateState } from '../core/invariants';
@@ -29,6 +30,8 @@ import { buildPeopleRelationshipGraph, peopleFolderSummaries } from '../systems/
 import { racingAction } from '../systems/SpecialCareerSystem';
 import { relatedMiniGameSkill, skipMiniGame } from '../minigames/framework';
 import { featuredLife } from '../systems/LifeSaveSystem';
+import { attendSchoolGroup, cheatAtSchool, currentSchoolWorld, joinSchoolGroup, migrateLegacySchoolWorlds, schoolAdmissionsFactors } from '../systems/SchoolWorldSystem';
+import { schoolProfileFor } from '../data/schools';
 
 export interface RegressionResult {name:string;passed:boolean;error?:string;}
 export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
@@ -222,6 +225,18 @@ export const regressionCases:RegressionCase[]=[
     }
   },
   {
+    name:'school friendships cannot bypass dating and marriage age rules',
+    run:()=>{
+      const state=createNewGame({seed:'school-romance-age'});state.character.age=12;
+      const friend: Npc={id:'young-friend',firstName:'Kai',lastName:'Test',age:12,alive:true,health:90,happiness:80,wealth:0,countryId:state.character.countryId,city:state.character.city,sexuality:'bisexual',fertility:60,maritalStatus:'single',traits:['curious'],hiddenOpinion:40,memories:[],parentIds:[],childIds:[]};
+      state.npcs[friend.id]=friend;state.relationships.push({id:'young-friend-rel',npcId:friend.id,type:'friend',score:90,attraction:90,compatibility:90,yearsKnown:3});
+      equal(changeRelationshipType(state,friend.id,'ask_out').success,false,'pre-teen school friend could be dated');
+      state.character.age=16;friend.age=16;equal(changeRelationshipType(state,friend.id,'ask_out').success,true,'valid teen-to-teen dating was blocked');
+      equal(changeRelationshipType(state,friend.id,'propose').success,false,'teen relationship could become engaged');
+      state.character.age=18;friend.age=17;state.relationships.find(rel=>rel.npcId===friend.id)!.type='friend';equal(changeRelationshipType(state,friend.id,'ask_out').success,false,'adult could date a minor school friend');
+    }
+  },
+  {
     name:'adult dating does not generate minor partners',
     run:()=>{
       for(let i=0;i<25;i++){const state=highStatAdult(`adult-dating-${i}`);state.character.age=18;const before=new Set(Object.keys(state.npcs));assert(meetPotentialPartner(state).success,'dating action did not complete');const added=Object.values(state.npcs).find(n=>!before.has(n.id));assert(added,'dating action did not add NPC');assert(added.age>=18,`adult dating generated age ${added.age}`);}
@@ -404,20 +419,20 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'rewind migrates legacy snapshots before restoring them',
     run:()=>{
-      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,6,'rewind did not migrate snapshot to schema v6');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
+      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,7,'rewind did not migrate snapshot to schema v7');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
     }
   },
   {
     name:'save migrations restore current required structures',
     run:()=>{
       const current=createNewGame({seed:'migration'});const legacy=structuredClone(current) as GameState;legacy.saveVersion=1;delete (legacy as unknown as {travel?:unknown}).travel;delete (legacy as unknown as {inheritance?:unknown}).inheritance;delete (legacy as unknown as {familyPlanning?:unknown}).familyPlanning;legacy.yearlySnapshots=[];
-      const migrated=migrateSave(legacy);equal(migrated.saveVersion,6,'save did not migrate to version 6');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');assert(migrated.actionLedger,'action ledger missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
+      const migrated=migrateSave(legacy);equal(migrated.saveVersion,7,'save did not migrate to version 7');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');assert(migrated.actionLedger,'action ledger missing after migration');assert(migrated.socialWorlds,'social-world state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
     }
   },
   {
     name:'v5 migration preserves consumed yearly actions in the central ledger',
     run:()=>{
-      const legacy=highStatAdult('action-ledger-migration');legacy.saveVersion=5;legacy.flags.lastWorkHarderAge=legacy.character.age;legacy.flags.lastRaiseRequestAge=legacy.character.age;delete (legacy as unknown as {actionLedger?:unknown}).actionLedger;const migrated=migrateSave(legacy);equal(migrated.saveVersion,6,'v5 save did not migrate to schema v6');equal(actionUsesThisAge(migrated,'career.work_harder'),1,'legacy work-effort use was lost');equal(actionUsesThisAge(migrated,'career.raise'),1,'legacy raise use was lost');equal(actionAllowed(migrated,{policy:'career.work_harder'}),false,'migrated save allowed a duplicate yearly work action');
+      const legacy=highStatAdult('action-ledger-migration');legacy.saveVersion=5;legacy.flags.lastWorkHarderAge=legacy.character.age;legacy.flags.lastRaiseRequestAge=legacy.character.age;delete (legacy as unknown as {actionLedger?:unknown}).actionLedger;const migrated=migrateSave(legacy);equal(migrated.saveVersion,7,'v5 save did not migrate to schema v7');equal(actionUsesThisAge(migrated,'career.work_harder'),1,'legacy work-effort use was lost');equal(actionUsesThisAge(migrated,'career.raise'),1,'legacy raise use was lost');equal(actionAllowed(migrated,{policy:'career.work_harder'}),false,'migrated save allowed a duplicate yearly work action');
     }
   },
   {
@@ -517,6 +532,47 @@ export const regressionCases:RegressionCase[]=[
       const secondary=createNewGame({seed:'featured-secondary',slotId:'slot-2'});secondary.character.firstName='Niko';secondary.character.age=72;secondary.character.stats={health:78,happiness:82,intelligence:84,appearance:76};secondary.finances.cash=600000;secondary.fame.fame=20;secondary.legacy.generation=1;
       const best=featuredLife([primary,secondary]);assert(best,'no featured life was selected');equal(best.lifeId,'life-gen-2','stronger Generation 2 life was not selected over weaker current generations');equal(best.generation,2,'featured completed life lost its generation');
       const fallback=featuredLife([secondary]);assert(fallback,'no fallback life was selected');equal(fallback.slotId,'slot-2','deleting the featured save did not promote the next surviving life');
+    }
+  },
+  {
+    name:'country school profiles create persistent staged school worlds and preserve prior rosters',
+    run:()=>{
+      const us=createNewGame({seed:'school-world-us',countryId:'us'});equal(schoolProfileFor('us').stages[0]?.startAge,5,'US game profile lost its age-5 school start');us.character.age=5;us.currentYear=2031;processEducationYear(us);const primary=currentSchoolWorld(us);assert(primary?.school,'primary school world was not created');equal(primary.school.stage,'primary','wrong school stage became active');assert(primary.members.filter(member=>member.role==='classmate').length>=7,'primary roster has too few classmates');assert(primary.members.some(member=>member.role==='principal'),'school world has no principal');assert(us.relationships.some(rel=>rel.type==='classmate'),'classmates were not added to persistent relationships');assert(us.relationships.some(rel=>rel.type==='teacher'||rel.type==='principal'),'school staff were not added to persistent relationships');
+      const primaryId=primary.id;us.character.age=11;us.currentYear=2037;processEducationYear(us);const middle=currentSchoolWorld(us);assert(middle?.school,'middle school world was not created');equal(middle.school.stage,'middle','country stage transition did not activate middle school');assert(middle.id!==primaryId,'school transition reused the prior world');equal(us.socialWorlds.find(world=>world.id===primaryId)?.active,false,'prior school world was not archived');assert(us.relationships.filter(rel=>rel.type==='classmate').length>middle.members.filter(member=>member.role==='classmate').length,'graduated classmates did not remain in relationship history');
+      const jp=createNewGame({seed:'school-world-jp',countryId:'jp'});jp.character.age=5;processEducationYear(jp);equal(jp.education.length,0,'Japan profile incorrectly started compulsory school at age 5');jp.character.age=6;processEducationYear(jp);equal(jp.education[0]?.stage,'primary','Japan profile did not start school at age 6');
+    }
+  },
+  {
+    name:'v6 migration reconstructs school social worlds from existing education history',
+    run:()=>{
+      const legacy=createNewGame({seed:'school-migration',countryId:'us'});legacy.character.age=16;legacy.currentYear=2042;legacy.education=[{stage:'primary',institution:'Old Primary',startAge:5,endAge:11,graduated:true,droppedOut:false,scholarship:false,performance:70},{stage:'middle',institution:'Old Middle',startAge:11,endAge:14,graduated:true,droppedOut:false,scholarship:false,performance:74},{stage:'secondary',institution:'Current Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:78}];legacy.socialWorlds=[];legacy.saveVersion=6;const migrated=migrateSave(legacy);equal(migrated.saveVersion,7,'v6 school save did not migrate to schema v7');equal(migrated.socialWorlds.length,3,'education history did not reconstruct three school worlds');equal(migrated.socialWorlds.filter(world=>world.active).length,1,'migration produced the wrong number of active school worlds');assert(migrated.relationships.some(rel=>rel.type==='classmate'),'migrated school history did not restore classmates');equal(validateState(migrated).length,0,'migrated school world violates invariants');
+    }
+  },
+  {
+    name:'compulsory school cannot be dropped before the country leaving age',
+    run:()=>{
+      const state=createNewGame({seed:'compulsory-dropout',countryId:'us'});state.character.age=11;state.education=[{stage:'middle',institution:'Test Middle',startAge:11,graduated:false,droppedOut:false,scholarship:false,performance:70}];migrateLegacySchoolWorlds(state);
+      equal(canDropOut(state),false,'middle school was incorrectly optional');equal(dropOut(state).success,false,'child dropped out of compulsory school');
+      state.education[0]!.droppedOut=true;state.education[0]!.endAge=14;state.education.push({stage:'secondary',institution:'Test Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:70});state.character.age=16;
+      equal(canDropOut(state),true,'secondary school leaving age was not honored');equal(dropOut(state).success,true,'eligible older teen could not leave secondary school');
+    }
+  },
+  {
+    name:'school groups create bounded persistent involvement that improves the admissions profile',
+    run:()=>{
+      const state=createNewGame({seed:'school-groups',countryId:'us',advanced:{intelligence:75,discipline:75,social:70,athleticism:70}});state.character.age=14;state.currentYear=2040;state.education=[{stage:'secondary',institution:'Test Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:76}];migrateLegacySchoolWorlds(state);const world=currentSchoolWorld(state);assert(world&&world.groups.length>=3,'school groups were not generated');const before=schoolAdmissionsFactors(state).involvement;const first=world.groups[0]!,second=world.groups[1]!,third=world.groups[2]!;assert(joinSchoolGroup(state,first.id).success,'first school group join failed');assert(joinSchoolGroup(state,second.id).success,'second school group join failed');equal(joinSchoolGroup(state,third.id).success,false,'yearly school commitment limit allowed a third join');assert(schoolAdmissionsFactors(state).involvement>before,'school involvement did not improve after joining groups');assert(attendSchoolGroup(state,first.id).success,'school group participation failed');equal(attendSchoolGroup(state,first.id).success,false,'same school group activity could be farmed repeatedly in one year');
+    }
+  },
+  {
+    name:'attendance and academic misconduct persist into school conduct instead of being stat-only actions',
+    run:()=>{
+      const state=createNewGame({seed:'school-conduct',countryId:'us',advanced:{discipline:70,intelligence:70}});state.character.age=14;state.currentYear=2040;state.education=[{stage:'secondary',institution:'Conduct Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:70}];migrateLegacySchoolWorlds(state);const world=currentSchoolWorld(state);assert(world?.school,'school conduct world missing');const attendance=world.school.attendance;const conduct=world.school.conduct;assert(skipClass(state).success,'first skip-class action failed');assert(world.school.attendance<attendance,'skipping class did not reduce persistent attendance');assert(world.school.conduct<conduct,'skipping class did not reduce persistent conduct');state.character.age+=1;state.actionLedger.age=state.character.age;state.actionLedger.uses={};const conductBeforeRisk=world.school.conduct;cheatAtSchool(state);assert(world.school.conduct<=conductBeforeRisk,'academic shortcut improved conduct');equal(cheatAtSchool(state).success,false,'academic shortcut could be rerolled in the same year');
+    }
+  },
+  {
+    name:'post-secondary admissions reward school history without letting activities replace academic readiness',
+    run:()=>{
+      const strong=createNewGame({seed:'admissions-strong',countryId:'us',advanced:{intelligence:78,discipline:82,social:80}});strong.character.age=18;strong.character.secondary.academicPerformance=84;strong.education=[{stage:'secondary',institution:'Strong Secondary',startAge:14,endAge:18,graduated:true,droppedOut:false,scholarship:false,performance:84}];migrateLegacySchoolWorlds(strong);const world=strong.socialWorlds[0];assert(world?.school,'historical school world missing for admissions');world.school.conduct=92;world.school.socialStanding=82;world.school.honors=3;for(const group of world.groups.slice(0,3)){group.playerJoinedAge=15;group.playerRole='officer';}const weak=structuredClone(strong);weak.socialWorlds[0]!.school!.conduct=35;weak.socialWorlds[0]!.school!.socialStanding=30;weak.socialWorlds[0]!.school!.honors=0;for(const group of weak.socialWorlds[0]!.groups){delete group.playerJoinedAge;delete group.playerRole;}const program=educationById['computer_science']!;const strongProfile=admissionProfile(strong,program);const weakProfile=admissionProfile(weak,program);assert(strongProfile.score>weakProfile.score+10,'school history did not materially affect admissions profile');const unready=structuredClone(strong);unready.character.stats.intelligence=10;equal(admissionProfile(unready,program).competitive,false,'activities were allowed to replace basic academic readiness');
     }
   },
   {

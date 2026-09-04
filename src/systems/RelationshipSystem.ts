@@ -130,15 +130,28 @@ function handleNpcDeath(state:GameState,npc:Npc){
 
 export function ageNpcs(state:GameState,rng=createRng(state.seed,state.rngCounter)){
   const startingNpcs=Object.values(state.npcs);const processedCouples=new Set<string>();
+  const directTypes=new Map(state.relationships.map(rel=>[rel.npcId,rel] as const));
+  const isMeaningful=(npcId:string)=>{const rel=directTypes.get(npcId);return Boolean(rel&&(['friend','best_friend','enemy','partner','fiance','spouse','ex'].includes(rel.type)||FAMILY_RELATION_TYPES.has(rel.type)||rel.score>=72));};
   for(const npc of startingNpcs){
-    if(!npc.alive)continue;npc.age+=1;npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.11)+rng.int(-2,1));npc.happiness=clamp(npc.happiness+rng.int(-3,3));
+    if(!npc.alive)continue;npc.age+=1;
+    const backgroundSchoolNpc=npc.simulationTier==='background'&&!isMeaningful(npc.id);
+    if(backgroundSchoolNpc){
+      // Acquaintances still age every year, but expensive stochastic autonomy is batched biennially.
+      npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.08));
+      if(npc.age%2!==0)continue;
+      npc.health=clamp(npc.health+rng.int(-3,1));npc.happiness=clamp(npc.happiness+rng.int(-3,3));
+      if(npc.age%4===0)updateNpcCareer(state,npc,rng);
+      if(npc.age>75||npc.health<15){const deathChance=Math.max(.006,(npc.age-70)*.012+(20-npc.health)*.004);if(rng.chance(deathChance))handleNpcDeath(state,npc);}
+      continue;
+    }
+    npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.11)+rng.int(-2,1));npc.happiness=clamp(npc.happiness+rng.int(-3,3));
     if(npc.imprisoned&&rng.chance(.18))npc.happiness=clamp(npc.happiness-4);
     updateNpcCareer(state,npc,rng);
     if(npc.age>=18&&!npc.partnerId&&!hasPlayerRomance(state,npc.id)&&['single','divorced','widowed'].includes(npc.maritalStatus)&&rng.chance(npc.traits.includes('romantic')?.04:.025))createAutonomousPartner(state,npc,rng);
     advanceNpcPartnership(state,npc,rng);maybeCreateNpcChild(state,npc,processedCouples,rng);
     if(npc.age>75||npc.health<15){const deathChance=Math.max(.003,(npc.age-70)*.006+(20-npc.health)*.002);if(rng.chance(deathChance))handleNpcDeath(state,npc);}
   }
-  for(const rel of state.relationships){rel.yearsKnown+=1;const npc=state.npcs[rel.npcId];if(!npc?.alive)continue;const decay=['spouse','child','parent','grandchild','grandparent'].includes(rel.type)?rng.int(-1,1):rng.int(-2,1);rel.score=clamp(rel.score+decay);}
+  for(const rel of state.relationships){rel.yearsKnown+=1;const npc=state.npcs[rel.npcId];if(!npc?.alive)continue;const backgroundSchoolRel=npc.simulationTier==='background'&&!isMeaningful(rel.npcId);if(backgroundSchoolRel&&state.character.age%2!==0)continue;const decay=['spouse','child','parent','grandchild','grandparent'].includes(rel.type)?rng.int(-1,1):rng.int(-2,1);rel.score=clamp(rel.score+decay);}
   state.rngCounter=rng.counter();
 }
 
@@ -213,6 +226,12 @@ export function meetPotentialPartner(state:GameState):EngineResult {
 export function changeRelationshipType(state:GameState,npcId:string,action:'ask_out'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'):EngineResult {
   const npc=state.npcs[npcId]; const rel=state.relationships.find(r=>r.npcId===npcId);
   if(!npc||!rel||!npc.alive) return {success:false,messages:[{text:'That relationship is unavailable.'}]};
+  if(action==='ask_out'||action==='reconcile'){
+    if(state.character.age<14||npc.age<14)return{success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
+    if(state.character.age<18&&npc.age>=18)return{success:false,messages:[{text:'Teen dating is limited to other teens.'}]};
+    if(state.character.age>=18&&npc.age<18)return{success:false,messages:[{text:'Adult dating is limited to adults.'}]};
+  }
+  if((action==='propose'||action==='marry')&&(state.character.age<18||npc.age<18))return{success:false,messages:[{text:'Engagement and marriage are adult relationship milestones.'}]};
   if(action==='ask_out'&&rel.type!=='friend')return{success:false,messages:[{text:'You can only ask out a current friend.'}]};
   if(action==='propose'&&rel.type!=='partner')return{success:false,messages:[{text:'You need to be dating before proposing.'}]};
   if(action==='marry'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'Marriage is not available in this relationship yet.'}]};

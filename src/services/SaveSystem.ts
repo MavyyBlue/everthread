@@ -2,8 +2,9 @@ import type { GameState, SettingsState } from '../types/game';
 import { enforceStateInvariants, validateState } from '../core/invariants';
 import { jobById, jobs } from '../data/jobs';
 import { countryById } from '../data/countries';
+import { migrateLegacySchoolWorlds } from '../systems/SchoolWorldSystem';
 
-const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';const ACTIVE_SLOT_KEY='everthread-active-save-slot';export const SAVE_VERSION=6;
+const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';const ACTIVE_SLOT_KEY='everthread-active-save-slot';export const SAVE_VERSION=7;
 
 function canUseIndexedDb(){return typeof indexedDB!=='undefined';}
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE,{keyPath:'slotId'});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
@@ -73,7 +74,12 @@ export function migrateSave(raw:unknown):GameState {
     state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;
     version=6;
   }
-  if(version>SAVE_VERSION)throw new Error(`Save version ${version} is newer than this build supports.`);state.saveVersion=SAVE_VERSION;state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};return enforceStateInvariants(state);
+  if(version<7){
+    state.socialWorlds=state.socialWorlds??[];
+    migrateLegacySchoolWorlds(state);
+    version=7;
+  }
+  if(version>SAVE_VERSION)throw new Error(`Save version ${version} is newer than this build supports.`);state.saveVersion=SAVE_VERSION;state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.socialWorlds=state.socialWorlds??[];state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};return enforceStateInvariants(state);
 }
 
 export async function saveGame(state:GameState):Promise<void>{state.lastSavedAt=new Date().toISOString();const clean=stripRuntime(state);if(!canUseIndexedDb()){localStorage.setItem(`everthread-save-${state.slotId}`,JSON.stringify(clean));return;}const db=await openDb();await new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(clean);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();}

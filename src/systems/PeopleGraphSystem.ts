@@ -70,7 +70,7 @@ export const PEOPLE_FOLDERS: readonly PeopleFolderDefinition[] = [
     id: 'school',
     title: 'School',
     description: 'Persistent classmates and teachers from your education history.',
-    relationshipTypes: ['classmate', 'teacher'],
+    relationshipTypes: ['classmate', 'teacher', 'principal', 'coach'],
   },
   {
     id: 'work',
@@ -91,6 +91,14 @@ export function folderForId(id: PeopleFolderId): PeopleFolderDefinition {
 export function relationshipsForFolder(state: GameState, folderId: PeopleFolderId): Relationship[] {
   const folder = folderForId(folderId);
   const allowed = new Set<RelationshipType>(folder.relationshipTypes);
+  if (folderId === 'school') {
+    const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='school').flatMap(world=>world.members.map(member=>member.npcId)));
+    return state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
+  }
+  if (folderId === 'work') {
+    const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='workplace').flatMap(world=>world.members.map(member=>member.npcId)));
+    return state.relationships.filter(rel => (allowed.has(rel.type)||affiliated.has(rel.npcId)) && Boolean(state.npcs[rel.npcId]));
+  }
   return state.relationships.filter(rel => allowed.has(rel.type) && Boolean(state.npcs[rel.npcId]));
 }
 

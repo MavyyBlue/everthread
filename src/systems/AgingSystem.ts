@@ -6,6 +6,7 @@ import { processEconomyYear } from './EconomySystem';
 import { processHealthYear } from './HealthSystem';
 import { ageNpcs, processFamilyPlanningYear } from './RelationshipSystem';
 import { processEducationYear } from './EducationSystem';
+import { processSchoolWorldYear } from './SchoolWorldSystem';
 import { processCareerYear } from './CareerSystem';
 import { processMarketYear } from './InvestmentSystem';
 import { processBusinessesYear } from './BusinessSystem';
@@ -34,6 +35,7 @@ export function ageUp(state:GameState):EngineResult {
     ageNpcs(state);
     processFamilyPlanningYear(state);
     processEducationYear(state);
+    processSchoolWorldYear(state);
     processCareerYear(state);
     processMarketYear(state);
     processBusinessesYear(state);

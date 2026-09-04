@@ -26,6 +26,7 @@ function eligible(state:GameState,event:GameEventDefinition){
   if(event.tags.includes('requires:employed')&&!state.employment.current)return false;
   if(event.tags.includes('requires:famous')&&state.fame.fame<10)return false;
   if(event.tags.includes('school')&&!state.education.some(e=>!e.graduated&&!e.droppedOut&&!e.endAge))return false;
+  if(event.tags.includes('requires:school_npc')&&!state.relationships.some(r=>['classmate','teacher','principal','coach'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
   if(event.tags.includes('romance')&&!state.relationships.some(r=>['partner','fiance','spouse'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
   if(event.tags.includes('requires:romantic')&&!state.relationships.some(r=>['partner','fiance','spouse'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
   if(event.tags.includes('requires:family')&&!state.relationships.some(r=>['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
@@ -66,12 +67,24 @@ function pickRareEvent(state:GameState,rng:ReturnType<typeof createRng>){
   return rng.weighted(triggered.map(event=>({item:event,weight:Math.max(.000001,event.probability)})));
 }
 
+function schoolAffiliationIds(state:GameState,roles?:string[]){
+  const world=(state.socialWorlds??[]).find(item=>item.kind==='school'&&item.active);
+  if(!world)return new Set<string>();
+  return new Set(world.members.filter(member=>!roles||roles.includes(member.role)).map(member=>member.npcId));
+}
+
 function eventContextPayload(state:GameState,event:GameEventDefinition,rng:ReturnType<typeof createRng>):Record<string,unknown>|undefined{
   const targetTag=event.tags.find(tag=>tag.startsWith('target:'));
   if(!targetTag)return undefined;
   const selector=targetTag.slice('target:'.length);
-  const allowed=selector==='romantic'?['partner','fiance','spouse']:selector==='family'?['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew']:selector==='friend'?['friend','best_friend']:[];
-  const candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);
+  let candidates:Relationship[]=[];
+  if(selector==='school'||selector==='school_peer'||selector==='school_authority'){
+    const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;
+    const ids=schoolAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);
+  }else{
+    const allowed=selector==='romantic'?['partner','fiance','spouse']:selector==='family'?['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew']:selector==='friend'?['friend','best_friend']:[];
+    candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);
+  }
   if(!candidates.length)return undefined;
   return {npcId:rng.pick(candidates).npcId};
 }
@@ -112,6 +125,10 @@ function relationshipCandidates(state:GameState,selector:string|undefined,payloa
   if(selector==='romantic')return candidates.filter(rel=>['partner','fiance','spouse'].includes(rel.type));
   if(selector==='family')return candidates.filter(rel=>['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew'].includes(rel.type));
   if(selector==='friend')return candidates.filter(rel=>['friend','best_friend'].includes(rel.type));
+  if(selector==='school'||selector==='school_peer'||selector==='school_authority'){
+    const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;
+    const ids=schoolAffiliationIds(state,roles);return candidates.filter(rel=>ids.has(rel.npcId));
+  }
   return candidates;
 }
 
@@ -159,7 +176,7 @@ export function resolvePendingEvent(state: GameState, choiceId: string): EngineR
   const summary = outcomeText || `You chose: ${choice.label}.`;
   state.timeline.push({
     id: makeStateId(state,'timeline'), year: state.currentYear, age: state.character.age,
-    category: def.category === 'health' ? 'health' : def.category === 'work' ? 'career' : def.category.includes('crime') ? 'legal' : def.category === 'money' ? 'money' : def.category === 'fame' ? 'fame' : def.category === 'family' ? 'family' : def.category === 'travel' ? 'travel' : 'random',
+    category: def.category === 'health' ? 'health' : def.category === 'work' ? 'career' : def.category === 'school' ? 'school' : def.category.includes('crime') ? 'legal' : def.category === 'money' ? 'money' : def.category === 'fame' ? 'fame' : def.category === 'family' ? 'family' : def.category === 'travel' ? 'travel' : 'random',
     importance: 2, title: def.title, text: `${pending.description} ${summary}`, ...(typeof pending.payload?.npcId==='string'?{npcIds:[pending.payload.npcId]}:{})
   });
   state.pendingEvent = undefined;
