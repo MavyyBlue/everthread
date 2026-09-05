@@ -6,6 +6,7 @@ import { interactWithNpc, meetPotentialPartner, changeRelationshipType, haveChil
 import { studyHarder, skipClass, enrollProgram, dropOut } from '../systems/EducationSystem';
 import { attendSchoolGroup, cheatAtSchool, joinSchoolGroup, leaveSchoolGroup, volunteerAtSchool } from '../systems/SchoolWorldSystem';
 import { applyForJob, workHarder, askForRaise, resign, retire, takeFreelanceGig } from '../systems/CareerSystem';
+import { askBossForFeedback, collaborateAtWork, networkAtWork, quitPartTimeJob, reportCoworkerIssue, startPartTimeJob } from '../systems/WorkplaceSystem';
 import { performWellnessActivity, riskyHabit, enterRehab, seekTreatment } from '../systems/HealthSystem';
 import { buyProperty, rentOutProperty, renovateProperty, sellProperty, buyVehicle, repairVehicle, buyCollectible } from '../systems/PropertySystem';
 import { buySecurity, sellSecurity } from '../systems/InvestmentSystem';
@@ -54,6 +55,8 @@ export class GameEngine {
   enroll(programId:string){return this.run(()=>enrollProgram(this.state,programId));} dropOut(){return this.run(()=>dropOut(this.state));}
   joinSchoolGroup(groupId:string){return this.run(()=>joinSchoolGroup(this.state,groupId));} leaveSchoolGroup(groupId:string){return this.run(()=>leaveSchoolGroup(this.state,groupId));} attendSchoolGroup(groupId:string){return this.run(()=>attendSchoolGroup(this.state,groupId));}
   applyForJob(jobId:string){return this.run(()=>applyForJob(this.state,jobId));} workHarder(){return this.run(()=>workHarder(this.state));} askForRaise(){return this.run(()=>askForRaise(this.state));} resign(){return this.run(()=>resign(this.state));} retire(){return this.run(()=>retire(this.state));}
+  collaborateAtWork(){return this.run(()=>collaborateAtWork(this.state));} networkAtWork(){return this.run(()=>networkAtWork(this.state));} askBossFeedback(){return this.run(()=>askBossForFeedback(this.state));} reportCoworker(npcId:string){return this.run(()=>reportCoworkerIssue(this.state,npcId));}
+  startPartTimeJob(jobId:string,hours=10){return this.run(()=>startPartTimeJob(this.state,jobId,hours));} quitPartTimeJob(jobId:string){return this.run(()=>quitPartTimeJob(this.state,jobId));}
   purchaseProperty(typeId:string,mortgage=true){const r=this.run(()=>buyProperty(this.state,typeId,mortgage));if(r.success)this.state.flags.propertiesEver=Number(this.state.flags.propertiesEver??0)+1;return r;} rentProperty(id:string){return this.run(()=>rentOutProperty(this.state,id));} renovateProperty(id:string){return this.run(()=>renovateProperty(this.state,id));} sellProperty(id:string){return this.run(()=>sellProperty(this.state,id));}
   purchaseVehicle(typeId:string){const r=this.run(()=>buyVehicle(this.state,typeId));if(r.success)this.state.flags.vehiclesOwned=Number(this.state.flags.vehiclesOwned??0)+1;return r;} repairVehicle(id:string){return this.run(()=>repairVehicle(this.state,id));} purchaseCollectible(id:string){return this.run(()=>buyCollectible(this.state,id));}
   invest(securityId:string,amount:number){return this.run(()=>buySecurity(this.state,securityId,amount));} sellInvestment(securityId:string,units?:number){return this.run(()=>sellSecurity(this.state,securityId,units));}

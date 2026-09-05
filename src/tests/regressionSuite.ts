@@ -5,6 +5,7 @@ import { forceEvent, processDelayedEvents, resolvePendingEvent } from '../system
 import { deathProbability } from '../systems/DeathSystem';
 import { admissionProfile, canDropOut, dropOut, enrollProgram, processEducationYear, skipClass } from '../systems/EducationSystem';
 import { availableJobs, applyForJob, askForRaise, workHarder } from '../systems/CareerSystem';
+import { askBossForFeedback, collaborateAtWork, currentWorkplaceWorld, migrateLegacyWorkplaceWorlds, networkAtWork, partTimeHourLimit, quitPartTimeJob, startPartTimeJob, syncWorkplaceWorlds, totalPartTimeHours } from '../systems/WorkplaceSystem';
 import { processAnnualFinance, netWorth, wealthBreakdown } from '../systems/FinanceSystem';
 import { buyCollectible, buyProperty, renovateProperty } from '../systems/PropertySystem';
 import { countryById } from '../data/countries';
@@ -132,7 +133,7 @@ export const regressionCases:RegressionCase[]=[
       const state=highStatAdult('career-entry');state.education.push({stage:'university',institution:'Test University',programId:'computer_science',major:'Computer Science',startAge:18,endAge:22,graduated:true,droppedOut:false,scholarship:false,performance:95});
       const jobs=availableJobs(state).filter(j=>j.id.endsWith('_1')||j.experienceRequirement===0);assert(jobs.length>0,'no entry jobs available');
       let hired=false;for(const job of jobs.slice(0,20)){if(applyForJob(state,job.id).success){hired=true;break;}}
-      assert(hired,'high-stat qualified adult could not get any entry job');assert(state.employment.current,'successful application did not create current employment');
+      assert(hired,'high-stat qualified adult could not get any entry job');assert(state.employment.current,'successful application did not create current employment');const workplace=currentWorkplaceWorld(state);assert(workplace?.workplace,'successful hire did not create a persistent workplace');assert(workplace.members.some(member=>member.role==='boss'),'workplace has no manager');assert(workplace.members.filter(member=>member.role==='coworker').length>=3,'workplace has too few recurring coworkers');
     }
   },
   {
@@ -419,20 +420,20 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'rewind migrates legacy snapshots before restoring them',
     run:()=>{
-      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,7,'rewind did not migrate snapshot to schema v7');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
+      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,8,'rewind did not migrate snapshot to schema v8');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
     }
   },
   {
     name:'save migrations restore current required structures',
     run:()=>{
       const current=createNewGame({seed:'migration'});const legacy=structuredClone(current) as GameState;legacy.saveVersion=1;delete (legacy as unknown as {travel?:unknown}).travel;delete (legacy as unknown as {inheritance?:unknown}).inheritance;delete (legacy as unknown as {familyPlanning?:unknown}).familyPlanning;legacy.yearlySnapshots=[];
-      const migrated=migrateSave(legacy);equal(migrated.saveVersion,7,'save did not migrate to version 7');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');assert(migrated.actionLedger,'action ledger missing after migration');assert(migrated.socialWorlds,'social-world state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
+      const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'save did not migrate to version 8');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');assert(migrated.actionLedger,'action ledger missing after migration');assert(migrated.socialWorlds,'social-world state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
     }
   },
   {
     name:'v5 migration preserves consumed yearly actions in the central ledger',
     run:()=>{
-      const legacy=highStatAdult('action-ledger-migration');legacy.saveVersion=5;legacy.flags.lastWorkHarderAge=legacy.character.age;legacy.flags.lastRaiseRequestAge=legacy.character.age;delete (legacy as unknown as {actionLedger?:unknown}).actionLedger;const migrated=migrateSave(legacy);equal(migrated.saveVersion,7,'v5 save did not migrate to schema v7');equal(actionUsesThisAge(migrated,'career.work_harder'),1,'legacy work-effort use was lost');equal(actionUsesThisAge(migrated,'career.raise'),1,'legacy raise use was lost');equal(actionAllowed(migrated,{policy:'career.work_harder'}),false,'migrated save allowed a duplicate yearly work action');
+      const legacy=highStatAdult('action-ledger-migration');legacy.saveVersion=5;legacy.flags.lastWorkHarderAge=legacy.character.age;legacy.flags.lastRaiseRequestAge=legacy.character.age;delete (legacy as unknown as {actionLedger?:unknown}).actionLedger;const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'v5 save did not migrate to schema v8');equal(actionUsesThisAge(migrated,'career.work_harder'),1,'legacy work-effort use was lost');equal(actionUsesThisAge(migrated,'career.raise'),1,'legacy raise use was lost');equal(actionAllowed(migrated,{policy:'career.work_harder'}),false,'migrated save allowed a duplicate yearly work action');
     }
   },
   {
@@ -545,7 +546,7 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'v6 migration reconstructs school social worlds from existing education history',
     run:()=>{
-      const legacy=createNewGame({seed:'school-migration',countryId:'us'});legacy.character.age=16;legacy.currentYear=2042;legacy.education=[{stage:'primary',institution:'Old Primary',startAge:5,endAge:11,graduated:true,droppedOut:false,scholarship:false,performance:70},{stage:'middle',institution:'Old Middle',startAge:11,endAge:14,graduated:true,droppedOut:false,scholarship:false,performance:74},{stage:'secondary',institution:'Current Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:78}];legacy.socialWorlds=[];legacy.saveVersion=6;const migrated=migrateSave(legacy);equal(migrated.saveVersion,7,'v6 school save did not migrate to schema v7');equal(migrated.socialWorlds.length,3,'education history did not reconstruct three school worlds');equal(migrated.socialWorlds.filter(world=>world.active).length,1,'migration produced the wrong number of active school worlds');assert(migrated.relationships.some(rel=>rel.type==='classmate'),'migrated school history did not restore classmates');equal(validateState(migrated).length,0,'migrated school world violates invariants');
+      const legacy=createNewGame({seed:'school-migration',countryId:'us'});legacy.character.age=16;legacy.currentYear=2042;legacy.education=[{stage:'primary',institution:'Old Primary',startAge:5,endAge:11,graduated:true,droppedOut:false,scholarship:false,performance:70},{stage:'middle',institution:'Old Middle',startAge:11,endAge:14,graduated:true,droppedOut:false,scholarship:false,performance:74},{stage:'secondary',institution:'Current Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:78}];legacy.socialWorlds=[];legacy.saveVersion=6;const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'v6 school save did not migrate to current schema');equal(migrated.socialWorlds.length,3,'education history did not reconstruct three school worlds');equal(migrated.socialWorlds.filter(world=>world.active).length,1,'migration produced the wrong number of active school worlds');assert(migrated.relationships.some(rel=>rel.type==='classmate'),'migrated school history did not restore classmates');equal(validateState(migrated).length,0,'migrated school world violates invariants');
     }
   },
   {
@@ -573,6 +574,56 @@ export const regressionCases:RegressionCase[]=[
     name:'post-secondary admissions reward school history without letting activities replace academic readiness',
     run:()=>{
       const strong=createNewGame({seed:'admissions-strong',countryId:'us',advanced:{intelligence:78,discipline:82,social:80}});strong.character.age=18;strong.character.secondary.academicPerformance=84;strong.education=[{stage:'secondary',institution:'Strong Secondary',startAge:14,endAge:18,graduated:true,droppedOut:false,scholarship:false,performance:84}];migrateLegacySchoolWorlds(strong);const world=strong.socialWorlds[0];assert(world?.school,'historical school world missing for admissions');world.school.conduct=92;world.school.socialStanding=82;world.school.honors=3;for(const group of world.groups.slice(0,3)){group.playerJoinedAge=15;group.playerRole='officer';}const weak=structuredClone(strong);weak.socialWorlds[0]!.school!.conduct=35;weak.socialWorlds[0]!.school!.socialStanding=30;weak.socialWorlds[0]!.school!.honors=0;for(const group of weak.socialWorlds[0]!.groups){delete group.playerJoinedAge;delete group.playerRole;}const program=educationById['computer_science']!;const strongProfile=admissionProfile(strong,program);const weakProfile=admissionProfile(weak,program);assert(strongProfile.score>weakProfile.score+10,'school history did not materially affect admissions profile');const unready=structuredClone(strong);unready.character.stats.intelligence=10;equal(admissionProfile(unready,program).competitive,false,'activities were allowed to replace basic academic readiness');
+    }
+  },
+  {
+    name:'workplace changes archive prior employers while preserving former coworkers',
+    run:()=>{
+      const state=highStatAdult('workplace-history');state.character.age=30;state.currentYear=2056;
+      state.employment.current={jobId:'retail_1',title:'Shop Assistant',company:'North Works',startAge:25,salary:32000,performance:66,level:1};syncWorkplaceWorlds(state,false);
+      const first=currentWorkplaceWorld(state);assert(first?.workplace,'first workplace was not created');const formerNpc=first.members.find(member=>member.role==='coworker')?.npcId;assert(formerNpc,'first workplace has no coworker');
+      state.employment.current.endAge=30;state.employment.history.push({...state.employment.current});state.employment.current={jobId:'real_estate_1',title:'Leasing Assistant',company:'Cedar Group',startAge:30,salary:41000,performance:60,level:1};syncWorkplaceWorlds(state,false);
+      const second=currentWorkplaceWorld(state);assert(second?.workplace&&second.id!==first.id,'job change did not create a new workplace');equal(first.active,false,'old workplace remained active after job change');assert(state.npcs[formerNpc],'former coworker NPC was deleted');assert(state.relationships.some(rel=>rel.npcId===formerNpc),'former coworker relationship was deleted');
+      const workFolder=peopleFolderSummaries(state).find(folder=>folder.id==='work');assert((workFolder?.count??0)>=first.members.length+second.members.length-1,'Work folder lost archived workplace connections');
+    }
+  },
+  {
+    name:'v7 migration reconstructs persistent workplaces and initializes part-time employment state',
+    run:()=>{
+      const legacy=highStatAdult('workplace-migration');legacy.character.age=32;legacy.currentYear=2058;legacy.employment.current={jobId:'office_administration_2',title:'Administrative Coordinator',company:'Mosaic Services',startAge:28,salary:46000,performance:68,level:2};legacy.socialWorlds=[];legacy.saveVersion=7;delete (legacy.employment as unknown as {partTimeJobs?:unknown}).partTimeJobs;delete (legacy.employment as unknown as {partTimeHistory?:unknown}).partTimeHistory;
+      const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'v7 save did not migrate to schema v8');assert(currentWorkplaceWorld(migrated)?.workplace,'current employment did not reconstruct an active workplace');assert(Array.isArray(migrated.employment.partTimeJobs)&&Array.isArray(migrated.employment.partTimeHistory),'part-time employment arrays were not initialized');equal(validateState(migrated).length,0,'migrated workplace state violates invariants');
+    }
+  },
+  {
+    name:'workplace collaboration, networking, and manager feedback use bounded yearly opportunity',
+    run:()=>{
+      const state=highStatAdult('workplace-actions');state.employment.current={jobId:'office_administration_1',title:'Office Assistant',company:'Aster Systems',startAge:24,salary:38000,performance:58,level:1};syncWorkplaceWorlds(state,false);const workplace=currentWorkplaceWorld(state);assert(workplace?.workplace,'workplace action test has no workplace');
+      assert(collaborateAtWork(state).success,'first collaboration failed');equal(collaborateAtWork(state).success,false,'same workplace collaboration could be repeated in one year');assert(networkAtWork(state).success,'networking should consume the second workplace activity');equal(networkAtWork(state).success,false,'workplace activity total allowed a third major activity');assert(askBossForFeedback(state).success,'manager feedback action failed');equal(askBossForFeedback(state).success,false,'manager feedback could be repeated in one year');
+    }
+  },
+  {
+    name:'part-time jobs respect shared weekly hour capacity and contribute taxable income',
+    run:()=>{
+      const state=createNewGame({seed:'part-time-hours',countryId:'us',advanced:{intelligence:100,discipline:100,social:100}});state.character.age=17;state.currentYear=2043;state.character.secondary.reputation=90;state.education=[{stage:'secondary',institution:'Hours Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:88}];migrateLegacySchoolWorlds(state);
+      equal(partTimeHourLimit(state),20,'student part-time hour limit is wrong');assert(startPartTimeJob(state,'pt_shop',10).success,'first part-time job failed');assert(startPartTimeJob(state,'pt_cafe',10).success,'second part-time job failed');equal(totalPartTimeHours(state),20,'part-time hours did not add correctly');state.character.age=18;state.actionLedger.age=18;state.actionLedger.uses={};equal(startPartTimeJob(state,'pt_library',10).success,false,'hour capacity allowed an excessive third student job');const annual=(state.employment.partTimeJobs??[]).reduce((sum,job)=>sum+job.salary,0);processAnnualFinance(state);assert(state.finances.annualIncome>=annual,'part-time pay was omitted from annual income');assert(state.socialWorlds.filter(world=>world.kind==='workplace'&&world.active).length>=2,'part-time jobs did not create persistent workplace worlds');assert(quitPartTimeJob(state,'pt_shop').success,'part-time resignation failed');assert(state.employment.partTimeHistory.some(job=>job.jobId==='pt_shop'),'part-time job history was not retained');
+    }
+  },
+  {
+    name:'workplace affiliation survives when a coworker becomes a real friend',
+    run:()=>{
+      const state=highStatAdult('work-affiliation-friend');state.employment.current={jobId:'retail_1',title:'Shop Assistant',company:'Harbor House',startAge:23,salary:33000,performance:62,level:1};syncWorkplaceWorlds(state,false);const world=currentWorkplaceWorld(state);assert(world,'work affiliation test has no workplace');const coworkerId=world.members.find(member=>member.role==='coworker')?.npcId;assert(coworkerId,'workplace has no coworker');const rel=state.relationships.find(item=>item.npcId===coworkerId);assert(rel,'coworker has no player relationship');rel.type='friend';const workGraph=buildPeopleRelationshipGraph(state,'work');assert(workGraph.nodes.some(node=>node.id===coworkerId),'friend conversion removed coworker from Work folder');const friends=peopleFolderSummaries(state).find(folder=>folder.id==='friends');assert((friends?.count??0)>=1,'coworker friendship did not also appear in Friends & Social');
+    }
+  },
+  {
+    name:'targeted workplace events bind to actual current coworkers and managers',
+    run:()=>{
+      const state=highStatAdult('work-event-target');state.employment.current={jobId:'customer_support_1',title:'Support Agent',company:'Bright Network',startAge:24,salary:34000,performance:60,level:1};syncWorkplaceWorlds(state,false);const world=currentWorkplaceWorld(state);assert(world,'target event test has no workplace');const result=forceEvent(state,'work_credit_dispute');assert(result.success&&state.pendingEvent,'targeted work event did not trigger');const npcId=state.pendingEvent.payload?.npcId;assert(typeof npcId==='string','targeted workplace event has no NPC payload');const member=world.members.find(item=>item.npcId===npcId);assert(member&&['coworker','direct_report'].includes(member.role),'work peer event targeted someone outside the current peer roster');
+    }
+  },
+  {
+    name:'generational handoff does not inherit the previous protagonist workplace',
+    run:()=>{
+      const state=highStatAdult('generation-workplace-reset');state.character.age=65;state.character.alive=false;state.employment.current={jobId:'retail_2',title:'Senior Shop Assistant',company:'Old Employer',startAge:55,salary:42000,performance:70,level:2};syncWorkplaceWorlds(state,false);const priorWorld=currentWorkplaceWorld(state);assert(priorWorld,'parent workplace missing');const child=makeChild(state,'working-heir',30);child.careerId='office_administration_1';state.npcs[child.id]=child;state.relationships.push({id:'working-heir-rel',npcId:child.id,type:'child',score:88,attraction:0,compatibility:75,yearsKnown:30});assert(continueAsChild(state,child.id).success,'generational continuation failed');assert(!state.socialWorlds.some(world=>world.id===priorWorld.id),'previous protagonist workplace leaked into descendant social worlds');assert(currentWorkplaceWorld(state)?.workplace,'working descendant did not receive a workplace for established employment');
     }
   },
   {

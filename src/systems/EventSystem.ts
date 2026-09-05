@@ -23,10 +23,11 @@ function eligible(state:GameState,event:GameEventDefinition){
   if(event.countries?.length&&!event.countries.includes(state.character.countryId))return false;
   if(event.requiredFlags?.some(f=>!state.flags[f]))return false;
   if(event.forbiddenFlags?.some(f=>state.flags[f]))return false;
-  if(event.tags.includes('requires:employed')&&!state.employment.current)return false;
+  if(event.tags.includes('requires:employed')&&!state.employment.current&&!(state.employment.partTimeJobs??[]).length)return false;
   if(event.tags.includes('requires:famous')&&state.fame.fame<10)return false;
   if(event.tags.includes('school')&&!state.education.some(e=>!e.graduated&&!e.droppedOut&&!e.endAge))return false;
-  if(event.tags.includes('requires:school_npc')&&!state.relationships.some(r=>['classmate','teacher','principal','coach'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
+  if(event.tags.includes('requires:school_npc')&&!schoolAffiliationIds(state).size)return false;
+  if(event.tags.includes('requires:work_npc')&&!workplaceAffiliationIds(state).size)return false;
   if(event.tags.includes('romance')&&!state.relationships.some(r=>['partner','fiance','spouse'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
   if(event.tags.includes('requires:romantic')&&!state.relationships.some(r=>['partner','fiance','spouse'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
   if(event.tags.includes('requires:family')&&!state.relationships.some(r=>['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew'].includes(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive))return false;
@@ -70,7 +71,16 @@ function pickRareEvent(state:GameState,rng:ReturnType<typeof createRng>){
 function schoolAffiliationIds(state:GameState,roles?:string[]){
   const world=(state.socialWorlds??[]).find(item=>item.kind==='school'&&item.active);
   if(!world)return new Set<string>();
-  return new Set(world.members.filter(member=>!roles||roles.includes(member.role)).map(member=>member.npcId));
+  return new Set(world.members.filter(member=>(!roles||roles.includes(member.role))&&state.npcs[member.npcId]?.alive).map(member=>member.npcId));
+}
+
+function workplaceAffiliationIds(state:GameState,roles?:string[]){
+  const worlds=(state.socialWorlds??[]).filter(item=>item.kind==='workplace'&&item.active);
+  return new Set(worlds.flatMap(world=>world.members.filter(member=>member.leftAge===undefined&&(!roles||roles.includes(member.role))&&state.npcs[member.npcId]?.alive).map(member=>member.npcId)));
+}
+
+function currentWorkplaceForPayload(state:GameState,npcId?:string){
+  return (state.socialWorlds??[]).find(world=>world.kind==='workplace'&&world.active&&world.workplace&&(!npcId||world.members.some(member=>member.npcId===npcId&&member.leftAge===undefined)));
 }
 
 function eventContextPayload(state:GameState,event:GameEventDefinition,rng:ReturnType<typeof createRng>):Record<string,unknown>|undefined{
@@ -81,12 +91,16 @@ function eventContextPayload(state:GameState,event:GameEventDefinition,rng:Retur
   if(selector==='school'||selector==='school_peer'||selector==='school_authority'){
     const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;
     const ids=schoolAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);
+  }else if(selector==='work'||selector==='work_peer'||selector==='work_boss'){
+    const roles=selector==='work_peer'?['coworker','direct_report']:selector==='work_boss'?['boss']:undefined;
+    const ids=workplaceAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);
   }else{
     const allowed=selector==='romantic'?['partner','fiance','spouse']:selector==='family'?['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew']:selector==='friend'?['friend','best_friend']:[];
     candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);
   }
   if(!candidates.length)return undefined;
-  return {npcId:rng.pick(candidates).npcId};
+  const chosen=rng.pick(candidates);const world=selector.startsWith('work')?currentWorkplaceForPayload(state,chosen.npcId):undefined;
+  return {npcId:chosen.npcId,...(world?{worldId:world.id}:{})};
 }
 
 function pickRoutineEvent(state:GameState,rng:ReturnType<typeof createRng>){
@@ -129,6 +143,10 @@ function relationshipCandidates(state:GameState,selector:string|undefined,payloa
     const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;
     const ids=schoolAffiliationIds(state,roles);return candidates.filter(rel=>ids.has(rel.npcId));
   }
+  if(selector==='work'||selector==='work_peer'||selector==='work_boss'){
+    const roles=selector==='work_peer'?['coworker','direct_report']:selector==='work_boss'?['boss']:undefined;
+    const ids=workplaceAffiliationIds(state,roles);return candidates.filter(rel=>ids.has(rel.npcId));
+  }
   return candidates;
 }
 
@@ -147,6 +165,13 @@ function applyEffect(state:GameState,effect:ChoiceEffect|undefined,rng:ReturnTyp
       rel.score=clamp(rel.score+effect.relationship.delta);const npc=state.npcs[rel.npcId]!;npc.hiddenOpinion=clamp(npc.hiddenOpinion+effect.relationship.delta*.4,-100,100);
       if(effect.relationship.setType){rel.type=effect.relationship.setType;if(effect.relationship.setType==='ex'){npc.maritalStatus='divorced';npc.partnerId=undefined;}}
       npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:'event_choice',sentiment:effect.relationship.delta,summary:'A shared event changed the relationship.',permanent:Math.abs(effect.relationship.delta)>=15});
+    }
+  }
+  if(effect.workplace){
+    const payloadWorldId=typeof payload?.worldId==='string'?payload.worldId:undefined;
+    const world=(payloadWorldId?state.socialWorlds.find(item=>item.id===payloadWorldId):undefined)??currentWorkplaceForPayload(state,typeof payload?.npcId==='string'?payload.npcId:undefined);
+    if(world?.workplace){
+      for(const [key,value] of Object.entries(effect.workplace))if(value!==undefined){const obj=world.workplace as unknown as Record<string,number|string|undefined>;const current=Number(obj[key]??0);obj[key]=clamp(current+Number(value));}
     }
   }
   if(effect.schedule){

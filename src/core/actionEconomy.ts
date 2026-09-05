@@ -36,6 +36,13 @@ export const ACTION_POLICIES = {
   'career.work_harder': { maxPerAge: 1, message: 'You already made an extra push at work this year.' },
   'career.raise': { maxPerAge: 1, message: 'You already asked for a raise this year.' },
   'career.freelance': { maxPerAge: 4, message: 'You have already taken on several freelance gigs this year.' },
+  'career.part_time.start': { maxPerAge: 2, message: 'You have already made enough serious part-time job starts this year.' },
+  'career.part_time.job': { maxPerAge: 1, message: 'You already pursued that part-time job this year.' },
+  'workplace.activity.total': { maxPerAge: 2, message: 'You have already committed substantial extra time to workplace relationships this year.' },
+  'workplace.activity.kind': { maxPerAge: 1, message: 'You already focused on that workplace activity this year.' },
+  'workplace.feedback': { maxPerAge: 1, message: 'You already had a major feedback conversation with your manager this year.' },
+  'workplace.report': { maxPerAge: 1, message: 'You already raised a formal workplace concern this year.' },
+  'workplace.report.target': { maxPerAge: 1, message: 'You already raised a formal concern involving that coworker this year.' },
 
   'education.effort': { maxPerAge: 1, message: 'You already made your major school-effort choice for this year.' },
   'education.enroll': { maxPerAge: 1, message: 'You already made a post-secondary enrollment decision this year.' },

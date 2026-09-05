@@ -161,7 +161,7 @@ export interface EducationRecord {
 
 export type SocialWorldKind = 'school' | 'workplace' | 'organization';
 export type SchoolGroupKind = 'academic' | 'arts' | 'sport' | 'service' | 'leadership' | 'social';
-export type SocialWorldMemberRole = 'classmate' | 'teacher' | 'principal' | 'coach' | 'coworker' | 'boss' | 'member' | 'leader';
+export type SocialWorldMemberRole = 'classmate' | 'teacher' | 'principal' | 'coach' | 'coworker' | 'boss' | 'direct_report' | 'member' | 'leader';
 
 export interface SocialWorldMember {
   npcId: Id;
@@ -194,6 +194,20 @@ export interface SchoolWorldState {
   principalNpcId?: Id;
 }
 
+export interface WorkplaceWorldState {
+  employmentKey: string;
+  employmentKind: 'full_time' | 'part_time';
+  industry: string;
+  department: string;
+  morale: Percent;
+  culture: Percent;
+  tension: Percent;
+  reputation: Percent;
+  managerNpcId?: Id;
+  layoffs: number;
+  disputes: number;
+}
+
 export interface SocialWorld {
   id: Id;
   kind: SocialWorldKind;
@@ -206,6 +220,7 @@ export interface SocialWorld {
   members: SocialWorldMember[];
   groups: SocialWorldGroup[];
   school?: SchoolWorldState;
+  workplace?: WorkplaceWorldState;
 }
 
 export interface CareerRecord {
@@ -219,10 +234,16 @@ export interface CareerRecord {
   level: number;
 }
 
+export interface PartTimeCareerRecord extends CareerRecord {
+  hoursPerWeek: number;
+}
+
 export interface EmploymentState {
   current?: CareerRecord;
   history: CareerRecord[];
   partTimeJobIds: Id[];
+  partTimeJobs: PartTimeCareerRecord[];
+  partTimeHistory: PartTimeCareerRecord[];
   freelanceReputation: Percent;
   retired: boolean;
 }
@@ -582,6 +603,7 @@ export interface ChoiceEffect {
   reputation?: number;
   flags?: Record<string, boolean | number | string>;
   schedule?: { eventId: Id; years: number; npcSelector?: string; requiredRelationshipTypes?: RelationshipType[] };
+  workplace?: Partial<Pick<WorkplaceWorldState, 'morale' | 'culture' | 'tension' | 'reputation'>>;
   health?: number;
   legalHeat?: number;
 }

@@ -4,6 +4,7 @@ import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { netWorth } from './FinanceSystem';
 import { jobById } from '../data/jobs';
+import { migrateLegacyWorkplaceWorlds } from './WorkplaceSystem';
 
 function npcToCharacter(state:GameState,npc:Npc):Character {
   const rng=createRng(`${state.seed}-descendant-${npc.id}`,state.rngCounter);
@@ -196,10 +197,10 @@ function rebuildDescendantRelationships(state:GameState, originalChild:Npc, prev
 
 function descendantEmployment(state:GameState,child:Npc):GameState['employment'] {
   const job=child.careerId?jobById[child.careerId]:undefined;
-  if(!job)return{history:[],partTimeJobIds:[],freelanceReputation:10,retired:child.age>=67};
+  if(!job)return{history:[],partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:child.age>=67};
   const level=Math.max(1,Number(job.id.match(/_(\d+)$/)?.[1]??1));
   const salary=Math.round(((job.salaryRange[0]+job.salaryRange[1])/2)*state.economy.salaryIndex);
-  return {current:{jobId:job.id,title:job.title,company:'Established Employer',startAge:Math.max(job.minAge,child.age-Math.max(1,level*2)),salary,performance:child.traits.includes('responsible')?68:child.traits.includes('ambitious')?72:58,level},history:[],partTimeJobIds:[],freelanceReputation:10,retired:false};
+  return {current:{jobId:job.id,title:job.title,company:'Established Employer',startAge:Math.max(job.minAge,child.age-Math.max(1,level*2)),salary,performance:child.traits.includes('responsible')?68:child.traits.includes('ambitious')?72:58,level},history:[],partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:false};
 }
 
 export function continueAsChild(state:GameState,childId:string):EngineResult {
@@ -228,7 +229,10 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.currentYear=newCharacter.birthYear+newCharacter.age;
   state.relationships=rebuildDescendantRelationships(state,originalChild,previousPlayerId);
   state.education=[];
+  // Social worlds belong to the controlled protagonist, not to the dynasty globally.
+  state.socialWorlds=[];
   state.employment=descendantEmployment(state,originalChild);
+  migrateLegacyWorkplaceWorlds(state);
   state.assets={properties:settlement.properties,vehicles:[],collectibles:settlement.collectibles};
   state.businesses=settlement.businesses;
   state.investments={...state.investments,positions:settlement.investments};

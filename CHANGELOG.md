@@ -1,5 +1,37 @@
 # Everthread Changelog
 
+## 0.11.0 — 2026-09-04 — Persistent Workplaces
+
+### Added
+
+- Save schema v8 with persisted workplace-specific Social World state and real active/historical part-time employment records. Existing v7 careers reconstruct compatible workplace worlds during migration.
+- Persistent full-time workplace rosters with managers, coworkers, departments, team groups, workplace morale/culture/tension/reputation, bounded turnover, and senior-character direct reports.
+- Workplace actions for collaboration, networking, manager feedback, and formal coworker concerns, all classified through the central action-economy ledger.
+- Real part-time jobs with age requirements, hourly pay, hours/week, performance, small persistent workplace rosters, annual income/tax integration, and shared weekly hour capacity around school/full-time commitments.
+- Target-aware work events for credit disputes, manager reviews, rumors, team feuds, after-hours connection, formal workplace claims, and bonus pools.
+- Regression coverage for employer archival, workplace migration, action limits, part-time capacity/income, evolving coworker relationships, targeted work events, and generation-safe social-world rebuilding.
+
+### Changed
+
+- Promotions within one employer preserve its workplace world; changing employers, resigning, being fired/laid off, or retiring archives the old workplace without deleting former coworkers.
+- Work affiliation is independent from `Relationship.type`, so coworkers remain in People → Work after becoming friends, enemies, or romantic connections.
+- Standard-career annual performance now responds to workplace morale/reputation/tension and manager relationship; low performance can demote before termination, while eligible performance can produce bonuses.
+- Layoffs are distinct from performance firing and respond to employer morale and broader business-demand conditions.
+- Retirement closes both full-time and active part-time employment and archives the associated workplaces.
+- Generational continuation clears the former protagonist's institutional worlds and reconstructs only the newly controlled descendant's relevant worlds, preventing social-world leakage across generations.
+- Work events may treat active part-time employment as valid employment and bind exact affiliated NPC/world payloads.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 71/71 regression cases pass.
+- Content audit: 691 events total, including 90 work/career events.
+- Neutral 1,000-life bulk population: zero anomalies and zero forced terminal deaths.
+- Mixed-policy 1,000-life bulk population: zero anomalies and zero forced terminal deaths.
+- Long-process profiling reached 1,000 sequential lives with bounded memory and stable per-life runtime.
+- Dependency-backed React/Vite production build remains the GitHub Actions deployment gate.
+
 ## 0.10.0 — 2026-09-04 — Persistent School Social Worlds
 
 ### Added

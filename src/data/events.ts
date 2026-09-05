@@ -364,6 +364,69 @@ const fixedEvents: GameEventDefinition[] = [
     ]
   },
   {
+    id:'work_credit_dispute',category:'work',title:'Credit Where It Went',
+    descriptions:['{NPC_NAME} presents a piece of work that contains more of your contribution than their explanation suggests.'],
+    minAge:16,maxAge:82,probability:.035,cooldown:8,tags:['work','requires:employed','requires:work_npc','target:work_peer'],choices:[
+      {id:'private',label:'Talk to them privately',effects:{relationship:{npcSelector:'payload',delta:5},secondary:{confidence:2,stress:2},workplace:{tension:-2,culture:2}}},
+      {id:'manager',label:'Bring it to your manager',effects:{relationship:{npcSelector:'payload',delta:-7},secondary:{reputation:2,stress:4},workplace:{tension:4,reputation:2}}},
+      {id:'ignore',label:'Let it go this time',effects:{relationship:{npcSelector:'payload',delta:-2},secondary:{stress:3},workplace:{tension:2}}},
+    ]
+  },
+  {
+    id:'work_manager_review',category:'work',title:'The Review Conversation',
+    descriptions:['{NPC_NAME} schedules a formal conversation about how your year at work has been going.'],
+    minAge:16,maxAge:82,probability:.04,cooldown:6,tags:['work','requires:employed','requires:work_npc','target:work_boss'],choices:[
+      {id:'listen',label:'Listen and ask useful questions',effects:{relationship:{npcSelector:'payload',delta:6},secondary:{workPerformance:5,discipline:2,stress:2},workplace:{reputation:3,culture:2}}},
+      {id:'advocate',label:'Advocate for your contributions',effects:{relationship:{npcSelector:'payload',delta:2},secondary:{confidence:4,charisma:2},workplace:{reputation:4,tension:1}}},
+      {id:'defensive',label:'Push back on every criticism',effects:{relationship:{npcSelector:'payload',delta:-9},secondary:{workPerformance:-4,stress:5},workplace:{tension:7,reputation:-4}}},
+    ]
+  },
+  {
+    id:'work_rumor_chain',category:'work',title:'Break-Room Physics',
+    descriptions:['{NPC_NAME} tells you a workplace rumor that is moving faster than any official announcement.'],
+    minAge:16,maxAge:82,probability:.032,cooldown:9,tags:['work','requires:employed','requires:work_npc','target:work_peer'],choices:[
+      {id:'stop',label:'Do not pass it on',effects:{relationship:{npcSelector:'payload',delta:2},secondary:{discipline:2,reputation:2},workplace:{tension:-2,culture:2}}},
+      {id:'share',label:'Pass it along quietly',effects:{relationship:{npcSelector:'payload',delta:4},secondary:{reputation:-3,stress:2},workplace:{tension:6,culture:-3}}},
+      {id:'check',label:'Ask for official clarification',effects:{secondary:{confidence:2,stress:1},workplace:{tension:-3,reputation:2}}},
+    ]
+  },
+  {
+    id:'work_team_feud',category:'work',title:'The Team Has Sides Now',
+    descriptions:['A disagreement with {NPC_NAME} spreads far enough that other coworkers start noticing.'],
+    minAge:16,maxAge:82,probability:.028,cooldown:10,tags:['work','requires:employed','requires:work_npc','target:work_peer'],choices:[
+      {id:'repair',label:'Try to repair the working relationship',effects:{relationship:{npcSelector:'payload',delta:8},secondary:{stress:3,willpower:2},workplace:{tension:-7,morale:2}}},
+      {id:'distance',label:'Keep it strictly professional',effects:{relationship:{npcSelector:'payload',delta:-2},secondary:{discipline:2},workplace:{tension:-2}}},
+      {id:'escalate',label:'Make the feud public',effects:{relationship:{npcSelector:'payload',delta:-14},secondary:{reputation:-5,stress:5},workplace:{tension:10,morale:-4,reputation:-3}}},
+    ]
+  },
+  {
+    id:'work_after_hours_connection',category:'work',title:'After the Workday',
+    descriptions:['After work, {NPC_NAME} asks if you want to keep talking somewhere that has absolutely nothing to do with deadlines.'],
+    minAge:18,maxAge:75,probability:.026,cooldown:12,tags:['work','requires:employed','requires:work_npc','target:work_peer'],choices:[
+      {id:'friendly',label:'Spend time together as friends',effects:{relationship:{npcSelector:'payload',delta:8,setType:'friend'},stats:{happiness:3},secondary:{confidence:2},workplace:{morale:2}}},
+      {id:'professional',label:'Keep the boundary professional',effects:{relationship:{npcSelector:'payload',delta:2},secondary:{discipline:2},workplace:{culture:2}}},
+      {id:'awkward',label:'Make the moment weird',effects:{relationship:{npcSelector:'payload',delta:-7},secondary:{stress:3},workplace:{tension:4}}},
+    ]
+  },
+  {
+    id:'work_internal_claim',category:'work',title:'A Formal Workplace Claim',
+    descriptions:['A formal workplace dispute reaches you after a conflict involving {NPC_NAME}. The employer wants a response before the issue grows.'],
+    minAge:18,maxAge:82,probability:.014,cooldown:18,tags:['work','requires:employed','requires:work_npc','target:work_peer'],choices:[
+      {id:'cooperate',label:'Cooperate with the internal process',effects:{relationship:{npcSelector:'payload',delta:-5},secondary:{stress:7,reputation:2,discipline:2},workplace:{tension:-4,culture:2}}},
+      {id:'settle',label:'Agree to an internal settlement',effects:{money:-1200,relationship:{npcSelector:'payload',delta:-3},secondary:{stress:3},workplace:{tension:-6}}},
+      {id:'fight',label:'Contest the claim aggressively',outcomes:[{weight:45,text:'The claim loses momentum, but the office atmosphere does not recover quickly.',effects:{relationship:{npcSelector:'payload',delta:-10},secondary:{stress:7,reputation:-2},workplace:{tension:5}}},{weight:55,text:'The dispute becomes expensive and damaging before it closes.',effects:{money:-4500,relationship:{npcSelector:'payload',delta:-16},secondary:{stress:12,reputation:-7},workplace:{tension:9,morale:-5}}}]},
+    ]
+  },
+  {
+    id:'work_bonus_pool',category:'work',title:'The Bonus Pool',
+    descriptions:['{NPC_NAME} tells the team there is a limited bonus pool and not everyone will receive the same recognition.'],
+    minAge:18,maxAge:82,probability:.024,cooldown:11,tags:['work','requires:employed','requires:work_npc','target:work_boss'],choices:[
+      {id:'case',label:'Make a measured case for yourself',outcomes:[{weight:58,text:'Your case lands well.',effects:{money:1200,relationship:{npcSelector:'payload',delta:3},secondary:{confidence:3,workPerformance:2},workplace:{reputation:3}}},{weight:42,text:'The answer is no, but the conversation stays professional.',effects:{relationship:{npcSelector:'payload',delta:1},secondary:{stress:2}}}]},
+      {id:'team',label:'Advocate for the team instead',effects:{relationship:{npcSelector:'payload',delta:4},secondary:{reputation:4,karma:2},workplace:{morale:5,culture:4}}},
+      {id:'avoid',label:'Stay out of the competition',effects:{secondary:{stress:-2},workplace:{reputation:-1}}},
+    ]
+  },
+  {
     id:'work_shortcut_offer',category:'work',title:'The Convenient Shortcut',
     descriptions:['A rushed deadline leaves you with a tempting option: sign off on work you did not fully review and hope the missing details never matter.'],
     minAge:18,maxAge:74,probability:.019,cooldown:15,tags:['work','requires:employed'],choices:[

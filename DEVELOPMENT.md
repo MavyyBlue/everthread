@@ -1,8 +1,8 @@
 # Everthread — Development Status
 
 Last updated: 2026-09-04  
-Current build line: 0.10.0 pre-release  
-Save schema: 7
+Current build line: 0.11.0 pre-release  
+Save schema: 8
 
 ## Product direction
 
@@ -15,7 +15,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/engine/GameEngine.ts` — public action façade used by UI.
 - `src/types/` — authoritative state and content contracts.
 - `src/core/` — RNG, math, deterministic IDs, invariant enforcement, and the centralized action-economy ledger/policies.
-- `src/systems/` — isolated simulation domains, including persistent social-world ownership for schools and future workplaces/organizations.
+- `src/systems/` — isolated simulation domains, including persistent social-world ownership for schools, workplaces, and future organizations.
 - `src/data/` — external content definitions for events, jobs, education, countries, health, crime, assets, achievements, and challenges.
 - `src/services/SaveSystem.ts` — IndexedDB/local fallback, schema migration, account-level multi-slot life saves, active-slot tracking, JSON import/export.
 - `src/screens/` and `src/components/` — mobile UI only; critical state is not intended to be mutated here.
@@ -25,6 +25,22 @@ The project is intentionally data-driven. React renders and requests actions; si
 ## Implemented foundations
 
 These are functioning systems rather than navigation placeholders, though some still need additional depth.
+
+
+### Persistent workplace social worlds (0.11.0)
+
+Work is now the second consumer of the persisted Social World layer. Employers own workplace membership, roles, departments, culture, morale, tension, and reputation; ordinary NPC records still own the people; RelationshipSystem still owns the player's evolving personal relationship with them. Former coworkers therefore remain part of work history when a friendship, rivalry, romance, promotion, resignation, or job change alters the current relationship.
+
+- v7→v8 migration initializes part-time employment history and reconstructs persistent workplace worlds for existing current/historical careers.
+- Full-time employers generate persistent managers/coworkers, bounded team membership, departments, workplace metrics, and senior-character direct reports.
+- Promotions within the same employer preserve the workplace; resignation, firing, layoff, retirement, and employer changes archive it without deleting former coworkers.
+- Workplace actions cover collaboration, networking, manager feedback, and formal coworker concerns through the central action economy.
+- Career processing now includes workplace-sensitive performance, bonuses, layoffs, demotions, manager effects, morale/tension, and bounded staff turnover.
+- Target-aware work events bind exact current coworkers/managers for credit disputes, reviews, rumors, team feuds, after-hours connections, formal claims, and bonus pools.
+- Part-time work is now real persisted employment with pay, performance, hours/week, independent small workplace rosters, and a shared weekly capacity that tightens around school/full-time commitments.
+- Work affiliation is independent of relationship type: a coworker can become a friend/enemy/partner and still remain discoverable in People → Work.
+- Generational handoff clears the previous protagonist's social worlds and reconstructs worlds appropriate to the controlled descendant, preventing inherited offices/schools from leaking across protagonists.
+- Verification before deployment: 71/71 regressions; 1,000 neutral and 1,000 mixed-policy lives completed with zero anomalies and zero forced terminal deaths.
 
 ### Persistent school social worlds (0.10.0)
 
@@ -48,7 +64,7 @@ School is now the first consumer of a generic persisted Social World layer. Inst
 - Persistent NPC records, relationship scores, memories, personality response modifiers, NPC aging, health drift, real career progression, linked autonomous partnerships, marriage/divorce/widowhood, bounded autonomous children, inheritance, and death.
 - Dating, partner/fiancé/spouse/ex states, marriage/divorce/reconciliation, biological children and adoption.
 - Country-profile childhood schooling with persistent classmates/teachers/leaders, clubs/teams/groups, conduct/attendance/honors, admissions profiles, scholarships, student debt, graduation/dropout rules, and post-secondary progression.
-- 51 standard-career ladders / 306 job positions with requirements, interviews, salary, performance, promotion, termination, raises, retirement, and freelance gigs.
+- 51 standard-career ladders / 306 job positions with requirements, interviews, salary, performance, promotion/demotion, termination/layoff, bonuses, raises, retirement, freelance gigs, persistent workplaces, and real part-time employment.
 - Annual finances, tax, baseline living costs, dependent/pet/asset costs, loans, net worth, and yearly summaries.
 - Dynamic bounded economy for cost, wage, housing, business-demand, and market-cycle pressure.
 - Fictional investment market with stocks, funds, bonds, speculative assets, regimes, buy/sell, and portfolio history.
@@ -236,12 +252,12 @@ Loans, mortgage underwriting, annual shortfall debt, foreclosure, bankruptcy and
 
 ### Workplace
 
-Boss/coworker concepts are not yet a full persistent workplace graph. Needed:
+0.11.0 completes the persistent workplace foundation identified in the original scope gap: managers/coworkers, departments/roles, workplace metrics, recurring interactions, layoffs, demotions, bonuses, reporting/dispute paths, rumor/feud/social events, relationship evolution, employer history, and multiple part-time jobs with shared hour limits all use the same Social World/NPC/Relationship architecture. Future additions are depth rather than missing foundation:
 
-- Generated boss/coworkers tied to the job.
-- Workplace-specific interactions and memories.
-- Layoff, office feud, romance, reporting, rumor, lawsuit, bonus, and demotion consequences integrated with persistent coworkers.
-- Multiple part-time jobs with hour limits.
+- More industry-specific workplace cultures, hazards, unions/professional bodies, schedules, and employer archetypes.
+- Richer multi-year workplace consequence chains and alumni/former-coworker resurfacing.
+- More nuanced management spans, departments, transfers, mentorship, performance reviews, and severance/benefits.
+- Workplace-specific minigames only where they add meaningful optional interaction without replacing character skill.
 
 ### Special careers
 
@@ -258,7 +274,7 @@ The first reusable interactive layer is now implemented. Timing, sequence-memory
 
 ### Events / consequences
 
-684 event definitions exist and routine selection is efficient. The first five multi-year consequence chains now preserve exact NPC/origin-age context. Remaining work:
+691 event definitions exist and routine selection is efficient. The first five multi-year consequence chains now preserve exact NPC/origin-age context. Remaining work:
 
 - Expand delayed consequences across parenting, crime/legal history, property, business, school, and special careers.
 - Event cooldown currently follows recent-event history rather than storing an exact last-trigger year.
@@ -276,7 +292,7 @@ The shell is mobile-first and has safe-area CSS/accessibility settings, but fina
 2. The centralized action ledger now covers the major profitable/progression-bearing player actions, but every new action must be classified deliberately as unlimited configuration, resource-limited, yearly-limited, cooldown-based, or consequence-escalating. Avoid reintroducing ad-hoc button spam paths.
 3. Simulation policies are separated and wealth-source diagnostics are available. Neutral and mixed populations should remain the balance baseline; do not tune core costs around a headless bot that still underuses optional lifestyle purchases.
 4. Bulk simulation suppresses achievement/challenge evaluation and truncates timeline history intentionally for performance. Full-mode runs remain the correctness reference.
-5. Save schema migration covers versions 1→6. Every future persisted state addition needs an explicit default/migration path, and old rewind snapshots must continue to migrate before restoration.
+5. Save schema migration covers versions 1→8. Every future persisted state addition needs an explicit default/migration path, and old rewind snapshots must continue to migrate before restoration.
 6. No runtime error boundary / last-known-good transaction backup exists yet around every important action. IndexedDB persistence is versioned, but crash-safe transactional recovery needs hardening.
 7. Full React/Vite production builds require installed npm dependencies; local engine/tests are compiler-validated in the current workspace and GitHub Actions remains the authoritative dependency-backed mobile deployment gate.
 
@@ -307,19 +323,22 @@ Added persistent family-planning/pregnancy state and targeted repair for obvious
 Added the persisted centralized `actionLedger` with per-age usage, last-used ages for cooldowns, and a revision counter used by `GameEngine` to detect failed-but-mutating outcomes. v5 migration preserves legacy annual career/family action markers where present.
 
 
-### Version 7 — current
+### Version 7
 
 Added persisted `socialWorlds` for school/workplace/organization membership and school-specific roster/group/conduct state. v6 migration reconstructs school worlds from existing education records so old lives retain their educational history while gaining persistent school affiliations.
 
+### Version 8 — current
+
+Added persisted workplace-specific Social World state plus real `partTimeJobs` / `partTimeHistory`. v7 migration reconstructs workplace worlds from existing career records, while generational handoff rebuilds social worlds for the newly controlled descendant rather than carrying the prior protagonist's institutions forward.
+
 ## Next development sequence
 
-1. Complete the 0.10.0 phone/browser playtest and repair any school-world UI, save-migration, or interaction issues before extending the social-world model.
-2. Phase 2: build persistent workplaces on the shared Social World foundation—generated bosses/coworkers, departments/roles, workplace memories, interactions, layoffs/bonuses/demotions/conflict/romance, and part-time-hour constraints.
-3. Phase 3: deepen NPC autonomy across education, health, household moves, crime/legal history, fame, imprisonment, finances, adoption, and memory/opinion-driven decisions.
-4. Phase 4: deepen special-career ecosystems with persistent teams/casts/rivals/staff, contracts, seasons, scandals, awards, retirement, and path-specific events.
-5. Phase 5: deepen generations/estates with asset-specific wills, fictionalized estate administration, richer NPC ownership, and broader kin taxonomy/performance validation.
-6. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
-7. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
-8. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
-9. Expand regional names substantially and verify long-dynasty repetition rates.
-10. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.
+1. Complete the 0.11.0 phone/browser playtest and repair any workplace UI, save-migration, affiliation, or part-time-hour issue before the next deepening phase.
+2. Phase 3: deepen NPC autonomy across education, health, household moves, crime/legal history, fame, imprisonment, finances, adoption, and memory/opinion-driven decisions.
+3. Phase 4: deepen special-career ecosystems with persistent teams/casts/rivals/staff, contracts, seasons, scandals, awards, retirement, and path-specific events.
+4. Phase 5: deepen generations/estates with asset-specific wills, fictionalized estate administration, richer NPC ownership, and broader kin taxonomy/performance validation.
+5. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
+6. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
+7. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
+8. Expand regional names substantially and verify long-dynasty repetition rates.
+9. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

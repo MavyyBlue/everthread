@@ -8,6 +8,7 @@ import { ageNpcs, processFamilyPlanningYear } from './RelationshipSystem';
 import { processEducationYear } from './EducationSystem';
 import { processSchoolWorldYear } from './SchoolWorldSystem';
 import { processCareerYear } from './CareerSystem';
+import { processPartTimeWorkYear, processWorkplaceYear } from './WorkplaceSystem';
 import { processMarketYear } from './InvestmentSystem';
 import { processBusinessesYear } from './BusinessSystem';
 import { processPropertiesYear } from './PropertySystem';
@@ -36,7 +37,9 @@ export function ageUp(state:GameState):EngineResult {
     processFamilyPlanningYear(state);
     processEducationYear(state);
     processSchoolWorldYear(state);
+    processWorkplaceYear(state);
     processCareerYear(state);
+    processPartTimeWorkYear(state);
     processMarketYear(state);
     processBusinessesYear(state);
     processPropertiesYear(state);

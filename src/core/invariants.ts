@@ -37,6 +37,8 @@ export function enforceStateInvariants(state: GameState): GameState {
     if (!npc.alive) { npc.imprisoned = false; npc.partnerId = undefined; }
   }
   state.socialWorlds ??= [];
+  state.employment.partTimeJobs ??= [];
+  state.employment.partTimeHistory ??= [];
   const activeSchoolWorlds = state.socialWorlds.filter(world => world.kind === 'school' && world.active);
   if (activeSchoolWorlds.length > 1) {
     const keep = activeSchoolWorlds.slice().sort((a,b)=>b.startedAge-a.startedAge)[0];
@@ -52,6 +54,15 @@ export function enforceStateInvariants(state: GameState): GameState {
       world.school.socialStanding = clamp(world.school.socialStanding);
       world.school.honors = Math.max(0,Math.floor(world.school.honors));
       world.school.disciplinaryActions = Math.max(0,Math.floor(world.school.disciplinaryActions));
+    }
+    if (world.workplace) {
+      world.workplace.morale = clamp(world.workplace.morale);
+      world.workplace.culture = clamp(world.workplace.culture);
+      world.workplace.tension = clamp(world.workplace.tension);
+      world.workplace.reputation = clamp(world.workplace.reputation);
+      world.workplace.layoffs = Math.max(0,Math.floor(world.workplace.layoffs));
+      world.workplace.disputes = Math.max(0,Math.floor(world.workplace.disputes));
+      if (world.workplace.managerNpcId && !state.npcs[world.workplace.managerNpcId]) world.workplace.managerNpcId = undefined;
     }
   }
 
@@ -84,9 +95,13 @@ export function validateState(state: GameState): string[] {
     else if (partner.partnerId !== npc.id) errors.push(`NPC partnership ${npc.id}/${partner.id} is asymmetric`);
   }
   if ((state.socialWorlds??[]).filter(world=>world.kind==='school'&&world.active).length>1) errors.push('Multiple active school worlds');
+  if ((state.socialWorlds??[]).filter(world=>world.kind==='workplace'&&world.active&&world.workplace?.employmentKind==='full_time').length>1) errors.push('Multiple active full-time workplace worlds');
+  if ((state.employment.partTimeJobs??[]).length>3) errors.push('Too many active part-time jobs');
+  if ((state.employment.partTimeJobs??[]).some(job=>job.hoursPerWeek<=0||job.hoursPerWeek>15)) errors.push('Invalid part-time job hours');
   for (const world of state.socialWorlds??[]) {
     for (const member of world.members??[]) if (!state.npcs[member.npcId]) errors.push(`Social world ${world.id} references missing NPC ${member.npcId}`);
     if (world.school && (world.school.attendance<0||world.school.attendance>100||world.school.conduct<0||world.school.conduct>100||world.school.socialStanding<0||world.school.socialStanding>100)) errors.push(`School world ${world.id} contains invalid bounded stats`);
+    if (world.workplace && (world.workplace.morale<0||world.workplace.morale>100||world.workplace.culture<0||world.workplace.culture>100||world.workplace.tension<0||world.workplace.tension>100||world.workplace.reputation<0||world.workplace.reputation>100)) errors.push(`Workplace world ${world.id} contains invalid bounded stats`);
   }
   return errors;
 }

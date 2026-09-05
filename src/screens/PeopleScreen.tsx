@@ -6,6 +6,7 @@ import { RelationshipTree } from '../components/RelationshipTree';
 import { gameEngine } from '../stores/gameStore';
 import { actionAllowed } from '../core/actionEconomy';
 import { buildPeopleRelationshipGraph, peopleFolderSummaries, type PeopleFolderId } from '../systems/PeopleGraphSystem';
+import { canReportCoworker, workplaceRoleForNpc } from '../systems/WorkplaceSystem';
 
 const folderGlyph: Record<PeopleFolderId,string> = {
   player_family:'⌂', relatives:'⌘', friends:'○', romance:'♡', school:'◇', work:'□',
@@ -24,6 +25,7 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:Engin
   const selected=selectedNpcId?state.relationships.find(r=>r.npcId===selectedNpcId):undefined;
   const npc=selected?state.npcs[selected.npcId]:undefined;
   const npcWorlds=npc?state.socialWorlds.filter(world=>world.members.some(member=>member.npcId===npc.id)):[];
+  const currentWorkRole=npc?workplaceRoleForNpc(state,npc.id):undefined;
   const partner=state.relationships.find(r=>['partner','fiance','spouse'].includes(r.type));
   const expecting=state.familyPlanning.pregnancy;
   const canTryChild=actionAllowed(state,{policy:'family.child_attempt'});
@@ -36,6 +38,7 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:Engin
     {npc.alive&&<div className="sheet-section"><h3>Relationship</h3><div className="action-grid">{selected.type==='friend'&&<button disabled={state.character.age<14||npc.age<14||(state.character.age<18?npc.age>=18:npc.age<18)||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'ask_out'))}>Ask out</button>}{selected.type==='partner'&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'propose'))}>Propose</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'marry'))}>Marry</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'break_up'))}>Break up</button>}{selected.type==='spouse'&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'divorce'))}>Divorce</button>}{selected.type==='ex'&&<button disabled={state.character.age<14||npc.age<14||(state.character.age<18?npc.age>=18:npc.age<18)||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'reconcile'))}>Reconcile</button>}</div></div>}
     <div className="sheet-section"><h3>Connections</h3><p className="muted">To you: {selected.type.replaceAll('_',' ')}.</p>{npc.partnerId&&state.npcs[npc.partnerId]&&<p className="memory">Partner link: {state.npcs[npc.partnerId]!.firstName} {state.npcs[npc.partnerId]!.lastName}</p>}{npc.parentIds.map(id=>state.npcs[id]).filter(Boolean).map(parent=><p className="memory" key={`parent-${parent!.id}`}>Parent: {parent!.firstName} {parent!.lastName}</p>)}{npc.childIds.map(id=>state.npcs[id]).filter(Boolean).map(child=><p className="memory" key={`child-${child!.id}`}>Child: {child!.firstName} {child!.lastName}</p>)}</div>
     {npcWorlds.length>0&&<div className="sheet-section"><h3>Shared worlds</h3>{npcWorlds.slice().sort((a,b)=>b.startedAge-a.startedAge).map(world=>{const member=world.members.find(item=>item.npcId===npc.id);return <p className="memory" key={world.id}><strong>{world.name}</strong> · {member?.role??'member'} · {world.active?'current':`ages ${world.startedAge}–${world.endedAge??state.character.age}`}</p>})}</div>}
+    {currentWorkRole?.world.active&&['coworker','direct_report'].includes(currentWorkRole.role)&&<div className="sheet-section"><h3>Workplace</h3><p className="muted">This person is part of your current workplace at {currentWorkRole.world.name}. Formal concerns are limited and can affect team tension, your manager relationship, and this coworker.</p><button className="danger-soft full-button" disabled={!canReportCoworker(state,npc.id)} onClick={()=>onResult(gameEngine.reportCoworker(npc.id))}>Raise work concern</button></div>}
     <div className="sheet-section"><h3>Memories</h3>{npc.memories.slice(-5).reverse().map(m=><p className="memory" key={m.id}>{m.summary}</p>)}{!npc.memories.length&&<p className="muted">No major memories yet.</p>}</div>
   </>}</BottomSheet>;
 

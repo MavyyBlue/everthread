@@ -160,10 +160,11 @@ function handleCashShortfall(state:GameState,grossIncome:number){
 export function processAnnualFinance(state:GameState) {
   const country=countryById[state.character.countryId];
   const salary=state.employment.current?.salary??0;
+  const partTimeIncome=(state.employment.partTimeJobs??[]).reduce((sum,job)=>sum+job.salary,0);
   const specialIncome=specialCareerIncome(state);
   const rentalIncome=state.assets.properties.reduce((s,p)=>s+(p.rental?.occupied?p.rental.annualRent:0),0);
   const businessDistribution=state.businesses.reduce((s,b)=>s+(b.profit>0?Math.round(b.profit*.25):0),0);
-  const gross=salary+specialIncome+rentalIncome+businessDistribution;
+  const gross=salary+partTimeIncome+specialIncome+rentalIncome+businessDistribution;
   const taxes=Math.round(gross*(country?.taxRate??.24));
   const age=state.character.age;
   const dependentMinor=age<18;
@@ -186,7 +187,7 @@ export function processAnnualFinance(state:GameState) {
   state.finances.liabilities=state.finances.liabilities.filter(l=>l.balance>.5);
   const expenses=baseline+lifestyleCosts+childCosts+petCosts+propertyCosts+vehicleCosts+debtPayments+taxes;
   // Business distributions are credited by BusinessSystem before finance processing, so do not add them twice here.
-  state.finances.cash+=salary+specialIncome+rentalIncome-expenses;
+  state.finances.cash+=salary+partTimeIncome+specialIncome+rentalIncome-expenses;
   handleCashShortfall(state,gross);
   state.finances.annualIncome=gross;state.finances.annualExpenses=expenses;state.finances.taxesPaid=taxes;
   const investmentReturn=state.investments.positions.reduce((sum,pos)=>{const hist=state.investments.history[pos.securityId]??[];if(hist.length<2)return sum;return sum+pos.units*(hist.at(-1)!-hist.at(-2)!);},0);
