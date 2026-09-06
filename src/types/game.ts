@@ -87,6 +87,84 @@ export interface NpcMemory {
   permanent?: boolean;
 }
 
+
+export interface NpcEducationLifeRecord {
+  stage: string;
+  institution: string;
+  startAge: number;
+  endAge?: number;
+  graduated: boolean;
+  performance: Percent;
+  credential?: string;
+}
+
+export interface NpcCareerLifeRecord {
+  jobId: Id;
+  startAge: number;
+  endAge?: number;
+}
+
+export interface NpcHealthLifeCondition {
+  illnessId: Id;
+  name: string;
+  severity: Percent;
+  diagnosedAge: number;
+  chronic: boolean;
+  treated: boolean;
+  years: number;
+}
+
+export interface NpcLegalLifeIncident {
+  age: number;
+  kind: 'minor' | 'serious';
+  convicted: boolean;
+  sentenceYears?: number;
+}
+
+export interface NpcLifeState {
+  aptitude: Percent;
+  education: {
+    records: NpcEducationLifeRecord[];
+    performance: Percent;
+    credential?: string;
+  };
+  career: {
+    history: NpcCareerLifeRecord[];
+    careerYears: number;
+    retired: boolean;
+  };
+  finance: {
+    annualIncome: Money;
+    debt: Money;
+    propertyValue: Money;
+    housing: 'family' | 'renting' | 'owning' | 'shared' | 'institutional';
+    creditStress: Percent;
+  };
+  health: {
+    conditions: NpcHealthLifeCondition[];
+    fitness: Percent;
+    wellness: Percent;
+  };
+  legal: {
+    incidents: NpcLegalLifeIncident[];
+    sentenceRemaining: number;
+    recordSeverity: Percent;
+  };
+  publicLife: {
+    fame: Percent;
+    reputation: Percent;
+    followers: number;
+    scandals: number;
+  };
+  household: {
+    status: 'dependent' | 'independent' | 'partnered' | 'institutional';
+    moves: number;
+    lastMoveAge?: number;
+    dependents: number;
+  };
+  lastFullSimulationAge?: number;
+}
+
 export interface Npc {
   id: Id;
   firstName: string;
@@ -111,6 +189,7 @@ export interface Npc {
   famous?: boolean;
   imprisoned?: boolean;
   simulationTier?: 'full' | 'background';
+  life?: NpcLifeState;
 }
 
 export type RelationshipType =

@@ -14,6 +14,7 @@ import { meetPotentialPartner, haveChild, ageNpcs, changeRelationshipType, inter
 import { jobById } from '../data/jobs';
 import { eventById } from '../data/events';
 import { enforceStateInvariants, validateState } from '../core/invariants';
+import { createRng } from '../core/rng';
 import { availableCrimes, commitCrime, resolveLegalCase } from '../systems/CrimeSystem';
 import { continueAsChild } from '../systems/GenerationSystem';
 import { migrateSave, nextSaveSlotId } from '../services/SaveSystem';
@@ -33,6 +34,7 @@ import { relatedMiniGameSkill, skipMiniGame } from '../minigames/framework';
 import { featuredLife } from '../systems/LifeSaveSystem';
 import { attendSchoolGroup, cheatAtSchool, currentSchoolWorld, joinSchoolGroup, migrateLegacySchoolWorlds, schoolAdmissionsFactors } from '../systems/SchoolWorldSystem';
 import { schoolProfileFor } from '../data/schools';
+import { ensureNpcLife, processNpcLives, relocateNpcHousehold } from '../systems/NpcLifeSystem';
 
 export interface RegressionResult {name:string;passed:boolean;error?:string;}
 export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
@@ -55,6 +57,19 @@ function makeChild(state:GameState,id='test-child',age=20):Npc{
 }
 
 export const regressionCases:RegressionCase[]=[
+  {
+    name:'seeded RNG counter jump matches sequential consumption exactly',
+    run:()=>{
+      const counters=[0,1,2,17,257,4096,65535];
+      for(const counter of counters){
+        const sequential=createRng('rng-jump-regression');
+        for(let i=0;i<counter;i++)sequential.next();
+        const jumped=createRng('rng-jump-regression',counter);
+        equal(jumped.counter(),counter,`jumped RNG reported the wrong counter at ${counter}`);
+        for(let draw=0;draw<8;draw++)equal(jumped.next(),sequential.next(),`jumped RNG diverged at counter ${counter}, draw ${draw}`);
+      }
+    }
+  },
   {
     name:'seeded character generation is behaviorally deterministic',
     run:()=>{
@@ -397,6 +412,29 @@ export const regressionCases:RegressionCase[]=[
     }
   },
   {
+    name:'eight-generation continuation keeps rich NPC histories valid and lifetime cast growth bounded',
+    run:()=>{
+      const state=highStatAdult('eight-generation-npc-life');
+      state.character.age=60;state.currentYear=state.character.birthYear+60;
+      for(let targetGeneration=2;targetGeneration<=8;targetGeneration++){
+        state.character.alive=false;state.finances.cash=100000+targetGeneration*10000;
+        const heirs:Npc[]=[];
+        for(let index=0;index<3;index++){
+          const heir=makeChild(state,`generation-${targetGeneration}-heir-${index}`,25+index*2);
+          heir.traits=['responsible','curious'];heir.wealth=index*10000;heir.simulationTier='full';
+          state.npcs[heir.id]=heir;ensureNpcLife(state,heir);
+          state.relationships.push({id:`generation-${targetGeneration}-rel-${index}`,npcId:heir.id,type:'child',score:85,attraction:0,compatibility:75,yearsKnown:heir.age});heirs.push(heir);
+        }
+        assert(continueAsChild(state,heirs[0]!.id).success,`generation ${targetGeneration} handoff failed`);
+        equal(state.legacy.generation,targetGeneration,`generation counter diverged at ${targetGeneration}`);
+        equal(validateState(state).length,0,`generation ${targetGeneration} violates state invariants`);
+        assert(Object.values(state.npcs).every(npc=>Boolean(npc.life)),`generation ${targetGeneration} contains NPCs without life histories`);
+        assert(Object.keys(state.npcs).length<400,`lifetime cast grew beyond the bounded dynasty budget at generation ${targetGeneration}`);
+        state.character.age=60;state.currentYear=state.character.birthYear+60;
+      }
+    }
+  },
+  {
     name:'wealth-source breakdown reconciles exactly to net worth',
     run:()=>{
       const state=highStatAdult('wealth-reconcile');state.finances.cash=12345;state.assets.properties=[{id:'equity-home',typeId:'starter_house_standard',name:'Equity Home',location:state.character.city,purchasePrice:200000,marketValue:180000,condition:80,age:12,amenities:[],mortgageId:'equity-mortgage'}];state.finances.liabilities=[{id:'equity-mortgage',kind:'mortgage',principal:220000,balance:190000,annualRate:.05,annualPayment:15000,remainingYears:20,assetId:'equity-home'},{id:'other-debt',kind:'personal',principal:5000,balance:5000,annualRate:.1,annualPayment:1000,remainingYears:5}];
@@ -420,20 +458,20 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'rewind migrates legacy snapshots before restoring them',
     run:()=>{
-      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,8,'rewind did not migrate snapshot to schema v8');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
+      const state=createNewGame({seed:'legacy-rewind',rewindEnabled:true});ageUp(state);if(state.pendingEvent){resolvePendingEvent(state,state.pendingEvent.choices[0]!.id);finalizeAgeUp(state);}assert(state.yearlySnapshots.length>0,'rewind snapshot was not created');const snapshot=JSON.parse(state.yearlySnapshots[0]!.state) as Record<string,unknown>;snapshot.saveVersion=3;delete snapshot.idCounter;delete snapshot.familyPlanning;state.yearlySnapshots[0]!.state=JSON.stringify(snapshot);const result=rewindToAge(state,state.yearlySnapshots[0]!.age);assert(result.success,'legacy snapshot rewind failed');equal(state.saveVersion,9,'rewind did not migrate snapshot to schema v9');assert(Number.isFinite(state.idCounter),'rewound state has no deterministic ID counter');assert(state.familyPlanning,'rewound state has no family-planning state');
     }
   },
   {
     name:'save migrations restore current required structures',
     run:()=>{
       const current=createNewGame({seed:'migration'});const legacy=structuredClone(current) as GameState;legacy.saveVersion=1;delete (legacy as unknown as {travel?:unknown}).travel;delete (legacy as unknown as {inheritance?:unknown}).inheritance;delete (legacy as unknown as {familyPlanning?:unknown}).familyPlanning;legacy.yearlySnapshots=[];
-      const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'save did not migrate to version 8');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');assert(migrated.actionLedger,'action ledger missing after migration');assert(migrated.socialWorlds,'social-world state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
+      const migrated=migrateSave(legacy);equal(migrated.saveVersion,9,'save did not migrate to version 9');assert(Number.isFinite(migrated.idCounter)&&migrated.idCounter>=10000,'v3→v4 migration did not initialize deterministic id counter');assert(migrated.travel,'travel state missing after migration');assert(migrated.inheritance,'inheritance state missing after migration');assert(migrated.familyPlanning,'family-planning state missing after migration');assert(migrated.actionLedger,'action ledger missing after migration');assert(migrated.socialWorlds,'social-world state missing after migration');equal(validateState(migrated).length,0,'migrated save violates invariants');
     }
   },
   {
     name:'v5 migration preserves consumed yearly actions in the central ledger',
     run:()=>{
-      const legacy=highStatAdult('action-ledger-migration');legacy.saveVersion=5;legacy.flags.lastWorkHarderAge=legacy.character.age;legacy.flags.lastRaiseRequestAge=legacy.character.age;delete (legacy as unknown as {actionLedger?:unknown}).actionLedger;const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'v5 save did not migrate to schema v8');equal(actionUsesThisAge(migrated,'career.work_harder'),1,'legacy work-effort use was lost');equal(actionUsesThisAge(migrated,'career.raise'),1,'legacy raise use was lost');equal(actionAllowed(migrated,{policy:'career.work_harder'}),false,'migrated save allowed a duplicate yearly work action');
+      const legacy=highStatAdult('action-ledger-migration');legacy.saveVersion=5;legacy.flags.lastWorkHarderAge=legacy.character.age;legacy.flags.lastRaiseRequestAge=legacy.character.age;delete (legacy as unknown as {actionLedger?:unknown}).actionLedger;const migrated=migrateSave(legacy);equal(migrated.saveVersion,9,'v5 save did not migrate to schema v9');equal(actionUsesThisAge(migrated,'career.work_harder'),1,'legacy work-effort use was lost');equal(actionUsesThisAge(migrated,'career.raise'),1,'legacy raise use was lost');equal(actionAllowed(migrated,{policy:'career.work_harder'}),false,'migrated save allowed a duplicate yearly work action');
     }
   },
   {
@@ -546,7 +584,7 @@ export const regressionCases:RegressionCase[]=[
   {
     name:'v6 migration reconstructs school social worlds from existing education history',
     run:()=>{
-      const legacy=createNewGame({seed:'school-migration',countryId:'us'});legacy.character.age=16;legacy.currentYear=2042;legacy.education=[{stage:'primary',institution:'Old Primary',startAge:5,endAge:11,graduated:true,droppedOut:false,scholarship:false,performance:70},{stage:'middle',institution:'Old Middle',startAge:11,endAge:14,graduated:true,droppedOut:false,scholarship:false,performance:74},{stage:'secondary',institution:'Current Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:78}];legacy.socialWorlds=[];legacy.saveVersion=6;const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'v6 school save did not migrate to current schema');equal(migrated.socialWorlds.length,3,'education history did not reconstruct three school worlds');equal(migrated.socialWorlds.filter(world=>world.active).length,1,'migration produced the wrong number of active school worlds');assert(migrated.relationships.some(rel=>rel.type==='classmate'),'migrated school history did not restore classmates');equal(validateState(migrated).length,0,'migrated school world violates invariants');
+      const legacy=createNewGame({seed:'school-migration',countryId:'us'});legacy.character.age=16;legacy.currentYear=2042;legacy.education=[{stage:'primary',institution:'Old Primary',startAge:5,endAge:11,graduated:true,droppedOut:false,scholarship:false,performance:70},{stage:'middle',institution:'Old Middle',startAge:11,endAge:14,graduated:true,droppedOut:false,scholarship:false,performance:74},{stage:'secondary',institution:'Current Secondary',startAge:14,graduated:false,droppedOut:false,scholarship:false,performance:78}];legacy.socialWorlds=[];legacy.saveVersion=6;const migrated=migrateSave(legacy);equal(migrated.saveVersion,9,'v6 school save did not migrate to current schema');equal(migrated.socialWorlds.length,3,'education history did not reconstruct three school worlds');equal(migrated.socialWorlds.filter(world=>world.active).length,1,'migration produced the wrong number of active school worlds');assert(migrated.relationships.some(rel=>rel.type==='classmate'),'migrated school history did not restore classmates');equal(validateState(migrated).length,0,'migrated school world violates invariants');
     }
   },
   {
@@ -591,7 +629,7 @@ export const regressionCases:RegressionCase[]=[
     name:'v7 migration reconstructs persistent workplaces and initializes part-time employment state',
     run:()=>{
       const legacy=highStatAdult('workplace-migration');legacy.character.age=32;legacy.currentYear=2058;legacy.employment.current={jobId:'office_administration_2',title:'Administrative Coordinator',company:'Mosaic Services',startAge:28,salary:46000,performance:68,level:2};legacy.socialWorlds=[];legacy.saveVersion=7;delete (legacy.employment as unknown as {partTimeJobs?:unknown}).partTimeJobs;delete (legacy.employment as unknown as {partTimeHistory?:unknown}).partTimeHistory;
-      const migrated=migrateSave(legacy);equal(migrated.saveVersion,8,'v7 save did not migrate to schema v8');assert(currentWorkplaceWorld(migrated)?.workplace,'current employment did not reconstruct an active workplace');assert(Array.isArray(migrated.employment.partTimeJobs)&&Array.isArray(migrated.employment.partTimeHistory),'part-time employment arrays were not initialized');equal(validateState(migrated).length,0,'migrated workplace state violates invariants');
+      const migrated=migrateSave(legacy);equal(migrated.saveVersion,9,'v7 save did not migrate to current schema');assert(currentWorkplaceWorld(migrated)?.workplace,'current employment did not reconstruct an active workplace');assert(Array.isArray(migrated.employment.partTimeJobs)&&Array.isArray(migrated.employment.partTimeHistory),'part-time employment arrays were not initialized');equal(validateState(migrated).length,0,'migrated workplace state violates invariants');
     }
   },
   {
@@ -624,6 +662,96 @@ export const regressionCases:RegressionCase[]=[
     name:'generational handoff does not inherit the previous protagonist workplace',
     run:()=>{
       const state=highStatAdult('generation-workplace-reset');state.character.age=65;state.character.alive=false;state.employment.current={jobId:'retail_2',title:'Senior Shop Assistant',company:'Old Employer',startAge:55,salary:42000,performance:70,level:2};syncWorkplaceWorlds(state,false);const priorWorld=currentWorkplaceWorld(state);assert(priorWorld,'parent workplace missing');const child=makeChild(state,'working-heir',30);child.careerId='office_administration_1';state.npcs[child.id]=child;state.relationships.push({id:'working-heir-rel',npcId:child.id,type:'child',score:88,attraction:0,compatibility:75,yearsKnown:30});assert(continueAsChild(state,child.id).success,'generational continuation failed');assert(!state.socialWorlds.some(world=>world.id===priorWorld.id),'previous protagonist workplace leaked into descendant social worlds');assert(currentWorkplaceWorld(state)?.workplace,'working descendant did not receive a workplace for established employment');
+    }
+  },
+  {
+    name:'autonomous blended-family formation preserves real stepfamily links to the player',
+    run:()=>{
+      const state=createNewGame({seed:'blend-9',countryId:'us'});state.character.age=20;state.currentYear=2046;
+      const parent:Npc={id:'single-parent-test',firstName:'Riley',lastName:'Test',age:32,alive:true,health:95,happiness:90,wealth:30000,countryId:'us',city:'Chicago',sexuality:'bisexual',fertility:70,maritalStatus:'single',traits:['romantic','responsible'],hiddenOpinion:70,memories:[],parentIds:[],childIds:[],simulationTier:'full'};
+      state.npcs[parent.id]=parent;state.relationships.push({id:'parent-test-rel',npcId:parent.id,type:'parent',score:85,attraction:0,compatibility:80,yearsKnown:20});ensureNpcLife(state,parent);
+      for(let year=0;year<12&&!state.relationships.some(rel=>rel.type==='stepsibling');year++){state.character.age+=1;state.currentYear+=1;processNpcLives(state);}
+      assert(parent.partnerId,'autonomous parent never formed a partner in deterministic blended-family setup');const partner=state.npcs[parent.partnerId];assert(partner&&partner.partnerId===parent.id,'blended-family partner link is not reciprocal');const stepRel=state.relationships.find(rel=>rel.type==='stepsibling');assert(stepRel,'partner pre-existing child was not connected to player as stepsibling');assert(partner.childIds.includes(stepRel.npcId),'stepsibling is not actually the new partner child');
+    }
+  },
+  {
+    name:'NPC household relocation keeps partners and dependent children together',
+    run:()=>{
+      const state=highStatAdult('npc-household-relocation');const sibling=makeChild(state,'relocation-sibling',32);sibling.parentIds=[];sibling.childIds=[];sibling.maritalStatus='married';sibling.countryId='us';sibling.city='Chicago';state.npcs[sibling.id]=sibling;ensureNpcLife(state,sibling);
+      const partner=makeChild(state,'relocation-partner',31);partner.parentIds=[];partner.childIds=[];partner.maritalStatus='married';partner.countryId='us';partner.city=sibling.city;partner.partnerId=sibling.id;state.npcs[partner.id]=partner;ensureNpcLife(state,partner);sibling.partnerId=partner.id;
+      const child=makeChild(state,'relocation-child',7);child.parentIds=[sibling.id,partner.id];child.childIds=[];child.countryId='us';child.city=sibling.city;state.npcs[child.id]=child;ensureNpcLife(state,child);sibling.childIds=[child.id];partner.childIds=[child.id];
+      const country=countryById[sibling.countryId];assert(country&&country.cities.length>1,'relocation test country has no alternate city');const destination=country.cities.find(city=>city!==sibling.city)!;const moved=relocateNpcHousehold(state,sibling.id,destination);
+      assert(moved.includes(sibling.id)&&moved.includes(partner.id)&&moved.includes(child.id),'household relocation omitted a household member');equal(sibling.city,destination,'primary NPC did not move');equal(partner.city,destination,'partner was left behind');equal(child.city,destination,'dependent child was left behind');equal(validateState(state).length,0,'household relocation broke state invariants');
+    }
+  },
+  {
+    name:'stable low-fertility close-family couples can adopt without creating broken lineage links',
+    run:()=>{
+      const state=createNewGame({seed:'npc-adoption-autonomy',countryId:'us'});state.character.age=35;state.currentYear=2061;
+      const sibling=makeChild(state,'adopting-sibling',34),partner=makeChild(state,'adopting-partner',35);sibling.parentIds=[];partner.parentIds=[];sibling.fertility=10;partner.fertility=10;sibling.health=95;partner.health=95;sibling.maritalStatus='married';partner.maritalStatus='married';sibling.partnerId=partner.id;partner.partnerId=sibling.id;sibling.traits=['responsible','loyal','calm'];partner.traits=['responsible','loyal','calm'];sibling.simulationTier='full';partner.simulationTier='full';sibling.memories.push({id:'old-marriage',year:2053,age:27,kind:'marriage',sentiment:9,summary:'Married years ago.',permanent:true});partner.memories.push({id:'old-marriage-partner',year:2053,age:26,kind:'marriage',sentiment:9,summary:'Married years ago.',permanent:true});state.npcs[sibling.id]=sibling;state.npcs[partner.id]=partner;state.relationships.push({id:'adopting-sibling-rel',npcId:sibling.id,type:'sibling',score:88,attraction:0,compatibility:82,yearsKnown:34});ensureNpcLife(state,sibling);ensureNpcLife(state,partner);
+      state.character.age+=1;state.currentYear+=1;processNpcLives(state);assert(sibling.childIds.length===1,'stable low-fertility couple did not expand family through adoption');const child=state.npcs[sibling.childIds[0]!];assert(child&&child.parentIds.includes(sibling.id)&&child.parentIds.includes(partner.id),'adopted child has broken parent links');assert(state.relationships.some(rel=>rel.npcId===child.id&&rel.type==='niece_nephew'),'adopted sibling child was not derived as niece/nephew');assert(sibling.memories.some(memory=>memory.kind==='adoption'),'NPC adoption was not preserved as a family memory');
+    }
+  },
+  {
+    name:'v8 migration deterministically initializes persistent NPC life histories without consuming player RNG',
+    run:()=>{
+      const legacy=createNewGame({seed:'npc-life-migration',countryId:'us'});legacy.saveVersion=8;const beforeCounter=legacy.rngCounter;
+      for(const npc of Object.values(legacy.npcs))delete npc.life;
+      const a=migrateSave(legacy),b=migrateSave(legacy);equal(a.saveVersion,9,'v8 save did not migrate to schema v9');equal(a.rngCounter,beforeCounter,'NPC life migration consumed the player RNG stream');
+      assert(Object.values(a.npcs).every(npc=>Boolean(npc.life)),'migration left an NPC without persistent life state');equal(JSON.stringify(Object.values(a.npcs).map(npc=>npc.life)),JSON.stringify(Object.values(b.npcs).map(npc=>npc.life)),'NPC life migration was not deterministic');equal(validateState(a).length,0,'migrated NPC life state violates invariants');
+    }
+  },
+  {
+    name:'NPC education, custody, health, finance, and public-life state advance as persistent bounded history',
+    run:()=>{
+      const state=createNewGame({seed:'npc-life-domains',countryId:'us'});state.character.age=40;state.currentYear=2066;
+      const npc=makeChild(state,'domain-child',17);npc.simulationTier='full';state.npcs[npc.id]=npc;state.relationships.push({id:'domain-rel',npcId:npc.id,type:'child',score:82,attraction:0,compatibility:70,yearsKnown:17});const life=ensureNpcLife(state,npc);
+      life.education.records=[{stage:'secondary',institution:'Domain Secondary',startAge:14,graduated:false,performance:82}];life.education.performance=82;
+      life.health.conditions=[{illnessId:'asthma',name:'Asthma',severity:32,diagnosedAge:12,chronic:true,treated:true,years:2}];
+      life.legal.incidents=[{age:16,kind:'minor',convicted:true,sentenceYears:2}];life.legal.sentenceRemaining=2;life.legal.recordSeverity=30;npc.imprisoned=true;
+      life.publicLife.fame=31;life.publicLife.reputation=64;life.publicLife.followers=1000;
+      life.finance.debt=4000;
+      processNpcLives(state);assert(life.education.records[0]?.graduated,'NPC did not graduate the active secondary record at the expected age boundary');equal(life.legal.sentenceRemaining,1,'NPC sentence did not progress by one year');assert(npc.imprisoned,'NPC was released too early');assert(life.health.conditions.some(condition=>condition.illnessId==='asthma'),'chronic NPC health history disappeared');
+      processNpcLives(state);equal(life.legal.sentenceRemaining,0,'NPC sentence did not finish');equal(Boolean(npc.imprisoned),false,'NPC imprisonment compatibility flag did not clear on release');assert(life.finance.debt>=0&&life.finance.propertyValue>=0,'NPC finances became invalid');assert(life.publicLife.fame>=0&&life.publicLife.fame<=100,'NPC fame escaped bounds');assert(life.health.conditions.length<=4&&life.legal.incidents.length<=8&&life.career.history.length<=10,'NPC persistent histories are unbounded');
+    }
+  },
+  {
+    name:'NPC housing value follows the bounded housing market instead of deterministic depreciation',
+    run:()=>{
+      const state=highStatAdult('npc-housing-market');const parentRel=state.relationships.find(rel=>rel.type==='parent');assert(parentRel,'test parent missing');const parent=state.npcs[parentRel.npcId]!;const life=ensureNpcLife(state,parent);
+      parent.age=40;parent.careerId=undefined;parent.wealth=120000;life.career.retired=true;life.finance.propertyValue=100000;life.finance.debt=0;life.finance.housing='owning';state.economy.housingIndex=2;
+      processNpcLives(state);
+      assert(life.finance.propertyValue>=99800,`NPC property ignored a strong housing market (${life.finance.propertyValue})`);
+      assert(life.finance.propertyValue<=105500,`NPC property exceeded the bounded annual housing move (${life.finance.propertyValue})`);
+    }
+  },
+  {
+    name:'NPC hidden opinions and emotional memories influence long-term relationship drift',
+    run:()=>{
+      const state=createNewGame({seed:'npc-opinion-drift',countryId:'us'});state.character.age=30;state.currentYear=2056;
+      const warm=makeChild(state,'warm-npc',30),cold=makeChild(state,'cold-npc',30);warm.simulationTier='full';cold.simulationTier='full';warm.hiddenOpinion=90;cold.hiddenOpinion=-90;
+      warm.memories.push({id:'warm-memory',year:2055,age:29,kind:'shared_history',sentiment:12,summary:'A deeply positive shared memory.'});cold.memories.push({id:'cold-memory',year:2055,age:29,kind:'shared_history',sentiment:-12,summary:'A deeply negative shared memory.'});
+      state.npcs[warm.id]=warm;state.npcs[cold.id]=cold;ensureNpcLife(state,warm);ensureNpcLife(state,cold);state.relationships.push({id:'warm-rel',npcId:warm.id,type:'friend',score:50,attraction:0,compatibility:60,yearsKnown:5},{id:'cold-rel',npcId:cold.id,type:'friend',score:50,attraction:0,compatibility:60,yearsKnown:5});
+      processNpcLives(state);const warmRel=state.relationships.find(rel=>rel.npcId===warm.id)!,coldRel=state.relationships.find(rel=>rel.npcId===cold.id)!;assert(warmRel.score>coldRel.score,`memory/opinion drift did not separate relationships (${warmRel.score} vs ${coldRel.score})`);
+    }
+  },
+  {
+    name:'adult descendant continuation preserves real NPC education career health legal fame and debt history',
+    run:()=>{
+      const state=highStatAdult('npc-handoff-history');state.character.age=68;state.character.alive=false;state.currentYear=2094;
+      const child=makeChild(state,'history-heir',32);child.careerId='technology_2';child.wealth=24000;child.famous=true;state.npcs[child.id]=child;state.relationships.push({id:'history-heir-rel',npcId:child.id,type:'child',score:90,attraction:0,compatibility:78,yearsKnown:32});const life=ensureNpcLife(state,child);
+      life.aptitude=88;life.education.records=[{stage:'primary',institution:'Primary',startAge:5,endAge:11,graduated:true,performance:82},{stage:'middle',institution:'Middle',startAge:11,endAge:14,graduated:true,performance:84},{stage:'secondary',institution:'Secondary',startAge:14,endAge:18,graduated:true,performance:88},{stage:'university',institution:'Tech Institute',startAge:18,endAge:22,graduated:true,performance:91,credential:'computer_science'}];life.education.performance=91;life.education.credential='computer_science';life.career.history=[{jobId:'technology_1',startAge:22,endAge:27},{jobId:'technology_2',startAge:27}];life.career.careerYears=10;
+      life.health.conditions=[{illnessId:'asthma',name:'Asthma',severity:28,diagnosedAge:20,chronic:true,treated:true,years:12}];life.health.fitness=72;life.health.wellness=68;life.legal.incidents=[{age:24,kind:'minor',convicted:true}];life.legal.recordSeverity=18;life.publicLife.fame=36;life.publicLife.reputation=67;life.publicLife.followers=54000;life.finance.debt=6500;
+      assert(continueAsChild(state,child.id).success,'descendant continuation failed');assert(state.education.some(record=>record.major==='computer science'&&record.graduated),'descendant degree history was not transferred');equal(state.employment.current?.jobId,'technology_2','descendant current career was not transferred');assert(state.employment.history.some(record=>record.jobId==='technology_1'),'descendant prior career history was not transferred');assert(state.health.conditions.some(condition=>condition.illnessId==='asthma'),'descendant chronic health history was reset');equal(state.legal.criminalRecord.length,1,'descendant legal history was reset');assert(state.fame.fame>=36,'descendant personal fame was discarded');assert(state.finances.liabilities.some(loan=>loan.kind==='personal'&&loan.balance===6500),'descendant personal debt was discarded');assert(state.socialWorlds.some(world=>world.kind==='school'),'descendant school worlds were not reconstructed from real education history');assert(currentWorkplaceWorld(state)?.workplace,'descendant workplace was not reconstructed from real career history');
+    }
+  },
+  {
+    name:'background NPC autonomy remains population-bounded across decades while preserving offscreen lives',
+    run:()=>{
+      const state=createNewGame({seed:'npc-background-bounds',countryId:'us'});state.character.age=20;state.currentYear=2046;const pool=Object.values(state.npcs)[0]!;
+      for(let index=0;index<30;index++){const npc: Npc={...structuredClone(pool),id:`background-${index}`,firstName:`Bg${index}`,age:20+(index%8),partnerId:undefined,parentIds:[],childIds:[],memories:[],wealth:5000+(index*300),maritalStatus:'single',simulationTier:'background',life:undefined};state.npcs[npc.id]=npc;state.relationships.push({id:`background-rel-${index}`,npcId:npc.id,type:'classmate',score:35,attraction:0,compatibility:50,yearsKnown:2});ensureNpcLife(state,npc);}
+      for(let year=0;year<35;year++){state.character.age+=1;state.currentYear+=1;processNpcLives(state);enforceStateInvariants(state);}
+      assert(Object.keys(state.npcs).length<150,`background autonomy expanded to ${Object.keys(state.npcs).length} NPCs`);equal(validateState(state).length,0,'background autonomy produced invalid state');assert(Object.values(state.npcs).some(npc=>npc.id.startsWith('background-')&&((npc.life?.career.history.length??0)>0||(npc.life?.education.records.length??0)>0)),'background NPCs did not accumulate meaningful offscreen history');
     }
   },
   {

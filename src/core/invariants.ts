@@ -34,7 +34,29 @@ export function enforceStateInvariants(state: GameState): GameState {
     npc.happiness = clamp(npc.happiness);
     npc.fertility = clamp(npc.fertility);
     npc.hiddenOpinion = clamp(npc.hiddenOpinion, -100, 100);
-    if (!npc.alive) { npc.imprisoned = false; npc.partnerId = undefined; }
+    if (npc.life) {
+      npc.life.aptitude = clamp(npc.life.aptitude);
+      npc.life.education.performance = clamp(npc.life.education.performance);
+      npc.life.finance.annualIncome = Math.max(0, Number.isFinite(npc.life.finance.annualIncome) ? npc.life.finance.annualIncome : 0);
+      npc.life.finance.debt = Math.max(0, Number.isFinite(npc.life.finance.debt) ? npc.life.finance.debt : 0);
+      npc.life.finance.propertyValue = Math.max(0, Number.isFinite(npc.life.finance.propertyValue) ? npc.life.finance.propertyValue : 0);
+      npc.life.finance.creditStress = clamp(npc.life.finance.creditStress);
+      npc.life.health.fitness = clamp(npc.life.health.fitness);
+      npc.life.health.wellness = clamp(npc.life.health.wellness);
+      npc.life.health.conditions = (npc.life.health.conditions ?? []).slice(-4).map(condition => ({...condition,severity:clamp(condition.severity),years:Math.max(0,Math.floor(condition.years))}));
+      npc.life.legal.incidents = (npc.life.legal.incidents ?? []).slice(-8);
+      npc.life.legal.sentenceRemaining = Math.max(0, Math.floor(npc.life.legal.sentenceRemaining));
+      npc.life.legal.recordSeverity = clamp(npc.life.legal.recordSeverity);
+      npc.life.publicLife.fame = clamp(npc.life.publicLife.fame);
+      npc.life.publicLife.reputation = clamp(npc.life.publicLife.reputation);
+      npc.life.publicLife.followers = Math.max(0,Math.floor(npc.life.publicLife.followers));
+      npc.life.publicLife.scandals = Math.max(0,Math.floor(npc.life.publicLife.scandals));
+      npc.life.household.moves = Math.max(0,Math.floor(npc.life.household.moves));
+      npc.life.household.dependents = Math.max(0,Math.floor(npc.life.household.dependents));
+      npc.imprisoned = npc.life.legal.sentenceRemaining > 0;
+      npc.famous = npc.life.publicLife.fame >= 25;
+    }
+    if (!npc.alive) { npc.imprisoned = false; npc.partnerId = undefined; if(npc.life) npc.life.legal.sentenceRemaining = 0; }
   }
   state.socialWorlds ??= [];
   state.employment.partTimeJobs ??= [];
@@ -88,6 +110,14 @@ export function validateState(state: GameState): string[] {
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
   for (const npc of Object.values(state.npcs)) {
+    if (!npc.life) errors.push(`NPC ${npc.id} is missing life state`);
+    else {
+      if (npc.life.finance.debt < 0 || npc.life.finance.propertyValue < 0 || npc.life.finance.annualIncome < 0) errors.push(`NPC ${npc.id} has invalid finances`);
+      if (npc.life.legal.sentenceRemaining < 0) errors.push(`NPC ${npc.id} has negative sentence`);
+      if (npc.life.health.conditions.length > 4) errors.push(`NPC ${npc.id} has too many active conditions`);
+      if (npc.life.career.history.length > 10) errors.push(`NPC ${npc.id} career history is unbounded`);
+      if (npc.life.education.records.length > 8) errors.push(`NPC ${npc.id} education history is unbounded`);
+    }
     if (!npc.partnerId) continue;
     if (npc.partnerId === npc.id) errors.push(`NPC ${npc.id} is partnered with self`);
     const partner = state.npcs[npc.partnerId];

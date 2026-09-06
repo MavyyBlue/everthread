@@ -1,8 +1,8 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-04  
-Current build line: 0.11.0 pre-release  
-Save schema: 8
+Last updated: 2026-09-05  
+Current build line: 0.12.0 pre-release  
+Save schema: 9
 
 ## Product direction
 
@@ -25,6 +25,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 ## Implemented foundations
 
 These are functioning systems rather than navigation placeholders, though some still need additional depth.
+
+### Full NPC life simulation (0.12.0)
+
+Phase 3 moves autonomous people from lightweight surrounding state into persistent resumable biographies while preserving simulation tiers for performance. `NpcLifeSystem` owns autonomous life domains; ordinary NPC records remain the identity/family graph, Social Worlds remain affiliation history, and RelationshipSystem remains the player-facing relationship domain.
+
+- v8→v9 migration deterministically initializes missing NPC education, career, finance/household, health, legal, public-life, and simulation-cadence state without advancing the player RNG stream.
+- Important NPCs progress through education, real career history, household cash flow, debt/property, illness, legal incidents/imprisonment/release, fame/reputation/followers, family formation, adoption, household moves, retirement, inheritance, and death. Background acquaintances retain cheaper cadence until a meaningful relationship promotes them to full simulation.
+- Blended-family formation can introduce partner children and derives real stepfamily links. Stable low-fertility close-family couples can adopt, while family/relationship progression has bounded pressure against decades of accidental RNG limbo.
+- Adult descendant continuation transfers the selected NPC's accumulated biography directly instead of reconstructing major education/health/legal/fame/debt history from generic defaults.
+- People detail sheets expose the NPC biography so offscreen life changes remain visible to the player.
+- Household relocation moves partners and dependent children together, protects current player spouses/dependent players from silent autonomous moves, and uses a deterministic household-specific RNG substream so relocation cannot perturb unrelated life outcomes.
+- Hidden opinion plus recent emotional memory influence relationship drift and targeted-event relevance.
+- NPC housing appreciation/debt service uses the bounded economy and real household cash-flow accounting.
+- Seeded RNG counter jumps are O(1) while remaining sequence-identical, reducing long simulation cost across every system.
+- Verification: 82/82 regressions; eight-generation dynasty stress passes; final neutral/mixed 1,000-life populations each complete with zero anomalies/forced terminal deaths and average lifetime casts ~116 NPCs (max 176).
 
 
 ### Persistent workplace social worlds (0.11.0)
@@ -211,12 +226,12 @@ The market-calibration conclusion from 0.9.4 still holds: inheritance is not the
 
 ### NPC simulation
 
-Close-family autonomous simulation is now materially deeper: NPCs can hold real careers, promote/lose jobs/retire, form linked partnerships, marry/divorce/become widowed, have bounded autonomous children, accumulate wealth, and leave inheritance. Player romantic partners are protected from autonomous matchmaking and malformed partner links are checked by invariants. Still needed:
+0.12.0 completes the Phase 3 foundation identified in the original scope gap. NPCs now persist education/credentials, real career histories, household cash flow/debt/property, health conditions, legal incidents/custody, fame/public reputation, household moves, partnership/family/adoption/blended-family state, emotionally relevant memories/opinions, inheritance, and death. Adult descendant handoff consumes that real history directly. Future NPC work is additional depth rather than a missing life-simulation foundation:
 
-- Better household moves, education progression, crime, fame, illness, imprisonment, and richer wealth behavior.
-- Hidden opinions/memories influencing more autonomous decisions and event eligibility.
-- More nuanced fertility, relationship compatibility, blended-family formation, and adoption.
-- Performance validation across very large multi-generation family trees.
+- More occupation/education-specific autonomous choices, richer household consumption, and NPC-owned businesses/vehicles/individual property assets rather than aggregate property value.
+- More nuanced chronic-health treatment trajectories, criminal/legal branching, public-life careers, friendships between NPCs, and explicit non-player social organizations.
+- Wider kin taxonomy (aunts/uncles/cousins) and more complex multi-household custody/guardianship where later generation work justifies it.
+- Continued very-large-dynasty profiling as special careers, organizations, and world systems add more persistent NPC affiliations.
 
 ### Generations and inheritance
 
@@ -224,8 +239,7 @@ The latest pass now performs multi-heir estate settlement, proportional investme
 
 - Asset-specific wills rather than percentage-only child beneficiaries.
 - Estate taxes/administration costs using fictionalized country rules.
-- NPC-owned property/business state rather than representing offscreen inherited assets only as NPC wealth.
-- Autonomous descendant education/legal/health histories detailed enough to transfer directly instead of being inferred or reset.
+- NPC-owned businesses and individually addressable properties/assets rather than the current aggregate NPC property-value model.
 - Aunt/uncle/cousin relationship types if the relationship model is expanded beyond the current supported taxonomy.
 - Large-family performance validation across many sequential generations.
 
@@ -327,18 +341,21 @@ Added the persisted centralized `actionLedger` with per-age usage, last-used age
 
 Added persisted `socialWorlds` for school/workplace/organization membership and school-specific roster/group/conduct state. v6 migration reconstructs school worlds from existing education records so old lives retain their educational history while gaining persistent school affiliations.
 
-### Version 8 — current
+### Version 8
 
 Added persisted workplace-specific Social World state plus real `partTimeJobs` / `partTimeHistory`. v7 migration reconstructs workplace worlds from existing career records, while generational handoff rebuilds social worlds for the newly controlled descendant rather than carrying the prior protagonist's institutions forward.
 
+### Version 9 — current
+
+Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration deterministically initializes missing NPC education/career/finance/health/legal/public-life/household state without consuming the player RNG stream; adult descendant handoff can now transfer this accumulated history directly.
+
 ## Next development sequence
 
-1. Complete the 0.11.0 phone/browser playtest and repair any workplace UI, save-migration, affiliation, or part-time-hour issue before the next deepening phase.
-2. Phase 3: deepen NPC autonomy across education, health, household moves, crime/legal history, fame, imprisonment, finances, adoption, and memory/opinion-driven decisions.
-3. Phase 4: deepen special-career ecosystems with persistent teams/casts/rivals/staff, contracts, seasons, scandals, awards, retirement, and path-specific events.
-4. Phase 5: deepen generations/estates with asset-specific wills, fictionalized estate administration, richer NPC ownership, and broader kin taxonomy/performance validation.
-5. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
-6. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
-7. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
-8. Expand regional names substantially and verify long-dynasty repetition rates.
-9. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.
+1. Complete the 0.12.0 phone/browser playtest and repair any NPC biography, household, migration, population, or descendant-handoff issue before the next deepening phase.
+2. Phase 4: deepen special-career ecosystems with persistent teams/casts/rivals/staff, contracts, seasons, scandals, awards, retirement, and path-specific events.
+3. Phase 5: deepen generations/estates with asset-specific wills, fictionalized estate administration, richer NPC ownership, and broader kin taxonomy/performance validation.
+4. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
+5. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
+6. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
+7. Expand regional names substantially and verify long-dynasty repetition rates.
+8. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

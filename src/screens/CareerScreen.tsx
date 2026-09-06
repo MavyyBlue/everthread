@@ -134,7 +134,7 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
   ['Contribute',()=>gameEngine.crimeOrgAction('contribute'),crimeOrgMove('contribute')],
   ['Become informant',()=>gameEngine.crimeOrgAction('informant'),crimeOrgMove('informant')],
  ]} onResult={onResult}/>
- </div>{challenge&&<MiniGameOverlay kind={challenge.kind} seedKey={`${state.seed}-${state.character.age}-${state.actionLedger.revision}`} onCancel={()=>setChallenge(undefined)} onResolveFromSkill={()=>skipMiniGame(state,challenge.kind,relatedMiniGameSkill(state,challenge.kind))} onComplete={result=>{const action=challenge.run;setChallenge(undefined);onResult(action(result.score));}}/>}</>;
+ </div>{challenge&&<MiniGameOverlay kind={challenge.kind} reducedMotion={state.settings.reducedMotion} seedKey={`${state.seed}-${state.character.age}-${state.actionLedger.revision}`} onCancel={()=>setChallenge(undefined)} onResolveFromSkill={()=>skipMiniGame(state,challenge.kind,relatedMiniGameSkill(state,challenge.kind))} onComplete={result=>{const action=challenge.run;setChallenge(undefined);onResult(action(result.score));}}/>}</>;
 }
 
 type PathAction=[label:string,run:()=>EngineResult|void,disabled?:boolean];

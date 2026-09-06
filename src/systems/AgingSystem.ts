@@ -4,7 +4,8 @@ import { makeStateId } from '../core/ids';
 import { migrateSave } from '../services/SaveSystem';
 import { processEconomyYear } from './EconomySystem';
 import { processHealthYear } from './HealthSystem';
-import { ageNpcs, processFamilyPlanningYear } from './RelationshipSystem';
+import { processFamilyPlanningYear } from './RelationshipSystem';
+import { initializeMissingNpcLives, processNpcLives } from './NpcLifeSystem';
 import { processEducationYear } from './EducationSystem';
 import { processSchoolWorldYear } from './SchoolWorldSystem';
 import { processCareerYear } from './CareerSystem';
@@ -33,7 +34,7 @@ export function ageUp(state:GameState):EngineResult {
     // World and economy state first; systems below consume the new-year indices.
     processEconomyYear(state);
     processHealthYear(state);
-    ageNpcs(state);
+    processNpcLives(state);
     processFamilyPlanningYear(state);
     processEducationYear(state);
     processSchoolWorldYear(state);
@@ -48,6 +49,8 @@ export function ageUp(state:GameState):EngineResult {
     processLegalYear(state);
     processSpecialCareersYear(state);
     processAnnualFinance(state);
+    // School/workplace transitions can create NPCs after the autonomy pass; initialize them before events/UI observe the new year.
+    initializeMissingNpcLives(state);
 
     if(state.legal.imprisoned)state.flags.prisonYears=Number(state.flags.prisonYears??0)+1;
     state.legacy.totalYearsSimulated+=1;

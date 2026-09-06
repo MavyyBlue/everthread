@@ -4,6 +4,7 @@ import { achievements } from '../data/achievements';
 import type { Character, GameState, Npc, Relationship, Sex, GenderIdentity, Orientation } from '../types/game';
 import { clamp } from '../core/math';
 import { createRng, randomSeed } from '../core/rng';
+import { initializeMissingNpcLives } from './NpcLifeSystem';
 
 const traits = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
 const skinTones = ['porcelain','fair','light','medium','olive','tan','brown','deep brown','dark'];
@@ -82,7 +83,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
   ];
   const familyCash = {poor:100,working:500,middle:1800,comfortable:7000,wealthy:30000}[familyWealthTier];
   const state: GameState = {
-    saveVersion:8,slotId:options.slotId??'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
+    saveVersion:9,slotId:options.slotId??'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
     education:[], socialWorlds:[], employment:{history:[],partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:false},
     finances:{cash:familyCash,annualIncome:0,annualExpenses:0,taxesPaid:0,liabilities:[]},
     assets:{properties:[],vehicles:[],collectibles:[]}, investments:{positions:[],prices:{},marketRegime:'neutral',history:{}}, businesses:[],
@@ -99,5 +100,6 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
   };
   if(country.royalFamily && familyWealthTier==='wealthy' && rng.chance(.015)){ state.flags.royalBirth=true; state.flags.royalRank=1; state.timeline.push({id:'royal-birth',year:2026,age:0,category:'family',importance:3,text:'You were born into a minor branch of the royal household.'}); }
   state.rngCounter=rng.counter();
+  initializeMissingNpcLives(state);
   return state;
 }

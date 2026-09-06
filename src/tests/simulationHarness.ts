@@ -55,6 +55,8 @@ export interface LifeSimulationResult {
   peakFame:number;
   causeOfDeath:string;
   forcedTerminalDeath:boolean;
+  peakNpcCount:number;
+  endNpcCount:number;
   anomalies:string[];
 }
 
@@ -82,6 +84,9 @@ export interface SimulationReport {
   causeOfDeathDistribution:Record<string,number>;
   averageWealthSources:{cash:number;propertyEquity:number;vehicles:number;collectibles:number;investments:number;investmentCostBasis:number;investmentGain:number;investmentContributions:number;investmentWithdrawals:number;businesses:number;otherLiabilities:number;lifetimeInheritance:number};
   inheritanceRate:number;
+  averagePeakNpcCount:number;
+  maxPeakNpcCount:number;
+  averageEndNpcCount:number;
 }
 
 export interface SimulationOptions {
@@ -303,6 +308,7 @@ export function simulateLife(seed:string,maxAge=125,mode:SimulationMode='full',r
   const state=createNewGame({seed});
   if(mode==='bulk'){state.flags.simulationBulk=true;state.achievements=[];state.challenges=[];}
   let peakFame=state.fame.fame;
+  let peakNpcCount=Object.keys(state.npcs).length;
   let forcedTerminalDeath=false;
   const annualAnomalies=new Set<string>();
   while(state.character.alive&&state.character.age<maxAge){
@@ -311,7 +317,7 @@ export function simulateLife(seed:string,maxAge=125,mode:SimulationMode='full',r
     const result=ageUp(state);
     if(!result.success&&state.pendingEvent)resolveEventAutomatically(state,profile,policy);
     else if(state.pendingEvent)resolveEventAutomatically(state,profile,policy);
-    peakFame=Math.max(peakFame,state.fame.fame);
+    peakFame=Math.max(peakFame,state.fame.fame);peakNpcCount=Math.max(peakNpcCount,Object.keys(state.npcs).length);
     if(!Number.isFinite(state.finances.cash))annualAnomalies.add('Non-finite cash during simulation');
     if(state.character.age<0)annualAnomalies.add('Negative age during simulation');
     if(mode==='bulk'&&state.timeline.length>40)state.timeline=state.timeline.slice(-40);
@@ -329,7 +335,7 @@ export function simulateLife(seed:string,maxAge=125,mode:SimulationMode='full',r
     primaryCareer:career?.title??'none',primaryIndustry:job?.industry??(state.businesses.some(b=>!b.bankrupt)?'Business Owner':'none'),
     married:Number(state.flags.marriages??0)>0||state.timeline.some(entry=>entry.text.startsWith('You married ')),children:state.relationships.filter(r=>r.type==='child').length,
     committedCrime:state.legal.criminalRecord.length>0,convictions:state.legal.criminalRecord.filter(r=>r.convicted).length,
-    imprisonedYears:Number(state.flags.prisonYears??0),peakFame,causeOfDeath:state.character.causeOfDeath??'unknown',forcedTerminalDeath,
+    imprisonedYears:Number(state.flags.prisonYears??0),peakFame,causeOfDeath:state.character.causeOfDeath??'unknown',forcedTerminalDeath,peakNpcCount,endNpcCount:Object.keys(state.npcs).length,
     anomalies:[...annualAnomalies],
   };
 }
@@ -338,13 +344,13 @@ export function runSimulation(options:SimulationOptions):SimulationReport {
   const requested=Math.max(1,Math.floor(options.lives));const maxAge=options.maxAge??125;const prefix=options.seedPrefix??'everthread-sim';const sampleLimit=options.keepAnomalySamples??12;const mode=options.mode??'full';
   const lifespans:number[]=[];const wealth:number[]=[];const anomalySamples:string[]=[];
   const educationDistribution:Record<string,number>={};const careerDistribution:Record<string,number>={};const profileDistribution:Record<string,number>={};const policyDistribution:Record<string,number>={};const causeOfDeathDistribution:Record<string,number>={};
-  let anomalyCount=0,completedLives=0,marriedCount=0,childrenTotal=0,crimeCount=0,convictedCount=0,fameCount=0,forcedTerminalDeaths=0,inheritanceCount=0;
+  let anomalyCount=0,completedLives=0,marriedCount=0,childrenTotal=0,crimeCount=0,convictedCount=0,fameCount=0,forcedTerminalDeaths=0,inheritanceCount=0,peakNpcTotal=0,endNpcTotal=0,maxPeakNpcCount=0;
   let cashTotal=0,propertyEquityTotal=0,vehiclesTotal=0,collectiblesTotal=0,investmentsTotal=0,investmentCostBasisTotal=0,investmentGainTotal=0,investmentContributionsTotal=0,investmentWithdrawalsTotal=0,businessesTotal=0,otherLiabilitiesTotal=0,lifetimeInheritanceTotal=0;
   for(let i=0;i<requested;i++){
     const result=simulateLife(`${prefix}-${i+1}`,maxAge,mode,options.policy??'mixed');completedLives+=1;lifespans.push(result.lifespan);wealth.push(result.netWorth);
     bump(educationDistribution,result.highestEducation);bump(careerDistribution,result.primaryIndustry);bump(profileDistribution,result.profile);bump(policyDistribution,result.policy);bump(causeOfDeathDistribution,result.causeOfDeath);
     anomalyCount+=result.anomalies.length;if(result.anomalies.length&&anomalySamples.length<sampleLimit)anomalySamples.push(`${result.seed}: ${result.anomalies.join('; ')}`);
-    if(result.married)marriedCount+=1;childrenTotal+=result.children;if(result.committedCrime)crimeCount+=1;if(result.convictions>0)convictedCount+=1;if(result.peakFame>=25)fameCount+=1;if(result.forcedTerminalDeath)forcedTerminalDeaths+=1;if(result.lifetimeInheritance>0)inheritanceCount+=1;
+    if(result.married)marriedCount+=1;childrenTotal+=result.children;if(result.committedCrime)crimeCount+=1;if(result.convictions>0)convictedCount+=1;if(result.peakFame>=25)fameCount+=1;if(result.forcedTerminalDeath)forcedTerminalDeaths+=1;if(result.lifetimeInheritance>0)inheritanceCount+=1;peakNpcTotal+=result.peakNpcCount;endNpcTotal+=result.endNpcCount;maxPeakNpcCount=Math.max(maxPeakNpcCount,result.peakNpcCount);
     cashTotal+=result.cash;propertyEquityTotal+=result.propertyEquity;vehiclesTotal+=result.vehicleValue;collectiblesTotal+=result.collectibleValue;investmentsTotal+=result.investmentValue;investmentCostBasisTotal+=result.investmentCostBasis;investmentGainTotal+=result.investmentGain;investmentContributionsTotal+=result.investmentContributions;investmentWithdrawalsTotal+=result.investmentWithdrawals;businessesTotal+=result.businessValue;otherLiabilitiesTotal+=result.otherLiabilities;lifetimeInheritanceTotal+=result.lifetimeInheritance;
   }
   const denominator=Math.max(1,completedLives);const sum=(values:number[])=>values.reduce((a,b)=>a+b,0);
@@ -357,7 +363,7 @@ export function runSimulation(options:SimulationOptions):SimulationReport {
     forcedTerminalDeaths,anomalyCount,anomalySamples,
     educationDistribution,careerDistribution,profileDistribution,policyDistribution,causeOfDeathDistribution,
     averageWealthSources:{cash:cashTotal/denominator,propertyEquity:propertyEquityTotal/denominator,vehicles:vehiclesTotal/denominator,collectibles:collectiblesTotal/denominator,investments:investmentsTotal/denominator,investmentCostBasis:investmentCostBasisTotal/denominator,investmentGain:investmentGainTotal/denominator,investmentContributions:investmentContributionsTotal/denominator,investmentWithdrawals:investmentWithdrawalsTotal/denominator,businesses:businessesTotal/denominator,otherLiabilities:otherLiabilitiesTotal/denominator,lifetimeInheritance:lifetimeInheritanceTotal/denominator},
-    inheritanceRate:inheritanceCount/denominator,
+    inheritanceRate:inheritanceCount/denominator,averagePeakNpcCount:peakNpcTotal/denominator,maxPeakNpcCount,averageEndNpcCount:endNpcTotal/denominator,
   };
 }
 
@@ -376,6 +382,7 @@ export function formatSimulationReport(report:SimulationReport){
     `Avg wealth sources — cash ${Math.round(report.averageWealthSources.cash).toLocaleString()} | property equity ${Math.round(report.averageWealthSources.propertyEquity).toLocaleString()} | investments ${Math.round(report.averageWealthSources.investments).toLocaleString()} | businesses ${Math.round(report.averageWealthSources.businesses).toLocaleString()} | vehicles ${Math.round(report.averageWealthSources.vehicles).toLocaleString()} | collectibles ${Math.round(report.averageWealthSources.collectibles).toLocaleString()} | other debt ${Math.round(report.averageWealthSources.otherLiabilities).toLocaleString()}`,
     `Investing avg — contributed ${Math.round(report.averageWealthSources.investmentContributions).toLocaleString()} | withdrawn ${Math.round(report.averageWealthSources.investmentWithdrawals).toLocaleString()} | held cost basis ${Math.round(report.averageWealthSources.investmentCostBasis).toLocaleString()} | held gain ${Math.round(report.averageWealthSources.investmentGain).toLocaleString()}`,
     `Inheritance: ${percent(report.inheritanceRate)} of lives | avg lifetime received ${Math.round(report.averageWealthSources.lifetimeInheritance).toLocaleString()}`,
+    `NPC population avg peak/end: ${report.averagePeakNpcCount.toFixed(1)} / ${report.averageEndNpcCount.toFixed(1)} | max peak: ${report.maxPeakNpcCount}`,
     `Profiles: ${topEntries(report.profileDistribution)}`,
     `Policies: ${topEntries(report.policyDistribution)}`,
     `Education: ${topEntries(report.educationDistribution)}`,

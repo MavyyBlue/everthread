@@ -32,12 +32,14 @@ function mulberry32(a: number) {
 
 export function createRng(seed: string, initialCounter = 0): SeededRng {
   const seedFn = xmur3(seed);
-  const random = mulberry32(seedFn());
-  let count = 0;
-  for (let i = 0; i < initialCounter; i++) {
-    random();
-    count++;
-  }
+  const skipped = Number.isFinite(initialCounter) ? Math.max(0, Math.floor(initialCounter)) : 0;
+  // Mulberry32 advances its internal state by the same 32-bit constant on every draw.
+  // Jump directly to the requested counter instead of replaying every consumed value.
+  // Math.imul intentionally performs the multiplication modulo 2^32, matching the
+  // bitwise arithmetic inside mulberry32 exactly even for long-running saves.
+  const offset = Math.imul(skipped >>> 0, 0x6d2b79f5);
+  const random = mulberry32((seedFn() + offset) >>> 0);
+  let count = skipped;
 
   return {
     next() {

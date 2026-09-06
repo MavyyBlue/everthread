@@ -5,6 +5,8 @@ import { makeStateId } from '../core/ids';
 import { netWorth } from './FinanceSystem';
 import { jobById } from '../data/jobs';
 import { migrateLegacyWorkplaceWorlds } from './WorkplaceSystem';
+import { migrateLegacySchoolWorlds } from './SchoolWorldSystem';
+import { ensureNpcLife, initializeMissingNpcLives } from './NpcLifeSystem';
 
 function npcToCharacter(state:GameState,npc:Npc):Character {
   const rng=createRng(`${state.seed}-descendant-${npc.id}`,state.rngCounter);
@@ -13,8 +15,8 @@ function npcToCharacter(state:GameState,npc:Npc):Character {
     sex:rng.pick(['female','male','intersex'] as const),genderIdentity:rng.pick(['woman','man','nonbinary'] as const),orientation:npc.sexuality,
     countryId:npc.countryId,city:npc.city,birthYear:state.currentYear-npc.age,age:npc.age,alive:true,
     appearance:{skinTone:rng.pick(['fair','light','medium','olive','tan','brown','deep brown','dark']),hairColor:rng.pick(['black','brown','auburn','blonde','red']),hairStyle:rng.pick(['straight','wavy','curly','coiled','cropped']),eyeColor:rng.pick(['brown','hazel','green','blue','gray']),accessories:[]},
-    stats:{health:npc.health,happiness:npc.happiness,intelligence:clamp(state.character.stats.intelligence*.45+rng.int(20,55)),appearance:clamp(state.character.stats.appearance*.45+rng.int(20,55))},
-    secondary:{athleticism:clamp(state.character.secondary.athleticism*.35+rng.int(20,60)),discipline:rng.int(25,80),willpower:rng.int(25,80),karma:0,reputation:clamp(state.fame.fame*.25+45),stress:rng.int(0,25),fertility:npc.fertility,charisma:rng.int(25,85),creativity:rng.int(25,85),confidence:rng.int(20,80),addictionSusceptibility:rng.int(5,75),criminalNotoriety:0,academicPerformance:rng.int(35,80),workPerformance:50},
+    stats:{health:npc.health,happiness:npc.happiness,intelligence:clamp((npc.life?.aptitude??50)*.72+state.character.stats.intelligence*.18+rng.int(0,12)),appearance:clamp(state.character.stats.appearance*.45+rng.int(20,55))},
+    secondary:{athleticism:clamp((npc.life?.health.fitness??50)*.62+state.character.secondary.athleticism*.18+rng.int(0,18)),discipline:clamp((npc.life?.education.performance??50)*.45+rng.int(20,45)),willpower:rng.int(25,80),karma:0,reputation:clamp(npc.life?.publicLife.reputation??50),stress:rng.int(0,25),fertility:npc.fertility,charisma:rng.int(25,85),creativity:rng.int(25,85),confidence:rng.int(20,80),addictionSusceptibility:rng.int(5,75),criminalNotoriety:clamp(npc.life?.legal.recordSeverity??0),academicPerformance:clamp(npc.life?.education.performance??50),workPerformance:clamp(npc.careerId?60+(npc.traits.includes('responsible')?8:0)+(npc.traits.includes('ambitious')?5:0):50)},
     talents:{music:clamp(state.character.talents.music*.35+rng.int(10,55)),acting:clamp(state.character.talents.acting*.35+rng.int(10,55)),athletics:clamp(state.character.talents.athletics*.35+rng.int(10,55)),business:clamp(state.character.talents.business*.35+rng.int(10,55)),crime:clamp(state.character.talents.crime*.35+rng.int(10,55)),social:clamp(state.character.talents.social*.35+rng.int(10,55)),combat:clamp(state.character.talents.combat*.35+rng.int(10,55))},
     birthCircumstance:'into the family you previously built',familyWealthTier:netWorth(state)>5000000?'wealthy':netWorth(state)>500000?'comfortable':'middle',traits:[...npc.traits],specialTalents:[],
   };
@@ -195,12 +197,24 @@ function rebuildDescendantRelationships(state:GameState, originalChild:Npc, prev
   return result;
 }
 
+function descendantEducation(child:Npc):GameState['education'] {
+  const records=child.life?.education.records??[];
+  return records.map(record=>({stage:record.stage,institution:record.institution,major:record.credential?.replaceAll('_',' '),startAge:record.startAge,endAge:record.endAge,graduated:record.graduated,droppedOut:false,scholarship:false,performance:record.performance}));
+}
+
 function descendantEmployment(state:GameState,child:Npc):GameState['employment'] {
+  const life=child.life;
+  const historyRecords=(life?.career.history??[]).filter(record=>record.endAge!==undefined).map(record=>{
+    const job=jobById[record.jobId];
+    if(!job)return undefined;
+    return {jobId:job.id,title:job.title,company:'Established Employer',startAge:record.startAge,endAge:record.endAge,salary:Math.round(((job.salaryRange[0]+job.salaryRange[1])/2)*state.economy.salaryIndex),performance:child.traits.includes('responsible')?68:child.traits.includes('ambitious')?72:58,level:Math.max(1,Number(job.id.match(/_(\d+)$/)?.[1]??1))};
+  }).filter((record):record is NonNullable<typeof record>=>Boolean(record));
   const job=child.careerId?jobById[child.careerId]:undefined;
-  if(!job)return{history:[],partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:child.age>=67};
+  if(!job)return{history:historyRecords,partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:life?.career.retired??child.age>=67};
+  const activeLifeRecord=[...(life?.career.history??[])].reverse().find(record=>record.jobId===job.id&&record.endAge===undefined);
   const level=Math.max(1,Number(job.id.match(/_(\d+)$/)?.[1]??1));
   const salary=Math.round(((job.salaryRange[0]+job.salaryRange[1])/2)*state.economy.salaryIndex);
-  return {current:{jobId:job.id,title:job.title,company:'Established Employer',startAge:Math.max(job.minAge,child.age-Math.max(1,level*2)),salary,performance:child.traits.includes('responsible')?68:child.traits.includes('ambitious')?72:58,level},history:[],partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:false};
+  return {current:{jobId:job.id,title:job.title,company:'Established Employer',startAge:activeLifeRecord?.startAge??Math.max(job.minAge,child.age-Math.max(1,level*2)),salary,performance:child.traits.includes('responsible')?68:child.traits.includes('ambitious')?72:58,level},history:historyRecords,partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:false};
 }
 
 export function continueAsChild(state:GameState,childId:string):EngineResult {
@@ -209,6 +223,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   const rel=state.relationships.find(r=>r.npcId===childId&&r.type==='child');
   if(!child||!rel||!child.alive)return{success:false,messages:[{text:'That descendant is not available.'}]};
 
+  ensureNpcLife(state,child);
   const originalChild=structuredClone(child);
   const previousCharacter=structuredClone(state.character);
   const previousPlayerId=previousCharacter.id;
@@ -228,19 +243,23 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.character=newCharacter;
   state.currentYear=newCharacter.birthYear+newCharacter.age;
   state.relationships=rebuildDescendantRelationships(state,originalChild,previousPlayerId);
-  state.education=[];
-  // Social worlds belong to the controlled protagonist, not to the dynasty globally.
+  state.education=descendantEducation(originalChild);
+  // Social worlds belong to the controlled protagonist, not to the dynasty globally; reconstruct this descendant's own school/work history.
   state.socialWorlds=[];
   state.employment=descendantEmployment(state,originalChild);
+  migrateLegacySchoolWorlds(state);
   migrateLegacyWorkplaceWorlds(state);
   state.assets={properties:settlement.properties,vehicles:[],collectibles:settlement.collectibles};
   state.businesses=settlement.businesses;
   state.investments={...state.investments,positions:settlement.investments};
-  state.finances={cash:Math.max(0,originalChild.wealth)+settlement.cash,annualIncome:state.employment.current?.salary??0,annualExpenses:0,taxesPaid:0,liabilities:settlement.liabilities};
-  state.legal={criminalRecord:[],investigationHeat:0,imprisoned:Boolean(originalChild.imprisoned),prisonSecurity:originalChild.imprisoned?'minimum':undefined,sentenceRemaining:originalChild.imprisoned?1:0,paroleEligible:false};
-  state.health={conditions:[],fitness:clamp(35+originalChild.health*.25),wellness:clamp(40+originalChild.happiness*.25),addictions:[]};
-  const inheritedFame=Math.max(Math.round((parentLife?.fame??0)*.2),originalChild.famous?25:0);
-  state.fame={fame:inheritedFame,publicReputation:55,followers:Math.round(inheritedFame*500),engagement:25,platforms:{},scandals:[]};
+  const npcLife=originalChild.life!;
+  const personalDebt=Math.max(0,Math.round(npcLife.finance.debt));
+  const personalDebtLoan=personalDebt>0?{id:makeStateId(state,'loan'),kind:'personal' as const,principal:personalDebt,balance:personalDebt,annualRate:.08,annualPayment:Math.max(500,Math.round(personalDebt/8)),remainingYears:8}:undefined;
+  state.finances={cash:Math.max(0,originalChild.wealth)+settlement.cash,annualIncome:state.employment.current?.salary??0,annualExpenses:0,taxesPaid:0,liabilities:[...settlement.liabilities,...(personalDebtLoan?[personalDebtLoan]:[])]};
+  state.legal={criminalRecord:npcLife.legal.incidents.map((incident,index)=>({crimeId:`npc_incident_${index+1}`,age:incident.age,convicted:incident.convicted,sentenceYears:incident.sentenceYears})),investigationHeat:clamp(npcLife.legal.recordSeverity*.25),imprisoned:npcLife.legal.sentenceRemaining>0,prisonSecurity:npcLife.legal.sentenceRemaining>0?'minimum':undefined,sentenceRemaining:npcLife.legal.sentenceRemaining,paroleEligible:npcLife.legal.sentenceRemaining>1};
+  state.health={conditions:npcLife.health.conditions.map(condition=>({id:makeStateId(state,'condition'),illnessId:condition.illnessId,name:condition.name,severity:condition.severity,diagnosedAge:condition.diagnosedAge,chronic:condition.chronic,treated:condition.treated})),fitness:npcLife.health.fitness,wellness:npcLife.health.wellness,addictions:[]};
+  const inheritedFame=Math.max(Math.round((parentLife?.fame??0)*.2),npcLife.publicLife.fame);
+  state.fame={fame:clamp(inheritedFame),publicReputation:npcLife.publicLife.reputation,followers:Math.max(npcLife.publicLife.followers,Math.round(inheritedFame*500)),engagement:25,platforms:{},scandals:Array.from({length:npcLife.publicLife.scandals},(_,index)=>`Past public controversy ${index+1}`)};
   state.specialCareers={};
   state.pets=[];
   state.familyPlanning={};
@@ -257,6 +276,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   if(state.employment.current)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'career',importance:2,text:`You entered this chapter already working as ${state.employment.current.title}.`});
   if(originalChild.partnerId){const partner=state.npcs[originalChild.partnerId];if(partner)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'relationship',importance:2,text:`Your existing ${originalChild.maritalStatus==='married'?'marriage':'relationship'} with ${partner.firstName} ${partner.lastName} continued with you.`});}
   state.yearlySnapshots=[];
+  initializeMissingNpcLives(state);
   return{success:true,messages:[{text:`Generation ${state.legacy.generation}: now playing as ${newCharacter.firstName}.`}]};
 }
 

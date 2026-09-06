@@ -3,10 +3,10 @@ import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { miniGames, type MiniGameKind, type MiniGameResult } from './framework';
 
-export function MiniGameOverlay({kind,seedKey,onComplete,onCancel,onResolveFromSkill}:{kind:MiniGameKind;seedKey:string;onComplete:(result:MiniGameResult)=>void;onCancel:()=>void;onResolveFromSkill:()=>MiniGameResult}){
+export function MiniGameOverlay({kind,seedKey,reducedMotion=false,onComplete,onCancel,onResolveFromSkill}:{kind:MiniGameKind;seedKey:string;reducedMotion?:boolean;onComplete:(result:MiniGameResult)=>void;onCancel:()=>void;onResolveFromSkill:()=>MiniGameResult}){
   const def=miniGames[kind];
-  const prefersReducedMotion=useMemo(()=>typeof window!=='undefined'&&window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,[]);
-  const mechanic=prefersReducedMotion&&def.mechanic==='timing'?'sequence':def.mechanic;
+  const systemReducedMotion=useMemo(()=>typeof window!=='undefined'&&window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,[]);
+  const mechanic=(reducedMotion||systemReducedMotion)&&def.mechanic==='timing'?'sequence':def.mechanic;
   const[phase,setPhase]=useState<'intro'|'playing'|'result'>('intro');
   const[result,setResult]=useState<MiniGameResult>();
   const finish=(score:number,summary:string)=>{const rounded=Math.round(clamp(score));setResult({score:rounded,success:rounded>=def.target,summary});setPhase('result');};

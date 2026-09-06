@@ -1,6 +1,6 @@
 # Everthread — Content Inventory
 
-Last audited: 2026-09-04  
+Last audited: 2026-09-05  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
 ## Current counts
@@ -75,6 +75,12 @@ Biological parenting now uses a one-year pregnancy state and resolves births on 
 ## Workplace social worlds
 
 0.11.0 makes workplaces the second production consumer of Social Worlds. Full-time and part-time employers persist manager/coworker membership independently from evolving personal relationships; job changes archive rather than erase workplace history. Workplace actions/events use exact affiliated NPCs, and the central action economy prevents same-year networking/feedback/report rerolls. Part-time employment is now persisted with pay, performance and a shared weekly hour budget.
+
+## NPC life simulation
+
+0.12.0 adds persistent resumable NPC biographies rather than new raw content rows. Important NPCs can accumulate education/credentials, real career histories, income/debt/aggregate property, illness histories, legal incidents/custody, fame/reputation/followers, household moves, partnerships, blended families, adoption, inheritance, and death. Background acquaintances retain a cheaper cadence until their relationship becomes meaningful. The player can inspect these histories in People, and an adult descendant carries the accumulated biography into playable state.
+
+Simulation reports now track lifetime NPC cast size as a first-class performance/content budget. Final 1,000-life neutral and mixed samples average about 116 persistent lifetime NPC records with a maximum of 176, including deceased relatives and archived school/work contacts deliberately retained for history.
 
 ## Health
 

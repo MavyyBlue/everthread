@@ -1,5 +1,41 @@
 # Everthread Changelog
 
+## 0.12.0 — 2026-09-05 — Full NPC Life Simulation
+
+### Added
+
+- Save schema v9 with persistent `NpcLifeState` biographies covering education, career history, household/finance state, health conditions, legal incidents/custody, public life, housing/moves, and simulation cadence. Existing v8 NPCs initialize deterministically without consuming the player RNG stream.
+- Dedicated `NpcLifeSystem` ownership for autonomous NPC education, careers, finance, health, legal status, fame, households, family formation, and death. `RelationshipSystem` retains player↔NPC interactions and relationship milestones instead of accumulating unrelated autonomy logic.
+- Autonomous NPC education/credentials, career history, job loss/promotion/retirement, household cash flow, debt servicing, bounded home ownership/appreciation, health histories, legal incidents/imprisonment/release, fame/followers/reputation/scandals, and household relocation.
+- Blended-family formation with incoming stepchildren, reciprocal stepfamily links, autonomous adoption for stable low-fertility couples, and bounded family-planning pressure for close-family households.
+- Direct adult-descendant handoff of real NPC biography state. Education, career, health, legal, fame, debt/property context, spouse/children, and institutional history survive when an established descendant becomes playable.
+- NPC life summaries in People detail sheets, exposing education, career, housing, income, property/debt, health, public/legal history, custody, and household moves.
+- Eight-generation dynasty stress coverage plus NPC population metrics in the simulation harness.
+- O(1) deterministic Mulberry32 counter jumps. Seeded RNG creation no longer replays every previously consumed random number; regression coverage proves direct jumps match sequential consumption through large counters.
+- Deterministic household relocation substreams so considering a move cannot reshuffle unrelated marriage, fertility, health, career, or legal outcomes. Partners and dependent children relocate together.
+- Bounded relationship progression for important close-family NPCs so unlucky RNG cannot leave romantic relatives permanently single, dating, or engaged without resolution.
+- In-game Reduced Motion now explicitly routes timing minigames to the non-motion sequence mechanic, matching the existing OS reduced-motion behavior.
+
+### Changed
+
+- Background acquaintances retain cheaper autonomy cadence while meaningful family/friend/enemy/romantic relationships automatically receive full simulation, preserving long-life performance without deleting history.
+- Memories and hidden opinions influence long-term relationship drift and make emotionally significant persistent NPCs more likely to surface in targeted events.
+- NPC-owned housing follows bounded housing-market movement instead of accidental deterministic depreciation; scheduled debt service is included in annual household cash flow before wealth growth.
+- Autonomous relocation is household-scoped rather than person-scoped. Current player spouses cannot autonomously move away, and a guardian cannot silently relocate a dependent player without a future player-facing family decision.
+- Partner/family progression remains probabilistic in normal years but gains bounded pressure against decades of accidental RNG limbo.
+- Simulation reporting now includes average/max lifetime NPC cast so future social systems can be held to a population-growth budget.
+
+### Validation
+
+- Engine TypeScript check passes.
+- Test/harness TypeScript check passes.
+- 82/82 regression cases pass.
+- Eight-generation continuation stress test passes with valid lineage/history and bounded cast growth.
+- Neutral 1,000-life bulk population: zero anomalies, zero forced terminal deaths, average/max lifetime NPC cast 116.2 / 176, average lifetime inheritance 125,559.
+- Mixed-policy 1,000-life bulk population: zero anomalies, zero forced terminal deaths, average/max lifetime NPC cast 116.3 / 176, average lifetime inheritance 123,442.
+- Identical 250-life benchmark improved from roughly 30.0 seconds to 8.3 seconds after deterministic RNG jump optimization with unchanged meaningful aggregate outcomes.
+- Dependency-backed React/Vite production build remains the GitHub Actions deployment gate.
+
 ## 0.11.0 — 2026-09-04 — Persistent Workplaces
 
 ### Added

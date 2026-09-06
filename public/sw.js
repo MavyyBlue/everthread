@@ -1,4 +1,4 @@
-const CACHE = 'everthread-shell-v5';
+const CACHE = 'everthread-shell-v6';
 const BASE = new URL('./', self.registration.scope).pathname;
 const SHELL = [BASE, `${BASE}manifest.json`];
 

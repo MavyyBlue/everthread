@@ -1,11 +1,10 @@
 import { getNamePool } from '../data/names';
-import { countryById } from '../data/countries';
-import { jobs, jobById } from '../data/jobs';
 import type { EngineResult, GameState, Npc, Orientation, Relationship, RelationshipType } from '../types/game';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
 import { consumeAction } from '../core/actionEconomy';
+import { ensureNpcLife } from './NpcLifeSystem';
 
 const interactionEffects: Record<string,{base:number;happiness:number;karma?:number}> = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
@@ -13,147 +12,7 @@ const interactionEffects: Record<string,{base:number;happiness:number;karma?:num
   apologize:{base:7,happiness:1,karma:1}, prank:{base:1,happiness:2}, fight:{base:-20,happiness:-5,karma:-4}, counseling:{base:8,happiness:2}, vacation:{base:11,happiness:6},
 };
 
-const FAMILY_RELATION_TYPES = new Set<RelationshipType>(['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew']);
-const PLAYER_ROMANTIC_TYPES = new Set<RelationshipType>(['partner','fiance','spouse']);
-const NPC_ENTRY_JOBS = jobs.filter(job=>job.experienceRequirement===0 && job.minAge<=18);
-
-function addNpcMemory(state:GameState,npc:Npc,kind:string,sentiment:number,summary:string,permanent=false){
-  npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind,sentiment,summary,permanent});
-  if(npc.memories.length>36){
-    const permanentMemories=npc.memories.filter(memory=>memory.permanent);
-    const recent=npc.memories.filter(memory=>!memory.permanent).slice(-Math.max(0,36-permanentMemories.length));
-    npc.memories=[...permanentMemories.slice(-18),...recent].slice(-36);
-  }
-}
-
-function directRelationship(state:GameState,npcId:string){return state.relationships.find(rel=>rel.npcId===npcId&&!rel.estranged);}
-function isPlayerFamily(state:GameState,npcId:string){const type=directRelationship(state,npcId)?.type;return Boolean(type&&FAMILY_RELATION_TYPES.has(type));}
-function hasPlayerRomance(state:GameState,npcId:string){const type=directRelationship(state,npcId)?.type;return Boolean(type&&PLAYER_ROMANTIC_TYPES.has(type));}
-
-function updateNpcCareer(state:GameState,npc:Npc,rng:ReturnType<typeof createRng>){
-  if(npc.age<16||npc.imprisoned)return;
-  if(!npc.careerId){
-    if(npc.age>=18&&rng.chance(npc.traits.includes('ambitious')?.34:.22)){
-      const options=NPC_ENTRY_JOBS.length?NPC_ENTRY_JOBS:jobs.filter(job=>job.experienceRequirement===0);
-      const job=rng.pick(options);npc.careerId=job.id;
-      addNpcMemory(state,npc,'career',4,`Started working as ${job.title}.`);
-    }
-    return;
-  }
-  const job=jobById[npc.careerId];
-  if(!job){npc.careerId=undefined;return;}
-  const jobLossChance=npc.traits.includes('responsible')?.008:npc.traits.includes('reckless')?.028:.015;
-  if(rng.chance(jobLossChance)){
-    addNpcMemory(state,npc,'job_loss',-8,`Left a job as ${job.title}.`,true);npc.careerId=undefined;npc.happiness=clamp(npc.happiness-7);return;
-  }
-  if(job.promotionPath&&npc.age>=20){
-    const promotionChance=.055+(npc.traits.includes('ambitious')?.035:0)+(npc.traits.includes('responsible')?.02:0);
-    if(rng.chance(promotionChance)){const next=jobById[job.promotionPath];if(next){npc.careerId=next.id;addNpcMemory(state,npc,'promotion',7,`Advanced to ${next.title}.`,true);}}
-  }
-  const current=jobById[npc.careerId]??job;
-  const gross=(current.salaryRange[0]+current.salaryRange[1])/2*state.economy.salaryIndex;
-  const savingsRate=npc.traits.includes('responsible')?.12:npc.traits.includes('reckless')?.01:.065;
-  const annualSavings=gross*savingsRate-(npc.age>18?2500*state.economy.inflationIndex:0);
-  npc.wealth=Math.max(0,Math.round(npc.wealth+annualSavings+rng.int(-1800,1800)));
-  if(npc.age>=67&&rng.chance(.12)){addNpcMemory(state,npc,'retirement',3,`Retired from work as ${current.title}.`,true);npc.careerId=undefined;}
-}
-
-function createAutonomousPartner(state:GameState,npc:Npc,rng:ReturnType<typeof createRng>){
-  if(npc.age<18||npc.partnerId||hasPlayerRomance(state,npc.id))return;
-  const pool=getNamePool(npc.countryId);const age=Math.max(18,npc.age+rng.int(-5,5));const id=makeStateId(state,'npc');
-  const partner:Npc={id,firstName:rng.pick(pool.first),lastName:rng.pick(pool.last),age,alive:true,health:rng.int(55,98),happiness:rng.int(42,94),wealth:rng.int(0,120000),countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian']),fertility:rng.int(20,92),maritalStatus:'dating',traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:0,memories:[],parentIds:[],childIds:[],partnerId:npc.id};
-  npc.partnerId=id;npc.maritalStatus='dating';state.npcs[id]=partner;
-  addNpcMemory(state,npc,'partner',5,`Began dating ${partner.firstName} ${partner.lastName}.`);
-  addNpcMemory(state,partner,'partner',5,`Began dating ${npc.firstName} ${npc.lastName}.`);
-  const relation=directRelationship(state,npc.id);
-  if(relation?.type==='parent')state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'stepparent',score:rng.int(28,62),attraction:0,compatibility:rng.int(35,75),yearsKnown:0});
-}
-
-function advanceNpcPartnership(state:GameState,npc:Npc,rng:ReturnType<typeof createRng>){
-  if(!npc.partnerId)return;const partner=state.npcs[npc.partnerId];
-  if(!partner?.alive){npc.partnerId=undefined;if(npc.maritalStatus==='married')npc.maritalStatus='widowed';else npc.maritalStatus='single';return;}
-  if(hasPlayerRomance(state,npc.id))return;
-  if(npc.maritalStatus==='dating'&&partner.maritalStatus==='dating'&&rng.chance(.10)){
-    npc.maritalStatus='married';partner.maritalStatus='married';addNpcMemory(state,npc,'marriage',9,`Married ${partner.firstName} ${partner.lastName}.`,true);addNpcMemory(state,partner,'marriage',9,`Married ${npc.firstName} ${npc.lastName}.`,true);
-    if(isPlayerFamily(state,npc.id)||isPlayerFamily(state,partner.id))state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:2,text:`${npc.firstName} married ${partner.firstName} ${partner.lastName}.`,npcIds:[npc.id,partner.id]});
-  } else if(npc.maritalStatus==='married'&&partner.maritalStatus==='married'&&rng.chance(npc.traits.includes('loyal')?.006:.012)){
-    npc.maritalStatus='divorced';partner.maritalStatus='divorced';npc.partnerId=undefined;partner.partnerId=undefined;addNpcMemory(state,npc,'divorce',-10,`Divorced ${partner.firstName} ${partner.lastName}.`,true);addNpcMemory(state,partner,'divorce',-10,`Divorced ${npc.firstName} ${npc.lastName}.`,true);
-    if(isPlayerFamily(state,npc.id)||isPlayerFamily(state,partner.id))state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:2,text:`${npc.firstName} and ${partner.firstName} divorced.`,npcIds:[npc.id,partner.id]});
-  }
-}
-
-function childRelationshipType(state:GameState,parentIds:string[]):RelationshipType|undefined{
-  const types=parentIds.map(id=>directRelationship(state,id)?.type).filter(Boolean) as RelationshipType[];
-  if(types.some(type=>type==='child'))return'grandchild';
-  if(types.some(type=>['sibling','half_sibling','stepsibling'].includes(type)))return'niece_nephew';
-  if(types.some(type=>type==='parent'))return'half_sibling';
-  return undefined;
-}
-
-function maybeCreateNpcChild(state:GameState,npc:Npc,processedCouples:Set<string>,rng:ReturnType<typeof createRng>){
-  if(!npc.partnerId||npc.maritalStatus!=='married')return;const partner=state.npcs[npc.partnerId];if(!partner?.alive||partner.maritalStatus!=='married')return;
-  const coupleKey=[npc.id,partner.id].sort().join('|');if(processedCouples.has(coupleKey))return;processedCouples.add(coupleKey);
-  if(!isPlayerFamily(state,npc.id)&&!isPlayerFamily(state,partner.id))return;
-  if(npc.age<18||partner.age<18||npc.age>50||partner.age>50)return;
-  const existingChildren=new Set([...npc.childIds,...partner.childIds]);if(existingChildren.size>=4)return;
-  const fertility=(npc.fertility+partner.fertility)/200;const chance=.035*fertility*(existingChildren.size===0?1.35:Math.max(.4,1-existingChildren.size*.18));if(!rng.chance(chance))return;
-  const pool=getNamePool(npc.countryId);const id=makeStateId(state,'npc');const firstName=rng.pick(pool.first);const lastName=rng.chance(.65)?npc.lastName:partner.lastName;
-  const child:Npc={id,firstName,lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,96),wealth:0,countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(5,25),memories:[],parentIds:[npc.id,partner.id],childIds:[]};
-  state.npcs[id]=child;npc.childIds.push(id);partner.childIds.push(id);state.legacy.familyTreeNpcIds.push(id);
-  const relationType=childRelationshipType(state,[npc.id,partner.id]);
-  if(relationType)state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:relationType,score:rng.int(42,72),attraction:0,compatibility:rng.int(40,80),yearsKnown:0});
-  addNpcMemory(state,npc,'child_birth',10,`${firstName} was born.`,true);addNpcMemory(state,partner,'child_birth',10,`${firstName} was born.`,true);
-  if(relationType)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:2,text:`${firstName} ${lastName} was born into your extended family.`,npcIds:[id,npc.id,partner.id]});
-}
-
-function handleNpcDeath(state:GameState,npc:Npc){
-  npc.alive=false;npc.imprisoned=false;
-  if(npc.partnerId){const partner=state.npcs[npc.partnerId];if(partner?.alive){if(partner.maritalStatus==='married')partner.maritalStatus='widowed';else partner.maritalStatus='single';partner.partnerId=undefined;addNpcMemory(state,partner,'bereavement',-12,`${npc.firstName} ${npc.lastName} died.`,true);}npc.partnerId=undefined;}
-  const playerIsChild=npc.childIds.includes(state.character.id)&&state.character.alive;
-  const livingChildren=npc.childIds.map(id=>state.npcs[id]).filter((child):child is Npc=>Boolean(child?.alive));
-  const heirCount=livingChildren.length+(playerIsChild?1:0);
-  if(heirCount&&npc.wealth>0){
-    const inheritance=Math.round(npc.wealth*.55/heirCount);
-    for(const child of livingChildren)child.wealth+=inheritance;
-    if(playerIsChild&&inheritance>0){
-      state.finances.cash+=inheritance;
-      state.flags.inheritanceReceived=Number(state.flags.inheritanceReceived??0)+inheritance;
-      state.flags.lifetimeInheritance=Number(state.flags.lifetimeInheritance??0)+inheritance;
-      state.flags.inheritances=Number(state.flags.inheritances??0)+1;
-      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You inherited ${inheritance.toLocaleString()} from ${npc.firstName} ${npc.lastName}.`,moneyDelta:inheritance,npcIds:[npc.id]});
-    }
-    npc.wealth=Math.max(0,npc.wealth-inheritance*heirCount);
-  }
-  for(const rel of state.relationships.filter(r=>r.npcId===npc.id))rel.score=clamp(rel.score-10);
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text:`${npc.firstName} ${npc.lastName} died at age ${npc.age}.`,npcIds:[npc.id]});
-}
-
-export function ageNpcs(state:GameState,rng=createRng(state.seed,state.rngCounter)){
-  const startingNpcs=Object.values(state.npcs);const processedCouples=new Set<string>();
-  const directTypes=new Map(state.relationships.map(rel=>[rel.npcId,rel] as const));
-  const isMeaningful=(npcId:string)=>{const rel=directTypes.get(npcId);return Boolean(rel&&(['friend','best_friend','enemy','partner','fiance','spouse','ex'].includes(rel.type)||FAMILY_RELATION_TYPES.has(rel.type)||rel.score>=72));};
-  for(const npc of startingNpcs){
-    if(!npc.alive)continue;npc.age+=1;
-    const backgroundSchoolNpc=npc.simulationTier==='background'&&!isMeaningful(npc.id);
-    if(backgroundSchoolNpc){
-      // Acquaintances still age every year, but expensive stochastic autonomy is batched biennially.
-      npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.08));
-      if(npc.age%2!==0)continue;
-      npc.health=clamp(npc.health+rng.int(-3,1));npc.happiness=clamp(npc.happiness+rng.int(-3,3));
-      if(npc.age%4===0)updateNpcCareer(state,npc,rng);
-      if(npc.age>75||npc.health<15){const deathChance=Math.max(.006,(npc.age-70)*.012+(20-npc.health)*.004);if(rng.chance(deathChance))handleNpcDeath(state,npc);}
-      continue;
-    }
-    npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.11)+rng.int(-2,1));npc.happiness=clamp(npc.happiness+rng.int(-3,3));
-    if(npc.imprisoned&&rng.chance(.18))npc.happiness=clamp(npc.happiness-4);
-    updateNpcCareer(state,npc,rng);
-    if(npc.age>=18&&!npc.partnerId&&!hasPlayerRomance(state,npc.id)&&['single','divorced','widowed'].includes(npc.maritalStatus)&&rng.chance(npc.traits.includes('romantic')?.04:.025))createAutonomousPartner(state,npc,rng);
-    advanceNpcPartnership(state,npc,rng);maybeCreateNpcChild(state,npc,processedCouples,rng);
-    if(npc.age>75||npc.health<15){const deathChance=Math.max(.003,(npc.age-70)*.006+(20-npc.health)*.002);if(rng.chance(deathChance))handleNpcDeath(state,npc);}
-  }
-  for(const rel of state.relationships){rel.yearsKnown+=1;const npc=state.npcs[rel.npcId];if(!npc?.alive)continue;const backgroundSchoolRel=npc.simulationTier==='background'&&!isMeaningful(rel.npcId);if(backgroundSchoolRel&&state.character.age%2!==0)continue;const decay=['spouse','child','parent','grandchild','grandparent'].includes(rel.type)?rng.int(-1,1):rng.int(-2,1);rel.score=clamp(rel.score+decay);}
-  state.rngCounter=rng.counter();
-}
+export { processNpcLives as ageNpcs } from './NpcLifeSystem';
 
 function personalityMultiplier(npc:Npc, action:string) {
   let mod=0;
@@ -216,7 +75,7 @@ export function meetPotentialPartner(state:GameState):EngineResult {
     countryId:state.character.countryId,city:state.character.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian']),fertility:rng.int(20,92),maritalStatus:'single',
     traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:rng.int(0,35),memories:[],parentIds:[],childIds:[]
   };
-  state.npcs[id]=npc;
+  state.npcs[id]=npc;ensureNpcLife(state,npc);
   const rel:Relationship={id:makeStateId(state,'rel'),npcId:id,type:'friend',score:rng.int(20,48),attraction:rng.int(35,95),compatibility:rng.int(25,95),yearsKnown:0};
   state.relationships.push(rel); state.rngCounter=rng.counter();
   const compatible=orientationCompatible(state.character,npc);
@@ -288,7 +147,7 @@ export function processFamilyPlanningYear(state:GameState):void {
     const firstName=pickChildName(state,pool,rng,reserved);names.push(firstName);
     const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
       sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
-    state.npcs[id]=child;state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
+    state.npcs[id]=child;ensureNpcLife(state,child);state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
     if(partner&&!partner.childIds.includes(id))partner.childIds.push(id);
     state.legacy.familyTreeNpcIds.push(id);
   }
@@ -329,7 +188,7 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
     const id=makeStateId(state,'child'); const firstName=pickChildName(state,pool,rng,reserved); names.push(firstName);
     const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
       sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
-    state.npcs[id]=child; state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
+    state.npcs[id]=child;ensureNpcLife(state,child); state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
     partner?.childIds.push(id); state.legacy.familyTreeNpcIds.push(id);
   }
   const text=adopt?`You adopted ${count>1?`${count} children`:names[0]}.`:`${count===1?`${names[0]} was born.`:`You welcomed ${count===2?'twins':'triplets'}: ${names.join(', ')}.`}`;

@@ -99,7 +99,9 @@ function eventContextPayload(state:GameState,event:GameEventDefinition,rng:Retur
     candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);
   }
   if(!candidates.length)return undefined;
-  const chosen=rng.pick(candidates);const world=selector.startsWith('work')?currentWorkplaceForPayload(state,chosen.npcId):undefined;
+  // NPCs with stronger hidden opinions or emotionally significant recent memories are more likely to surface in targeted stories.
+  const chosen=rng.weighted(candidates.map(rel=>{const npc=state.npcs[rel.npcId]!;const recent=npc.memories.slice(-6);const memorySignal=recent.length?recent.reduce((sum,memory)=>sum+Math.abs(memory.sentiment),0)/recent.length:0;return{item:rel,weight:1+Math.abs(npc.hiddenOpinion)/45+Math.abs(rel.score-50)/65+memorySignal/18};}));
+  const world=selector.startsWith('work')?currentWorkplaceForPayload(state,chosen.npcId):undefined;
   return {npcId:chosen.npcId,...(world?{worldId:world.id}:{})};
 }
 
