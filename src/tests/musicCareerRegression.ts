@@ -1,7 +1,7 @@
 import { createNewGame } from '../systems/CharacterSystem';
-import { activeSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
+import { activeSpecialCareerWorld, ensureSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
 import { musicPartnershipAction, processSpecialCareersYear, releaseMusic, tourMusic } from '../systems/SpecialCareerSystem';
-import { musicCatalog, musicPartnershipOffer, processMusicCareerYear } from '../systems/MusicCareerCycleSystem';
+import { musicCatalog, musicPartnershipOffer, practiceMusicTraining, processMusicCareerYear } from '../systems/MusicCareerCycleSystem';
 
 export function runMusicCareerRegression(){
   let checks=0;
@@ -11,12 +11,22 @@ export function runMusicCareerRegression(){
   verify(musicCatalog(readOnlyState).length===0,'reading an empty music catalog must return an empty projection');
   verify(readOnlyState.specialCareers.music===undefined,'read-only music projections must not create career state during UI render');
 
+  const trainingState=createNewGame({seed:'phase4d4-music-training-age-regression'});
+  trainingState.character.age=0;
+  verify(!practiceMusicTraining(trainingState,'vocals').success,'newborns must not start music practice');
+  verify(trainingState.specialCareers.music===undefined,'blocked newborn practice must not create a music career record');
+  trainingState.character.age=5;trainingState.currentYear+=5;
+  verify(practiceMusicTraining(trainingState,'vocals').success,'music practice must become available in childhood');
+  verify(trainingState.specialCareers.music?.active!==true,'childhood practice must build skill without starting professional career years');
+  verify(Number(trainingState.specialCareers.music?.skill)>0,'childhood practice must still build real music skill');
+
   const state=createNewGame({seed:'phase4d3-music-cycle-regression'});
   state.character.age=25;state.currentYear=2075;state.fame.fame=85;state.character.secondary.creativity=96;
   state.specialCareers.music={active:true,instrument:'vocals',skill:96,reputation:88,fanbase:50000};
   const cashBefore=state.finances.cash;const fansBefore=Number(state.specialCareers.music.fanbase);
   const album=releaseMusic(state,'album');
   verify(album.success,'a qualified musician must be able to launch an album');
+  verify(Number(state.specialCareers.music.professionalStartAge)===25,'the first real release must stamp professional music start age');
   const world=activeSpecialCareerWorld(state,'music');
   verify(Boolean(world),'the first substantial release must create/reuse a persistent music world');
   const firstCatalog=musicCatalog(state);
@@ -79,8 +89,10 @@ export function runMusicCareerRegression(){
   verify(Number(state.specialCareers.music.lastTourScore)>=0&&Number(state.specialCareers.music.lastTourScore)<=100,'tour performance must be bounded');
   verify(Number(state.specialCareers.music.lastTourAttendance)>0,'completed tours must preserve attendance');
   verify(Number.isFinite(Number(state.specialCareers.music.lastTourNet)),'completed tours must preserve a finite net result after costs');
+  verify(Number(state.specialCareers.music.lastTourGross)>0&&Number(state.specialCareers.music.lastTourCosts)>=Number(state.specialCareers.music.lastTourGross)*.25,'tour operating costs must materially constrain gross revenue instead of producing near-frictionless superstar margins');
   verify(Number(state.specialCareers.music.catalogLifetimeStreams)>lifetimeBeforeTail,'older releases must continue generating a catalog stream tail on later ages');
   verify(Number(state.specialCareers.music.lastCatalogTailRoyalties)>=0,'catalog tail processing must preserve annual royalty history');
+  verify(Number(state.specialCareers.music.years)===3,'professional music years must count from the first real release rather than childhood practice or birth');
   const cashAfterCycle=state.finances.cash;const completedTours=Number(state.specialCareers.music.toursCompleted);const lifetimeAfterCycle=Number(state.specialCareers.music.catalogLifetimeStreams);
   processMusicCareerYear(state);
   verify(state.finances.cash===cashAfterCycle&&Number(state.specialCareers.music.toursCompleted)===completedTours&&Number(state.specialCareers.music.catalogLifetimeStreams)===lifetimeAfterCycle,'same-age music-cycle reprocessing must be idempotent');
@@ -92,11 +104,22 @@ export function runMusicCareerRegression(){
   verify(Number(state.specialCareers.music.managementPressure)>35,'poor persistent management/creative relationships must surface as music-career pressure');
   verify(Number(state.specialCareers.music.managerRelationship)<=50,'music-cycle projection must preserve manager relationship quality as a career input');
 
-  const catalogState=createNewGame({seed:'phase4d3-catalog-bound-regression'});
+  const catalogState=createNewGame({seed:'phase4d4-catalog-lifetime-title-regression'});
   catalogState.character.age=20;catalogState.currentYear=2040;catalogState.fame.fame=50;catalogState.character.secondary.creativity=90;catalogState.specialCareers.music={active:true,instrument:'guitar',skill:92,reputation:75,fanbase:25000};
-  for(let index=0;index<7;index+=1){const result=releaseMusic(catalogState,index%3===0?'album':'song');verify(result.success,`catalog release ${index+1} must succeed on its own age`);catalogState.character.age+=1;catalogState.currentYear+=1;}
-  verify(Number(catalogState.specialCareers.music.catalogCount)===7,'lifetime catalog count must keep growing after the detailed-history cap');
+  const lifetimeTitles:string[]=[];
+  for(let index=0;index<18;index+=1){const result=releaseMusic(catalogState,'song');verify(result.success,`catalog release ${index+1} must succeed on its own age`);lifetimeTitles.push(String(catalogState.specialCareers.music.lastReleaseTitle));catalogState.character.age+=1;catalogState.currentYear+=1;}
+  verify(Number(catalogState.specialCareers.music.catalogCount)===18,'lifetime catalog count must keep growing after the detailed-history cap');
   verify(musicCatalog(catalogState).length===6,'detailed catalog history must remain bounded to six recent entries');
+  verify(new Set(lifetimeTitles).size===lifetimeTitles.length,'release title generation must remain unique across the career even after bounded detailed history rolls over');
+
+  const legacyTitleState=createNewGame({seed:'phase4d4-legacy-title-timeline-regression'});legacyTitleState.character.age=30;legacyTitleState.currentYear=2060;legacyTitleState.character.secondary.creativity=100;legacyTitleState.specialCareers.music={active:true,instrument:'vocals',skill:95,reputation:80,fanbase:30000,songsReleased:16,catalogCount:16};
+  const oldSongTitles=['Neon Weather','Quiet Voltage','Paper Satellites','Afterimage','Low Orbit','Static Bloom','Borrowed Light','Glass Summer','Midnight Receiver','Soft Collision','Second Signal','Blue Hour Drive','Northbound Static','Open Circuit','Half Awake','Slow Comet'];
+  for(const title of oldSongTitles)legacyTitleState.timeline.push({id:`legacy-${title}`,year:2050,age:20,category:'career',importance:1,text:`You released the single ${title} through an earlier music collective. It launched successfully.`});
+  const legacyTitleRelease=releaseMusic(legacyTitleState,'song');verify(legacyTitleRelease.success,'legacy careers with title history outside the detailed catalog must still be able to release new music');verify(!oldSongTitles.includes(String(legacyTitleState.specialCareers.music.lastReleaseTitle)),'legacy timeline history must prevent reuse of a title that rotated out of the bounded catalog');
+
+  const legacyYears=createNewGame({seed:'phase4d4-legacy-music-years-regression'});legacyYears.character.age=21;legacyYears.currentYear=2047;legacyYears.specialCareers.music={active:true,skill:70,reputation:55,songsReleased:4,albumsReleased:2,years:21,worldStartedAge:13,fanbase:8000};ensureSpecialCareerWorld(legacyYears,'music','vocals',{announce:false});processMusicCareerYear(legacyYears);
+  verify(Number(legacyYears.specialCareers.music.years)===9,'legacy music saves with inflated years must normalize from their real professional world start');
+  verify(Number(legacyYears.specialCareers.music.professionalStartAge)===13,'legacy music normalization must preserve a recoverable professional start age');
 
   const expireState=createNewGame({seed:'phase4d3-partnership-expiry'});expireState.character.age=30;expireState.currentYear=2080;expireState.specialCareers.music={active:true,skill:70,fanbase:5000,instrument:'vocals',partnershipOfferPending:true,partnershipOfferPartner:'Lumen Signal',partnershipOfferAdvance:12000,partnershipOfferShare:.2,partnershipOfferReach:1.2,partnershipOfferExpiresAge:30};
   releaseMusic(expireState,'song');expireState.character.age=32;expireState.currentYear=2082;processMusicCareerYear(expireState);

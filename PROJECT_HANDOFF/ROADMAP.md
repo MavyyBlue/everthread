@@ -7,7 +7,7 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 ### Phase 4A — Persistent career worlds
 Status: green.
 
-Foundation: acting productions, music collaborators/management, professional sports teams, modeling agencies/campaign worlds, racing teams, directing productions, and persistent career NPCs through `SocialWorld(kind: "organization")`.
+Foundation: acting productions, music collaborators/management, professional sports teams, modeling agencies/networks, racing teams, directing productions, and persistent career NPCs through `SocialWorld(kind: "organization")`.
 
 ### Phase 4B — Career ecosystem consequences
 Status: green.
@@ -24,13 +24,22 @@ In progress.
 
 1. **Phase 4D1 — Professional Sports Seasons & Contract Lifecycle:** green. Yearly seasons/circuits, records, salary accrual before contract resolution, renewals/free agency, and explicit retirement.
 2. **Phase 4D2 — Acting & Directing Production Cycles:** green. Multi-age productions, overlap protection, release economics/reception, follow-up offers, and studio-backed directing opportunities. Deployed special-career regression: 77 checks.
-3. **Phase 4D3 — Music Release / Album / Tour Cycles:** green. Bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs. Deployed dedicated music regression: 52 checks.
-4. **Post-4D3 social-affiliation correction:** implementation/package pending deployment verification. Isolates Work from special-career affiliations, allows close school/work/career relationships to overlap into Friends & Social, and permits age-eligible affiliated NPCs to use Ask out without losing their original Social World history.
-5. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** next after the corrective slice is green.
-6. Racing seasons, team movement, contracts, championships.
+3. **Phase 4D3 — Music Release / Album / Tour Cycles:** green. Bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs.
+4. **Post-4D3 Social Affiliation / Friends / Dating correction:** green. Work-folder affiliation isolation, close institutional Friends overlap, and age-eligible romance without erasing SocialWorld history. Verified run #26.
+5. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** implementation/local validation complete; deployment verification pending. Adds one-year campaign periods, bounded campaign history, representation contracts/offers/renewals, commission/reach tradeoffs, relationship-driven booking quality, earnings history, and bounded industry pressure while preserving existing modeling worlds and old aggregate jobs.
+6. **Phase 4D5 — Racing Seasons / Team Contract / Championship Cycles:** next after 4D4 is green.
 7. Deeper rival/leader consequences across paths.
 8. Remaining retirement/end-state handling.
 9. Targeted special-career event chains.
+
+### Phase 4D4 accompanying quality corrections
+
+The 4D4 bundle also generalizes long-form playtest findings without embedding any player save:
+
+- childhood music practice no longer starts professional career years;
+- professional music tenure derives from first real release/world start;
+- release-title generation remembers exact prior timeline titles beyond the six-slot detailed catalog;
+- tour operating costs are rebalanced upward to constrain extreme net margins.
 
 ### Later Phase 4 extensions
 
@@ -58,7 +67,8 @@ Planned: exact event cooldown tracking, expanded delayed consequence chains, mor
 - PWA install/offline upgrade QA;
 - iOS/Android standalone behavior;
 - regional name-pool expansion and long-dynasty repetition analysis;
-- continued bulk/stress simulations as persistent systems grow.
+- continued bulk/stress simulations as persistent systems grow;
+- generalized balance simulations informed by real player saves without shipping those saves as fixtures.
 
 ## Scope philosophy
 

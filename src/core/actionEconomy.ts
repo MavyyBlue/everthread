@@ -87,12 +87,14 @@ export const ACTION_POLICIES = {
   'special.royal_duty': { maxPerAge: 1, message: 'You already completed your major ceremonial duties for this year.' },
   'special.model.total': { maxPerAge: 2, message: 'You have already completed several major modeling activities this year.' },
   'special.model.kind': { maxPerAge: 1, message: 'You already completed that kind of modeling activity this year.' },
+  'special.model.agency_seek': { maxPerAge: 1, message: 'You already made a serious representation inquiry this year.' },
+  'special.model.business': { maxPerAge: 1, message: 'You already made a major modeling-contract decision this year.' },
   'special.race': { maxPerAge: 1, message: 'You already completed this year’s major racing event.' },
   'special.direct_film': { cooldownAges: 2, message: 'A feature production takes time. Age up before directing another major film.' },
   'special.crime_org.total': { maxPerAge: 2, message: 'You have already completed several major organization actions this year.' },
   'special.crime_org.kind': { maxPerAge: 1, message: 'You already completed that organization action this year.' },
   'special.organization.total': { maxPerAge: 2, message: 'You have already made several major operational decisions for this organization this year.' },
-  'special.organization.kind': { maxPerAge: 1, message: 'You already completed that operational action this year.' },
+  'special.organization.kind': { maxPerAge: 1, message: 'You already completed that organization action this year.' },
 } as const satisfies Record<string, ActionPolicy>;
 
 function ensureLedger(state: GameState) {

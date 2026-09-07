@@ -37,9 +37,9 @@ Core simulation uses seeded RNG.
 
 ## Yearly processor idempotence
 
-A yearly system that changes contracts, seasons, delayed consequences, royalties, tours, or other once-per-age state must defend against duplicate execution.
+A yearly system that changes contracts, seasons, delayed consequences, royalties, tours, campaigns, or other once-per-age state must defend against duplicate execution.
 
-Persist a last-processed age/year marker in the appropriate existing state and return early for repeated processing. Phase 4 uses this for ecosystem years, sports seasons/contracts, and Phase 4D3 music catalog/tour processing.
+Persist a last-processed age/year marker in the appropriate existing state and return early for repeated processing. Phase 4 uses this for ecosystem years, sports seasons/contracts, music catalog/tour processing, and modeling campaign/agency processing.
 
 ## Period accrual before end-state transitions
 
@@ -53,7 +53,7 @@ Prefer an explicit age-stamped accrual over temporarily keeping an invalid statu
 
 For careers where a project should take meaningful time, do not resolve the entire career event in the button click. Start the project in the existing special-career track, bind it to the exact persistent Social World, and let a later Age Up finalize it.
 
-Phase 4D2 uses this for acting/directing: the action commits the production; the active world remains cast/crew affiliation; overlap is blocked before consuming another opportunity; the next Age Up archives/finalizes; primitive summary state remains for UI/future progression; follow-up offers are bounded and expire.
+Phase 4D2 uses this for acting/directing. Phase 4D4 uses the same principle for modeling campaigns: booking starts the campaign and pays only an advance; the next Age Up settles performance, remaining compensation, bonus, commission, reputation/fame effects, pressure, and history.
 
 Use this pattern when a future career needs a season/project lifecycle but does not yet justify a new save schema.
 
@@ -61,12 +61,7 @@ Use this pattern when a future career needs a season/project lifecycle but does 
 
 The special-career tracks are intentionally generic persisted records. Primitive additions do not require a schema bump, but they must stay understandable and bounded.
 
-Phase 4D3 music uses numbered recent-catalog slots rather than an unbounded hidden array/string blob:
-
-- lifetime catalog count/streams/royalties remain aggregate primitives;
-- only six detailed recent releases are retained in rotating primitive slots;
-- each slot records title, kind, launch age, quality, launch/lifetime streams, latest tail, reception, and last processed age;
-- older detail can fall out of the bounded recent window while timeline history and lifetime aggregates remain intact.
+Phase 4D3 music uses numbered recent-catalog slots rather than an unbounded hidden array/string blob. Phase 4D4 modeling mirrors that pattern with six rotating detailed campaign slots while retaining lifetime campaign/earnings aggregates.
 
 Do not encode arbitrary nested state as serialized JSON strings merely to avoid a migration. If several future systems genuinely need nested persistent histories, introduce a real typed structure and schema migration instead.
 
@@ -74,7 +69,7 @@ Do not encode arbitrary nested state as serialized JSON strings merely to avoid 
 
 A release can keep mattering after the click without becoming an unbounded yearly object.
 
-Phase 4D3 music applies deterministic, capped three-age stream/royalty tails to recent catalog slots. Every slot carries a `LastProcessedAge`, while the music career carries `lastMusicCycleAge`, so duplicate calls cannot mint royalties twice.
+Phase 4D3 music applies deterministic, capped three-age stream/royalty tails to recent catalog slots. Every slot carries a last-processed age while the music career carries `lastMusicCycleAge`, so duplicate calls cannot mint royalties twice.
 
 This pattern is appropriate for residual income/attention that should decay predictably and then stop being actively processed.
 
@@ -82,7 +77,46 @@ This pattern is appropriate for residual income/attention that should decay pred
 
 Offers should create an actual decision, not a free buff.
 
-Phase 4D3 distribution partnerships exchange an advance and reach multiplier for a future royalty share. Terms are stored exactly, offers expire, and accept/decline routes through a dedicated central action-economy policy. Future contract systems should likewise make both upside and cost explicit.
+Phase 4D3 distribution partnerships exchange an advance and reach multiplier for a future royalty share. Phase 4D4 agency contracts exchange booking reach/representation upside for explicit commission and term limits. Terms are stored exactly, offers expire, and accept/decline routes through dedicated action-economy policies.
+
+A persistent organization/world and a temporary business contract are separate facts. Ending a contract should not delete authentic affiliation history.
+
+## Persistent modeling network vs representation
+
+The existing modeling `SocialWorld(kind: "organization")` is the persistent professional network: agency staff, campaign team contacts, and rivals. Formal representation is contract state layered onto that world.
+
+Rules:
+
+- do not create a second modeling world merely because representation is accepted, renewed, declined, or lost;
+- an unrepresented model can remain connected to the same network;
+- pre-4D4 aggregate `jobs` remain valid historical facts;
+- do not fabricate detailed campaign records for old instant jobs;
+- new completed campaigns append only bounded recent detail plus lifetime aggregates;
+- renewal/release changes contract status, not historical affiliation.
+
+## Skill pathway vs professional career activation
+
+Training/practice and professional tenure are different concepts.
+
+Music practice may build skill during childhood, but it must not automatically mark the player as a professional musician or increment professional career years. The first real release starts professional tenure, and annual processing derives `years` from a recoverable professional start age/world start.
+
+Use the same distinction for future careers where childhood training precedes professional entry.
+
+## Historical uniqueness without unbounded state
+
+A bounded detailed UI history must not accidentally make generation logic forget older history.
+
+Music keeps only six detailed recent catalog slots, but title selection can also read exact prior release names from the existing career timeline. This avoids casual lifetime title reuse without introducing an unbounded parallel title array or a save migration.
+
+Generation should remain deterministic from seed + career ordinal. Timeline inspection is used only as historical collision evidence, not as hidden random state.
+
+## Shared special-career relationship initialization
+
+Career-world member relationship initialization lives in `SpecialCareerRelationshipSystem.ts` rather than being owned by the ecosystem processor itself.
+
+This keeps one deterministic implementation for leader/boss, rival/enemy, and peer/coworker relationship creation while allowing individual career-cycle systems to ensure their world is socially initialized without creating a circular dependency through `SpecialCareerEcosystemSystem`.
+
+`SpecialCareerEcosystemSystem` re-exports the helper for source compatibility with existing callers.
 
 ## Central action economy
 
@@ -90,7 +124,7 @@ Every meaningful clickable action must be classified as unlimited/configuration,
 
 Use `src/core/actionEconomy.ts`. UI disabled states mirror policy for UX, but engine/system enforcement remains authoritative. Failed-but-executed random attempts generally consume their opportunity; blocked actions should not partially consume claims.
 
-Phase 4D3 adds `special.music_business` for partnership accept/decline so business decisions cannot be spammed independently of career simulation.
+Current Phase 4 business-decision policies include `special.music_business`, `special.model.agency_seek`, and `special.model.business`. Existing modeling total/kind limits remain authoritative for bookings.
 
 ## Persistent social worlds
 
@@ -108,13 +142,15 @@ Current save schema: 9.
 
 Bump only for genuinely new persisted structure that existing state cannot safely represent. When bumping, initialize deterministically, preserve old meaning, migrate rewind snapshots, test old-save migration, consider generation continuation, and never silently discard major player history.
 
+Phase 4D4 remains within bounded primitive special-career state and therefore does not justify schema 10.
+
 ## Mobile-first technique
 
 Primary widths: 360 / 390 / 412 / 430px. Favor bottom navigation/sheets, clear cards, 44px+ meaningful touch controls, compact stat grids, safe-area padding, readable text, no hover-only behavior, and limited simultaneous dense controls.
 
 ## Simulation-first consequence design
 
-Features should interact: school history affects admissions/careers; workplace relationships affect performance; career-world chemistry affects momentum/projects/releases/tours; crime/legal history affects work; health affects sports/lifespan; wealth affects assets/business; children/relationships affect inheritance/generations.
+Features should interact: school history affects admissions/careers; workplace relationships affect performance; career-world chemistry affects momentum/projects/releases/tours/campaigns; crime/legal history affects work; health affects sports/lifespan; wealth affects assets/business; children/relationships affect inheritance/generations.
 
 Avoid isolated meters that never matter anywhere else.
 
@@ -122,32 +158,43 @@ Avoid isolated meters that never matter anywhere else.
 
 Use deterministic setups with controlled seeds/state. High-value patterns include same seed + same history ⇒ identical result; compare states differing in one intended variable; call yearly processors twice to test idempotence; archive/end and verify history remains; generation handoff and old-save migration; and stress long lives/many generations for bounded growth.
 
-Keep specialized regression suites separate when that makes failures easier to diagnose. Phase 4D3 adds a dedicated music-career regression rather than folding another large block into the existing special-career world suite.
+Keep specialized regression suites separate when that makes failures easier to diagnose. Music and modeling each have dedicated career regressions.
 
 GitHub Actions remains the final dependency-backed build gate.
+
+## Real-save diagnostic policy
+
+Real player saves can reveal state combinations, bugs, and balance problems synthetic tests miss. They are diagnostic evidence only.
+
+When a playtest save exposes a problem:
+
+1. identify the generalized owning-system failure;
+2. build a fabricated deterministic regression that reproduces the failure shape;
+3. fix the owning system without save-specific conditionals;
+4. preserve unrelated existing state/history;
+5. never copy the player's seed, slot, NPCs, character history, or save JSON into production/default fixtures;
+6. never make a fresh install or new life auto-load a tester's save.
+
+Balance observations from real saves should inform generalized simulations and tuning, not hard-coded corrections for one life.
 
 ## Folder membership is a projection, not a second relationship type
 
 People folders may overlap when different facts justify membership.
 
-Use these rules:
-
-- School / Work / Career Worlds membership should primarily come from persistent `SocialWorld` affiliation, not from re-reading a generic `Relationship.type` label;
-- a career-world peer may use `Relationship.type = "coworker"` for personal interaction semantics while still not belonging in Work unless that NPC also has a real workplace affiliation;
-- archived Social Worlds preserve institutional history unless the product explicitly introduces a current-only view;
-- Friends & Social may project a very close institutional connection without overwriting the underlying classmate/coworker/boss/teacher relationship type;
-- changing the personal relationship to partner/spouse/friend must not delete the NPC's original School/Work/Career Worlds history.
-
-This keeps affiliation and personal relationship state independent and prevents one reused relationship label from leaking NPCs into the wrong folder.
+- School / Work / Career Worlds membership should primarily come from persistent SocialWorld affiliation, not generic Relationship labels.
+- A career-world peer may use `Relationship.type = "coworker"` for interaction semantics while still not belonging in Work unless they also share a real workplace.
+- Archived SocialWorlds preserve institutional history unless the product explicitly introduces a current-only view.
+- Friends & Social may project a very close institutional connection without overwriting classmate/coworker/boss/teacher state.
+- Changing the personal relationship to partner/spouse/friend must not delete original School/Work/Career Worlds history.
 
 ## Dating eligibility is separate from institutional affiliation
 
-`Relationship.type` should not require a player to first convert every classmate/coworker/boss/teacher into `friend` before romance becomes possible.
+`Relationship.type` should not require converting every classmate/coworker/boss/teacher into `friend` before romance is possible.
 
 For Ask out:
 
 - enforce living NPC and teen/adult age compatibility first;
 - permit only explicitly supported non-family relationship categories;
 - family types remain blocked regardless of score;
-- a successful romance changes the personal relationship state while the Social World continues to preserve where the pair originally knew each other;
-- UI visibility mirrors the same system helper used by the relationship action, so the button and engine cannot silently disagree.
+- successful romance changes personal relationship state while SocialWorld preserves where the pair originally knew each other;
+- UI visibility mirrors the same system helper used by the relationship action so button and engine cannot silently disagree.

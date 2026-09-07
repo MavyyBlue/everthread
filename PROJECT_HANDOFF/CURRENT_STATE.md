@@ -1,6 +1,6 @@
 # Everthread — Current State
 
-Last handoff preparation: 2026-09-06/07  
+Last handoff preparation: 2026-09-07  
 Repository: `MavyyBlue/everthread`  
 Default branch: `main`  
 Public build line: `0.12.0 pre-release`  
@@ -8,74 +8,85 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-`main` at `a9f5900795231aadbb7038cf12f86bad59ab906c`.
+`main` at `b24fd4f09864dcd91dac65ea88649bc0d92f4c12`.
 
-- Phase 4D3 — Music Release / Album / Tour Cycles is deployed and green.
-- GitHub Actions run #25 (`34079094425`) passed overlay import, engine/test type checks, regression suite, production build, Pages upload, deployment, and cleanup.
-- Run #25 reported core regression 82/82, special-career regression 77/77, and music-career regression 52/52.
-- Run #24 had failed only on two TypeScript control-flow assertions in the new music regression; the corrective overlay fixed those assertions without weakening the tested behavior, and run #25 is the authoritative green result.
-- Phase 4D1 sports seasons/contracts, Phase 4D2 acting/directing cycles, and all Phase 4A–4C foundations remain green.
-- `PROJECT_HANDOFF/` remains installed and the one-ZIP overlay importer is the normal mobile development workflow.
+- Post-4D3 Social Affiliation / Friends / Dating corrections are deployed and green.
+- GitHub Actions run #26 (`34081682400`) passed overlay import, engine/test type checks, regression suite, production build, Pages upload, deployment, and cleanup.
+- Run #26 uploaded head: `ffb74f7904dd0dbab3e94db7f5d4a2c2548eedf2`.
+- Run #26 reported core regression 82/82, special-career regression 77/77, music-career regression 52/52, and social-affiliation regression 23/23.
+- Expanded bot commit after that run is the verified baseline above.
+- Save schema remains 9.
 
-Verified Phase 4D3 behavior includes deterministic singles/albums with bounded catalog history, three-age catalog tails, fanbase/release trajectory, persistent music collaborators/management, multi-age tours, distribution-partnership offers and tradeoffs, relationship-driven management pressure, and Career Worlds music UI.
+Verified social-affiliation behavior:
 
-## Current work — post-4D3 playtest corrections
+- Work folder membership comes from actual workplace SocialWorld affiliation, not generic coworker/boss relationship labels.
+- Career Worlds retains current and archived special-career affiliation as history.
+- score-90+ institutional relationships can overlap into Friends & Social without losing their school/work/career identity.
+- eligible adult classmates/coworkers/bosses/teachers/principals/coaches can use Ask out while teen/adult boundaries and family exclusions remain enforced.
+- successful romance changes the personal relationship while persistent SocialWorld history remains discoverable.
 
-**Social Affiliation / Friends / Dating UX corrections** are implemented locally and packaged for deployment verification. Do not treat them as green until the intended GitHub Actions run completes successfully and expanded `main` source is spot-checked.
+## Current work — Phase 4D4 plus generalized music corrections
 
-Reason for this corrective slice:
+**Phase 4D4 — Modeling Campaign / Agency Contract Cycles** is implemented locally and packaged only after local validation. It is NOT green until the intended GitHub Actions upload run succeeds and expanded `main` is spot-checked.
 
-- Mavyy found that special-career NPCs whose relationship types are `coworker`/`boss` could also appear in the Work folder even though their affiliation was a special-career organization, not a workplace;
-- Career Worlds intentionally preserves current and archived casts/teams/collectives as career history, but the UI did not make the distinction between persistent music collective relationships and temporary distribution offers clear enough;
-- high-score classmates/coworkers/bosses/teachers could reach 100 without appearing in Friends & Social;
-- Ask out was restricted to `Relationship.type === "friend"`, preventing otherwise eligible adult school/work/career connections from becoming romantic relationships.
+The same normal bundle also includes generalized fixes/balance corrections exposed by long-form playtesting:
 
-Prepared correction behavior:
+### Music corrections
 
-- Work folder membership is now driven by actual `SocialWorld(kind: "workplace")` affiliation, preventing special-career coworker/boss relationships from leaking into Work;
-- Career Worlds continues to preserve current and archived special-career affiliation intentionally; archived career NPCs are history, not deleted relationships;
-- Friends & Social also surfaces very close institutional relationships (score 90+) for classmate/teacher/principal/coach/coworker/boss types without overwriting their authoritative relationship type;
-- this allows the same NPC to appear in Friends & Social plus School/Work/Career Worlds when both closeness and affiliation justify it;
-- Ask out is available for eligible living `friend`, `best_friend`, `classmate`, `coworker`, `boss`, `teacher`, `principal`, and `coach` relationships;
-- the existing teen/adult age boundary remains authoritative: minors cannot date adults, including teachers/bosses;
-- family relationship types remain excluded from Ask out;
-- successful dating changes the personal relationship to `partner` while School/Work/Career Worlds affiliation remains discoverable through the persistent Social World;
-- Career Worlds music copy now clarifies that the persistent creative/management collective is separate from temporary distribution offers;
-- no save-schema change is required.
+- music practice is now a childhood skill/pathway action instead of starting professional career years;
+- practice is blocked before age 5 and must not create an age-0 professional music career;
+- the first real release stamps `professionalStartAge`;
+- annual music processing normalizes professional `years` from a recoverable professional start/world start, repairing inflated legacy values without rewriting old timeline history;
+- release-title selection is deterministic by career ordinal and consults exact prior release names preserved in timeline history, so titles that rotated out of the six-slot recent catalog are not casually reused;
+- theater/arena/club tour operating costs are materially higher so touring remains lucrative without routinely behaving like near-frictionless revenue;
+- the existing three-age catalog tail, distribution tradeoff, persistent music world, and action limits remain intact.
 
-## Validation completed before corrective packaging
+These fixes were generalized from real-playtest observations. Personal user saves, seeds, NPC IDs, life history, and save slots are NOT included in source, default data, or regression fixtures.
 
-- targeted social-affiliation runtime regression passes 23/23 checks;
-- regression covers Work-folder isolation, Career Worlds history retention, close institutional Friends overlap, adult coworker/boss/classmate/teacher dating eligibility, minor/adult safety, family exclusion, and affiliation retention after romance;
-- strict TypeScript check of the targeted social regression passes in the local production-compatible harness;
-- People and Career Worlds TSX compile passes in the local mobile UI harness;
-- changed PeopleGraph/PeopleScreen files were reconstructed from exact current Git blobs before editing;
-- current package base is the verified Phase 4D3 `main` commit `a9f5900795231aadbb7038cf12f86bad59ab906c`.
+### Phase 4D4 modeling behavior
 
-GitHub Actions remains the authoritative dependency-backed deployment gate.
+- the existing `specialCareers.modeling` track remains authoritative; no parallel modeling state was introduced;
+- an existing persistent modeling SocialWorld is reused as the professional network and is not replaced when representation begins or ends;
+- pre-4D4 instant jobs remain legitimate aggregate history, but the game does not fabricate detailed campaign records retroactively;
+- successful photoshoot/runway/audition bookings now begin one-year campaigns rather than paying the entire outcome instantly;
+- campaigns preserve exact title/client/type, gross booking value, agency commission, advance, start age, completion age, performance, reception, bonus, and net compensation;
+- only six recent detailed campaigns are kept in rotating primitive slots while lifetime campaign totals/earnings continue growing;
+- editorial, commercial, and runway campaigns have distinct economics and pressure profiles;
+- active campaigns block overlap before another modeling opportunity is consumed;
+- formal representation is a separate tradeoff contract layered over the persistent modeling network;
+- agency offers store exact term, commission, reach, type, and expiry;
+- seek/accept/decline use central action policies;
+- agency contracts count down yearly and can renew or end cleanly while affiliation history remains;
+- high-quality campaigns and established legacy careers can generate bounded representation offers;
+- an offer that expires during an annual pass cannot silently regenerate in the same pass;
+- campaign quality/booking probability use appearance, technique, charisma, reputation, persistent relationships, prestige, career momentum, fame, and deterministic RNG;
+- campaign/industry pressure is bounded and may increase stress/hurt happiness at high levels without adding body/medical mechanics;
+- no save-schema bump is required.
 
-## Next implementation after this corrective slice is green
+## Local validation completed before packaging
 
-Phase 4D4 — Modeling Campaign / Agency Contract Cycles.
+- dedicated music-career synthetic regression: **76 checks**;
+- dedicated modeling-career synthetic regression: **46 checks**;
+- targeted TypeScript semantic checks for the new/changed system files pass in the local deterministic harness;
+- syntax/transpile checks pass across all production-target TS/TSX files;
+- modeling regression verifies existing world/NPC preservation, no fake backfill, contracts, campaign settlement, overlap prevention, pressure bounds, renewals, offer expiry, idempotence, and six-slot bounded history;
+- music regression verifies childhood practice gating, professional-year normalization, lifetime title uniqueness including old timeline history, tour cost floor, distribution/tour/catalog behavior, and idempotence.
+
+GitHub Actions remains the authoritative dependency-backed integration/build/deploy gate.
+
+## Next after Phase 4D4 is green
+
+Phase 4D5 — Racing Seasons / Team Contract / Championship Cycles.
 
 Preferred scope:
 
-1. representation/agency contract lifecycle and bounded offers;
-2. campaign bookings that persist as real career periods instead of isolated jobs;
-3. editorial/commercial/runway campaign types with distinct pay/reputation/fame tradeoffs;
-4. agency/creative-team relationships feeding booking quality and pressure;
-5. campaign history, earnings, reputation, major-client progression, and contract renewal/release;
-6. bounded overwork/image pressure consequences and clean end states;
-7. preserve the existing modeling Social World/action limits unless genuinely new state requires more.
-
-Do not start Phase 4D4 before verifying the social-affiliation correction upload is green.
-
-## Later Phase 4D sequence
-
-1. Modeling campaign/agency contracts.
-2. Racing seasons/team contracts/championships.
-3. Cross-path rival/leader consequences and remaining retirement/end states.
-4. Targeted special-career event chains.
+1. real yearly race seasons rather than one isolated race result;
+2. team contracts, renewal/release/team movement while preserving prior team worlds;
+3. championships, standings/season records, best-season/career totals;
+4. engineering/team relationships feeding performance and pressure;
+5. bounded crash/mechanical/fatigue consequences at abstract gameplay level;
+6. clean retirement/end states and no duplicate yearly settlement;
+7. retain existing racing action economy and persistent race-team world wherever possible.
 
 ## Existing major completed foundations
 
@@ -87,7 +98,13 @@ Do not start Phase 4D4 before verifying the social-affiliation correction upload
 - Multi-slot saves, generations, legacy/past lives.
 - Standard careers, finance, assets, investments, businesses.
 - Health, crime/legal/prison, fame, pets, travel.
-- Phase 4 persistent special-career worlds, social consequences, sports seasons, screen-career productions, and music career cycles.
+- Phase 4A persistent special-career worlds.
+- Phase 4B career ecosystem consequences.
+- Phase 4C Career Worlds UI and social consequences.
+- Phase 4D1 sports seasons/contracts.
+- Phase 4D2 acting/directing productions.
+- Phase 4D3 music release/catalog/tour/distribution cycles.
+- Post-4D3 social-affiliation/friendship/dating correction.
 - 691 event definitions as of the 0.12.0 tracking baseline.
 - Mobile-first React/PWA shell.
 
@@ -98,5 +115,7 @@ Do not start Phase 4D4 before verifying the social-affiliation correction upload
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - Persistent career worlds add NPC/history load; continue population/performance profiling as Phase 4 grows.
-- Flat primitive special-career records are acceptable while bounded and readable; reconsider schema 10 if future systems require genuinely nested persistent histories rather than numbered bounded slots.
-- Handoff docs must update with meaningful phase bundles so current/next state never drifts behind code.
+- Flat primitive special-career records are acceptable while bounded/readable; reconsider schema 10 if future systems genuinely require nested persistent histories.
+- Existing older direct `SpecialCareerSystem` exports remain compatibility paths; player-facing GameEngine routes own the new 4D4 modeling and corrected music-practice behavior. Avoid creating new alternate mutation routes.
+- Real player saves may be inspected for QA evidence but must never be shipped, auto-loaded, or copied into production/default regression fixtures.
+- Handoff docs must update in meaningful normal bundles so current/next state never drifts behind code.

@@ -49,6 +49,13 @@ function track(state:GameState){return (state.specialCareers.music ??= {}) as Tr
 function readTrack(state:GameState){return (state.specialCareers.music ?? {}) as Track;}
 function average(values:number[],fallback=50){return values.length?values.reduce((sum,value)=>sum+value,0)/values.length:fallback;}
 
+export function practiceMusicTraining(state:GameState,instrument='vocals'):EngineResult {
+  if(state.character.age<5)return{success:false,messages:[{text:'Music practice becomes available in childhood.'}]};
+  const gate=consumeAction(state,{policy:'special.training',target:'music'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  const career=track(state);career.instrument=instrument;career.musicPathway=true;if(typeof career.practiceStartedAge!=='number')setN(career,'practiceStartedAge',state.character.age);setN(career,'skill',clamp(n(career,'skill',state.character.talents.music*.35)+5));state.character.secondary.creativity=clamp(state.character.secondary.creativity+1);
+  return{success:true,messages:[{text:`You practiced ${instrument}. Music skill: ${Math.round(n(career,'skill'))}.`}]};
+}
+
 function musicRelationships(state:GameState,world:SocialWorld){
   const active=world.members.filter(member=>member.leftAge===undefined&&state.npcs[member.npcId]?.alive);
   const manager=active.find(member=>member.role==='leader');
@@ -59,11 +66,30 @@ function musicRelationships(state:GameState,world:SocialWorld){
   return {chemistry:clamp(average(scores,50)),creativeChemistry:clamp(average(creativeScores,average(scores,50))),managerScore:clamp(managerScore),managerNpcId:manager?.npcId};
 }
 
-function uniqueReleaseTitle(career:Track,kind:MusicReleaseKind,rng:Rng){
+function historicReleaseTitles(state:GameState,career:Track){
+  const known=new Set(musicCatalogFromTrack(career).map(entry=>entry.title));
+  for(const entry of state.timeline){
+    if(entry.category!=='career'||!entry.text.startsWith('You released '))continue;
+    const match=/^You released (?:the album|the single) (.+?) through /.exec(entry.text);
+    if(match?.[1])known.add(match[1]);
+  }
+  return known;
+}
+
+function uniqueReleaseTitle(state:GameState,career:Track,kind:MusicReleaseKind){
   const pool=kind==='album'?ALBUM_TITLES:SONG_TITLES;
-  const used=new Set(musicCatalogFromTrack(career).map(entry=>entry.title));
-  for(let tries=0;tries<pool.length*2;tries+=1){const title=rng.pick(pool);if(!used.has(title))return title;}
-  return `${rng.pick(pool)} ${Math.max(2,n(career,'catalogCount')+1)}`;
+  const released=Math.max(0,Math.floor(n(career,kind==='album'?'albumsReleased':'songsReleased')));
+  const order=createRng(`${state.seed}-music-title-order-${kind}`).shuffle(pool);
+  const used=historicReleaseTitles(state,career);
+  for(let offset=0;offset<order.length;offset+=1){
+    const base=order[(released+offset)%order.length]!;
+    if(!used.has(base))return base;
+  }
+  const base=order[released%order.length]!;
+  let edition=Math.floor(released/order.length)+2;
+  let candidate=`${base} ${edition}`;
+  while(used.has(candidate)){edition+=1;candidate=`${base} ${edition}`;}
+  return candidate;
 }
 
 function receptionFor(quality:number,streams:number,kind:MusicReleaseKind){
@@ -135,8 +161,9 @@ export function launchMusicRelease(state:GameState,career:Track,world:SocialWorl
   const audienceFactor=1+Math.min(2.4,fanbase/90000)+state.fame.fame/48;
   const streams=Math.max(75,Math.round(quality*quality*(kind==='album'?28:10)*audienceFactor*partnerReach*rng.int(82,122)/100));
   const grossRoyalty=streams*.004;const royalties=Math.round(grossRoyalty*(1-partnerShare));
-  const title=uniqueReleaseTitle(career,kind,rng);const reception=receptionFor(quality,streams,kind);
+  const title=uniqueReleaseTitle(state,career,kind);const reception=receptionFor(quality,streams,kind);
   const fanGain=Math.max(5,Math.round(streams*(kind==='album'?.032:.023)*(0.75+quality/180)));
+  const totalBefore=n(career,'songsReleased')+n(career,'albumsReleased');career.active=true;career.musicPathway=true;if(totalBefore===0&&typeof career.professionalStartAge!=='number')setN(career,'professionalStartAge',state.character.age);
   state.finances.cash+=royalties;setN(career,kind==='album'?'albumsReleased':'songsReleased',n(career,kind==='album'?'albumsReleased':'songsReleased')+1);setN(career,'fanbase',Math.max(0,fanbase+fanGain));setN(career,'catalogLifetimeStreams',n(career,'catalogLifetimeStreams')+streams);setN(career,'catalogRoyalties',n(career,'catalogRoyalties')+royalties);setN(career,'lastReleaseAge',state.character.age);setN(career,'lastReleaseQuality',quality);setN(career,'lastReleaseStreams',streams);setN(career,'lastReleaseRoyalties',royalties);setN(career,'releaseMomentum',clamp(quality*.72+Math.min(100,Math.log10(Math.max(10,streams))*14)*.28));
   career.lastReleaseTitle=title;career.lastReleaseKind=kind;career.lastReleaseReception=reception;
   state.fame.followers+=Math.round(streams*.018);state.fame.fame=clamp(state.fame.fame+(quality>=88?(kind==='album'?7:5):quality>=70?2:quality>=55?1:0));
@@ -199,7 +226,7 @@ function processCatalogTail(state:GameState,career:Track,momentum:number,chemist
 function finalizeMusicTour(state:GameState,career:Track,world:SocialWorld,momentum:number,relationships:ReturnType<typeof musicRelationships>,rng:Rng){
   if(career.tourActive!==true||state.character.age<=n(career,'currentTourStartedAge',state.character.age))return;
   const scale=(s(career,'currentTourScale','clubs') as MusicTourScale);const shows=Math.max(1,Math.round(n(career,'currentTourShows',8)));const fanbase=n(career,'fanbase');
-  const profile=scale==='arenas'?{capacity:15000,ticket:105,cost:185000,difficulty:.17}:scale==='theaters'?{capacity:3600,ticket:72,cost:47000,difficulty:.09}:{capacity:850,ticket:44,cost:9000,difficulty:.02};
+  const profile=scale==='arenas'?{capacity:15000,ticket:105,cost:520000,difficulty:.17}:scale==='theaters'?{capacity:3600,ticket:72,cost:110000,difficulty:.09}:{capacity:850,ticket:44,cost:21000,difficulty:.02};
   const performance=clamp(n(career,'skill',45)*.28+momentum*.25+relationships.creativeChemistry*.15+relationships.managerScore*.09+state.fame.fame*.08+state.health.fitness*.08+(100-state.character.secondary.stress)*.07+rng.int(-11,12));
   const draw=clamp(.23+performance/180+Math.log10(Math.max(100,fanbase))/12+(career.distributionPartner===true?n(career,'distributionReach',1.2)-1:0)*.22-profile.difficulty,.18,.98);
   const attendance=Math.round(shows*profile.capacity*draw);const gross=Math.round(attendance*profile.ticket);const costs=Math.round(shows*profile.cost*state.economy.inflationIndex);const net=gross-costs;
@@ -211,7 +238,10 @@ function finalizeMusicTour(state:GameState,career:Track,world:SocialWorld,moment
 
 /** Annual music lifecycle. Runs after the shared career ecosystem has calculated momentum. */
 export function processMusicCareerYear(state:GameState){
-  const career=state.specialCareers.music as Track|undefined;if(!career?.active)return;
+  const career=state.specialCareers.music as Track|undefined;if(!career)return;
+  const releases=n(career,'songsReleased')+n(career,'albumsReleased');
+  if(releases<=0){career.active=false;setN(career,'years',0);return;}
+  career.active=true;const professionalStart=n(career,'professionalStartAge',n(career,'worldStartedAge',state.character.age));if(typeof career.professionalStartAge!=='number')setN(career,'professionalStartAge',professionalStart);setN(career,'years',Math.max(1,state.character.age-professionalStart+1));
   if(n(career,'lastMusicCycleAge',-1)===state.character.age)return;setN(career,'lastMusicCycleAge',state.character.age);
   const world=activeSpecialCareerWorld(state,'music');if(!world)return;
   const relationships=musicRelationships(state,world);const momentum=clamp(n(career,'careerMomentum',50));const rng=createRng(`${state.seed}-music-cycle-${world.id}-${state.currentYear}`);
