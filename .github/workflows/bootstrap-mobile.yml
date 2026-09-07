@@ -32,31 +32,69 @@ jobs:
           set -euo pipefail
 
           if [ -f everthread-source.zip ]; then
-            echo "Everthread source bundle found. Importing it..."
+            echo "Everthread overlay bundle found. Importing it..."
             IMPORT_DIR="$RUNNER_TEMP/everthread-import"
             rm -rf "$IMPORT_DIR"
             mkdir -p "$IMPORT_DIR"
-            unzip -q everthread-source.zip -d "$IMPORT_DIR"
 
-            if [ ! -f "$IMPORT_DIR/package.json" ]; then
-              echo "The uploaded ZIP is not an Everthread source bundle: package.json is missing."
+            # Reject absolute paths and parent traversal before extraction.
+            if zipinfo -1 everthread-source.zip | grep -Eq '(^/|(^|/)\.\.(/|$))'; then
+              echo "Unsafe path detected in everthread-source.zip."
               exit 1
             fi
 
-            # Keep this workflow in place while replacing the game source.
-            rsync -a --delete \
+            unzip -q everthread-source.zip -d "$IMPORT_DIR"
+
+            if [ ! -f "$IMPORT_DIR/everthread-patch.json" ]; then
+              echo "The uploaded ZIP is not an Everthread overlay bundle: everthread-patch.json is missing."
+              exit 1
+            fi
+
+            FORMAT="$(python3 -c 'import json; print(json.load(open("'"$IMPORT_DIR"'/everthread-patch.json"))["format"])')"
+            if [ "$FORMAT" != "1" ]; then
+              echo "Unsupported Everthread patch format: $FORMAT"
+              exit 1
+            fi
+
+            # Overlay changed/new files only. Existing unrelated repository files remain untouched.
+            rsync -a \
               --exclude='.git/' \
               --exclude='.github/workflows/' \
+              --exclude='everthread-patch.json' \
               "$IMPORT_DIR/" ./
+
+            # Optional explicit deletions are supported without using rsync --delete.
+            python3 - "$IMPORT_DIR/everthread-patch.json" <<'PY'
+          import json, pathlib, sys
+          manifest = json.load(open(sys.argv[1], encoding="utf-8"))
+          root = pathlib.Path.cwd().resolve()
+          for raw in manifest.get("delete", []):
+              rel = pathlib.PurePosixPath(str(raw))
+              if rel.is_absolute() or ".." in rel.parts or str(rel).startswith(".github/workflows/"):
+                  raise SystemExit(f"Unsafe delete path in Everthread patch: {raw}")
+              target = (root / pathlib.Path(*rel.parts)).resolve()
+              if root not in target.parents and target != root:
+                  raise SystemExit(f"Delete path escapes repository: {raw}")
+              if target.is_dir():
+                  import shutil
+                  shutil.rmtree(target)
+              elif target.exists() or target.is_symlink():
+                  target.unlink()
+          PY
 
             rm -rf "$IMPORT_DIR"
             rm -f everthread-source.zip
+
+            if [ ! -f package.json ]; then
+              echo "Everthread package.json is missing after overlay import."
+              exit 1
+            fi
 
             git config user.name "everthread-build-bot"
             git config user.email "actions@users.noreply.github.com"
             git add -A
             if ! git diff --cached --quiet; then
-              git commit -m "Import Everthread mobile source bundle"
+              git commit -m "Import Everthread source overlay [skip ci]"
               if ! git push; then
                 echo "Warning: GitHub did not allow the workflow to push the expanded source. Continuing with the playable build anyway."
               fi
@@ -67,7 +105,7 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "No Everthread source is present yet. Upload everthread-source.zip to continue."
+            echo "No Everthread source is present yet."
           fi
 
       - name: Set up Node
