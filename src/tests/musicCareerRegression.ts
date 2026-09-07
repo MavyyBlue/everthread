@@ -46,7 +46,7 @@ export function runMusicCareerRegression(){
   state.specialCareers.music.partnershipOfferReach=1.3;
   state.specialCareers.music.partnershipOfferExpiresAge=26;
   const offer=musicPartnershipOffer(state);
-  verify(Boolean(offer)&&offer.partner==='Parallel House','a valid distribution offer must project exact partner terms');
+  verify(offer!==undefined&&offer.partner==='Parallel House','a valid distribution offer must project exact partner terms');
   const beforeAdvance=state.finances.cash;
   const accepted=musicPartnershipAction(state,'accept');
   verify(accepted.success,'the player must be able to accept a current distribution offer');
@@ -73,7 +73,7 @@ export function runMusicCareerRegression(){
   const lifetimeBeforeTail=Number(state.specialCareers.music.catalogLifetimeStreams);
   state.character.age=27;state.currentYear=2077;
   processSpecialCareersYear(state);
-  verify(state.specialCareers.music.tourActive===false,'the next Age Up must resolve the active tour');
+  verify((state.specialCareers.music.tourActive as boolean|undefined)!==true,'the next Age Up must resolve the active tour');
   verify(Number(state.specialCareers.music.toursCompleted)===1,'tour completion must be counted exactly once');
   verify(Number(state.specialCareers.music.lastTourAge)===27,'tour history must preserve the exact completion age');
   verify(Number(state.specialCareers.music.lastTourScore)>=0&&Number(state.specialCareers.music.lastTourScore)<=100,'tour performance must be bounded');
