@@ -27,10 +27,11 @@ In progress.
 3. **Phase 4D3 — Music Release / Album / Tour Cycles:** green. Bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs.
 4. **Post-4D3 Social Affiliation / Friends / Dating correction:** green. Work-folder affiliation isolation, close institutional Friends overlap, and age-eligible romance without erasing SocialWorld history. Verified run #26.
 5. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** green. One-year campaign periods, bounded campaign history, representation contracts/offers/renewals, commission/reach tradeoffs, relationship-driven booking quality, earnings history, and bounded industry pressure while preserving existing modeling worlds and old aggregate jobs. Verified run #29.
-6. **Phase 4D5 — Racing Seasons / Team Contract / Championship Cycles:** implementation and local validation complete; deployment verification pending. Adds multi-round seasons, championship standings, team contracts/renewals/releases/free agency, team movement with archived prior worlds, age-stamped salary/prize accrual, bounded detailed season history, relationship-driven engineering/team performance, abstract incident/mechanical pressure, and clean retirement while preserving pre-4D5 aggregate history.
-7. Deeper rival/leader consequences across paths.
-8. Remaining retirement/end-state handling.
-9. Targeted special-career event chains.
+6. **Phase 4D5 — Racing Seasons / Team Contract / Championship Cycles:** green. Multi-round seasons, championship standings, team contracts/renewals/releases/free agency, team movement with archived prior worlds, age-stamped salary/prize accrual, bounded detailed season history, relationship-driven engineering/team performance, abstract incident/mechanical pressure, and clean retirement while preserving pre-4D5 aggregate history. Verified run #31.
+7. **Pre-4D6 coherence pass:** in progress. Current/former People-folder prioritization, centralized school/work/special-career commitment limits, and context/maturity-safe procedural event eligibility. Must be green before continuing.
+8. **Phase 4D6 — deeper rival/leader consequences across paths.**
+9. Remaining retirement/end-state handling.
+10. Targeted special-career event chains.
 
 ### Phase 4D4 accompanying quality corrections
 
@@ -48,6 +49,16 @@ The 4D4 bundle also generalized long-form playtest findings without embedding an
 - detailed six-slot season history begins only with seasons actually completed under 4D5;
 - contracts and team membership are separate facts: release/free agency/retirement archive current affiliation without deleting old team history;
 - final-season salary and prize earnings are resolved before contract or retirement transitions and flow through normal annual finance/tax processing.
+
+### Pre-4D6 coherence rules
+
+- School / Work / Career Worlds keep history, but current affiliations render before muted former affiliations.
+- Special-career capacity is two outside school and one during active enrollment.
+- School blocks full-time work; school plus a special career blocks new part-time work as well.
+- Existing over-cap saves preserve established paths rather than silently deleting careers.
+- Training-only legacy flags do not count as professional acting/music/modeling evidence.
+- Procedural relationship stories require real eligible NPC context, and untargeted procedural stories cannot mutate a random relationship.
+- Early-age procedural content is filtered by maturity where its choices assume teen/adult independence.
 
 ### Later Phase 4 extensions
 

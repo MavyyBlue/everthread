@@ -215,3 +215,44 @@ For Ask out:
 - family types remain blocked regardless of score;
 - successful romance changes personal relationship state while SocialWorld preserves where the pair originally knew each other;
 - UI visibility mirrors the same system helper used by the relationship action so button and engine cannot silently disagree.
+
+## Commitment capacity is a shared policy, not scattered UI logic
+
+`CommitmentSystem.ts` owns read-only compatibility-aware gates for active enrollment, established special-career commitments, full-time work, part-time work, and school enrollment. Player-facing `GameEngine` methods enforce the same gates that Career UI uses for disabled states and explanatory copy.
+
+Rules:
+
+- outside school, allow at most two established special-career paths;
+- during active enrollment, allow at most one;
+- full-time work cannot begin while enrolled;
+- part-time work remains available during school only when there is no active special-career commitment;
+- starting a special career during school requires ordinary work to be left first;
+- enrollment never silently resigns/quits/retire paths for the player; incompatible commitments must be ended explicitly;
+- an older save already above a new limit is preserved: existing paths remain usable, while new starts are blocked;
+- preparatory skill practice is not automatically professional commitment. Legacy acting/music/modeling `active=true` flags require real professional evidence before consuming capacity;
+- inherited statuses such as royal birth must be represented consistently rather than becoming an optional start action that can be nonsensically blocked later.
+
+Do not add new player-facing career entry routes that bypass these shared gates.
+
+## People folder recency is an affiliation projection
+
+School, Work, and Career Worlds remain historical projections over `SocialWorld` membership. They do not delete former people merely to declutter the UI. Instead, derive an affiliation projection per NPC containing current/former status, role, world name, and dates.
+
+Current means the world is active and the member has no `leftAge`. Current affiliations sort before former affiliations regardless of relationship score. Former affiliations sort below current by recency and are visually muted but remain selectable.
+
+This is presentation/projection state only; it must not overwrite `Relationship.type`, NPC identity, or archived SocialWorld history.
+
+## Procedural events require legitimate context
+
+Procedural event category is not sufficient evidence that a relevant NPC exists. Relationship-dependent stories must resolve eligibility and target context before presentation.
+
+- friend stories require a living non-estranged friend;
+- family stories require an eligible living family relationship;
+- romance and institutional target stories use explicit/current eligible relationships;
+- an inferred/explicit target is carried in the event payload so choice effects affect that exact NPC;
+- if a procedural story has no legitimate target, generic relationship fallback is suppressed rather than mutating an unrelated NPC;
+- maturity floors can be stricter than raw family `minAge` when the scenario/choices assume independent money, travel, care, or adult-like decision-making;
+- genuinely child-appropriate childhood events remain available.
+
+Prefer improving eligibility/context contracts over patching one nonsensical sentence at a time.
+

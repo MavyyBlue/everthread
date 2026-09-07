@@ -1,4 +1,4 @@
-import type { GameState, Relationship, RelationshipType } from '../types/game';
+import type { GameState, Relationship, RelationshipType, SocialWorldMemberRole } from '../types/game';
 
 export type PeopleFolderId = 'player_family' | 'relatives' | 'friends' | 'romance' | 'school' | 'work' | 'career';
 
@@ -17,6 +17,14 @@ export interface PeopleFolderSummary extends PeopleFolderDefinition {
   previewNames: string[];
 }
 
+export interface PeopleFolderAffiliation {
+  status: 'current' | 'former';
+  role: SocialWorldMemberRole;
+  worldName: string;
+  startedAge: number;
+  endedAge?: number;
+}
+
 export type PeopleGraphEdgeKind = 'parent_child' | 'partner' | 'direct';
 
 export interface PeopleGraphNode {
@@ -27,6 +35,7 @@ export interface PeopleGraphNode {
   alive: boolean;
   relationshipToPlayer?: RelationshipType;
   relationshipScore?: number;
+  affiliation?: PeopleFolderAffiliation;
 }
 
 export interface PeopleGraphEdge {
@@ -45,206 +54,89 @@ export interface PeopleRelationshipGraph {
 }
 
 export const PEOPLE_FOLDERS: readonly PeopleFolderDefinition[] = [
-  {
-    id: 'player_family',
-    title: 'Player Family',
-    description: 'Parents, guardians, current partner, children, and descendants closest to your household.',
-    relationshipTypes: ['parent', 'stepparent', 'partner', 'fiance', 'spouse', 'child', 'grandchild'],
-  },
-  {
-    id: 'relatives',
-    title: 'Relatives',
-    description: 'Grandparents, siblings, step and half family, nieces, and nephews.',
-    relationshipTypes: ['grandparent', 'sibling', 'half_sibling', 'stepsibling', 'niece_nephew'],
-  },
-  {
-    id: 'friends',
-    title: 'Friends & Social',
-    description: 'Friends, best friends, close school/work/career connections, and openly hostile relationships.',
-    relationshipTypes: ['friend', 'best_friend', 'enemy'],
-  },
-  {
-    id: 'romance',
-    title: 'Romantic History',
-    description: 'Current and former romantic relationships across this life.',
-    relationshipTypes: ['partner', 'fiance', 'spouse', 'ex'],
-  },
-  {
-    id: 'school',
-    title: 'School',
-    description: 'Persistent classmates and teachers from your education history.',
-    relationshipTypes: ['classmate', 'teacher', 'principal', 'coach'],
-  },
-  {
-    id: 'work',
-    title: 'Work',
-    description: 'Current and former coworkers and bosses from persistent workplace history.',
-    relationshipTypes: ['coworker', 'boss'],
-  },
-  {
-    id: 'career',
-    title: 'Career Worlds',
-    description: 'Current and former casts, teams, staff, managers, and rivals from your special-career history.',
-    relationshipTypes: [],
-  },
+  {id:'player_family',title:'Player Family',description:'Parents, guardians, current partner, children, and descendants closest to your household.',relationshipTypes:['parent','stepparent','partner','fiance','spouse','child','grandchild']},
+  {id:'relatives',title:'Relatives',description:'Grandparents, siblings, step and half family, nieces, and nephews.',relationshipTypes:['grandparent','sibling','half_sibling','stepsibling','niece_nephew']},
+  {id:'friends',title:'Friends & Social',description:'Friends, best friends, close school/work/career connections, and openly hostile relationships.',relationshipTypes:['friend','best_friend','enemy']},
+  {id:'romance',title:'Romantic History',description:'Current and former romantic relationships across this life.',relationshipTypes:['partner','fiance','spouse','ex']},
+  {id:'school',title:'School',description:'Current school relationships first, followed by muted former classmates, teachers, coaches, and school leadership.',relationshipTypes:['classmate','teacher','principal','coach']},
+  {id:'work',title:'Work',description:'Current coworkers and bosses first, followed by muted relationships from former workplaces.',relationshipTypes:['coworker','boss']},
+  {id:'career',title:'Career Worlds',description:'Current special-career teams, casts, staff, managers, and rivals first, followed by muted former career-world relationships.',relationshipTypes:[]},
 ] as const;
 
-function relationByNpc(state: GameState) {
-  return new Map(state.relationships.map(rel => [rel.npcId, rel] as const));
+function relationByNpc(state: GameState) {return new Map(state.relationships.map(rel => [rel.npcId, rel] as const));}
+
+export function folderForId(id: PeopleFolderId): PeopleFolderDefinition {return PEOPLE_FOLDERS.find(folder => folder.id === id) ?? PEOPLE_FOLDERS[0]!;}
+
+function worldsForFolder(state:GameState,folderId:PeopleFolderId){
+  if(folderId==='school')return (state.socialWorlds??[]).filter(world=>world.kind==='school');
+  if(folderId==='work')return (state.socialWorlds??[]).filter(world=>world.kind==='workplace');
+  if(folderId==='career')return (state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.id.startsWith('special-'));
+  return [];
 }
 
-export function folderForId(id: PeopleFolderId): PeopleFolderDefinition {
-  return PEOPLE_FOLDERS.find(folder => folder.id === id) ?? PEOPLE_FOLDERS[0]!;
+export function affiliationForFolder(state:GameState,folderId:PeopleFolderId,npcId:string):PeopleFolderAffiliation|undefined{
+  const matches=worldsForFolder(state,folderId).flatMap(world=>{
+    const member=world.members.find(item=>item.npcId===npcId);if(!member)return[];
+    const current=world.active&&member.leftAge===undefined;
+    return[{status:current?'current' as const:'former' as const,role:member.role,worldName:world.name,startedAge:world.startedAge,endedAge:member.leftAge??world.endedAge,world}];
+  });
+  matches.sort((a,b)=>Number(b.status==='current')-Number(a.status==='current')||(b.endedAge??b.startedAge)-(a.endedAge??a.startedAge)||b.startedAge-a.startedAge||a.worldName.localeCompare(b.worldName));
+  const best=matches[0];if(!best)return undefined;
+  return{status:best.status,role:best.role,worldName:best.worldName,startedAge:best.startedAge,...(best.endedAge!==undefined?{endedAge:best.endedAge}:{})};
+}
+
+function sortFolderRelationships(state:GameState,folderId:PeopleFolderId,rels:Relationship[]){
+  if(!['school','work','career'].includes(folderId))return rels.slice().sort((a,b)=>b.score-a.score||a.npcId.localeCompare(b.npcId));
+  return rels.slice().sort((a,b)=>{
+    const aa=affiliationForFolder(state,folderId,a.npcId);const bb=affiliationForFolder(state,folderId,b.npcId);
+    const currentRank=Number(bb?.status==='current')-Number(aa?.status==='current');if(currentRank)return currentRank;
+    const recent=(bb?.endedAge??bb?.startedAge??-1)-(aa?.endedAge??aa?.startedAge??-1);if(recent)return recent;
+    return b.score-a.score||a.npcId.localeCompare(b.npcId);
+  });
 }
 
 export function relationshipsForFolder(state: GameState, folderId: PeopleFolderId): Relationship[] {
-  const folder = folderForId(folderId);
-  const allowed = new Set<RelationshipType>(folder.relationshipTypes);
+  const folder = folderForId(folderId);const allowed = new Set<RelationshipType>(folder.relationshipTypes);let result:Relationship[];
   if (folderId === 'school') {
     const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='school').flatMap(world=>world.members.map(member=>member.npcId)));
-    return state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
-  }
-  if (folderId === 'friends') {
-    return state.relationships.filter(rel => (allowed.has(rel.type)||(CLOSE_SOCIAL_TYPES.has(rel.type)&&rel.score>=CLOSE_SOCIAL_SCORE)) && Boolean(state.npcs[rel.npcId]));
-  }
-  if (folderId === 'work') {
+    result=state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
+  } else if (folderId === 'friends') {
+    result=state.relationships.filter(rel => (allowed.has(rel.type)||(CLOSE_SOCIAL_TYPES.has(rel.type)&&rel.score>=CLOSE_SOCIAL_SCORE)) && Boolean(state.npcs[rel.npcId]));
+  } else if (folderId === 'work') {
     const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='workplace').flatMap(world=>world.members.map(member=>member.npcId)));
-    return state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
-  }
-  if (folderId === 'career') {
+    result=state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
+  } else if (folderId === 'career') {
     const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.id.startsWith('special-')).flatMap(world=>world.members.map(member=>member.npcId)));
-    return state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
-  }
-  return state.relationships.filter(rel => allowed.has(rel.type) && Boolean(state.npcs[rel.npcId]));
+    result=state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
+  } else result=state.relationships.filter(rel => allowed.has(rel.type) && Boolean(state.npcs[rel.npcId]));
+  return sortFolderRelationships(state,folderId,result);
 }
 
 export function peopleFolderSummaries(state: GameState): PeopleFolderSummary[] {
   return PEOPLE_FOLDERS.map(folder => {
     const rels = relationshipsForFolder(state, folder.id);
-    return {
-      ...folder,
-      count: rels.length,
-      previewNames: rels
-        .slice()
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 3)
-        .map(rel => {
-          const npc = state.npcs[rel.npcId]!;
-          return `${npc.firstName} ${npc.lastName}`;
-        }),
-    };
+    return {...folder,count:rels.length,previewNames:rels.slice(0,3).map(rel=>{const npc=state.npcs[rel.npcId]!;return `${npc.firstName} ${npc.lastName}`;})};
   });
 }
 
-function directLabel(type: RelationshipType): string {
-  return type.replaceAll('_', ' ');
-}
+function directLabel(type: RelationshipType): string {return type.replaceAll('_', ' ');}
 
 function parentChildLabel(state: GameState, from: string, to: string): string {
-  if (from === state.character.id) return 'your child';
-  if (to === state.character.id) return 'your parent';
-  const fromNpc = state.npcs[from];
-  const toNpc = state.npcs[to];
-  if (fromNpc && toNpc) return `${fromNpc.firstName} → ${toNpc.firstName}`;
-  return 'parent → child';
+  if (from === state.character.id) return 'your child';if (to === state.character.id) return 'your parent';
+  const fromNpc = state.npcs[from];const toNpc = state.npcs[to];if (fromNpc && toNpc) return `${fromNpc.firstName} → ${toNpc.firstName}`;return 'parent → child';
 }
 
 export function buildPeopleRelationshipGraph(state: GameState, folderId: PeopleFolderId): PeopleRelationshipGraph {
-  const folder = folderForId(folderId);
-  const rels = relationshipsForFolder(state, folderId);
-  const relMap = relationByNpc(state);
-  const memberIds = new Set(rels.map(rel => rel.npcId));
-  const playerId = state.character.id;
-  const nodes: PeopleGraphNode[] = [
-    {
-      id: playerId,
-      isPlayer: true,
-      name: `${state.character.firstName} ${state.character.lastName}`,
-      age: state.character.age,
-      alive: state.character.alive,
-    },
-    ...rels.map(rel => {
-      const npc = state.npcs[rel.npcId]!;
-      return {
-        id: npc.id,
-        isPlayer: false,
-        name: `${npc.firstName} ${npc.lastName}`,
-        age: npc.age,
-        alive: npc.alive,
-        relationshipToPlayer: rel.type,
-        relationshipScore: rel.score,
-      } satisfies PeopleGraphNode;
-    }),
-  ];
-
-  const edges: PeopleGraphEdge[] = [];
-  const edgeKeys = new Set<string>();
-  const addEdge = (from: string, to: string, kind: PeopleGraphEdgeKind, label: string) => {
-    if (from === to) return;
-    const directional = kind === 'parent_child';
-    const key = directional ? `${kind}:${from}>${to}` : `${kind}:${[from, to].sort().join('|')}`;
-    if (edgeKeys.has(key)) return;
-    edgeKeys.add(key);
-    edges.push({ id: key, from, to, kind, label });
-  };
-
-  // Player ↔ NPC structural links. These are the edges we actually know from state.
-  for (const rel of rels) {
-    const npc = state.npcs[rel.npcId]!;
-    if (npc.parentIds.includes(playerId)) addEdge(playerId, npc.id, 'parent_child', parentChildLabel(state, playerId, npc.id));
-    if (npc.childIds.includes(playerId)) addEdge(npc.id, playerId, 'parent_child', parentChildLabel(state, npc.id, playerId));
-    if (['partner', 'fiance', 'spouse', 'ex'].includes(rel.type)) addEdge(playerId, npc.id, 'partner', directLabel(rel.type));
-  }
-
-  // NPC ↔ NPC links only come from persistent parent/child and partner fields. We never infer an edge from names or age.
-  const members = [...memberIds].map(id => state.npcs[id]).filter(Boolean);
-  for (const npc of members) {
-    for (const parentId of npc!.parentIds) {
-      if (memberIds.has(parentId)) addEdge(parentId, npc!.id, 'parent_child', parentChildLabel(state, parentId, npc!.id));
-    }
-    for (const childId of npc!.childIds) {
-      if (memberIds.has(childId)) addEdge(npc!.id, childId, 'parent_child', parentChildLabel(state, npc!.id, childId));
-    }
-    if (npc!.partnerId && memberIds.has(npc!.partnerId)) {
-      const partner = state.npcs[npc!.partnerId];
-      const status = npc!.maritalStatus === 'married' && partner?.maritalStatus === 'married' ? 'spouses' : 'partners';
-      addEdge(npc!.id, npc!.partnerId, 'partner', status);
-    }
-  }
-
-  // Build reachability from the player using structural edges. Any direct relationship that is not structurally connected
-  // in this folder gets one explicit player edge so every folder remains navigable without inventing family data.
-  const reachable = new Set<string>([playerId]);
-  const expandReachability = () => {
-    let changed = true;
-    while (changed) {
-      changed = false;
-      for (const edge of edges) {
-        if (reachable.has(edge.from) && !reachable.has(edge.to)) { reachable.add(edge.to); changed = true; }
-        if (reachable.has(edge.to) && !reachable.has(edge.from)) { reachable.add(edge.from); changed = true; }
-      }
-    }
-  };
-  expandReachability();
-  for (const rel of rels) {
-    if (!reachable.has(rel.npcId)) {
-      addEdge(playerId, rel.npcId, 'direct', directLabel(rel.type));
-      reachable.add(rel.npcId);
-      expandReachability();
-    }
-  }
-
-  // If adding one direct edge made a whole NPC subgraph reachable, keep the graph minimal and do not add redundant spokes.
-  for (const rel of rels) {
-    if (edges.some(edge => edge.from === rel.npcId || edge.to === rel.npcId)) continue;
-    addEdge(playerId, rel.npcId, 'direct', directLabel(rel.type));
-  }
-
-  // Stable order improves deterministic snapshots and keeps the mobile tree from jumping between renders.
-  nodes.sort((a, b) => Number(b.isPlayer) - Number(a.isPlayer) || (a.relationshipToPlayer ?? '').localeCompare(b.relationshipToPlayer ?? '') || a.name.localeCompare(b.name));
-  edges.sort((a, b) => a.id.localeCompare(b.id));
-
-  // Keep relationship map referenced so future graph enrichments can use direct scores without rebuilding it.
-  void relMap;
-  return { folder, playerId, nodes, edges };
+  const folder=folderForId(folderId);const rels=relationshipsForFolder(state,folderId);const relMap=relationByNpc(state);const memberIds=new Set(rels.map(rel=>rel.npcId));const playerId=state.character.id;
+  const nodes:PeopleGraphNode[]=[{id:playerId,isPlayer:true,name:`${state.character.firstName} ${state.character.lastName}`,age:state.character.age,alive:state.character.alive},...rels.map(rel=>{const npc=state.npcs[rel.npcId]!;return{id:npc.id,isPlayer:false,name:`${npc.firstName} ${npc.lastName}`,age:npc.age,alive:npc.alive,relationshipToPlayer:rel.type,relationshipScore:rel.score,...(['school','work','career'].includes(folderId)?{affiliation:affiliationForFolder(state,folderId,npc.id)}:{})} satisfies PeopleGraphNode;})];
+  const edges:PeopleGraphEdge[]=[];const edgeKeys=new Set<string>();
+  const addEdge=(from:string,to:string,kind:PeopleGraphEdgeKind,label:string)=>{if(from===to)return;const directional=kind==='parent_child';const key=directional?`${kind}:${from}>${to}`:`${kind}:${[from,to].sort().join('|')}`;if(edgeKeys.has(key))return;edgeKeys.add(key);edges.push({id:key,from,to,kind,label});};
+  for(const rel of rels){const npc=state.npcs[rel.npcId]!;if(npc.parentIds.includes(playerId))addEdge(playerId,npc.id,'parent_child',parentChildLabel(state,playerId,npc.id));if(npc.childIds.includes(playerId))addEdge(npc.id,playerId,'parent_child',parentChildLabel(state,npc.id,playerId));if(['partner','fiance','spouse','ex'].includes(rel.type))addEdge(playerId,npc.id,'partner',directLabel(rel.type));}
+  const members=[...memberIds].map(id=>state.npcs[id]).filter(Boolean);
+  for(const npc of members){for(const parentId of npc!.parentIds)if(memberIds.has(parentId))addEdge(parentId,npc!.id,'parent_child',parentChildLabel(state,parentId,npc!.id));for(const childId of npc!.childIds)if(memberIds.has(childId))addEdge(npc!.id,childId,'parent_child',parentChildLabel(state,npc!.id,childId));if(npc!.partnerId&&memberIds.has(npc!.partnerId)){const partner=state.npcs[npc!.partnerId];const status=npc!.maritalStatus==='married'&&partner?.maritalStatus==='married'?'spouses':'partners';addEdge(npc!.id,npc!.partnerId,'partner',status);}}
+  const reachable=new Set<string>([playerId]);const expandReachability=()=>{let changed=true;while(changed){changed=false;for(const edge of edges){if(reachable.has(edge.from)&&!reachable.has(edge.to)){reachable.add(edge.to);changed=true;}if(reachable.has(edge.to)&&!reachable.has(edge.from)){reachable.add(edge.from);changed=true;}}}};expandReachability();
+  for(const rel of rels)if(!reachable.has(rel.npcId)){addEdge(playerId,rel.npcId,'direct',directLabel(rel.type));reachable.add(rel.npcId);expandReachability();}
+  for(const rel of rels){if(edges.some(edge=>edge.from===rel.npcId||edge.to===rel.npcId))continue;addEdge(playerId,rel.npcId,'direct',directLabel(rel.type));}
+  nodes.sort((a,b)=>Number(b.isPlayer)-Number(a.isPlayer)||Number(b.affiliation?.status==='current')-Number(a.affiliation?.status==='current')||(a.relationshipToPlayer??'').localeCompare(b.relationshipToPlayer??'')||a.name.localeCompare(b.name));
+  edges.sort((a,b)=>a.id.localeCompare(b.id));void relMap;return{folder,playerId,nodes,edges};
 }

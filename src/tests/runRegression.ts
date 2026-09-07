@@ -4,6 +4,7 @@ import { runMusicCareerRegression } from './musicCareerRegression';
 import { runSocialAffiliationRegression } from './socialAffiliationRegression';
 import { runModelingCareerRegression } from './modelingCareerRegression';
 import { runRacingCareerRegression } from './racingCareerRegression';
+import { runCoherenceRegression } from './coherenceRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -13,4 +14,5 @@ try{const checks=runMusicCareerRegression();console.log(`Music career regression
 try{const checks=runSocialAffiliationRegression();console.log(`Social-affiliation regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runModelingCareerRegression();console.log(`Modeling career regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runRacingCareerRegression();console.log(`Racing career regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runCoherenceRegression();console.log(`Coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
