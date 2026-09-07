@@ -125,3 +125,29 @@ Use deterministic setups with controlled seeds/state. High-value patterns includ
 Keep specialized regression suites separate when that makes failures easier to diagnose. Phase 4D3 adds a dedicated music-career regression rather than folding another large block into the existing special-career world suite.
 
 GitHub Actions remains the final dependency-backed build gate.
+
+## Folder membership is a projection, not a second relationship type
+
+People folders may overlap when different facts justify membership.
+
+Use these rules:
+
+- School / Work / Career Worlds membership should primarily come from persistent `SocialWorld` affiliation, not from re-reading a generic `Relationship.type` label;
+- a career-world peer may use `Relationship.type = "coworker"` for personal interaction semantics while still not belonging in Work unless that NPC also has a real workplace affiliation;
+- archived Social Worlds preserve institutional history unless the product explicitly introduces a current-only view;
+- Friends & Social may project a very close institutional connection without overwriting the underlying classmate/coworker/boss/teacher relationship type;
+- changing the personal relationship to partner/spouse/friend must not delete the NPC's original School/Work/Career Worlds history.
+
+This keeps affiliation and personal relationship state independent and prevents one reused relationship label from leaking NPCs into the wrong folder.
+
+## Dating eligibility is separate from institutional affiliation
+
+`Relationship.type` should not require a player to first convert every classmate/coworker/boss/teacher into `friend` before romance becomes possible.
+
+For Ask out:
+
+- enforce living NPC and teen/adult age compatibility first;
+- permit only explicitly supported non-family relationship categories;
+- family types remain blocked regardless of score;
+- a successful romance changes the personal relationship state while the Social World continues to preserve where the pair originally knew each other;
+- UI visibility mirrors the same system helper used by the relationship action, so the button and engine cannot silently disagree.

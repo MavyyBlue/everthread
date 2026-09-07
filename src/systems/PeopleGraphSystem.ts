@@ -2,6 +2,9 @@ import type { GameState, Relationship, RelationshipType } from '../types/game';
 
 export type PeopleFolderId = 'player_family' | 'relatives' | 'friends' | 'romance' | 'school' | 'work' | 'career';
 
+const CLOSE_SOCIAL_SCORE = 90;
+const CLOSE_SOCIAL_TYPES = new Set<RelationshipType>(['classmate','teacher','principal','coach','coworker','boss']);
+
 export interface PeopleFolderDefinition {
   id: PeopleFolderId;
   title: string;
@@ -57,7 +60,7 @@ export const PEOPLE_FOLDERS: readonly PeopleFolderDefinition[] = [
   {
     id: 'friends',
     title: 'Friends & Social',
-    description: 'Friends, best friends, and people where the relationship has become openly hostile.',
+    description: 'Friends, best friends, close school/work/career connections, and openly hostile relationships.',
     relationshipTypes: ['friend', 'best_friend', 'enemy'],
   },
   {
@@ -75,13 +78,13 @@ export const PEOPLE_FOLDERS: readonly PeopleFolderDefinition[] = [
   {
     id: 'work',
     title: 'Work',
-    description: 'Coworkers and bosses connected to your working life.',
+    description: 'Current and former coworkers and bosses from persistent workplace history.',
     relationshipTypes: ['coworker', 'boss'],
   },
   {
     id: 'career',
     title: 'Career Worlds',
-    description: 'Casts, teams, staff, managers, and rivals from your special-career history.',
+    description: 'Current and former casts, teams, staff, managers, and rivals from your special-career history.',
     relationshipTypes: [],
   },
 ] as const;
@@ -101,9 +104,12 @@ export function relationshipsForFolder(state: GameState, folderId: PeopleFolderI
     const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='school').flatMap(world=>world.members.map(member=>member.npcId)));
     return state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
   }
+  if (folderId === 'friends') {
+    return state.relationships.filter(rel => (allowed.has(rel.type)||(CLOSE_SOCIAL_TYPES.has(rel.type)&&rel.score>=CLOSE_SOCIAL_SCORE)) && Boolean(state.npcs[rel.npcId]));
+  }
   if (folderId === 'work') {
     const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='workplace').flatMap(world=>world.members.map(member=>member.npcId)));
-    return state.relationships.filter(rel => (allowed.has(rel.type)||affiliated.has(rel.npcId)) && Boolean(state.npcs[rel.npcId]));
+    return state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
   }
   if (folderId === 'career') {
     const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.id.startsWith('special-')).flatMap(world=>world.members.map(member=>member.npcId)));

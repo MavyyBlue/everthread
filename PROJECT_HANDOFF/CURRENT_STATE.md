@@ -8,51 +8,53 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-`main` at `452c140b76f942f93a135885c5aff265e0c8d7f9`.
+`main` at `a9f5900795231aadbb7038cf12f86bad59ab906c`.
 
-- Phase 4D2 — Acting & Directing Production Cycles is deployed and green.
-- GitHub Actions run #23 (`34077126826`) passed overlay import, dependency install, type checks, regression suite, production build, Pages upload, deployment, and cleanup.
-- The deployed special-career regression reports 77 checks at the Phase 4D2 baseline.
-- Phase 4D1 sports seasons/contracts and all Phase 4A–4C foundations remain green.
+- Phase 4D3 — Music Release / Album / Tour Cycles is deployed and green.
+- GitHub Actions run #25 (`34079094425`) passed overlay import, engine/test type checks, regression suite, production build, Pages upload, deployment, and cleanup.
+- Run #25 reported core regression 82/82, special-career regression 77/77, and music-career regression 52/52.
+- Run #24 had failed only on two TypeScript control-flow assertions in the new music regression; the corrective overlay fixed those assertions without weakening the tested behavior, and run #25 is the authoritative green result.
+- Phase 4D1 sports seasons/contracts, Phase 4D2 acting/directing cycles, and all Phase 4A–4C foundations remain green.
 - `PROJECT_HANDOFF/` remains installed and the one-ZIP overlay importer is the normal mobile development workflow.
 
-Verified Phase 4D2 behavior includes multi-age acting/directing productions, overlap protection, exact production history, path-specific release economics/reception, acting follow-up offers, studio-backed directing offers, bounded offer expiry, persistent casts/crew, and Career Worlds production/offer UI.
+Verified Phase 4D3 behavior includes deterministic singles/albums with bounded catalog history, three-age catalog tails, fanbase/release trajectory, persistent music collaborators/management, multi-age tours, distribution-partnership offers and tradeoffs, relationship-driven management pressure, and Career Worlds music UI.
 
-## Current work — Phase 4D3
+## Current work — post-4D3 playtest corrections
 
-**Music Release / Album / Tour Cycles** is implemented locally and packaged for deployment verification. Do not treat it as green until the newest intended GitHub Actions run completes successfully and expanded `main` source is spot-checked.
+**Social Affiliation / Friends / Dating UX corrections** are implemented locally and packaged for deployment verification. Do not treat them as green until the intended GitHub Actions run completes successfully and expanded `main` source is spot-checked.
 
-Prepared Phase 4D3 behavior:
+Reason for this corrective slice:
 
-- singles and albums receive deterministic original titles, bounded quality/reception, launch streams, launch royalties, fan growth, and exact age history;
-- detailed recent catalog history is bounded to six releases while lifetime catalog count/streams/royalties continue accumulating;
-- each catalog release produces a deterministic three-age declining stream/royalty tail instead of disappearing after launch;
-- release reach uses skill, creativity, reputation, persistent creative-partner relationships, manager relationship, fame, fanbase, and distribution terms;
-- inactive/weak catalog momentum can produce bounded fanbase decline rather than permanent one-way growth;
-- tours now start as an in-progress commitment and resolve on the next Age Up instead of paying instantly;
-- tour scale is selected from current fanbase (clubs/theaters/arenas) and stores exact show count, attendance, gross, costs, net, performance, fan gain, fatigue, and completion age;
-- overlapping tours are blocked before consuming another tour action claim;
-- same-age music lifecycle processing is idempotent, preventing duplicate catalog royalties or duplicate tour completion;
-- persistent manager/creative relationships are projected into `managementPressure`, `creativeChemistry`, and tour/release outcomes;
-- high-quality releases can generate fictional distribution-partnership offers with explicit advance, royalty share, reach boost, source release, and expiry;
-- partnership accept/decline is a controlled engine action using the new central `special.music_business` one-per-age policy;
-- accepting a partnership pays the recorded advance exactly once and trades future royalty share for broader reach;
-- Career Worlds UI exposes partnership offers, recent catalog, fanbase/lifetime streams, management pressure, active tours, latest tour economics, and distribution terms;
-- music regression is a separate deterministic suite and currently passes 52 checks in the local harness;
-- save schema remains 9 because bounded catalog entries and lifecycle state use primitive keys in the existing persisted music track plus the existing music Social World.
+- Mavyy found that special-career NPCs whose relationship types are `coworker`/`boss` could also appear in the Work folder even though their affiliation was a special-career organization, not a workplace;
+- Career Worlds intentionally preserves current and archived casts/teams/collectives as career history, but the UI did not make the distinction between persistent music collective relationships and temporary distribution offers clear enough;
+- high-score classmates/coworkers/bosses/teachers could reach 100 without appearing in Friends & Social;
+- Ask out was restricted to `Relationship.type === "friend"`, preventing otherwise eligible adult school/work/career connections from becoming romantic relationships.
 
-## Validation completed before Phase 4D3 packaging
+Prepared correction behavior:
 
-- MusicCareerCycleSystem / SpecialCareerSystem / action-economy/test harness type-check passes with production-compatible signatures;
-- deterministic music runtime passes all 50 prepared regression checks;
-- stricter Career Worlds TSX compile passes;
-- syntax transpilation passes for every changed TS/TSX file;
-- existing 77-check special-career regression is left intact and the new music regression is invoked separately by `runRegression.ts`;
-- no migration or duplicate music-world state is introduced.
+- Work folder membership is now driven by actual `SocialWorld(kind: "workplace")` affiliation, preventing special-career coworker/boss relationships from leaking into Work;
+- Career Worlds continues to preserve current and archived special-career affiliation intentionally; archived career NPCs are history, not deleted relationships;
+- Friends & Social also surfaces very close institutional relationships (score 90+) for classmate/teacher/principal/coach/coworker/boss types without overwriting their authoritative relationship type;
+- this allows the same NPC to appear in Friends & Social plus School/Work/Career Worlds when both closeness and affiliation justify it;
+- Ask out is available for eligible living `friend`, `best_friend`, `classmate`, `coworker`, `boss`, `teacher`, `principal`, and `coach` relationships;
+- the existing teen/adult age boundary remains authoritative: minors cannot date adults, including teachers/bosses;
+- family relationship types remain excluded from Ask out;
+- successful dating changes the personal relationship to `partner` while School/Work/Career Worlds affiliation remains discoverable through the persistent Social World;
+- Career Worlds music copy now clarifies that the persistent creative/management collective is separate from temporary distribution offers;
+- no save-schema change is required.
+
+## Validation completed before corrective packaging
+
+- targeted social-affiliation runtime regression passes 23/23 checks;
+- regression covers Work-folder isolation, Career Worlds history retention, close institutional Friends overlap, adult coworker/boss/classmate/teacher dating eligibility, minor/adult safety, family exclusion, and affiliation retention after romance;
+- strict TypeScript check of the targeted social regression passes in the local production-compatible harness;
+- People and Career Worlds TSX compile passes in the local mobile UI harness;
+- changed PeopleGraph/PeopleScreen files were reconstructed from exact current Git blobs before editing;
+- current package base is the verified Phase 4D3 `main` commit `a9f5900795231aadbb7038cf12f86bad59ab906c`.
 
 GitHub Actions remains the authoritative dependency-backed deployment gate.
 
-## Next implementation after Phase 4D3 is green
+## Next implementation after this corrective slice is green
 
 Phase 4D4 — Modeling Campaign / Agency Contract Cycles.
 
@@ -66,7 +68,7 @@ Preferred scope:
 6. bounded overwork/image pressure consequences and clean end states;
 7. preserve the existing modeling Social World/action limits unless genuinely new state requires more.
 
-Do not start Phase 4D4 before verifying the Phase 4D3 upload is green.
+Do not start Phase 4D4 before verifying the social-affiliation correction upload is green.
 
 ## Later Phase 4D sequence
 
@@ -85,7 +87,7 @@ Do not start Phase 4D4 before verifying the Phase 4D3 upload is green.
 - Multi-slot saves, generations, legacy/past lives.
 - Standard careers, finance, assets, investments, businesses.
 - Health, crime/legal/prison, fame, pets, travel.
-- Phase 4 persistent special-career worlds, social consequences, sports seasons, and screen-career productions.
+- Phase 4 persistent special-career worlds, social consequences, sports seasons, screen-career productions, and music career cycles.
 - 691 event definitions as of the 0.12.0 tracking baseline.
 - Mobile-first React/PWA shell.
 

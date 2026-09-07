@@ -24,12 +24,13 @@ In progress.
 
 1. **Phase 4D1 — Professional Sports Seasons & Contract Lifecycle:** green. Yearly seasons/circuits, records, salary accrual before contract resolution, renewals/free agency, and explicit retirement.
 2. **Phase 4D2 — Acting & Directing Production Cycles:** green. Multi-age productions, overlap protection, release economics/reception, follow-up offers, and studio-backed directing opportunities. Deployed special-career regression: 77 checks.
-3. **Phase 4D3 — Music Release / Album / Tour Cycles:** implemented/package pending deployment verification. Adds bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs. Adds a separate prepared 52-check deterministic music regression suite.
-4. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** next after 4D3 is green.
-5. Racing seasons, team movement, contracts, championships.
-6. Deeper rival/leader consequences across paths.
-7. Remaining retirement/end-state handling.
-8. Targeted special-career event chains.
+3. **Phase 4D3 — Music Release / Album / Tour Cycles:** green. Bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs. Deployed dedicated music regression: 52 checks.
+4. **Post-4D3 social-affiliation correction:** implementation/package pending deployment verification. Isolates Work from special-career affiliations, allows close school/work/career relationships to overlap into Friends & Social, and permits age-eligible affiliated NPCs to use Ask out without losing their original Social World history.
+5. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** next after the corrective slice is green.
+6. Racing seasons, team movement, contracts, championships.
+7. Deeper rival/leader consequences across paths.
+8. Remaining retirement/end-state handling.
+9. Targeted special-career event chains.
 
 ### Later Phase 4 extensions
 

@@ -9,7 +9,7 @@ import { screenCareerOffer } from '../systems/ScreenCareerCycleSystem';
 import { musicCatalog, musicPartnershipOffer } from '../systems/MusicCareerCycleSystem';
 import type { SpecialCareerWorldKind } from '../systems/SpecialCareerWorldSystem';
 
-const KIND_LABELS:Record<SpecialCareerWorldKind,string>={acting:'Acting production',music:'Music circle',sports:'Professional team',modeling:'Modeling agency',racing:'Race team',directing:'Film production'};
+const KIND_LABELS:Record<SpecialCareerWorldKind,string>={acting:'Acting production',music:'Music collective',sports:'Professional team',modeling:'Modeling agency',racing:'Race team',directing:'Film production'};
 type CareerTrack=Record<string,number|string|boolean>;
 function careerTrack(state:GameState,kind:SpecialCareerWorldKind){return (state.specialCareers[kind]??{}) as CareerTrack;}
 function person(state:GameState,id?:string):Npc|undefined{return id?state.npcs[id]:undefined;}
@@ -55,6 +55,7 @@ function CareerWorldCard({state,world,onResult}:{state:GameState;world:SocialWor
     {view.kind==='directing'&&career.currentProjectActive===true&&career.currentProjectWorldId===world.id&&<p className="memory">In production: {formatMoney(Number(career.currentProjectBudget??0))} budget · {String(career.currentProjectSource??'production')} · director fee {formatMoney(Number(career.currentProjectFee??0))}. Release resolves on the next Age Up.</p>}
     {view.kind==='music'&&career.lastReleaseTitle&&<p className="memory">Latest release: <strong>{String(career.lastReleaseTitle)}</strong> · {String(career.lastReleaseReception??'released')} · launch {Number(career.lastReleaseStreams??0).toLocaleString()} streams · latest catalog tail {Number(career.lastCatalogTailStreams??0).toLocaleString()}.</p>}
     {view.kind==='music'&&<p className="memory">Audience: {Number(career.fanbase??0).toLocaleString()} fans · catalog {Number(career.catalogLifetimeStreams??0).toLocaleString()} lifetime streams · management pressure {Math.round(Number(career.managementPressure??0))}/100.</p>}
+    {view.kind==='music'&&<p className="muted">This collective is your persistent creative/management circle. Distribution offers are separate business terms, so an expired offer does not erase these relationships or their career history.</p>}
     {view.kind==='music'&&career.tourActive===true&&<p className="memory">On the road: {String(career.currentTourName??'Tour')} · {Number(career.currentTourShows??0)} {String(career.currentTourScale??'')} shows. Attendance, costs, fatigue, and career impact resolve on the next Age Up.</p>}
     {view.kind==='music'&&career.distributionPartner===true&&<p className="memory">Distribution: {String(career.distributionPartnerName??'partner')} · {Math.round((Number(career.distributionReach??1)-1)*100)}% reach boost · {Math.round(Number(career.distributionShare??0)*100)}% royalty share.</p>}
     {view.kind==='sports'&&career.pro===true&&<p className="memory">Contract: {contractRemaining} year{contractRemaining===1?'':'s'} remaining{salary?` · ${formatMoney(salary)}/year`:''}.</p>}

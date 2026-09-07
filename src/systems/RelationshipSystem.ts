@@ -12,6 +12,20 @@ const interactionEffects: Record<string,{base:number;happiness:number;karma?:num
   apologize:{base:7,happiness:1,karma:1}, prank:{base:1,happiness:2}, fight:{base:-20,happiness:-5,karma:-4}, counseling:{base:8,happiness:2}, vacation:{base:11,happiness:6},
 };
 
+const ASK_OUT_RELATIONSHIP_TYPES = new Set<RelationshipType>(['friend','best_friend','classmate','coworker','boss','teacher','principal','coach']);
+
+function datingAgesCompatible(playerAge:number,npcAge:number){
+  if(playerAge<14||npcAge<14)return false;
+  if(playerAge<18)return npcAge<18;
+  return npcAge>=18;
+}
+
+export function canAskOutNpc(state:GameState,npcId:string){
+  const npc=state.npcs[npcId];
+  const rel=state.relationships.find(item=>item.npcId===npcId);
+  return Boolean(npc?.alive&&rel&&ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&datingAgesCompatible(state.character.age,npc.age));
+}
+
 export { processNpcLives as ageNpcs } from './NpcLifeSystem';
 
 function personalityMultiplier(npc:Npc, action:string) {
@@ -91,7 +105,7 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
     if(state.character.age>=18&&npc.age<18)return{success:false,messages:[{text:'Adult dating is limited to adults.'}]};
   }
   if((action==='propose'||action==='marry')&&(state.character.age<18||npc.age<18))return{success:false,messages:[{text:'Engagement and marriage are adult relationship milestones.'}]};
-  if(action==='ask_out'&&rel.type!=='friend')return{success:false,messages:[{text:'You can only ask out a current friend.'}]};
+  if(action==='ask_out'&&!ASK_OUT_RELATIONSHIP_TYPES.has(rel.type))return{success:false,messages:[{text:'Dating is not available from this relationship.'}]};
   if(action==='propose'&&rel.type!=='partner')return{success:false,messages:[{text:'You need to be dating before proposing.'}]};
   if(action==='marry'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'Marriage is not available in this relationship yet.'}]};
   if(action==='break_up'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'There is no dating relationship to end.'}]};
@@ -103,7 +117,7 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   const rng=createRng(state.seed,state.rngCounter);
   const chance=clamp(rel.score*.55+rel.compatibility*.25+rel.attraction*.2+npc.hiddenOpinion*.15,0,100)/100;
   let success=true; let newType:RelationshipType=rel.type; let text='';
-  if(action==='ask_out') { success=rng.chance(chance); newType=success?'partner':rel.type; text=success?`${npc.firstName} agrees to date you.`:`${npc.firstName} would rather stay friends.`; if(success) npc.maritalStatus='dating'; }
+  if(action==='ask_out') { success=rng.chance(chance); newType=success?'partner':rel.type; text=success?`${npc.firstName} agrees to date you.`:`${npc.firstName} does not want to date you right now.`; if(success) npc.maritalStatus='dating'; }
   if(action==='propose') {
     const alreadyCommitted=state.relationships.some(r=>r.npcId!==npcId&&['fiance','spouse'].includes(r.type));
     if(rel.type!=='partner'||alreadyCommitted){success=false;text=alreadyCommitted?'You are already committed to someone else.':'You need to be dating before proposing.';}
