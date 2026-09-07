@@ -17,8 +17,9 @@ export function runMusicCareerRegression(){
   verify(trainingState.specialCareers.music===undefined,'blocked newborn practice must not create a music career record');
   trainingState.character.age=5;trainingState.currentYear+=5;
   verify(practiceMusicTraining(trainingState,'vocals').success,'music practice must become available in childhood');
-  verify(trainingState.specialCareers.music?.active!==true,'childhood practice must build skill without starting professional career years');
-  verify(Number(trainingState.specialCareers.music?.skill)>0,'childhood practice must still build real music skill');
+  const childhoodMusic=trainingState.specialCareers.music as {active?:boolean;skill?:number}|undefined;
+  verify(childhoodMusic?.active!==true,'childhood practice must build skill without starting professional career years');
+  verify(Number(childhoodMusic?.skill??0)>0,'childhood practice must still build real music skill');
 
   const state=createNewGame({seed:'phase4d3-music-cycle-regression'});
   state.character.age=25;state.currentYear=2075;state.fame.fame=85;state.character.secondary.creativity=96;
