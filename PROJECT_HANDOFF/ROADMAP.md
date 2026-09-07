@@ -7,97 +7,47 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 ### Phase 4A — Persistent career worlds
 Status: green.
 
-Foundation:
-
-- acting productions;
-- music collaborators/management;
-- professional sports teams;
-- modeling agencies/campaign worlds;
-- racing teams;
-- directing productions;
-- persistent career NPCs using `SocialWorld(kind: "organization")`.
+Foundation: acting productions, music collaborators/management, professional sports teams, modeling agencies/campaign worlds, racing teams, directing productions, and persistent career NPCs through `SocialWorld(kind: "organization")`.
 
 ### Phase 4B — Career ecosystem consequences
 Status: green.
 
-Added:
-
-- direct career relationships;
-- leaders/managers;
-- persistent rivals;
-- career momentum;
-- awards/scandals;
-- sports contract expiry/renewal/release;
-- acting/directing project completion;
-- annual idempotence guard.
+Added direct career relationships, leaders/managers, persistent rivals, momentum, awards/scandals, sports contracts, acting/directing project completion, and annual idempotence.
 
 ### Phase 4C — Career Worlds UI + social consequences
 Status: green.
 
-Target:
-
-- Career UI ecosystem visibility;
-- People → Career Worlds affiliation folder;
-- chemistry / guidance / rivalry interactions;
-- relationship-driven career outcomes;
-- richer career history display.
+Added Career UI ecosystem visibility, People → Career Worlds affiliation, chemistry/guidance/rivalry interaction, and relationship-driven career outcomes.
 
 ### Phase 4D — Deep career cycles
 In progress.
 
-1. **Phase 4D1 — Professional Sports Seasons & Contract Lifecycle:** green. Adds yearly season/circuit resolution, sport-specific schedules/results, bounded missed time, season/career records, salary accrual before contract resolution, performance-aware renewals, free agency/team changes, and explicit retirement. Deployed regression target: 41 special-career checks.
-2. **Phase 4D2 — Acting & Directing Production Cycles:** implemented/package pending deployment verification. Adds multi-age productions, overlap protection, path-specific release economics/reception, acting follow-up offers, studio-backed directing offers, expiry, and Career Worlds production/offer UI. Prepared regression target: 77 special-career checks.
-3. **Phase 4D3 — Music release/album/tour cycles:** next after 4D2 is green. Deepen singles/albums/tours, collaborators, management pressure, catalog trajectory, fanbase, costs/fatigue, and bounded follow-up opportunities.
-4. Modeling campaigns/agency representation and contract progression.
-5. Racing seasons, team movement, championships.
+1. **Phase 4D1 — Professional Sports Seasons & Contract Lifecycle:** green. Yearly seasons/circuits, records, salary accrual before contract resolution, renewals/free agency, and explicit retirement.
+2. **Phase 4D2 — Acting & Directing Production Cycles:** green. Multi-age productions, overlap protection, release economics/reception, follow-up offers, and studio-backed directing opportunities. Deployed special-career regression: 77 checks.
+3. **Phase 4D3 — Music Release / Album / Tour Cycles:** implemented/package pending deployment verification. Adds bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs. Adds a separate prepared 52-check deterministic music regression suite.
+4. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** next after 4D3 is green.
+5. Racing seasons, team movement, contracts, championships.
 6. Deeper rival/leader consequences across paths.
 7. Remaining retirement/end-state handling.
 8. Targeted special-career event chains.
 
 ### Later Phase 4 extensions
 
-Extend persistent worlds/depth to:
-
-- military;
-- politics;
-- royalty;
-- organized crime;
-- fictional intelligence/other special organizations where appropriate;
-- combat-sports ecosystem if its design benefits from a persistent gym/promoter/rival layer.
+Extend persistent worlds/depth to military, politics, royalty, organized crime, fictional intelligence/other special organizations where appropriate, and combat sports if a persistent gym/promoter/rival layer adds meaningful simulation.
 
 Before introducing richer structured Phase 4 persisted objects, decide whether save schema 10 is justified.
 
 ## Phase 5 — Generations / estates
 
-Planned:
-
-- asset-specific wills;
-- fictionalized estate administration/tax handling;
-- richer NPC-owned assets/businesses;
-- broader kin taxonomy if justified;
-- large-family and multi-generation performance validation.
+Planned: asset-specific wills, fictionalized estate administration/tax handling, richer NPC-owned assets/businesses, broader kin taxonomy if justified, and large-family/multi-generation performance validation.
 
 ## Phase 6 — Credit / debt
 
-Planned:
-
-- vehicle financing;
-- repossession;
-- creditworthiness/history;
-- personal-loan UI;
-- voluntary bankruptcy;
-- longer recovery consequences;
-- hardship events.
+Planned: vehicle financing, repossession, creditworthiness/history, personal-loan UI, voluntary bankruptcy, longer recovery consequences, and hardship events.
 
 ## Phase 7 — Persistent world consequences
 
-Planned:
-
-- exact event cooldown tracking;
-- expanded delayed consequence chains;
-- more persistent target-aware follow-ups;
-- parenting/property/business/school/special-career delayed consequences;
-- deeper national/world event layer.
+Planned: exact event cooldown tracking, expanded delayed consequence chains, more persistent target-aware follow-ups, parenting/property/business/school/special-career delayed consequences, and a deeper national/world event layer.
 
 ## Cross-cutting later gates
 
@@ -111,6 +61,4 @@ Planned:
 
 ## Scope philosophy
 
-Do not finish Everthread by maximizing feature count.
-
-Finish systems by adding enough persistence, interaction, consequence, UI clarity, and replay variety that independent systems combine into memorable life stories.
+Do not finish Everthread by maximizing feature count. Finish systems by adding enough persistence, interaction, consequence, UI clarity, and replay variety that independent systems combine into memorable life stories.

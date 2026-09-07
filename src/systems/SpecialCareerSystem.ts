@@ -6,6 +6,7 @@ import { consumeAction } from '../core/actionEconomy';
 import { activeSpecialCareerWorld, ensureSpecialCareerWorld, processSpecialCareerWorldsYear } from './SpecialCareerWorldSystem';
 import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear } from './SpecialCareerEcosystemSystem';
 import { beginActingProject, beginDirectingProject, screenCareerOffer } from './ScreenCareerCycleSystem';
+import { beginMusicTour, launchMusicRelease, musicPartnershipDecision, processMusicCareerYear } from './MusicCareerCycleSystem';
 
 type CareerTrack = Record<string, number | string | boolean>;
 const track = (state:GameState,key:keyof GameState['specialCareers']) => (state.specialCareers[key] ??= {}) as CareerTrack;
@@ -33,6 +34,7 @@ export function processSpecialCareersYear(state:GameState){
   state.rngCounter=rng.counter();
   processSpecialCareerWorldsYear(state);
   processSpecialCareerEcosystemsYear(state);
+  processMusicCareerYear(state);
 }
 
 export function takeActingLesson(state:GameState):EngineResult {
@@ -80,13 +82,16 @@ export function practiceMusic(state:GameState,instrument='vocals'):EngineResult 
 
 export function releaseMusic(state:GameState,kind:'song'|'album'):EngineResult {
   if(state.character.age<13)return{success:false,messages:[{text:'Music releases become available in the teen years.'}]};const r=track(state,'music');const skill=n(r,'skill',state.character.talents.music*.35);if(skill<20)return{success:false,messages:[{text:'You need more musical skill before releasing material.'}]};const gate=consumeAction(state,{policy:'special.music_release'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
-  const rng=createRng(`${state.seed}-music`,state.rngCounter);const quality=skill+state.character.secondary.creativity*.25+rng.int(-20,25);const streams=Math.max(50,Math.round(quality*quality*(kind==='album'?22:8)*(1+state.fame.fame/35)));const pay=Math.round(streams*.004);state.finances.cash+=pay;setN(r,kind==='album'?'albumsReleased':'songsReleased',n(r,kind==='album'?'albumsReleased':'songsReleased')+1);setN(r,'fanbase',n(r,'fanbase')+Math.round(streams*.04));state.fame.followers+=Math.round(streams*.02);state.fame.fame=clamp(state.fame.fame+(quality>80?(kind==='album'?9:5):quality>55?2:0));
-  const firstRelease=n(r,'songsReleased')+n(r,'albumsReleased')===1;const world=careerWorld(state,'music',String(r.instrument??'music'),{announce:firstRelease});
-  state.rngCounter=rng.counter();return{success:true,messages:[{text:`You released a ${kind} with ${world.name}. It generated ${streams.toLocaleString()} streams and ${pay.toLocaleString()} in royalties.`}]};
+  const beforeCount=n(r,'songsReleased')+n(r,'albumsReleased');const world=careerWorld(state,'music',String(r.instrument??'music'),{announce:beforeCount===0});const rng=createRng(`${state.seed}-music`,state.rngCounter);const result=launchMusicRelease(state,r,world,kind,rng);
+  state.rngCounter=rng.counter();return{success:true,messages:[{text:`${result.title} launched with ${result.streams.toLocaleString()} streams, ${result.reception}, and ${result.royalties.toLocaleString()} in royalties. Its catalog tail will continue across future Age Ups.`}]};
 }
 
 export function tourMusic(state:GameState):EngineResult {
-  const r=track(state,'music');if(n(r,'fanbase')<2500)return{success:false,messages:[{text:'You need a larger fanbase before touring.'}]};const gate=consumeAction(state,{policy:'special.tour',target:'music'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-tour`,state.rngCounter);const shows=rng.int(6,24);const gross=Math.round(shows*n(r,'fanbase')*.42*rng.int(40,110)/100);const net=Math.round(gross*.32);state.finances.cash+=net;state.fame.fame=clamp(state.fame.fame+4);state.character.secondary.stress=clamp(state.character.secondary.stress+8);const world=careerWorld(state,'music',String(r.instrument??'music'),{announce:false});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You completed a ${shows}-show tour with ${world.name} and earned ${net.toLocaleString()} after costs.`}]};
+  const r=track(state,'music');if(n(r,'fanbase')<2500)return{success:false,messages:[{text:'You need a larger fanbase before touring.'}]};if(r.tourActive===true)return{success:false,messages:[{text:'You already have a tour underway. Age up to complete it before starting another.'}]};const gate=consumeAction(state,{policy:'special.tour',target:'music'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-tour`,state.rngCounter);const world=careerWorld(state,'music',String(r.instrument??'music'),{announce:false});const result=beginMusicTour(state,r,world,rng);state.rngCounter=rng.counter();return result;
+}
+
+export function musicPartnershipAction(state:GameState,action:'accept'|'decline'):EngineResult {
+  return musicPartnershipDecision(state,action);
 }
 
 const sports=['American football','Basketball','Baseball','Soccer','Hockey','Tennis','Golf','Volleyball'];
