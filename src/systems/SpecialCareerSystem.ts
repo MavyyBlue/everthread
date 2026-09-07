@@ -4,11 +4,18 @@ import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import { consumeAction } from '../core/actionEconomy';
 import { ensureSpecialCareerWorld, processSpecialCareerWorldsYear } from './SpecialCareerWorldSystem';
+import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear } from './SpecialCareerEcosystemSystem';
 
 type CareerTrack = Record<string, number | string | boolean>;
 const track = (state:GameState,key:keyof GameState['specialCareers']) => (state.specialCareers[key] ??= {}) as CareerTrack;
 const n = (r:CareerTrack,key:string,def=0) => typeof r[key]==='number' ? r[key] as number : def;
 const setN=(r:CareerTrack,key:string,value:number)=>{r[key]=Math.round(value*100)/100;};
+
+function careerWorld(state:GameState,kind:Parameters<typeof ensureSpecialCareerWorld>[1],context='',options:Parameters<typeof ensureSpecialCareerWorld>[3]={}):ReturnType<typeof ensureSpecialCareerWorld>{
+  const world=ensureSpecialCareerWorld(state,kind,context,options);
+  ensureSpecialCareerRelationships(state,world);
+  return world;
+}
 
 export function processSpecialCareersYear(state:GameState){
   const rng=createRng(`${state.seed}-special`,state.rngCounter);
@@ -24,6 +31,7 @@ export function processSpecialCareersYear(state:GameState){
   }
   state.rngCounter=rng.counter();
   processSpecialCareerWorldsYear(state);
+  processSpecialCareerEcosystemsYear(state);
 }
 
 export function takeActingLesson(state:GameState):EngineResult {
@@ -43,7 +51,7 @@ export function auditionActing(state:GameState,miniGameScore?:number):EngineResu
     const role=rng.weighted([{item:'extra',weight:35},{item:'supporting',weight:50},{item:'lead',weight:Math.max(3,skill-45)}]);
     const basePay=role==='lead'?40000:role==='supporting'?9000:350;const pay=Math.round(basePay*(1+state.fame.fame/45)*rng.int(70,180)/100);
     state.finances.cash+=pay;setN(r,'credits',n(r,'credits')+1);setN(r,'skill',clamp(skill+3));setN(r,'reputation',clamp(n(r,'reputation',20)+(role==='lead'?8:role==='supporting'?4:1)));if(role==='lead')setN(r,'leadRoles',n(r,'leadRoles')+1);state.fame.fame=clamp(state.fame.fame+(role==='lead'?8:role==='supporting'?3:1));
-    const world=ensureSpecialCareerWorld(state,'acting',role,{forceNew:true,announce:false});
+    const world=careerWorld(state,'acting',role,{forceNew:true,announce:false});
     state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You joined the cast of ${world.name} for a ${role} role.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});
     text=`You booked a ${role} role in ${world.name} and earned ${pay.toLocaleString()}.`;
   }else{text='You auditioned, but the production chose someone else.';setN(r,'skill',clamp(skill+1));}
@@ -61,12 +69,12 @@ export function practiceMusic(state:GameState,instrument='vocals'):EngineResult 
 export function releaseMusic(state:GameState,kind:'song'|'album'):EngineResult {
   if(state.character.age<13)return{success:false,messages:[{text:'Music releases become available in the teen years.'}]};const r=track(state,'music');const skill=n(r,'skill',state.character.talents.music*.35);if(skill<20)return{success:false,messages:[{text:'You need more musical skill before releasing material.'}]};const gate=consumeAction(state,{policy:'special.music_release'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(`${state.seed}-music`,state.rngCounter);const quality=skill+state.character.secondary.creativity*.25+rng.int(-20,25);const streams=Math.max(50,Math.round(quality*quality*(kind==='album'?22:8)*(1+state.fame.fame/35)));const pay=Math.round(streams*.004);state.finances.cash+=pay;setN(r,kind==='album'?'albumsReleased':'songsReleased',n(r,kind==='album'?'albumsReleased':'songsReleased')+1);setN(r,'fanbase',n(r,'fanbase')+Math.round(streams*.04));state.fame.followers+=Math.round(streams*.02);state.fame.fame=clamp(state.fame.fame+(quality>80?(kind==='album'?9:5):quality>55?2:0));
-  const firstRelease=n(r,'songsReleased')+n(r,'albumsReleased')===1;const world=ensureSpecialCareerWorld(state,'music',String(r.instrument??'music'),{announce:firstRelease});
+  const firstRelease=n(r,'songsReleased')+n(r,'albumsReleased')===1;const world=careerWorld(state,'music',String(r.instrument??'music'),{announce:firstRelease});
   state.rngCounter=rng.counter();return{success:true,messages:[{text:`You released a ${kind} with ${world.name}. It generated ${streams.toLocaleString()} streams and ${pay.toLocaleString()} in royalties.`}]};
 }
 
 export function tourMusic(state:GameState):EngineResult {
-  const r=track(state,'music');if(n(r,'fanbase')<2500)return{success:false,messages:[{text:'You need a larger fanbase before touring.'}]};const gate=consumeAction(state,{policy:'special.tour',target:'music'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-tour`,state.rngCounter);const shows=rng.int(6,24);const gross=Math.round(shows*n(r,'fanbase')*.42*rng.int(40,110)/100);const net=Math.round(gross*.32);state.finances.cash+=net;state.fame.fame=clamp(state.fame.fame+4);state.character.secondary.stress=clamp(state.character.secondary.stress+8);const world=ensureSpecialCareerWorld(state,'music',String(r.instrument??'music'),{announce:false});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You completed a ${shows}-show tour with ${world.name} and earned ${net.toLocaleString()} after costs.`}]};
+  const r=track(state,'music');if(n(r,'fanbase')<2500)return{success:false,messages:[{text:'You need a larger fanbase before touring.'}]};const gate=consumeAction(state,{policy:'special.tour',target:'music'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-tour`,state.rngCounter);const shows=rng.int(6,24);const gross=Math.round(shows*n(r,'fanbase')*.42*rng.int(40,110)/100);const net=Math.round(gross*.32);state.finances.cash+=net;state.fame.fame=clamp(state.fame.fame+4);state.character.secondary.stress=clamp(state.character.secondary.stress+8);const world=careerWorld(state,'music',String(r.instrument??'music'),{announce:false});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You completed a ${shows}-show tour with ${world.name} and earned ${net.toLocaleString()} after costs.`}]};
 }
 
 const sports=['American football','Basketball','Baseball','Soccer','Hockey','Tennis','Golf','Volleyball'];
@@ -80,7 +88,7 @@ export function trainSport(state:GameState):EngineResult {
 
 export function pursueProSports(state:GameState,miniGameScore?:number):EngineResult {
   const r=track(state,'sports');if(state.character.age<18||n(r,'skill')<58)return{success:false,messages:[{text:'You need adulthood and stronger athletic skill before pursuing a professional contract.'}]};if(r.pro===true)return{success:false,messages:[{text:'You already hold a professional sports contract.'}]};const gate=consumeAction(state,{policy:'special.pro_contract'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-pro-sport`,state.rngCounter);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.2;const success=rng.chance(clamp(n(r,'skill')*.75+n(r,'fitness')*.2+challengeBonus+rng.int(-15,20),5,90)/100);
-  if(success){r.pro=true;setN(r,'contractYears',rng.int(1,5));setN(r,'salary',rng.int(80000,3200000));state.fame.fame=clamp(state.fame.fame+8);const world=ensureSpecialCareerWorld(state,'sports',String(r.sport??'sport'),{announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You signed a professional ${String(r.sport)} contract with ${world.name}.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});}
+  if(success){r.pro=true;setN(r,'contractYears',rng.int(1,5));setN(r,'salary',rng.int(80000,3200000));state.fame.fame=clamp(state.fame.fame+8);const world=careerWorld(state,'sports',String(r.sport??'sport'),{announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You signed a professional ${String(r.sport)} contract with ${world.name}.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});}
   state.rngCounter=rng.counter();return{success,messages:[{text:success?`You signed with ${String(r.worldName??'a professional team')} for ${Number(r.salary).toLocaleString()} per year.`:'No professional team offered you a contract this time.'}]};
 }
 
@@ -120,7 +128,7 @@ export function modelingAction(state:GameState, action:'lesson'|'audition'|'phot
   }
   const gate=consumeAction(state,[{policy:'special.model.total'},{policy:'special.model.kind',target:action}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const quality=state.character.stats.appearance*.45+n(r,'technique',25)*.35+state.character.secondary.charisma*.2+rng.int(-20,18);const success=quality>(action==='runway'?63:45);
   if(success){
-    const pay=rng.int(action==='runway'?3000:500,action==='runway'?30000:8000);state.finances.cash+=pay;setN(r,'jobs',n(r,'jobs')+1);if(action==='runway')setN(r,'runwayCampaigns',n(r,'runwayCampaigns')+1);setN(r,'reputation',clamp(n(r,'reputation',20)+4));state.fame.fame=clamp(state.fame.fame+(action==='runway'?5:1));const firstJob=n(r,'jobs')===1;const world=ensureSpecialCareerWorld(state,'modeling',action,{announce:firstJob});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You booked the ${action} job through ${world.name} and earned ${pay.toLocaleString()}.`}]};
+    const pay=rng.int(action==='runway'?3000:500,action==='runway'?30000:8000);state.finances.cash+=pay;setN(r,'jobs',n(r,'jobs')+1);if(action==='runway')setN(r,'runwayCampaigns',n(r,'runwayCampaigns')+1);setN(r,'reputation',clamp(n(r,'reputation',20)+4));state.fame.fame=clamp(state.fame.fame+(action==='runway'?5:1));const firstJob=n(r,'jobs')===1;const world=careerWorld(state,'modeling',action,{announce:firstJob});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You booked the ${action} job through ${world.name} and earned ${pay.toLocaleString()}.`}]};
   }
   state.rngCounter=rng.counter();return{success:false,messages:[{text:`You did not book the ${action} job.`}]};
 }
@@ -128,7 +136,7 @@ export function modelingAction(state:GameState, action:'lesson'|'audition'|'phot
 export function racingAction(state:GameState, action:'join'|'train'|'race',miniGameScore?:number):EngineResult {
   const r=track(state,'racing');const rng=createRng(`${state.seed}-racing`,state.rngCounter);
   if(action==='join'){
-    if(state.character.age<16)return{success:false,messages:[{text:'You are too young for the racing pathway.'}]};if(r.active===true)return{success:false,messages:[{text:'You are already in the racing pathway.'}]};r.active=true;setN(r,'skill',state.character.secondary.athleticism*.35+20);setN(r,'seasons',0);const world=ensureSpecialCareerWorld(state,'racing','motorsport',{announce:true});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You entered fictional motorsport with ${world.name}.`}]};
+    if(state.character.age<16)return{success:false,messages:[{text:'You are too young for the racing pathway.'}]};if(r.active===true)return{success:false,messages:[{text:'You are already in the racing pathway.'}]};r.active=true;setN(r,'skill',state.character.secondary.athleticism*.35+20);setN(r,'seasons',0);const world=careerWorld(state,'racing','motorsport',{announce:true});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You entered fictional motorsport with ${world.name}.`}]};
   }
   if(!r.active)return{success:false,messages:[{text:'Join the racing pathway first.'}]};
   if(action==='train'){
@@ -138,7 +146,7 @@ export function racingAction(state:GameState, action:'join'|'train'|'race',miniG
 }
 
 export function directFilm(state:GameState,budget:number):EngineResult {
-  if(state.character.age<21)return{success:false,messages:[{text:'You need more experience before directing a full production.'}]};const r=track(state,'directing');if(state.finances.cash<budget*.05)return{success:false,messages:[{text:'You need enough cash or backing to cover part of the production risk.'}]};const gate=consumeAction(state,{policy:'special.direct_film'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=Math.round(budget*.05);const rng=createRng(`${state.seed}-director`,state.rngCounter);const skill=n(r,'skill',state.character.secondary.creativity*.45+state.character.stats.intelligence*.2);const production=clamp(skill+rng.int(-20,25),5,100);const marketing=budget*.18;const box=Math.max(0,Math.round(budget*(.25+production/60)*rng.int(55,145)/100+marketing*rng.int(1,4)));const pay=Math.round(budget*.025);state.finances.cash+=pay;setN(r,'filmsDirected',n(r,'filmsDirected')+1);setN(r,'skill',clamp(skill+4));setN(r,'boxOfficeBest',Math.max(n(r,'boxOfficeBest'),box));state.fame.fame=clamp(state.fame.fame+(box>budget*2?8:box>budget?3:0));const world=ensureSpecialCareerWorld(state,'directing',`film-${n(r,'filmsDirected')}`,{forceNew:true,announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'fame',importance:3,text:`You directed ${world.name}, a fictional film budgeted at ${budget.toLocaleString()}; it earned ${box.toLocaleString()} at the box office.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});state.rngCounter=rng.counter();return{success:box>=budget,messages:[{text:`${world.name} released. Critical quality ${Math.round(production)}/100; box office ${box.toLocaleString()}.`}]};
+  if(state.character.age<21)return{success:false,messages:[{text:'You need more experience before directing a full production.'}]};const r=track(state,'directing');if(state.finances.cash<budget*.05)return{success:false,messages:[{text:'You need enough cash or backing to cover part of the production risk.'}]};const gate=consumeAction(state,{policy:'special.direct_film'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=Math.round(budget*.05);const rng=createRng(`${state.seed}-director`,state.rngCounter);const skill=n(r,'skill',state.character.secondary.creativity*.45+state.character.stats.intelligence*.2);const production=clamp(skill+rng.int(-20,25),5,100);const marketing=budget*.18;const box=Math.max(0,Math.round(budget*(.25+production/60)*rng.int(55,145)/100+marketing*rng.int(1,4)));const pay=Math.round(budget*.025);state.finances.cash+=pay;setN(r,'filmsDirected',n(r,'filmsDirected')+1);setN(r,'skill',clamp(skill+4));setN(r,'boxOfficeBest',Math.max(n(r,'boxOfficeBest'),box));state.fame.fame=clamp(state.fame.fame+(box>budget*2?8:box>budget?3:0));const world=careerWorld(state,'directing',`film-${n(r,'filmsDirected')}`,{forceNew:true,announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'fame',importance:3,text:`You directed ${world.name}, a fictional film budgeted at ${budget.toLocaleString()}; it earned ${box.toLocaleString()} at the box office.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});state.rngCounter=rng.counter();return{success:box>=budget,messages:[{text:`${world.name} released. Critical quality ${Math.round(production)}/100; box office ${box.toLocaleString()}.`}]};
 }
 
 export function joinCrimeOrganization(state:GameState):EngineResult {
