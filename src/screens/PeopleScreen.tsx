@@ -11,7 +11,7 @@ import { npcLifeSummary } from '../systems/NpcLifeSystem';
 import { formatMoney } from '../core/format';
 
 const folderGlyph: Record<PeopleFolderId,string> = {
-  player_family:'⌂', relatives:'⌘', friends:'○', romance:'♡', school:'◇', work:'□',
+  player_family:'⌂', relatives:'⌘', friends:'○', romance:'♡', school:'◇', work:'□', career:'◎',
 };
 
 export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:EngineResult)=>void}){

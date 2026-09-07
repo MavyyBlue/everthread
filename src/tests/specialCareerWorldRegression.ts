@@ -1,6 +1,7 @@
 import { createNewGame } from '../systems/CharacterSystem';
 import { ensureSpecialCareerWorld, processSpecialCareerWorldsYear, specialCareerWorlds } from '../systems/SpecialCareerWorldSystem';
-import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear } from '../systems/SpecialCareerEcosystemSystem';
+import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear, specialCareerWorldView } from '../systems/SpecialCareerEcosystemSystem';
+import { buildPeopleRelationshipGraph, peopleFolderSummaries } from '../systems/PeopleGraphSystem';
 
 function assert(condition:unknown,message:string):asserts condition{
   if(!condition)throw new Error(`Special-career world regression failed: ${message}`);
@@ -33,6 +34,27 @@ export function runSpecialCareerWorldRegression(){
   assert(teamRelations.length===team.members.length,'every special-career world member must be reachable through the player relationship graph');
   assert(teamRelations.some(rel=>rel?.type==='boss'),'career leaders must become persistent boss/manager relationships');
   assert(teamRelations.some(rel=>rel?.type==='enemy'),'career rival groups must create real enemy relationships');
+  const teamView=specialCareerWorldView(state,team);
+  assert(teamView?.kind==='sports','career-world projection must identify the ecosystem kind');
+  assert(teamView.memberCount===team.members.length,'career-world projection must expose the live recurring roster');
+  const careerFolder=peopleFolderSummaries(state).find(folder=>folder.id==='career');
+  assert((careerFolder?.count??0)>=team.members.length,'Career Worlds folder must expose the persistent special-career roster');
+  const careerGraph=buildPeopleRelationshipGraph(state,'career');
+  assert(Boolean(teamView.rivalNpcId&&careerGraph.nodes.some(node=>node.id===teamView.rivalNpcId)),'Career Worlds graph must keep the professional rival discoverable');
+
+  // The same seeded career should perform differently when its persistent team relationships differ.
+  const supportive=structuredClone(state);const fractured=structuredClone(state);
+  for(const candidate of [supportive,fractured]){candidate.character.age=25;candidate.currentYear=2051;}
+  for(const member of team.members){
+    const supportiveRel=supportive.relationships.find(rel=>rel.npcId===member.npcId);
+    const fracturedRel=fractured.relationships.find(rel=>rel.npcId===member.npcId);
+    if(supportiveRel&&supportiveRel.type!=='enemy')supportiveRel.score=92;
+    if(fracturedRel&&fracturedRel.type!=='enemy')fracturedRel.score=12;
+  }
+  processSpecialCareerWorldsYear(supportive);processSpecialCareerEcosystemsYear(supportive);
+  processSpecialCareerWorldsYear(fractured);processSpecialCareerEcosystemsYear(fractured);
+  assert(Number(supportive.specialCareers.sports?.careerChemistry)>Number(fractured.specialCareers.sports?.careerChemistry),'persistent career relationships must change measured ecosystem chemistry');
+  assert(Number(supportive.specialCareers.sports?.careerMomentum)>Number(fractured.specialCareers.sports?.careerMomentum),'career chemistry must feed into annual career momentum');
 
   const teamId=team.id;
   state.character.age=25;
@@ -65,5 +87,5 @@ export function runSpecialCareerWorldRegression(){
   processSpecialCareerEcosystemsYear(state);
   assert(!team.active&&team.endedAge!==undefined,'ending the special career must archive its persistent world');
 
-  return 22;
+  return 28;
 }

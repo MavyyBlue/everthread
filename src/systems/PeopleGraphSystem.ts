@@ -1,6 +1,6 @@
 import type { GameState, Relationship, RelationshipType } from '../types/game';
 
-export type PeopleFolderId = 'player_family' | 'relatives' | 'friends' | 'romance' | 'school' | 'work';
+export type PeopleFolderId = 'player_family' | 'relatives' | 'friends' | 'romance' | 'school' | 'work' | 'career';
 
 export interface PeopleFolderDefinition {
   id: PeopleFolderId;
@@ -78,6 +78,12 @@ export const PEOPLE_FOLDERS: readonly PeopleFolderDefinition[] = [
     description: 'Coworkers and bosses connected to your working life.',
     relationshipTypes: ['coworker', 'boss'],
   },
+  {
+    id: 'career',
+    title: 'Career Worlds',
+    description: 'Casts, teams, staff, managers, and rivals from your special-career history.',
+    relationshipTypes: [],
+  },
 ] as const;
 
 function relationByNpc(state: GameState) {
@@ -98,6 +104,10 @@ export function relationshipsForFolder(state: GameState, folderId: PeopleFolderI
   if (folderId === 'work') {
     const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='workplace').flatMap(world=>world.members.map(member=>member.npcId)));
     return state.relationships.filter(rel => (allowed.has(rel.type)||affiliated.has(rel.npcId)) && Boolean(state.npcs[rel.npcId]));
+  }
+  if (folderId === 'career') {
+    const affiliated = new Set((state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.id.startsWith('special-')).flatMap(world=>world.members.map(member=>member.npcId)));
+    return state.relationships.filter(rel => affiliated.has(rel.npcId) && Boolean(state.npcs[rel.npcId]));
   }
   return state.relationships.filter(rel => allowed.has(rel.type) && Boolean(state.npcs[rel.npcId]));
 }

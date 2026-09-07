@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { EngineResult, GameState } from '../types/game';
 import { SearchField } from '../components/SearchField';
+import { SpecialCareerWorldPanel } from '../components/SpecialCareerWorldPanel';
 import { gameEngine } from '../stores/gameStore';
 import { availableJobs } from '../systems/CareerSystem';
 import { admissionProfile, availablePrograms, canDropOut } from '../systems/EducationSystem';
@@ -63,7 +64,7 @@ export function CareerScreen({state,onResult}:{state:GameState;onResult:(r:Engin
       <section className="action-card"><h2>Education history</h2>{state.education.map((e,i)=><p className="history-line" key={`${e.stage}-${e.startAge}-${i}`}><span><strong>{e.stage.replaceAll('_',' ')}</strong><small>{e.institution}{e.scholarship?` · ${Math.round((e.scholarshipPercent??0)*100)}% scholarship`:''}</small></span><span>{e.graduated?'Graduated':e.droppedOut?'Dropped out':'In progress'}</span></p>)}</section>
     </>}
 
-    {tab==='special'&&<SpecialPaths state={state} onResult={onResult}/>} 
+    {tab==='special'&&<><SpecialCareerWorldPanel state={state} onResult={onResult}/><SpecialPaths state={state} onResult={onResult}/></>}
   </main>;
 }
 
