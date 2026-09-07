@@ -3,6 +3,8 @@ import { ensureSpecialCareerWorld, processSpecialCareerWorldsYear, specialCareer
 import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear, specialCareerWorldView } from '../systems/SpecialCareerEcosystemSystem';
 import { buildPeopleRelationshipGraph, peopleFolderSummaries } from '../systems/PeopleGraphSystem';
 import { processAnnualFinance } from '../systems/FinanceSystem';
+import { auditionActing, directFilm } from '../systems/SpecialCareerSystem';
+import { expireScreenCareerOffers, screenCareerOffer } from '../systems/ScreenCareerCycleSystem';
 
 function assert(condition:unknown,message:string):asserts condition{
   if(!condition)throw new Error(`Special-career world regression failed: ${message}`);
@@ -115,5 +117,65 @@ export function runSpecialCareerWorldRegression(){
   processSpecialCareerEcosystemsYear(state);
   assert(!team.active&&team.endedAge!==undefined,'ending the special career must archive its persistent world');
 
-  return 41;
+  const actingState=createNewGame({seed:'phase4-screen-acting-cycle-regression'});
+  actingState.character.age=30;actingState.currentYear=2070;actingState.fame.fame=100;
+  actingState.specialCareers.acting={active:true,skill:100,reputation:100,agent:1,offerPending:true,offerRole:'lead',offerPay:60000,offerExpiresAge:31,offerFromProject:'Prior Breakout'};
+  assert(Boolean(screenCareerOffer(actingState,'acting')),'a valid acting offer must be readable before acceptance');
+  const actingCashBefore=actingState.finances.cash;
+  const acceptedRole=auditionActing(actingState);
+  assert(acceptedRole.success,'a pending acting offer must be accepted through the existing acting action');
+  const actingWorld=specialCareerWorlds(actingState,'acting').find(world=>world.active);
+  assert(Boolean(actingWorld),'accepting an acting offer must create a live persistent production world');
+  assert(actingState.specialCareers.acting?.currentProjectActive===true,'accepted acting work must enter an in-production state instead of releasing immediately');
+  assert(actingState.specialCareers.acting?.currentProjectRole==='lead','accepted acting work must preserve the offered role');
+  assert(actingState.finances.cash-actingCashBefore===60000,'accepted acting offers must pay the recorded booking fee exactly once');
+  const overlapRole=auditionActing(actingState,100);
+  assert(!overlapRole.success,'an actor already committed to a production must not silently replace it with another booking');
+  for(const group of actingWorld!.groups)group.prestige=100;
+  for(const member of actingWorld!.members){const rel=actingState.relationships.find(item=>item.npcId===member.npcId);if(rel&&rel.type!=='enemy')rel.score=100;}
+  actingState.character.age=31;actingState.currentYear=2071;
+  processSpecialCareerWorldsYear(actingState);processSpecialCareerEcosystemsYear(actingState);
+  assert(!actingWorld!.active&&actingWorld!.endedAge===31,'acting productions must archive on the release age instead of disappearing');
+  assert(Number(actingState.specialCareers.acting?.projectsCompleted)===1,'an acting production must become completed career history only after the next Age Up');
+  assert(!Boolean(actingState.specialCareers.acting?.currentProjectActive),'acting release processing must close the in-production state');
+  assert(actingState.specialCareers.acting?.lastProjectName===actingWorld!.name,'acting release history must preserve the exact production name');
+  assert(actingState.specialCareers.acting?.lastProjectRole==='lead','acting release history must preserve the exact role');
+  assert(typeof actingState.specialCareers.acting?.lastProjectReception==='string','acting release history must preserve a readable reception result');
+  assert(Number(actingState.specialCareers.acting?.lastProjectReleaseAge)===31,'acting release history must preserve the release age');
+  assert(Number(actingState.specialCareers.acting?.lastProjectBonus)>=0,'acting release economics must preserve the resolved performance bonus');
+  assert(Boolean(screenCareerOffer(actingState,'acting')),'an exceptional acting release must generate a bounded follow-up offer');
+  const actingOfferExpiry=Number(actingState.specialCareers.acting?.offerExpiresAge);
+  actingState.character.age=actingOfferExpiry+1;expireScreenCareerOffers(actingState);
+  assert(actingState.specialCareers.acting?.offerPending===false,'screen-career offers must expire instead of persisting forever');
+  assert(Number(actingState.specialCareers.acting?.offersExpired)===1,'expired screen-career offers must be counted for career history');
+
+  const directingState=createNewGame({seed:'phase4-screen-directing-cycle-regression'});
+  directingState.character.age=35;directingState.currentYear=2090;directingState.finances.cash=0;directingState.fame.fame=100;
+  directingState.specialCareers.directing={active:true,skill:100,reputation:100,offerPending:true,offerBudget:20000000,offerFee:650000,offerExpiresAge:37,offerFromProject:'Previous Feature'};
+  assert(Boolean(screenCareerOffer(directingState,'directing')),'a valid directing offer must be readable before acceptance');
+  const directingCashBefore=directingState.finances.cash;
+  const acceptedFilm=directFilm(directingState,1500000);
+  assert(acceptedFilm.success,'a studio-backed directing offer must be actionable without a personal production stake');
+  const directingWorld=specialCareerWorlds(directingState,'directing').find(world=>world.active);
+  assert(Boolean(directingWorld),'accepting a directing offer must create a live film-production world');
+  assert(Number(directingState.specialCareers.directing?.currentProjectBudget)===20000000,'directing offers must preserve their exact offered production budget');
+  assert(Number(directingState.specialCareers.directing?.currentProjectStake)===0,'studio-backed directing offers must not charge the normal self-backed stake');
+  assert(directingState.finances.cash-directingCashBefore===650000,'studio-backed directing offers must pay the recorded director fee at production start');
+  assert(Number(directingState.specialCareers.directing?.projectsCompleted??0)===0,'directing a film must no longer resolve its release in the same action');
+  const overlapFilm=directFilm(directingState,1500000);
+  assert(!overlapFilm.success,'a director with a film already in production must not start an overlapping feature');
+  for(const group of directingWorld!.groups)group.prestige=100;
+  for(const member of directingWorld!.members){const rel=directingState.relationships.find(item=>item.npcId===member.npcId);if(rel)rel.score=100;}
+  directingState.character.age=36;directingState.currentYear=2091;
+  processSpecialCareerWorldsYear(directingState);processSpecialCareerEcosystemsYear(directingState);
+  assert(!directingWorld!.active&&directingWorld!.endedAge===36,'directing productions must archive on release while preserving the exact world');
+  assert(Number(directingState.specialCareers.directing?.projectsCompleted)===1,'directing projects must become completed career history after release');
+  assert(!Boolean(directingState.specialCareers.directing?.currentProjectActive),'directing release processing must close the active production state');
+  assert(Number(directingState.specialCareers.directing?.lastProjectBudget)===20000000,'directing release history must preserve the exact production budget');
+  assert(Number(directingState.specialCareers.directing?.lastBoxOffice)>0,'directing release processing must resolve a positive bounded box-office result');
+  assert(Number(directingState.specialCareers.directing?.profitableFilms??0)+Number(directingState.specialCareers.directing?.flops??0)===1,'each completed directing project must resolve exactly one commercial outcome');
+  assert(directingState.specialCareers.directing?.lastProjectName===directingWorld!.name,'directing release history must preserve the exact film name');
+  assert(typeof directingState.specialCareers.directing?.lastProjectReception==='string','directing release history must preserve a readable reception result');
+
+  return 77;
 }

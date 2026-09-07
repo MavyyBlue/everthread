@@ -94,6 +94,22 @@ Example: a professional sports season is played under the contract that existed 
 
 This avoids order-dependent losses without reordering the global Age Up pipeline. Prefer an explicit age-stamped accrual over keeping an invalid status temporarily alive just so another system can see it.
 
+
+## Multi-age project lifecycle without duplicate state
+
+For careers where a project should take meaningful time, do not resolve the entire career event in the button click. Start the project in the existing special-career track, bind it to the exact persistent `SocialWorld`, and let the next Age Up archive/finalize that world.
+
+Phase 4D2 uses this for acting/directing:
+
+- the action creates/commits the production and records primitive project context;
+- the active Social World remains the authoritative cast/crew/producer affiliation;
+- another project is blocked while that world is active, before another major action claim is consumed;
+- the next Age Up archives the world, resolves the shared project-impact score, then applies path-specific release economics/reception;
+- the archived world remains history and the primitive track stores only career-summary values needed for UI/future progression;
+- follow-up offers are bounded primitive opportunities with explicit expiry, not permanent parallel objects.
+
+Use this pattern when a future career needs a season/project/release lifecycle but does not yet justify a new save-schema structure.
+
 ## Central action economy
 
 Every meaningful clickable action must be classified as one of:

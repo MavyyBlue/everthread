@@ -4,6 +4,7 @@ import { makeStateId } from '../core/ids';
 import type { GameState, RelationshipType, SocialWorld } from '../types/game';
 import { specialCareerWorlds, type SpecialCareerWorldKind } from './SpecialCareerWorldSystem';
 import { processSportsSeasonYear } from './SportsCareerCycleSystem';
+import { expireScreenCareerOffers, finalizeScreenCareerProject } from './ScreenCareerCycleSystem';
 
 type Track = Record<string, number | string | boolean>;
 
@@ -201,10 +202,11 @@ function finalizeTemporaryProject(state:GameState,kind:'acting'|'directing',worl
   if(score>=78&&rng.chance(clamp((score-64)/70,.12,.42)))awardCareer(state,kind,career,world,rival?.id);
   const scandalChance=clamp(.01+(100-state.fame.publicReputation)/2000+state.character.secondary.stress/3600+Math.max(0,55-chemistry)/2300+view.rivalry/7500,.01,.10);
   if(rng.chance(scandalChance))careerScandal(state,kind,career,world,rival?.id,rng);
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:score>=80?2:1,text:`${world.name} completed its run with a career impact score of ${Math.round(score)}/100.`});
+  finalizeScreenCareerProject(state,kind,career,world,score,rng);
 }
 
 export function processSpecialCareerEcosystemsYear(state:GameState){
+  expireScreenCareerOffers(state);
   for(const world of specialCareerWorlds(state)){
     if(world.active)ensureSpecialCareerRelationships(state,world);
     const kind=specialCareerWorldKind(world);if(!kind)continue;

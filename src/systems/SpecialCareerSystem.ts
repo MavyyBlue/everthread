@@ -3,8 +3,9 @@ import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import { consumeAction } from '../core/actionEconomy';
-import { ensureSpecialCareerWorld, processSpecialCareerWorldsYear } from './SpecialCareerWorldSystem';
+import { activeSpecialCareerWorld, ensureSpecialCareerWorld, processSpecialCareerWorldsYear } from './SpecialCareerWorldSystem';
 import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear } from './SpecialCareerEcosystemSystem';
+import { beginActingProject, beginDirectingProject, screenCareerOffer } from './ScreenCareerCycleSystem';
 
 type CareerTrack = Record<string, number | string | boolean>;
 const track = (state:GameState,key:keyof GameState['specialCareers']) => (state.specialCareers[key] ??= {}) as CareerTrack;
@@ -45,15 +46,26 @@ export function takeActingLesson(state:GameState):EngineResult {
 
 export function auditionActing(state:GameState,miniGameScore?:number):EngineResult {
   if(state.character.age<14)return{success:false,messages:[{text:'Professional auditions become available in the teen years.'}]};
+  if(activeSpecialCareerWorld(state,'acting'))return{success:false,messages:[{text:'You are already committed to an acting production. Age up to complete it before taking another role.'}]};
+  const r=track(state,'acting');
+  const offer=screenCareerOffer(state,'acting');
   const gate=consumeAction(state,{policy:'special.audition'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
-  const r=track(state,'acting');const rng=createRng(`${state.seed}-acting`,state.rngCounter);const skill=n(r,'skill',state.character.talents.acting*.4);const agent=n(r,'agent',0);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.22;const success=rng.chance(clamp(skill*.65+state.character.stats.appearance*.15+state.fame.fame*.08+agent*4+challengeBonus+rng.int(-15,20),5,92)/100);let text='';
+  const rng=createRng(`${state.seed}-acting`,state.rngCounter);const skill=n(r,'skill',state.character.talents.acting*.4);
+  if(offer){
+    const role=offer.role??'supporting';const pay=Math.max(0,Math.round(offer.pay??0));
+    state.finances.cash+=pay;setN(r,'credits',n(r,'credits')+1);setN(r,'skill',clamp(skill+2));setN(r,'reputation',clamp(n(r,'reputation',20)+(role==='lead'?6:3)));if(role==='lead')setN(r,'leadRoles',n(r,'leadRoles')+1);
+    const world=careerWorld(state,'acting',role,{forceNew:true,announce:false});beginActingProject(state,r,world,role,pay,'offer');
+    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You accepted the ${role} offer for ${world.name}. Production is now underway.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});
+    state.rngCounter=rng.counter();return{success:true,messages:[{text:`You accepted a ${role} role in ${world.name} for ${pay.toLocaleString()}. The production will resolve after you age up.`}]};
+  }
+  const agent=n(r,'agent',0);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.22;const success=rng.chance(clamp(skill*.65+state.character.stats.appearance*.15+state.fame.fame*.08+agent*4+challengeBonus+rng.int(-15,20),5,92)/100);let text='';
   if(success){
     const role=rng.weighted([{item:'extra',weight:35},{item:'supporting',weight:50},{item:'lead',weight:Math.max(3,skill-45)}]);
     const basePay=role==='lead'?40000:role==='supporting'?9000:350;const pay=Math.round(basePay*(1+state.fame.fame/45)*rng.int(70,180)/100);
-    state.finances.cash+=pay;setN(r,'credits',n(r,'credits')+1);setN(r,'skill',clamp(skill+3));setN(r,'reputation',clamp(n(r,'reputation',20)+(role==='lead'?8:role==='supporting'?4:1)));if(role==='lead')setN(r,'leadRoles',n(r,'leadRoles')+1);state.fame.fame=clamp(state.fame.fame+(role==='lead'?8:role==='supporting'?3:1));
-    const world=careerWorld(state,'acting',role,{forceNew:true,announce:false});
-    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You joined the cast of ${world.name} for a ${role} role.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});
-    text=`You booked a ${role} role in ${world.name} and earned ${pay.toLocaleString()}.`;
+    state.finances.cash+=pay;setN(r,'credits',n(r,'credits')+1);setN(r,'skill',clamp(skill+3));setN(r,'reputation',clamp(n(r,'reputation',20)+(role==='lead'?8:role==='supporting'?4:1)));if(role==='lead')setN(r,'leadRoles',n(r,'leadRoles')+1);state.fame.fame=clamp(state.fame.fame+(role==='lead'?5:role==='supporting'?2:0));
+    const world=careerWorld(state,'acting',role,{forceNew:true,announce:false});beginActingProject(state,r,world,role,pay,'audition');
+    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You joined the cast of ${world.name} for a ${role} role. Production is now underway.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});
+    text=`You booked a ${role} role in ${world.name} for ${pay.toLocaleString()}. The production will resolve after you age up.`;
   }else{text='You auditioned, but the production chose someone else.';setN(r,'skill',clamp(skill+1));}
   state.rngCounter=rng.counter();return{success,messages:[{text}]};
 }
@@ -149,7 +161,17 @@ export function racingAction(state:GameState, action:'join'|'train'|'race',miniG
 }
 
 export function directFilm(state:GameState,budget:number):EngineResult {
-  if(state.character.age<21)return{success:false,messages:[{text:'You need more experience before directing a full production.'}]};const r=track(state,'directing');if(state.finances.cash<budget*.05)return{success:false,messages:[{text:'You need enough cash or backing to cover part of the production risk.'}]};const gate=consumeAction(state,{policy:'special.direct_film'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=Math.round(budget*.05);const rng=createRng(`${state.seed}-director`,state.rngCounter);const skill=n(r,'skill',state.character.secondary.creativity*.45+state.character.stats.intelligence*.2);const production=clamp(skill+rng.int(-20,25),5,100);const marketing=budget*.18;const box=Math.max(0,Math.round(budget*(.25+production/60)*rng.int(55,145)/100+marketing*rng.int(1,4)));const pay=Math.round(budget*.025);state.finances.cash+=pay;setN(r,'filmsDirected',n(r,'filmsDirected')+1);setN(r,'skill',clamp(skill+4));setN(r,'boxOfficeBest',Math.max(n(r,'boxOfficeBest'),box));state.fame.fame=clamp(state.fame.fame+(box>budget*2?8:box>budget?3:0));const world=careerWorld(state,'directing',`film-${n(r,'filmsDirected')}`,{forceNew:true,announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'fame',importance:3,text:`You directed ${world.name}, a fictional film budgeted at ${budget.toLocaleString()}; it earned ${box.toLocaleString()} at the box office.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});state.rngCounter=rng.counter();return{success:box>=budget,messages:[{text:`${world.name} released. Critical quality ${Math.round(production)}/100; box office ${box.toLocaleString()}.`}]};
+  if(state.character.age<21)return{success:false,messages:[{text:'You need more experience before directing a full production.'}]};
+  if(activeSpecialCareerWorld(state,'directing'))return{success:false,messages:[{text:'You already have a film in production. Age up to complete it before starting another.'}]};
+  const r=track(state,'directing');const offer=screenCareerOffer(state,'directing');const actualBudget=Math.round(offer?.budget??budget);
+  if(!Number.isFinite(actualBudget)||actualBudget<250000)return{success:false,messages:[{text:'That production budget is not available.'}]};
+  const source=offer?'studio-offer' as const:'self-backed' as const;const stake=offer?0:Math.round(actualBudget*.05);
+  if(!offer&&state.finances.cash<stake)return{success:false,messages:[{text:'You need enough cash or backing to cover part of the production risk.'}]};
+  const gate=consumeAction(state,{policy:'special.direct_film'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  state.finances.cash-=stake;const rng=createRng(`${state.seed}-director`,state.rngCounter);const skill=n(r,'skill',state.character.secondary.creativity*.45+state.character.stats.intelligence*.2);const fee=Math.round(offer?.fee??actualBudget*.025);state.finances.cash+=fee;r.active=true;setN(r,'filmsDirected',n(r,'filmsDirected')+1);setN(r,'skill',clamp(skill+4));
+  const world=careerWorld(state,'directing',`film-${n(r,'filmsDirected')}`,{forceNew:true,announce:false});beginDirectingProject(state,r,world,actualBudget,stake,fee,source);
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You began directing ${world.name}, a ${source==='studio-offer'?'studio-backed':'self-backed'} production budgeted at ${actualBudget.toLocaleString()}.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});
+  state.rngCounter=rng.counter();return{success:true,messages:[{text:`${world.name} entered production on a ${actualBudget.toLocaleString()} budget. Your director fee is ${fee.toLocaleString()}; release results will resolve after you age up.`}]};
 }
 
 export function joinCrimeOrganization(state:GameState):EngineResult {

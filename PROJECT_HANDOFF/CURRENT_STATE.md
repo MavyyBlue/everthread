@@ -8,75 +8,70 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-`main` at `29b25374d6c87a01b21477066c4be922c126b993`.
+`main` at `48c97c3fc05adc1c409993919e392848300e3b08`.
 
-- Phase 4C — Career Worlds UI + Social Consequences is deployed and green.
-- `PROJECT_HANDOFF/` is installed in the repository and its installation run #21 completed green.
-- The one-ZIP overlay importer is the normal mobile development workflow.
-- Special-career regression coverage at the Phase 4C baseline is 28 checks.
+- Phase 4D1 — Professional Sports Seasons & Contract Lifecycle is deployed and green.
+- GitHub Actions run #22 (`34076274130`) passed overlay import, dependency install, type checks, regression suite, production build, Pages upload, deployment, and cleanup.
+- The deployed special-career regression reports 41 checks at the Phase 4D1 baseline.
+- `PROJECT_HANDOFF/` remains installed and the one-ZIP overlay importer is the normal mobile development workflow.
 
-Verified Phase 4C behavior includes persistent career worlds in Career → Life Paths, Career Worlds in People, relationship-driven chemistry/rivalry, contracts, awards/scandals, and project impact.
+Verified Phase 4D1 behavior includes one season per pro Age Up, sport-specific team/circuit results, missed-time pressure, persistent season/career totals, earned-season salary accrual before contract resolution, performance-aware renewals, free agency/team history, explicit retirement, all eight supported sports in the mobile UI, and preserved team/rival worlds.
 
-## Current work — Phase 4D1
+## Current work — Phase 4D2
 
-**Professional Sports Seasons & Contract Lifecycle** is implemented locally and packaged for deployment verification. Do not treat it as green until the newest intended GitHub Actions run completes successfully and the expanded source is spot-checked.
+**Acting & Directing Production Cycles** is implemented locally and packaged for deployment verification. Do not treat it as green until the newest intended GitHub Actions run completes successfully and the expanded source is spot-checked.
 
-Prepared Phase 4D1 behavior:
+Prepared Phase 4D2 behavior:
 
-- each professional Age Up resolves exactly one sport-specific season/circuit year;
-- basketball/baseball/football/soccer/hockey/volleyball use team-season records, while tennis/golf use circuit-event results;
-- season performance is driven by skill, fitness, existing career momentum, team chemistry, world prestige, stress, age, and deterministic variance;
-- bounded missed-time/injury pressure can reduce appearances, health, fitness, and season performance;
-- season records, outcomes, appearances, successes, best-season score, honors, championships, and career totals persist in the existing primitive special-career track;
-- relationship consequences continue: coaches react to strong/poor seasons and championships can intensify the persistent rival relationship;
-- contract years tick only after a completed season;
-- renewal now considers season performance, momentum, reputation, chemistry, fitness, and age;
-- non-renewal produces a real free-agent state and archives the former team world without deleting its history;
-- later successful pro-contract actions create another persistent team and increment contract/team history;
-- professional retirement is now an explicit end state rather than a silent random `active=false`; age 48 is a hard playing-career boundary, with earlier late-career retirement pressure;
-- the final season is played before retirement and its salary remains earned;
-- annual finance pays an age-stamped completed-season salary even if contract resolution releases or retires the player before finance runs;
-- initial pro signings now initialize `contractRemaining` immediately and track pro contracts / teams played for;
-- Career UI exposes pro/free-agent/retired status plus season count, and active sports worlds show season record/performance/career totals;
-- the Life Paths sports card now exposes all eight already-supported sports instead of only basketball, and retired/inactive states mirror engine eligibility;
-- regression target expands from 28 to 41 special-career checks;
-- no save-schema bump: all new persisted values remain primitives inside the already persisted special-career record.
+- acting/directing actions now start a production instead of instantly resolving the final release;
+- active acting/directing worlds persist through the current age and release on the next Age Up;
+- overlapping acting roles or directing features are blocked before consuming another major opportunity, preventing a new action from silently archiving the project already underway;
+- acting productions preserve exact role, booked pay, source, project name, start age, release age, reception, impact, and performance bonus;
+- directing productions preserve exact budget, player stake, director fee, backing source, release reception, box office, commercial result, and project history;
+- the shared cast/crew chemistry, prestige, reputation, fame, and project-impact score now feed path-specific release outcomes rather than only a generic score;
+- exceptional acting releases can generate a follow-up supporting/lead offer with bounded pay and expiry;
+- successful directing releases can generate a studio-backed follow-up offer with bounded budget/fee and an expiry long enough to respect the existing two-age directing cooldown;
+- pending acting offers are accepted through the existing acting action; pending directing offers use the existing directing action, so no parallel action system or new action policy is introduced;
+- offer expiry is explicit and bounded instead of allowing opportunities to persist forever;
+- studio-backed directing offers do not charge the normal self-backed production stake;
+- Career Worlds UI exposes pending offers, active production details, and latest acting/directing release summaries;
+- active project social actions continue using the normal NPC relationship/action-economy system;
+- regression target expands from 41 to 77 reported special-career checks;
+- save schema remains 9 because all additions are primitive fields inside the already persisted special-career records plus existing Social Worlds.
 
-## Validation completed before packaging
+## Validation completed before Phase 4D2 packaging
 
-- exact deployed FinanceSystem and CareerScreen baselines were reconstructed locally and their Git blob hashes matched `main` before applying edits;
-- local TypeScript systems/test subset compiles;
-- strict SpecialCareerWorldPanel compile passes;
-- special-career regression source type-checks with the local validation harness;
-- deterministic runtime sanity verifies season 1, same-age idempotence, season 2, contract resolution, released-season salary payment, and age-48 retirement;
-- local finance case paid exactly the completed-season salary despite `pro=false` / free agency.
+- full local TypeScript systems/test harness compiles;
+- strict SpecialCareerWorldPanel TSX compile passes;
+- deterministic acting runtime verifies offer acceptance, exact booking pay, overlap blocking, next-age archival/release, reception/bonus history, guaranteed exceptional follow-up offer, and bounded offer expiry;
+- deterministic directing runtime verifies zero-stake studio-backed acceptance, exact director fee, no same-action release, overlap blocking, next-age archival/release, box office, and exactly one commercial outcome;
+- no save-schema bump or new action-economy policy is required.
 
 GitHub Actions remains the authoritative dependency-backed deployment gate.
 
-## Next implementation after Phase 4D1 is green
+## Next implementation after Phase 4D2 is green
 
-Phase 4D2 — Acting & Directing Production Cycles.
+Phase 4D3 — Music Release / Album / Tour Cycles.
 
 Preferred scope:
 
-1. project offers rather than every successful action immediately becoming an undifferentiated one-year production;
-2. role/budget/production-tier effects;
-3. production lifecycle and release/completion outcomes;
-4. cast/producer/director relationship consequences;
-5. project pay timing and career impact;
-6. offer rejection/acceptance opportunity cost where appropriate;
-7. awards/scandal follow-ups that reference the exact archived production.
+1. distinguish singles, albums, and tours as persistent career periods rather than isolated cash actions;
+2. management/creative-partner pressure and relationship consequences;
+3. release quality, chart/stream trajectory, fanbase growth/decline, and catalog history;
+4. tour scale, costs, performance, fatigue, and career impact;
+5. label/management-style offers or representation pressure using original fictional structures;
+6. bounded multi-year consequences and exact release/tour references;
+7. preserve the existing music world and action limits rather than inventing a parallel career state.
 
-Do not start Phase 4D2 before verifying the Phase 4D1 upload is green.
+Do not start Phase 4D3 before verifying the Phase 4D2 upload is green.
 
 ## Later Phase 4D sequence
 
-1. Acting/directing production cycles.
-2. Music single/album/tour cycles and management pressure.
-3. Modeling campaign/agency contracts.
-4. Racing seasons/team contracts/championships.
-5. Cross-path rival/leader consequences and retirement/end states.
-6. Targeted special-career event chains.
+1. Music release/album/tour cycles and management pressure.
+2. Modeling campaign/agency contracts.
+3. Racing seasons/team contracts/championships.
+4. Cross-path rival/leader consequences and remaining retirement/end states.
+5. Targeted special-career event chains.
 
 ## Existing major completed foundations
 

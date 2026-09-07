@@ -45,9 +45,9 @@ Target:
 ### Phase 4D — Deep career cycles
 In progress.
 
-1. **Phase 4D1 — Professional Sports Seasons & Contract Lifecycle:** implemented/package pending deployment verification. Adds yearly season/circuit resolution, sport-specific schedules/results, bounded missed time, season/career records, salary accrual before contract resolution, performance-aware renewals, free agency/team changes, and explicit retirement. Regression target: 41 special-career checks.
-2. **Phase 4D2 — Acting/directing production cycles:** next after 4D1 is green. Add offers, project tiers, production lifecycle, exact cast/producer consequences, pay timing, release impact, and archived-project follow-ups.
-3. Music singles/albums/tours, collaborators, management/label-style pressure.
+1. **Phase 4D1 — Professional Sports Seasons & Contract Lifecycle:** green. Adds yearly season/circuit resolution, sport-specific schedules/results, bounded missed time, season/career records, salary accrual before contract resolution, performance-aware renewals, free agency/team changes, and explicit retirement. Deployed regression target: 41 special-career checks.
+2. **Phase 4D2 — Acting & Directing Production Cycles:** implemented/package pending deployment verification. Adds multi-age productions, overlap protection, path-specific release economics/reception, acting follow-up offers, studio-backed directing offers, expiry, and Career Worlds production/offer UI. Prepared regression target: 77 special-career checks.
+3. **Phase 4D3 — Music release/album/tour cycles:** next after 4D2 is green. Deepen singles/albums/tours, collaborators, management pressure, catalog trajectory, fanbase, costs/fatigue, and bounded follow-up opportunities.
 4. Modeling campaigns/agency representation and contract progression.
 5. Racing seasons, team movement, championships.
 6. Deeper rival/leader consequences across paths.
