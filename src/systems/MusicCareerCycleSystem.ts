@@ -3,7 +3,7 @@ import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import { consumeAction } from '../core/actionEconomy';
 import type { EngineResult, GameState, SocialWorld } from '../types/game';
-import { activeSpecialCareerWorld } from './SpecialCareerWorldSystem';
+import { activeSpecialCareerWorld, specialCareerWorlds } from './SpecialCareerWorldSystem';
 
 type Track = Record<string, number | string | boolean>;
 type Rng = ReturnType<typeof createRng>;
@@ -236,12 +236,24 @@ function finalizeMusicTour(state:GameState,career:Track,world:SocialWorld,moment
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:performance>=84?3:performance>=68?2:1,text:`${s(career,'lastTourName')} finished at ${Math.round(performance)}/100: ${attendance.toLocaleString()} attendance, ${gross.toLocaleString()} gross, ${costs.toLocaleString()} costs, and ${net.toLocaleString()} net.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});
 }
 
+function professionalMusicStartAge(state:GameState,career:Track){
+  const candidates:number[]=[];
+  const add=(value:unknown)=>{if(typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=state.character.age)candidates.push(value);};
+  add(career.professionalStartAge);add(career.worldStartedAge);add(career.lastReleaseAge);
+  for(const world of specialCareerWorlds(state,'music'))add(world.startedAge);
+  for(const entry of musicCatalogFromTrack(career))add(entry.launchAge);
+  for(const entry of state.timeline){
+    if(entry.category==='career'&&entry.text.startsWith('You released '))add(entry.age);
+  }
+  return candidates.length?Math.min(...candidates):state.character.age;
+}
+
 /** Annual music lifecycle. Runs after the shared career ecosystem has calculated momentum. */
 export function processMusicCareerYear(state:GameState){
   const career=state.specialCareers.music as Track|undefined;if(!career)return;
   const releases=n(career,'songsReleased')+n(career,'albumsReleased');
   if(releases<=0){career.active=false;setN(career,'years',0);return;}
-  career.active=true;const professionalStart=n(career,'professionalStartAge',n(career,'worldStartedAge',state.character.age));if(typeof career.professionalStartAge!=='number')setN(career,'professionalStartAge',professionalStart);setN(career,'years',Math.max(1,state.character.age-professionalStart+1));
+  career.active=true;const professionalStart=professionalMusicStartAge(state,career);setN(career,'professionalStartAge',professionalStart);setN(career,'years',Math.max(1,state.character.age-professionalStart+1));
   if(n(career,'lastMusicCycleAge',-1)===state.character.age)return;setN(career,'lastMusicCycleAge',state.character.age);
   const world=activeSpecialCareerWorld(state,'music');if(!world)return;
   const relationships=musicRelationships(state,world);const momentum=clamp(n(career,'careerMomentum',50));const rng=createRng(`${state.seed}-music-cycle-${world.id}-${state.currentYear}`);
