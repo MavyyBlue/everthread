@@ -79,6 +79,11 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
  const publicMove=(kind:string)=>!actionAllowed(state,[{policy:'special.politics.total'},{policy:'special.politics.kind',target:kind}]);
  const modelMove=(kind:string)=>!actionAllowed(state,[{policy:'special.model.total'},{policy:'special.model.kind',target:kind}]);
  const crimeOrgMove=(kind:string)=>!actionAllowed(state,[{policy:'special.crime_org.total'},{policy:'special.crime_org.kind',target:kind}]);
+ const sportsTrack=state.specialCareers.sports;
+ const sportsStatus=sportsTrack?.retired===true?'retired':sportsTrack?.pro===true?'pro contract':sportsTrack?.freeAgent===true?'free agent':sportsTrack?.active===true?'pathway':'not started';
+ const sportsSeasons=Number(sportsTrack?.seasonsPlayed??0);
+ const sportsRetired=sportsTrack?.retired===true;
+ const sportsActive=sportsTrack?.active===true;
  return <><div className="special-paths">
  <Path title="Acting" stat={`Skill ${Math.round(Number(state.specialCareers.acting?.skill??0))}`} actions={[
   ['Lesson',()=>gameEngine.actingLesson(),training('acting')||(state.character.age>=18&&state.finances.cash<120)],
@@ -91,10 +96,17 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
   ['Release album',()=>gameEngine.musicRelease('album'),!actionAllowed(state,{policy:'special.music_release'})],
   ['Tour',()=>gameEngine.musicTour(),!actionAllowed(state,{policy:'special.tour',target:'music'})],
  ]} onResult={onResult}/>
- <Path title="Professional sports" stat={String(state.specialCareers.sports?.sport??'Choose a sport')} actions={[
-  ['Join basketball',()=>gameEngine.sportsJoin('Basketball'),pathActive('sports')],
-  ['Train',()=>gameEngine.sportsTrain(),training('sports')],
-  ['Seek pro contract',()=>launchChallenge('sports',score=>gameEngine.sportsPro(score)),state.character.age<18||Number(state.specialCareers.sports?.skill??0)<58||state.specialCareers.sports?.pro===true||!actionAllowed(state,{policy:'special.pro_contract'})],
+ <Path title="Professional sports" stat={`${String(sportsTrack?.sport??'Choose a sport')} · ${sportsStatus}${sportsSeasons?` · ${sportsSeasons} season${sportsSeasons===1?'':'s'}`:''}`} actions={[
+  ['Basketball',()=>gameEngine.sportsJoin('Basketball'),sportsActive||sportsRetired],
+  ['American football',()=>gameEngine.sportsJoin('American football'),sportsActive||sportsRetired],
+  ['Baseball',()=>gameEngine.sportsJoin('Baseball'),sportsActive||sportsRetired],
+  ['Soccer',()=>gameEngine.sportsJoin('Soccer'),sportsActive||sportsRetired],
+  ['Hockey',()=>gameEngine.sportsJoin('Hockey'),sportsActive||sportsRetired],
+  ['Tennis',()=>gameEngine.sportsJoin('Tennis'),sportsActive||sportsRetired],
+  ['Golf',()=>gameEngine.sportsJoin('Golf'),sportsActive||sportsRetired],
+  ['Volleyball',()=>gameEngine.sportsJoin('Volleyball'),sportsActive||sportsRetired],
+  ['Train',()=>gameEngine.sportsTrain(),sportsRetired||!sportsActive||training('sports')],
+  ['Seek pro contract',()=>launchChallenge('sports',score=>gameEngine.sportsPro(score)),sportsRetired||!sportsActive||state.character.age<18||Number(sportsTrack?.skill??0)<58||sportsTrack?.pro===true||!actionAllowed(state,{policy:'special.pro_contract'})],
  ]} onResult={onResult}/>
  <Path title="Combat sports" stat={`Wins ${Number(state.specialCareers.combat?.wins??0)} · titles ${Number(state.specialCareers.combat?.titles??0)}`} actions={[
   ['Train',()=>gameEngine.combatTrain(),training('combat')],

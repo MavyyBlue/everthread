@@ -22,7 +22,7 @@ export function processSpecialCareersYear(state:GameState){
   for(const [key,raw] of Object.entries(state.specialCareers)){
     if(!raw)continue;const r=raw as CareerTrack;
     if(r.active===true){setN(r,'years',n(r,'years')+1);setN(r,'skill',clamp(n(r,'skill',20)+rng.int(-1,2)));setN(r,'reputation',clamp(n(r,'reputation',20)+rng.int(-2,3)));}
-    if(key==='sports'&&r.active===true&&state.character.age>34){setN(r,'fitness',clamp(n(r,'fitness',70)-rng.int(1,4)));if(state.character.age>42&&rng.chance(.25))r.active=false;}
+    if(key==='sports'&&r.active===true&&state.character.age>34){setN(r,'fitness',clamp(n(r,'fitness',70)-rng.int(1,4)));}
     if(key==='combat'&&r.active===true&&state.character.age>32){setN(r,'stamina',clamp(n(r,'stamina',70)-rng.int(1,3)));}
     if(key==='military'&&r.active===true&&rng.chance(.14)){setN(r,'rank',Math.min(10,n(r,'rank',1)+1));state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You advanced to military rank ${n(r,'rank')}.`});}
     if(key==='politics'&&r.office){setN(r,'approval',clamp(n(r,'approval',50)+rng.int(-8,8)));}
@@ -79,7 +79,7 @@ export function tourMusic(state:GameState):EngineResult {
 
 const sports=['American football','Basketball','Baseball','Soccer','Hockey','Tennis','Golf','Volleyball'];
 export function joinSportsPath(state:GameState,sport:string):EngineResult {
-  if(!sports.includes(sport))return{success:false,messages:[{text:'Unknown sport.'}]};if(state.character.age<8)return{success:false,messages:[{text:'Organized sports become available later in childhood.'}]};const r=track(state,'sports');if(r.active===true)return{success:false,messages:[{text:`You are already committed to the ${String(r.sport??'sports')} pathway.`}]};r.active=true;r.sport=sport;setN(r,'skill',Math.max(n(r,'skill'),state.character.talents.athletics*.4));setN(r,'fitness',state.health.fitness);return{success:true,messages:[{text:`You joined the ${sport} pathway.`}]};
+  if(!sports.includes(sport))return{success:false,messages:[{text:'Unknown sport.'}]};if(state.character.age<8)return{success:false,messages:[{text:'Organized sports become available later in childhood.'}]};const r=track(state,'sports');if(r.retired===true)return{success:false,messages:[{text:'You have already retired from professional competition in this life.'}]};if(r.active===true)return{success:false,messages:[{text:`You are already committed to the ${String(r.sport??'sports')} pathway.`}]};r.active=true;r.sport=sport;r.freeAgent=false;setN(r,'skill',Math.max(n(r,'skill'),state.character.talents.athletics*.4));setN(r,'fitness',state.health.fitness);return{success:true,messages:[{text:`You joined the ${sport} pathway.`}]};
 }
 
 export function trainSport(state:GameState):EngineResult {
@@ -87,9 +87,12 @@ export function trainSport(state:GameState):EngineResult {
 }
 
 export function pursueProSports(state:GameState,miniGameScore?:number):EngineResult {
-  const r=track(state,'sports');if(state.character.age<18||n(r,'skill')<58)return{success:false,messages:[{text:'You need adulthood and stronger athletic skill before pursuing a professional contract.'}]};if(r.pro===true)return{success:false,messages:[{text:'You already hold a professional sports contract.'}]};const gate=consumeAction(state,{policy:'special.pro_contract'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-pro-sport`,state.rngCounter);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.2;const success=rng.chance(clamp(n(r,'skill')*.75+n(r,'fitness')*.2+challengeBonus+rng.int(-15,20),5,90)/100);
-  if(success){r.pro=true;setN(r,'contractYears',rng.int(1,5));setN(r,'salary',rng.int(80000,3200000));state.fame.fame=clamp(state.fame.fame+8);const world=careerWorld(state,'sports',String(r.sport??'sport'),{announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You signed a professional ${String(r.sport)} contract with ${world.name}.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});}
-  state.rngCounter=rng.counter();return{success,messages:[{text:success?`You signed with ${String(r.worldName??'a professional team')} for ${Number(r.salary).toLocaleString()} per year.`:'No professional team offered you a contract this time.'}]};
+  const r=track(state,'sports');if(r.retired===true)return{success:false,messages:[{text:'Your professional playing career is already retired.'}]};if(state.character.age<18||n(r,'skill')<58)return{success:false,messages:[{text:'You need adulthood and stronger athletic skill before pursuing a professional contract.'}]};if(r.pro===true)return{success:false,messages:[{text:'You already hold a professional sports contract.'}]};const gate=consumeAction(state,{policy:'special.pro_contract'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-pro-sport`,state.rngCounter);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.2;const success=rng.chance(clamp(n(r,'skill')*.75+n(r,'fitness')*.2+challengeBonus+rng.int(-15,20),5,90)/100);
+  let text='No professional team offered you a contract this time.';
+  if(success){
+    r.active=true;r.pro=true;r.freeAgent=false;const years=rng.int(1,5);const salary=rng.int(80000,3200000);setN(r,'contractYears',years);setN(r,'contractRemaining',years);setN(r,'salary',salary);setN(r,'contractSignedAge',state.character.age);setN(r,'proContracts',n(r,'proContracts')+1);setN(r,'teamsPlayedFor',n(r,'teamsPlayedFor')+1);setN(r,'seasonSalaryDue',0);state.fame.fame=clamp(state.fame.fame+8);const world=careerWorld(state,'sports',String(r.sport??'sport'),{announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You signed a ${years}-year professional ${String(r.sport)} contract with ${world.name} at ${salary.toLocaleString()} per year.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});text=`You signed with ${world.name} for ${salary.toLocaleString()} per year.`;
+  }
+  state.rngCounter=rng.counter();return{success,messages:[{text}]};
 }
 
 export function trainCombat(state:GameState):EngineResult {

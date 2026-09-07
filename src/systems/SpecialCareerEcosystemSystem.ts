@@ -2,7 +2,8 @@ import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import type { GameState, RelationshipType, SocialWorld } from '../types/game';
-import { archiveSpecialCareerWorld, specialCareerWorlds, type SpecialCareerWorldKind } from './SpecialCareerWorldSystem';
+import { specialCareerWorlds, type SpecialCareerWorldKind } from './SpecialCareerWorldSystem';
+import { processSportsSeasonYear } from './SportsCareerCycleSystem';
 
 type Track = Record<string, number | string | boolean>;
 
@@ -151,24 +152,6 @@ function careerScandal(state:GameState,kind:SpecialCareerWorldKind,career:Track,
   addCareerMemory(state,rivalId,'career_scandal',-6,text,true);
 }
 
-function processSportsContract(state:GameState,career:Track,world:SocialWorld,momentum:number,rng:ReturnType<typeof createRng>){
-  if(career.pro!==true)return;
-  let remaining=numberValue(career,'contractRemaining',Math.max(1,numberValue(career,'contractYears',1)));
-  remaining=Math.max(0,remaining-1);setNumber(career,'contractRemaining',remaining);
-  if(remaining>0)return;
-  const renewalChance=clamp(22+momentum*.62+numberValue(career,'reputation',45)*.16,18,88)/100;
-  if(rng.chance(renewalChance)){
-    const years=rng.int(1,4);const current=Math.max(50000,numberValue(career,'salary',80000));
-    const salary=Math.round(clamp(current*rng.int(92,132)/100,60000,6500000));
-    setNumber(career,'contractYears',years);setNumber(career,'contractRemaining',years);setNumber(career,'salary',salary);
-    setNumber(career,'contractRenewals',numberValue(career,'contractRenewals')+1);
-    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`${world.name} renewed your contract for ${years} year${years===1?'':'s'} at ${salary.toLocaleString()} per year.`});
-  }else{
-    career.pro=false;career.releasedAge=state.character.age;setNumber(career,'contractRemaining',0);archiveSpecialCareerWorld(world,state.character.age);
-    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`${world.name} did not renew your professional contract. You became a free agent.`});
-  }
-}
-
 function processPersistentCareerYear(state:GameState,kind:SpecialCareerWorldKind,world:SocialWorld){
   const career=track(state,kind);
   if(numberValue(career,'lastEcosystemAge',-1)===state.character.age)return;
@@ -191,7 +174,7 @@ function processPersistentCareerYear(state:GameState,kind:SpecialCareerWorldKind
     else if(rel.type==='enemy')rel.score=clamp(rel.score+rng.int(-2,1));
   }
 
-  if(kind==='sports')processSportsContract(state,career,world,momentum,rng);
+  if(kind==='sports')processSportsSeasonYear(state,career,world,{momentum,chemistry,rivalry:view.rivalry,prestige},rng);
   if(!world.active)return;
 
   const awardChance=momentum>=68?clamp((momentum-58)/130,.04,.27):0;

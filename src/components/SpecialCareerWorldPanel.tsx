@@ -63,6 +63,8 @@ function CareerWorldCard({state,world,onResult}:{state:GameState;world:SocialWor
     </div>
     <p className="muted">{leader?`Lead: ${leader.firstName} ${leader.lastName} (${Math.round(relationScore(state,leader.id)??0)})`:'No current lead'}{rival?` · Rival: ${rival.firstName} ${rival.lastName} (${Math.round(view.rivalry)} pressure)`:''}</p>
     {view.kind==='sports'&&career.pro===true&&<p className="memory">Contract: {contractRemaining} year{contractRemaining===1?'':'s'} remaining{salary?` · ${formatMoney(salary)}/year`:''}.</p>}
+    {view.kind==='sports'&&Number(career.seasonsPlayed??0)>0&&<p className="memory">Season {Number(career.seasonsPlayed)}: {String(career.seasonRecord??'record pending')} · performance {Math.round(Number(career.lastSeasonScore??0))}/100. {String(career.seasonOutcome??'')}</p>}
+    {view.kind==='sports'&&Number(career.seasonsPlayed??0)>0&&<p className="memory">Career: {Number(career.careerAppearances??0)} appearances · {Number(career.championships??0)} championship{Number(career.championships??0)===1?'':'s'} · best season {Math.round(Number(career.bestSeasonScore??0))}/100.</p>}
     {(awards>0||scandals>0)&&<p className="memory">Career record: {awards} award{awards===1?'':'s'} · {scandals} public scandal{scandals===1?'':'s'}.</p>}
     <div className="button-row">
       <button disabled={!peer||!interactionAllowed(state,peer.id,'spend_time')} onClick={()=>interact(peer,'spend_time')}>Build chemistry</button>

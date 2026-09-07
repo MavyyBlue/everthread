@@ -61,7 +61,9 @@ function specialCareerIncome(state:GameState) {
   const politics=state.specialCareers.politics as Record<string,number|string|boolean>|undefined;
   const royalty=state.specialCareers.royalty as Record<string,number|string|boolean>|undefined;
   let total=0;
-  if(sports?.active===true&&sports.pro===true) total+=Number(sports.salary??0);
+  const completedSeasonSalary=Number(sports?.lastSeasonAge)===state.character.age?Number(sports?.seasonSalaryDue??0):0;
+  if(completedSeasonSalary>0)total+=completedSeasonSalary;
+  else if(sports?.active===true&&sports.pro===true)total+=Number(sports.salary??0);
   if(military?.active===true){const rank=Number(military.rank??1);const officer=military.path==='officer';total+=Math.round((officer?52000:34000)+rank*(officer?11500:6500));}
   if(politics?.office){const office=Math.max(1,Math.min(5,Number(politics.office)));total+=[0,42000,78000,132000,210000,310000][office]!;}
   if(royalty?.active===true){const rank=Math.max(1,Number(royalty.rank??1));total+=Math.round(28000+rank*42000);}

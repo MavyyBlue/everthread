@@ -2,6 +2,7 @@ import { createNewGame } from '../systems/CharacterSystem';
 import { ensureSpecialCareerWorld, processSpecialCareerWorldsYear, specialCareerWorlds } from '../systems/SpecialCareerWorldSystem';
 import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear, specialCareerWorldView } from '../systems/SpecialCareerEcosystemSystem';
 import { buildPeopleRelationshipGraph, peopleFolderSummaries } from '../systems/PeopleGraphSystem';
+import { processAnnualFinance } from '../systems/FinanceSystem';
 
 function assert(condition:unknown,message:string):asserts condition{
   if(!condition)throw new Error(`Special-career world regression failed: ${message}`);
@@ -27,7 +28,7 @@ export function runSpecialCareerWorldRegression(){
   assert(!firstProduction.active&&firstProduction.endedAge===24,'the previous production must archive instead of disappearing');
   assert(firstProduction.members.every(member=>member.leftAge===24),'archived production members must receive a leave age');
 
-  state.specialCareers.sports={active:true,pro:true,sport:'Basketball',skill:78,fitness:84,reputation:72,contractYears:2,salary:850000};
+  state.specialCareers.sports={active:true,pro:true,sport:'Basketball',skill:78,fitness:84,reputation:72,contractYears:2,contractRemaining:2,salary:850000};
   const team=ensureSpecialCareerWorld(state,'sports','Basketball',{announce:false});
   ensureSpecialCareerRelationships(state,team);
   const teamRelations=team.members.map(member=>state.relationships.find(rel=>rel.npcId===member.npcId)).filter(Boolean);
@@ -65,10 +66,18 @@ export function runSpecialCareerWorldRegression(){
   assert((state.specialCareers.sports?.worldPrestige as number|undefined)!==undefined,'annual processing must expose bounded career-world prestige');
   assert((state.specialCareers.sports?.careerMomentum as number|undefined)!==undefined,'career ecosystems must calculate annual momentum');
   assert(typeof state.specialCareers.sports?.rivalNpcId==='string','sports ecosystem must preserve a named persistent rival');
-  assert(Number(state.specialCareers.sports?.contractRemaining)===1,'professional contracts must count down annually');
+  assert(Number(state.specialCareers.sports?.contractRemaining)===1,'professional contracts must count down after a completed season');
+  assert(Number(state.specialCareers.sports?.seasonsPlayed)===1,'professional sports must resolve one season per Age Up');
+  assert(Number(state.specialCareers.sports?.lastSeasonAge)===25,'sports season history must record the exact processed age');
+  assert(Number.isFinite(Number(state.specialCareers.sports?.lastSeasonScore))&&Number(state.specialCareers.sports?.lastSeasonScore)>=0&&Number(state.specialCareers.sports?.lastSeasonScore)<=100,'sports season performance must be bounded');
+  assert(Number(state.specialCareers.sports?.seasonSalaryDue)===850000,'the completed season must preserve its earned salary before contract resolution');
+  assert(typeof state.specialCareers.sports?.seasonRecord==='string','sports season must retain a readable result/record');
+  assert(Number(state.specialCareers.sports?.careerAppearances)>0,'sports season must accumulate career appearances');
   const contractAfterFirstPass=Number(state.specialCareers.sports?.contractRemaining);
+  const seasonsAfterFirstPass=Number(state.specialCareers.sports?.seasonsPlayed);
   processSpecialCareerEcosystemsYear(state);
   assert(Number(state.specialCareers.sports?.contractRemaining)===contractAfterFirstPass,'special-career annual processing must be idempotent within the same age');
+  assert(Number(state.specialCareers.sports?.seasonsPlayed)===seasonsAfterFirstPass,'duplicate same-age processing must not create a second sports season');
   assert(!secondProduction.active&&secondProduction.endedAge===25,'temporary productions must close after their active year');
   assert(Number(state.specialCareers.acting?.projectsCompleted)===1,'completed acting productions must become career history instead of disappearing');
   assert(Number.isFinite(Number(state.specialCareers.acting?.lastProjectScore)),'completed projects must retain a career impact score');
@@ -78,7 +87,26 @@ export function runSpecialCareerWorldRegression(){
   state.currentYear=2052;
   processSpecialCareerWorldsYear(state);
   processSpecialCareerEcosystemsYear(state);
+  assert(Number(state.specialCareers.sports?.seasonsPlayed)===2,'a second age must resolve exactly one additional professional season');
+  assert(Number(state.specialCareers.sports?.lastSeasonAge)===26,'the latest sports season must advance with age');
+  assert(Number(state.specialCareers.sports?.seasonSalaryDue)>0,'season salary must remain earned even when the expiring contract is renewed or released');
   assert(state.specialCareers.sports?.pro===false||Number(state.specialCareers.sports?.contractRemaining)>0,'expired sports contracts must either renew or release the player cleanly');
+
+  const financeState=createNewGame({seed:'phase4-sports-salary-regression'});
+  financeState.character.age=30;financeState.currentYear=2060;
+  financeState.specialCareers.sports={active:true,pro:false,freeAgent:true,sport:'Basketball',lastSeasonAge:30,seasonSalaryDue:100000,salary:250000};
+  processAnnualFinance(financeState);
+  assert(financeState.finances.annualIncome===Math.round(100000*financeState.economy.salaryIndex),'annual finance must pay a completed season salary even after release into free agency');
+
+  const retirementState=createNewGame({seed:'phase4-sports-retirement-regression'});
+  retirementState.character.age=48;retirementState.currentYear=2080;
+  retirementState.specialCareers.sports={active:true,pro:true,sport:'Basketball',skill:78,fitness:70,reputation:70,contractYears:2,contractRemaining:2,salary:500000};
+  const retirementTeam=ensureSpecialCareerWorld(retirementState,'sports','Basketball',{announce:false});
+  ensureSpecialCareerRelationships(retirementState,retirementTeam);
+  processSpecialCareerWorldsYear(retirementState);processSpecialCareerEcosystemsYear(retirementState);
+  assert(retirementState.specialCareers.sports?.retired===true,'professional sports must reach a clean retirement end state by the hard age boundary');
+  assert(retirementState.specialCareers.sports?.pro===false&&retirementState.specialCareers.sports?.active===false,'retirement must close professional and pathway activity together');
+  assert(!retirementTeam.active&&retirementTeam.endedAge===48,'retirement must archive the final team world without deleting its history');
 
   state.specialCareers.sports!.active=false;
   state.character.age=27;
@@ -87,5 +115,5 @@ export function runSpecialCareerWorldRegression(){
   processSpecialCareerEcosystemsYear(state);
   assert(!team.active&&team.endedAge!==undefined,'ending the special career must archive its persistent world');
 
-  return 28;
+  return 41;
 }

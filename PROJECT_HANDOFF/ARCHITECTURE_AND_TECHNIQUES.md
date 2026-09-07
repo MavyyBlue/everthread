@@ -86,6 +86,14 @@ Technique: persist a last-processed age/year marker in the already appropriate s
 
 Phase 4B uses this for special-career ecosystem processing so duplicate calls cannot burn two contract years or roll awards/scandals twice.
 
+## Period accrual before end-state transitions
+
+When one Age Up represents a completed period of work, resolve what was earned during that period before changing the player's end-of-period status.
+
+Example: a professional sports season is played under the contract that existed during that season. Its salary is stamped to `seasonSalaryDue` / `lastSeasonAge` before renewal, release, or retirement. Annual finance then pays that age-stamped earned salary even if the player is a free agent or retired by the time finance processing runs.
+
+This avoids order-dependent losses without reordering the global Age Up pipeline. Prefer an explicit age-stamped accrual over keeping an invalid status temporarily alive just so another system can see it.
+
 ## Central action economy
 
 Every meaningful clickable action must be classified as one of:

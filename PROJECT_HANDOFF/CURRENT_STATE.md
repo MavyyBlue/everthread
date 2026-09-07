@@ -6,77 +6,90 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`  
 Current save schema: `9`
 
-## Last fully verified baseline
+## Last fully verified repository baseline
 
-Phase 4B — Career Ecosystems is deployed and green.
+`main` at `29b25374d6c87a01b21477066c4be922c126b993`.
 
-Verified behavior includes:
+- Phase 4C — Career Worlds UI + Social Consequences is deployed and green.
+- `PROJECT_HANDOFF/` is installed in the repository and its installation run #21 completed green.
+- The one-ZIP overlay importer is the normal mobile development workflow.
+- Special-career regression coverage at the Phase 4C baseline is 28 checks.
 
-- persistent special-career organization worlds for acting, music, professional sports, modeling, motorsport, and directing;
-- actual persistent NPC casts, teammates, staff, leaders, and rivals;
-- career-world NPCs linked into the normal Relationship/NPC graph;
-- yearly career momentum;
-- awards and scandals;
-- sports contract expiration / renewal / release;
-- acting/directing project completion history;
-- same-age idempotence guard for annual ecosystem processing;
-- one-ZIP overlay deployment workflow;
-- GitHub Actions type-check, regression, build, and Pages deployment all green.
+Verified Phase 4C behavior includes persistent career worlds in Career → Life Paths, Career Worlds in People, relationship-driven chemistry/rivalry, contracts, awards/scandals, and project impact.
 
-## Last completed phase
+## Current work — Phase 4D1
 
-Phase 4C — Career Worlds UI + Social Consequences is deployed and green.
+**Professional Sports Seasons & Contract Lifecycle** is implemented locally and packaged for deployment verification. Do not treat it as green until the newest intended GitHub Actions run completes successfully and the expanded source is spot-checked.
 
-Verified in GitHub Actions run #20 (`34075080076`) against the uploaded commit and expanded source. The workflow passed source import, dependency install, engine/tests type-checking, the regression suite, production build, Pages artifact upload, and Pages deployment.
+Prepared Phase 4D1 behavior:
 
-The build-bot expanded source is committed on `main` at `28f4925811d9ddbc3192e110172c40370b64b951`.
+- each professional Age Up resolves exactly one sport-specific season/circuit year;
+- basketball/baseball/football/soccer/hockey/volleyball use team-season records, while tennis/golf use circuit-event results;
+- season performance is driven by skill, fitness, existing career momentum, team chemistry, world prestige, stress, age, and deterministic variance;
+- bounded missed-time/injury pressure can reduce appearances, health, fitness, and season performance;
+- season records, outcomes, appearances, successes, best-season score, honors, championships, and career totals persist in the existing primitive special-career track;
+- relationship consequences continue: coaches react to strong/poor seasons and championships can intensify the persistent rival relationship;
+- contract years tick only after a completed season;
+- renewal now considers season performance, momentum, reputation, chemistry, fitness, and age;
+- non-renewal produces a real free-agent state and archives the former team world without deleting its history;
+- later successful pro-contract actions create another persistent team and increment contract/team history;
+- professional retirement is now an explicit end state rather than a silent random `active=false`; age 48 is a hard playing-career boundary, with earlier late-career retirement pressure;
+- the final season is played before retirement and its salary remains earned;
+- annual finance pays an age-stamped completed-season salary even if contract resolution releases or retires the player before finance runs;
+- initial pro signings now initialize `contractRemaining` immediately and track pro contracts / teams played for;
+- Career UI exposes pro/free-agent/retired status plus season count, and active sports worlds show season record/performance/career totals;
+- the Life Paths sports card now exposes all eight already-supported sports instead of only basketball, and retired/inactive states mirror engine eligibility;
+- regression target expands from 28 to 41 special-career checks;
+- no save-schema bump: all new persisted values remain primitives inside the already persisted special-career record.
 
-Verified Phase 4C behavior includes:
+## Validation completed before packaging
 
-- player-facing special-career ecosystem information in Career → Life Paths;
-- current world name, prestige, chemistry, rivalry pressure, momentum, leaders, rivals, contracts, awards/scandals, and world history;
-- career-world NPC interactions that use the real relationship/action systems;
-- career chemistry affecting later momentum/project outcomes;
-- a dedicated affiliation-driven People → Career Worlds folder;
-- career-world affiliation preserved independently of current relationship type;
-- expanded special-career regression coverage at 28 checks;
-- deterministic regression proof that stronger career chemistry improves otherwise-identical seeded career momentum;
-- one-ZIP overlay workflow preserved unrelated repository source.
+- exact deployed FinanceSystem and CareerScreen baselines were reconstructed locally and their Git blob hashes matched `main` before applying edits;
+- local TypeScript systems/test subset compiles;
+- strict SpecialCareerWorldPanel compile passes;
+- special-career regression source type-checks with the local validation harness;
+- deterministic runtime sanity verifies season 1, same-age idempotence, season 2, contract resolution, released-season salary payment, and age-48 retirement;
+- local finance case paid exactly the completed-season salary despite `pro=false` / free agency.
 
-## Current work
+GitHub Actions remains the authoritative dependency-backed deployment gate.
 
-Phase 4D — Deep Career Cycles is next. No Phase 4D source change has been deployed yet.
+## Next implementation after Phase 4D1 is green
 
-## Immediate next implementation
+Phase 4D2 — Acting & Directing Production Cycles.
 
-Phase 4D should deepen the career loops themselves rather than adding another visibility layer.
+Preferred scope:
 
-Preferred sequence:
+1. project offers rather than every successful action immediately becoming an undifferentiated one-year production;
+2. role/budget/production-tier effects;
+3. production lifecycle and release/completion outcomes;
+4. cast/producer/director relationship consequences;
+5. project pay timing and career impact;
+6. offer rejection/acceptance opportunity cost where appropriate;
+7. awards/scandal follow-ups that reference the exact archived production.
 
-1. richer sports seasons and team contract state;
-2. acting/directing production cycles and project offers;
-3. music release/album/tour cycles and management/label pressure;
-4. modeling campaign/agency contracts;
-5. racing seasons/team contract progression;
-6. path-specific rival/manager/castmate consequences;
-7. retirement/end-state handling for the six Phase 4 career worlds;
-8. targeted special-career event chains.
+Do not start Phase 4D2 before verifying the Phase 4D1 upload is green.
 
-Do not jump to save schema 10 merely because Phase 4 is growing. Continue using existing `SocialWorld` plus primitive special-career track fields while that remains structurally honest. Introduce schema 10 only when genuinely structured persisted state requires it.
+## Later Phase 4D sequence
+
+1. Acting/directing production cycles.
+2. Music single/album/tour cycles and management pressure.
+3. Modeling campaign/agency contracts.
+4. Racing seasons/team contracts/championships.
+5. Cross-path rival/leader consequences and retirement/end states.
+6. Targeted special-career event chains.
 
 ## Existing major completed foundations
 
 - Core Age Up transaction and pending-event lock.
 - Save migrations through schema 9.
 - Central action-economy ledger.
-- Persistent school social worlds.
-- Persistent workplace social worlds.
+- Persistent school and workplace social worlds.
 - Full NPC life simulation and adult descendant biography handoff.
-- Multi-slot saves, legacy/past lives, generations.
+- Multi-slot saves, generations, legacy/past lives.
 - Standard careers, finance, assets, investments, businesses.
 - Health, crime/legal/prison, fame, pets, travel.
 - Existing special-career tracks and minigames.
-- 691 event definitions as of the 0.12.0 project tracking.
+- 691 event definitions as of the 0.12.0 tracking baseline.
 - Mobile-first React/PWA shell.
 
 ## Known quality / architecture issues to keep visible
@@ -85,5 +98,5 @@ Do not jump to save schema 10 merely because Phase 4 is growing. Continue using 
 - Every meaningful new player action must be explicitly classified in the central action economy.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
-- Long-lived special-career worlds add persistent NPCs; continue population/performance profiling as Phase 4 grows.
-- Handoff docs must be updated whenever a phase materially changes current state, next work, architecture, deployment, or quality gates.
+- Persistent career worlds add NPC history; continue population/performance profiling as Phase 4 grows.
+- Handoff docs must update with meaningful phase bundles so current/next state never drifts behind code.
