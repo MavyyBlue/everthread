@@ -6,6 +6,7 @@ import { specialCareerWorlds, type SpecialCareerWorldKind } from './SpecialCaree
 import { processSportsSeasonYear } from './SportsCareerCycleSystem';
 import { expireScreenCareerOffers, finalizeScreenCareerProject } from './ScreenCareerCycleSystem';
 import { processModelingCareerYear } from './ModelingCareerCycleSystem';
+import { expireRacingContractOffer, processRacingCareerYear } from './RacingCareerCycleSystem';
 import { ensureSpecialCareerRelationships } from './SpecialCareerRelationshipSystem';
 
 export { ensureSpecialCareerRelationships } from './SpecialCareerRelationshipSystem';
@@ -143,6 +144,7 @@ function processPersistentCareerYear(state:GameState,kind:SpecialCareerWorldKind
 
   if(kind==='sports')processSportsSeasonYear(state,career,world,{momentum,chemistry,rivalry:view.rivalry,prestige},rng);
   if(kind==='modeling')processModelingCareerYear(state,career,world,{momentum,chemistry,rivalry:view.rivalry,prestige},rng);
+  if(kind==='racing')processRacingCareerYear(state,career,world,{momentum,chemistry,rivalry:view.rivalry,prestige},rng);
   if(!world.active)return;
 
   const awardChance=momentum>=68?clamp((momentum-58)/130,.04,.27):0;
@@ -174,6 +176,7 @@ function finalizeTemporaryProject(state:GameState,kind:'acting'|'directing',worl
 
 export function processSpecialCareerEcosystemsYear(state:GameState){
   expireScreenCareerOffers(state);
+  expireRacingContractOffer(state);
   for(const world of specialCareerWorlds(state)){
     if(world.active)ensureSpecialCareerRelationships(state,world);
     const kind=specialCareerWorldKind(world);if(!kind)continue;

@@ -39,21 +39,21 @@ Core simulation uses seeded RNG.
 
 A yearly system that changes contracts, seasons, delayed consequences, royalties, tours, campaigns, or other once-per-age state must defend against duplicate execution.
 
-Persist a last-processed age/year marker in the appropriate existing state and return early for repeated processing. Phase 4 uses this for ecosystem years, sports seasons/contracts, music catalog/tour processing, and modeling campaign/agency processing.
+Persist a last-processed age/year marker in the appropriate existing state and return early for repeated processing. Phase 4 uses this for ecosystem years, sports seasons/contracts, music catalog/tour processing, modeling campaign/agency processing, and racing season/contract processing.
 
 ## Period accrual before end-state transitions
 
 When one Age Up represents a completed period of work, resolve what was earned during that period before changing end-of-period status.
 
-Example: a professional sports season stamps `seasonSalaryDue` / `lastSeasonAge` before renewal, release, or retirement. Annual finance can then pay what was actually earned even if status changes later in the same Age Up.
+Professional sports stamps `seasonSalaryDue` / `lastSeasonAge` before renewal, release, or retirement. Phase 4D5 racing follows the same ownership rule with age-stamped `seasonSalaryDue` plus `seasonPrizeDue` before renewal, release, team movement, or retirement. Annual Finance can then pay and tax what was actually earned even if career status changes later in the same Age Up.
 
 Prefer an explicit age-stamped accrual over temporarily keeping an invalid status alive just so another system can see it.
 
-## Multi-age project lifecycle without duplicate state
+## Multi-age project and season lifecycle without duplicate state
 
-For careers where a project should take meaningful time, do not resolve the entire career event in the button click. Start the project in the existing special-career track, bind it to the exact persistent Social World, and let a later Age Up finalize it.
+For careers where a project or season should take meaningful time, do not resolve the entire career event in the button click. Start the period in the existing special-career track, bind it to the exact persistent Social World, and let a later Age Up finalize it.
 
-Phase 4D2 uses this for acting/directing. Phase 4D4 uses the same principle for modeling campaigns: booking starts the campaign and pays only an advance; the next Age Up settles performance, remaining compensation, bonus, commission, reputation/fame effects, pressure, and history.
+Phase 4D2 uses this for acting/directing. Phase 4D4 uses it for modeling campaigns: booking starts the campaign and pays only an advance; the next Age Up settles performance, remaining compensation, bonus, commission, reputation/fame effects, pressure, and history. Phase 4D5 uses it for motorsport: Race starts an 18–24 round season and the next Age Up resolves the championship, wins/podiums/points, incidents/mechanical issues, earnings, pressure, and contract consequences.
 
 Use this pattern when a future career needs a season/project lifecycle but does not yet justify a new save schema.
 
@@ -61,7 +61,7 @@ Use this pattern when a future career needs a season/project lifecycle but does 
 
 The special-career tracks are intentionally generic persisted records. Primitive additions do not require a schema bump, but they must stay understandable and bounded.
 
-Phase 4D3 music uses numbered recent-catalog slots rather than an unbounded hidden array/string blob. Phase 4D4 modeling mirrors that pattern with six rotating detailed campaign slots while retaining lifetime campaign/earnings aggregates.
+Phase 4D3 music uses numbered recent-catalog slots rather than an unbounded hidden array/string blob. Phase 4D4 modeling mirrors that pattern with six rotating detailed campaign slots while retaining lifetime campaign/earnings aggregates. Phase 4D5 racing uses six rotating detailed season slots while lifetime seasons, wins, podiums, points, titles, earnings, teams, and best-result aggregates continue independently.
 
 Do not encode arbitrary nested state as serialized JSON strings merely to avoid a migration. If several future systems genuinely need nested persistent histories, introduce a real typed structure and schema migration instead.
 
@@ -73,13 +73,13 @@ Phase 4D3 music applies deterministic, capped three-age stream/royalty tails to 
 
 This pattern is appropriate for residual income/attention that should decay predictably and then stop being actively processed.
 
-## Tradeoff contracts
+## Tradeoff and term contracts
 
 Offers should create an actual decision, not a free buff.
 
-Phase 4D3 distribution partnerships exchange an advance and reach multiplier for a future royalty share. Phase 4D4 agency contracts exchange booking reach/representation upside for explicit commission and term limits. Terms are stored exactly, offers expire, and accept/decline routes through dedicated action-economy policies.
+Phase 4D3 distribution partnerships exchange an advance and reach multiplier for a future royalty share. Phase 4D4 agency contracts exchange booking reach/representation upside for explicit commission and term limits. Phase 4D5 racing contracts preserve exact team, term, salary, offer type, and expiry; renewals retain an authentic current team while new-team contracts change affiliation only after acceptance.
 
-A persistent organization/world and a temporary business contract are separate facts. Ending a contract should not delete authentic affiliation history.
+A persistent organization/world and a temporary business or employment contract are separate facts. Ending a contract should not delete authentic affiliation history.
 
 ## Persistent modeling network vs representation
 
@@ -94,11 +94,26 @@ Rules:
 - new completed campaigns append only bounded recent detail plus lifetime aggregates;
 - renewal/release changes contract status, not historical affiliation.
 
+## Persistent racing team vs team contract
+
+The racing `SocialWorld(kind: "organization")` owns real team affiliation, recurring engineering/team contacts, and rivals. The racing track owns the current contract, season, free-agency, and retirement state.
+
+Rules:
+
+- legacy racers reuse their existing active team world and NPC roster when 4D5 initializes contract lifecycle state;
+- pre-4D5 `seasons` and `titles` remain aggregate history and are never retroactively converted into invented detailed championship records;
+- a renewal keeps the same team world and relationships;
+- release or declined/expired renewal archives the former team world and moves the driver into free agency without erasing history;
+- a new-team offer must not create a team world merely by existing; create/archive affiliation only when the player accepts the contract;
+- a free agent keeps `racingPathway` history without a fake active team;
+- retirement archives active team affiliation, blocks future racing seasons, and preserves old teams/season records;
+- a final season still accrues salary/prize before release, contract expiry, team movement, or retirement.
+
 ## Skill pathway vs professional career activation
 
 Training/practice and professional tenure are different concepts.
 
-Music practice may build skill during childhood, but it must not automatically mark the player as a professional musician or increment professional career years. The first real release starts professional tenure, and annual processing derives `years` from a recoverable professional start age/world start.
+Music practice may build skill during childhood, but it must not automatically mark the player as a professional musician or increment professional career years. The first real release starts professional tenure, and annual processing derives `years` from recoverable professional evidence.
 
 Use the same distinction for future careers where childhood training precedes professional entry.
 
@@ -124,7 +139,7 @@ Every meaningful clickable action must be classified as unlimited/configuration,
 
 Use `src/core/actionEconomy.ts`. UI disabled states mirror policy for UX, but engine/system enforcement remains authoritative. Failed-but-executed random attempts generally consume their opportunity; blocked actions should not partially consume claims.
 
-Current Phase 4 business-decision policies include `special.music_business`, `special.model.agency_seek`, and `special.model.business`. Existing modeling total/kind limits remain authoritative for bookings.
+Current Phase 4 business/contract policies include `special.music_business`, `special.model.agency_seek`, `special.model.business`, `special.racing_contract_seek`, and `special.racing_business`. Existing `special.race` remains the one-season-per-age racing commitment gate.
 
 ## Persistent social worlds
 
@@ -142,7 +157,7 @@ Current save schema: 9.
 
 Bump only for genuinely new persisted structure that existing state cannot safely represent. When bumping, initialize deterministically, preserve old meaning, migrate rewind snapshots, test old-save migration, consider generation continuation, and never silently discard major player history.
 
-Phase 4D4 remains within bounded primitive special-career state and therefore does not justify schema 10.
+Phase 4D4 and Phase 4D5 remain within bounded primitive special-career state and therefore do not justify schema 10.
 
 ## Mobile-first technique
 
@@ -150,7 +165,7 @@ Primary widths: 360 / 390 / 412 / 430px. Favor bottom navigation/sheets, clear c
 
 ## Simulation-first consequence design
 
-Features should interact: school history affects admissions/careers; workplace relationships affect performance; career-world chemistry affects momentum/projects/releases/tours/campaigns; crime/legal history affects work; health affects sports/lifespan; wealth affects assets/business; children/relationships affect inheritance/generations.
+Features should interact: school history affects admissions/careers; workplace relationships affect performance; career-world chemistry affects momentum/projects/releases/tours/campaigns/racing seasons; crime/legal history affects work; health affects sports/lifespan; wealth affects assets/business; children/relationships affect inheritance/generations.
 
 Avoid isolated meters that never matter anywhere else.
 
@@ -158,7 +173,9 @@ Avoid isolated meters that never matter anywhere else.
 
 Use deterministic setups with controlled seeds/state. High-value patterns include same seed + same history ⇒ identical result; compare states differing in one intended variable; call yearly processors twice to test idempotence; archive/end and verify history remains; generation handoff and old-save migration; and stress long lives/many generations for bounded growth.
 
-Keep specialized regression suites separate when that makes failures easier to diagnose. Music and modeling each have dedicated career regressions.
+Keep specialized regression suites separate when that makes failures easier to diagnose. Music, modeling, and racing each have dedicated career regressions.
+
+For racing specifically, regression coverage should include legacy-team preservation, no fake historical backfill, overlap blocking before action consumption, salary/prize accrual before end-state transitions, renewal/release/free-agency movement, offer expiry, final-season retirement pay, deterministic standings, and bounded six-slot history.
 
 GitHub Actions remains the final dependency-backed build gate.
 

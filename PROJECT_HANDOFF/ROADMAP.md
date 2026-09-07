@@ -26,20 +26,28 @@ In progress.
 2. **Phase 4D2 — Acting & Directing Production Cycles:** green. Multi-age productions, overlap protection, release economics/reception, follow-up offers, and studio-backed directing opportunities. Deployed special-career regression: 77 checks.
 3. **Phase 4D3 — Music Release / Album / Tour Cycles:** green. Bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs.
 4. **Post-4D3 Social Affiliation / Friends / Dating correction:** green. Work-folder affiliation isolation, close institutional Friends overlap, and age-eligible romance without erasing SocialWorld history. Verified run #26.
-5. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** implementation/local validation complete; deployment verification pending. Adds one-year campaign periods, bounded campaign history, representation contracts/offers/renewals, commission/reach tradeoffs, relationship-driven booking quality, earnings history, and bounded industry pressure while preserving existing modeling worlds and old aggregate jobs.
-6. **Phase 4D5 — Racing Seasons / Team Contract / Championship Cycles:** next after 4D4 is green.
+5. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** green. One-year campaign periods, bounded campaign history, representation contracts/offers/renewals, commission/reach tradeoffs, relationship-driven booking quality, earnings history, and bounded industry pressure while preserving existing modeling worlds and old aggregate jobs. Verified run #29.
+6. **Phase 4D5 — Racing Seasons / Team Contract / Championship Cycles:** implementation and local validation complete; deployment verification pending. Adds multi-round seasons, championship standings, team contracts/renewals/releases/free agency, team movement with archived prior worlds, age-stamped salary/prize accrual, bounded detailed season history, relationship-driven engineering/team performance, abstract incident/mechanical pressure, and clean retirement while preserving pre-4D5 aggregate history.
 7. Deeper rival/leader consequences across paths.
 8. Remaining retirement/end-state handling.
 9. Targeted special-career event chains.
 
 ### Phase 4D4 accompanying quality corrections
 
-The 4D4 bundle also generalizes long-form playtest findings without embedding any player save:
+The 4D4 bundle also generalized long-form playtest findings without embedding any player save:
 
 - childhood music practice no longer starts professional career years;
-- professional music tenure derives from first real release/world start;
+- professional music tenure derives from persisted professional evidence;
 - release-title generation remembers exact prior timeline titles beyond the six-slot detailed catalog;
 - tour operating costs are rebalanced upward to constrain extreme net margins.
+
+### Phase 4D5 compatibility rules
+
+- existing race-team worlds and NPC rosters survive legacy normalization;
+- pre-4D5 seasons/titles remain aggregate history and are not retroactively fabricated into detailed standings;
+- detailed six-slot season history begins only with seasons actually completed under 4D5;
+- contracts and team membership are separate facts: release/free agency/retirement archive current affiliation without deleting old team history;
+- final-season salary and prize earnings are resolved before contract or retirement transitions and flow through normal annual finance/tax processing.
 
 ### Later Phase 4 extensions
 
