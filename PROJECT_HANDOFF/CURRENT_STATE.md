@@ -24,9 +24,11 @@ Real player saves remain diagnostic evidence only. Personal save JSON, seeds, sl
 
 Mavyy identified two playtest coherence problems before Phase 4D6.
 
-The first career/relationship consistency overlay was imported successfully by GitHub Actions run #39 (`34195169895`) and expanded to `main` commit `0840f9156a07fcaac54803cae7239535d764b562`. The gameplay/engine source passed the engine typecheck. Run #39 then stopped during **test typecheck** because the new regression fixture compared an object property TypeScript had control-flow narrowed to the literal `"married"` against `"divorced"` (`TS2367`). Regression execution, production build, and Pages deployment were therefore skipped.
+The main consistency overlay is expanded on `main`. Run #39 (`34195169895`) exposed only a TypeScript control-flow narrowing error in the new regression fixture; the follow-up repair fixed that without changing gameplay.
 
-The follow-up repair changes only that regression assertion plus this handoff note. It reads the post-action spouse state back through authoritative `state.npcs`, avoiding the false compile-time narrowing without weakening compiler settings or changing gameplay behavior. Treat this consistency pass as **deployment pending** until the newest workflow after run #39 passes all gates.
+Run #40 (`34195436029`), job `101962002262`, then proved both **engine and test typechecks pass**. The core suite passed 82/82, special-career 77/77, music 76/76, modeling 46/46, racing 86/86, coherence 37/37, stress/career-freedom 64/64, event-target 4/4, commitment exclusivity 10/10, and the new career/relationship coherence regression 19/19. The sole failure was an older `socialAffiliationRegression` assertion that still expected `Ask out` for a classmate after the fixture had already created a current partner. Under the newly approved exclusivity rule, that NPC should expose `Hook Up` instead. Build and Pages deployment were skipped because the regression command correctly returned nonzero.
+
+The next repair changes only `socialAffiliationRegression.ts` plus this handoff note. It updates the older preservation test to the new intended rule: before commitment, adult institutional relationships can be Ask Out candidates; after commitment, otherwise eligible adults become Hook Up candidates; minors and family are candidates for neither. Production gameplay code remains untouched. Treat this consistency pass as **deployment pending** until the next GitHub Actions run passes every gate.
 
 ### Career identity coherence
 
@@ -38,7 +40,7 @@ The follow-up repair changes only that regression assertion plus this handoff no
 - Example failure shape covered by regression: an NPC who has a standard Barista biography but is the active leader of Orbit Records management displays `Music Manager · Orbit Records`, not Barista.
 - Special-career NPC income is shown as a deterministic **estimated** role income derived from career kind, role/group prestige, salary index, and a stable NPC-specific factor. This avoids presenting the unrelated standard-job wage as the special-career salary while making clear it is a projection rather than rewriting `NpcLifeState` finance history.
 - Archived special Career Worlds stop overriding an NPC's current ordinary-career biography. Affiliation history remains visible through Social Worlds.
-- `NpcLifeSystem` is deliberately not rewritten in this coherence patch; SocialWorld remains authoritative for professional affiliation and NpcLife remains authoritative for autonomous biography. A deeper unification of special-world NPC compensation can be considered later if it becomes gameplay-significant rather than display-only.
+- `NpcLifeSystem` is deliberately not rewritten in this coherence patch; SocialWorld remains authoritative for professional affiliation and NpcLife remains authoritative for autonomous biography.
 
 ### Romantic exclusivity and Hook Up
 
@@ -51,15 +53,15 @@ The follow-up repair changes only that regression assertion plus this handoff no
 - Successful hookups persist a per-target flat count in `GameFlags`; no save-schema bump is required.
 - Discovery risk rises with consecutive successful hookups with the same NPC, with additional bounded pressure from engagement/marriage and a jealous current partner.
 - If discovered, the current partner relationship loses score/opinion, records a permanent memory, increases stress, and creates a life-timeline consequence. A second bounded roll can end the relationship/engagement/marriage; marriage fallout records divorce state/counters correctly.
-- Legacy saves with more than one current romantic commitment are handled defensively: each living commitment can independently discover the hookup, while new Ask Out/reconcile/propose/marry actions cannot create another duplicate commitment.
+- Legacy saves with more than one current romantic commitment are handled defensively.
 
 ### Regression / validation
 
 - New deterministic `careerRelationshipCoherenceRegression.ts` covers player special-career profile identity, NPC special-world role precedence/fallback, special-career income projection, Ask Out exclusivity, Hook Up availability, reconciliation exclusivity, escalating discovery probability, non-creation of a second partner, discovered-infidelity fallout, and the adult-only hookup boundary.
-- A targeted isolated TypeScript compile executed the actual changed CareerIdentity + RelationshipSystem modules against minimal typed infrastructure successfully.
-- The seeded `hookup-fallout-1` fixture executed successfully: hookup accepted, discovery occurred, the spouse became an ex/divorced, and both the hookup and discovery were recorded without converting the target into a partner.
-- Run #39 proved the expanded gameplay source passes `typecheck:engine`; its only reported failure was `TS2367` inside the new test fixture.
-- GitHub Actions remains the authority for full test typecheck, all regressions, production build, and Pages deployment.
+- Run #40 proved this new regression passes 19/19.
+- Run #40 also proved both engine and tests compile under the real dependency-backed TypeScript configuration.
+- The remaining regression incompatibility is an old expectation, not a production behavior failure; this repair updates that expectation while preserving the social-affiliation test's original coverage.
+- GitHub Actions remains the authority for all regressions, production build, and Pages deployment.
 
 ## Next after this patch is green
 
@@ -74,4 +76,4 @@ The follow-up repair changes only that regression assertion plus this handoff no
 - Persistent world population/performance profiling remains important as Phase 4 grows.
 - The main application chunk should eventually be code-split.
 - Flat primitive special-career/flag records remain acceptable for this pass; schema 10 is not justified yet.
-- Special Career World NPC role/income projection is currently presentation-oriented; do not silently duplicate it into a second persistent career authority. If future gameplay needs exact career-world NPC compensation/history, integrate it deliberately with NpcLife rather than layering another truth on top.
+- Special Career World NPC role/income projection is currently presentation-oriented; if future gameplay needs exact career-world NPC compensation/history, integrate it deliberately with NpcLife rather than layering another truth on top.

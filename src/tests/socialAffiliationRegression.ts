@@ -4,7 +4,7 @@ import { createNewGame } from '../systems/CharacterSystem';
 import { archiveSpecialCareerWorld, ensureSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
 import { ensureSpecialCareerRelationships } from '../systems/SpecialCareerEcosystemSystem';
 import { relationshipsForFolder } from '../systems/PeopleGraphSystem';
-import { canAskOutNpc, changeRelationshipType } from '../systems/RelationshipSystem';
+import { canAskOutNpc, canHookUpWithNpc, changeRelationshipType } from '../systems/RelationshipSystem';
 
 export function runSocialAffiliationRegression(){
   let checks=0;
@@ -35,11 +35,11 @@ export function runSocialAffiliationRegression(){
   const leaderRel=state.relationships.find(rel=>rel.npcId===leader!.npcId)!;
   leaderRel.score=100;
   verify(relationshipsForFolder(state,'friends').some(rel=>rel.npcId===leader!.npcId),'a very close boss/manager relationship must also surface in Friends & Social');
-  verify(canAskOutNpc(state,leader!.npcId),'an adult player must be able to ask out an adult boss/manager relationship');
+  verify(canAskOutNpc(state,leader!.npcId),'an uncommitted adult player must be able to ask out an adult boss/manager relationship');
 
   const peerNpc=state.npcs[peer!.npcId]!;
   peerNpc.age=25;peerNpc.hiddenOpinion=100;peerRel.compatibility=100;peerRel.attraction=100;peerRel.score=100;
-  verify(canAskOutNpc(state,peerNpc.id),'an adult career coworker must be eligible for Ask out');
+  verify(canAskOutNpc(state,peerNpc.id),'an uncommitted adult career coworker must be eligible for Ask out');
   const dating=changeRelationshipType(state,peerNpc.id,'ask_out');
   verify(dating.success&&state.relationships.find(rel=>rel.npcId===peerNpc.id)?.type==='partner','asking out a highly compatible adult career coworker must be able to create a romantic relationship');
   verify(relationshipsForFolder(state,'career').some(rel=>rel.npcId===peerNpc.id),'becoming partners must not erase the original Career Worlds affiliation');
@@ -49,20 +49,20 @@ export function runSocialAffiliationRegression(){
   const classmateRel=state.relationships.find(rel=>rel.npcId===classmateMember.npcId)!;
   const classmateNpc=state.npcs[classmateMember.npcId]!;
   classmateRel.type='classmate';classmateRel.score=100;classmateNpc.age=24;
-  verify(canAskOutNpc(state,classmateNpc.id),'adult classmates must be eligible for Ask out');
+  verify(!canAskOutNpc(state,classmateNpc.id)&&canHookUpWithNpc(state,classmateNpc.id),'a committed adult player must receive Hook Up rather than Ask out for an eligible adult classmate');
   verify(relationshipsForFolder(state,'friends').some(rel=>rel.npcId===classmateNpc.id),'a 100-score classmate must surface in Friends & Social');
 
   const teacherMember=careerWorld.members.find(member=>![peerNpc.id,leader!.npcId,classmateNpc.id].includes(member.npcId))!;
   const teacherRel=state.relationships.find(rel=>rel.npcId===teacherMember.npcId)!;
   const teacherNpc=state.npcs[teacherMember.npcId]!;
   teacherRel.type='teacher';teacherRel.score=100;teacherNpc.age=35;
-  verify(canAskOutNpc(state,teacherNpc.id),'an adult player and adult teacher relationship must be eligible for Ask out');
+  verify(!canAskOutNpc(state,teacherNpc.id)&&canHookUpWithNpc(state,teacherNpc.id),'a committed adult player must receive Hook Up rather than Ask out for an eligible adult teacher relationship');
   state.character.age=17;
-  verify(!canAskOutNpc(state,teacherNpc.id),'a minor player must never be eligible to ask out an adult teacher');
+  verify(!canAskOutNpc(state,teacherNpc.id)&&!canHookUpWithNpc(state,teacherNpc.id),'a minor player must never be eligible to ask out or hook up with an adult teacher');
   state.character.age=26;
 
   teacherRel.type='sibling';
-  verify(!canAskOutNpc(state,teacherNpc.id),'family relationships must never become Ask out candidates through the institutional dating expansion');
+  verify(!canAskOutNpc(state,teacherNpc.id)&&!canHookUpWithNpc(state,teacherNpc.id),'family relationships must never become Ask out or Hook Up candidates through the institutional dating expansion');
   verify(!relationshipsForFolder(state,'friends').some(rel=>rel.npcId===teacherNpc.id),'a high-score family relationship must not be pulled into Friends & Social by the institutional closeness rule');
 
   const sourceNpc=state.npcs[leader!.npcId]!;
