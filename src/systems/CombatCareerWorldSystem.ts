@@ -89,7 +89,12 @@ export function ensureCombatCareerWorld(state:GameState,options:{announce?:boole
 }
 
 function replenishGroup(state:GameState,world:SocialWorld,key:GroupKey,rng:Rng,used:Set<string>){
-  const definition=GROUPS.find(group=>group.key===key)!;let active=activeMemberIds(state,world,key);while(active.length<definition.min){const leader=key==='coaches'&&!world.members.some(member=>member.role==='leader'&&member.leftAge===undefined&&state.npcs[member.npcId]?.alive);const npc=addMember(state,world,key,definition,rng,used,leader);active=[...active,npc.id];}
+  const definition=GROUPS.find(group=>group.key===key)!;let active=activeMemberIds(state,world,key);
+  const livingLeader=key==='coaches'&&world.members.some(member=>member.role==='leader'&&member.leftAge===undefined&&state.npcs[member.npcId]?.alive&&active.includes(member.npcId));
+  if(key==='coaches'&&!livingLeader&&active.length<definition.max){
+    const npc=addMember(state,world,key,definition,rng,used,true);active=[...active,npc.id];
+  }
+  while(active.length<definition.min){const leader=key==='coaches'&&!world.members.some(member=>member.role==='leader'&&member.leftAge===undefined&&state.npcs[member.npcId]?.alive);const npc=addMember(state,world,key,definition,rng,used,leader);active=[...active,npc.id];}
 }
 
 export interface CombatCareerWorldView {
