@@ -4,11 +4,13 @@ import { StatBar } from '../components/StatBar';
 import { Timeline } from '../components/Timeline';
 import { gameEngine } from '../stores/gameStore';
 import { netWorth } from '../systems/FinanceSystem';
+import { playerCareerLabel } from '../systems/CareerIdentitySystem';
 import { exactMoney, formatMoney } from '../core/format';
 
 export function LifeScreen({state,onResult}:{state:GameState;onResult:(r:EngineResult)=>void}){
   const cashLabel=formatMoney(state.finances.cash);
   const netWorthValue=netWorth(state);
+  const careerLabel=playerCareerLabel(state);
   return <main className="screen life-screen">
     <section className="identity-card">
       <Avatar character={state.character} size={58}/>
@@ -16,7 +18,7 @@ export function LifeScreen({state,onResult}:{state:GameState;onResult:(r:EngineR
       <div className="money-chip" title={exactMoney(state.finances.cash)}><small>Cash</small><strong>{cashLabel}</strong></div>
     </section>
     <section className="stats-card" aria-label="Primary stats"><StatBar label="Health" value={state.character.stats.health}/><StatBar label="Happiness" value={state.character.stats.happiness}/><StatBar label="Intelligence" value={state.character.stats.intelligence}/><StatBar label="Appearance" value={state.character.stats.appearance}/></section>
-    <section className="quick-facts"><div title={exactMoney(netWorthValue)}><small>Net worth</small><strong>{formatMoney(netWorthValue)}</strong></div><div><small>Career</small><strong>{state.employment.current?.title??(state.character.age<18?'Growing up':'Unemployed')}</strong></div><div><small>Fame</small><strong>{Math.round(state.fame.fame)}</strong></div></section>
+    <section className="quick-facts"><div title={exactMoney(netWorthValue)}><small>Net worth</small><strong>{formatMoney(netWorthValue)}</strong></div><div><small>Career</small><strong>{careerLabel}</strong></div><div><small>Fame</small><strong>{Math.round(state.fame.fame)}</strong></div></section>
     <section className="timeline-card"><div className="section-heading"><div><p className="eyebrow">Your story</p><h2>Life timeline</h2></div><span>{state.timeline.length} entries</span></div><Timeline entries={state.timeline}/></section>
     <div className="age-up-dock"><button className="age-up" disabled={!!state.pendingEvent||!state.character.alive||!!state.flags.ageUpLocked} onClick={()=>{if(state.settings.haptics&&navigator.vibrate)navigator.vibrate(18);onResult(gameEngine.ageUp());}} aria-label={`Age up from ${state.character.age} to ${state.character.age+1}`}><span className="age-up-plus">＋</span><span><strong>Age Up</strong><small>{state.pendingEvent?'Resolve your event first':state.character.alive?'Move life forward one year':'Life complete'}</small></span></button></div>
   </main>;

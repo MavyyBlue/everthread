@@ -1,6 +1,6 @@
 # Everthread — Current State
 
-Last handoff preparation: 2026-09-07  
+Last handoff preparation: 2026-09-08  
 Repository: `MavyyBlue/everthread`  
 Default branch: `main`  
 Public build line: `0.12.0 pre-release`  
@@ -8,88 +8,58 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-`main` is `2dccb47ba0a27587cfda7ff48402b558b7100ee2`, tree `b7024d7ee5a0de49a839d880d0b232376191efe6`.
+Current expanded `main` before the career/relationship consistency patch is `f59a494025099fee7efacc1028c3d6c95d0a1347`.
 
-- Phase 4D5 Racing is green.
-- The pre-4D6 coherence pass is also green.
-- GitHub Actions run #32 (`34148978761`), job `101827001795`, passed overlay import, engine/test type checks, every regression suite, production build, Pages upload, deployment, and cleanup.
-- Run #32 uploaded head: `53df92eab41719416feaaf6eeb4bff07736cacc4`.
-- Expanded bot commit: `2dccb47ba0a27587cfda7ff48402b558b7100ee2`.
-- Run #32 reported core 82/82, special-career 77/77, music 76/76, social-affiliation 23/23, modeling 46/46, racing 86/86, and coherence 37/37: **427 checks passed**.
-- Production build transformed 104 modules and deployed successfully to GitHub Pages.
-- Pages artifact: `10028684986`, 760367 bytes, SHA-256 `d3f2d9b635b0d6fae6a2a072856616e2ec349064dfac6ec67b71d44788cc4f63`.
-- The primary application chunk was 726.49 kB minified / 208.88 kB gzip. Code splitting remains a visible later performance task, not a current release blocker.
+- GitHub Actions run #38 (`34191585874`), job `101950586478`, completed successfully on 2026-09-08.
+- The run passed source-overlay import, dependency install, engine/test type checks, the regression suite, production build, Pages artifact upload, deployment, and cleanup.
+- Run #38 tested the uploaded source commit `cbade560df5fa06527e64d2081800ef107370fbd`; the workflow expanded it into the build-bot commit above.
+- Phase 4D5 Racing remains green.
+- The pre-4D6 coherence pass remains green.
+- The pre-4D6 systemic strain / recovery / career-freedom / event-role pass is now green as well; the prior handoff still described it as deployment-pending because that note predated run #38.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-## Current work — pre-4D6 stress, recovery, career freedom & event-role coherence
+## Current work — pre-4D6 career identity & relationship consistency
 
-This integrated pass is implemented and locally validated, but remains **deployment pending** until a GitHub Actions run proves the exact overlay.
+Mavyy identified two playtest coherence problems before Phase 4D6. This patch is implemented locally and remains **deployment pending** until the next GitHub Actions run proves the exact overlay.
 
-### Stress consequence framework
+### Career identity coherence
 
-- Stress below 90 does not receive the new high-strain incident modifier.
-- At 90+ stress, deterministic probability rises toward 100 stress but never reaches certainty.
-- Temporary gameplay strain states are `Burnout`, `Emotional Volatility`, and `Chronic Strain`; they are simulation modifiers, not clinical diagnoses.
-- At most one new stress incident can be generated per age.
-- Full-time and part-time workplace incidents can be mistakes, conflicts, or minor accidents and feed the exact job record, workplace tension/reputation, health, relationships, and persistent per-workplace incident counts.
-- School incidents can affect attendance, conduct, academic performance, happiness, and school relationships.
-- Persistent special-career worlds can receive strain-related professional mistakes/conflicts/accidents.
-- Three incidents create review eligibility rather than automatic firing/dismissal. Reviews consider performance/standing, leader relationship, incident count, and current stress.
-- Ordinary full-time or part-time work can end in a warning or dismissal without mutating another employer; post-secondary school can result in probation or dismissal; compulsory school uses support/discipline rather than automatic expulsion.
-- Contracted special careers can still be involuntarily released for serious repeated incidents. Voluntary contract restrictions do not provide immunity from employer/team consequences.
-- Stress consequences run after annual finance settlement so work already completed that year remains paid/taxed even if the position ends afterward.
+- `CareerIdentitySystem.ts` is a read-only projection layer for player/NPC career presentation; it does not create a second authoritative career state.
+- The Life profile now gives active established special-career commitments precedence over the ordinary employment fallback. A professional modeling path therefore reads `Model` instead of `Unemployed`.
+- When two special-career commitments are active, both remain visible rather than silently hiding one.
+- Player-facing special-career titles use current track context where available, such as recording artist, sport/athlete, military branch, model, racing driver, and director.
+- NPC profile career identity now gives an active special Career World precedence over an unrelated autonomous standard job. Career World group + member role derive a professional title and retain the exact organization name.
+- Example failure shape covered by regression: an NPC who has a standard Barista biography but is the active leader of Orbit Records management displays `Music Manager · Orbit Records`, not Barista.
+- Special-career NPC income is shown as a deterministic **estimated** role income derived from career kind, role/group prestige, salary index, and a stable NPC-specific factor. This avoids presenting the unrelated standard-job wage as the special-career salary while making clear it is a projection rather than rewriting `NpcLifeState` finance history.
+- Archived special Career Worlds stop overriding an NPC's current ordinary-career biography. Affiliation history remains visible through Social Worlds.
+- The 42 KB autonomous `NpcLifeSystem` is deliberately not rewritten in this coherence patch; SocialWorld remains authoritative for professional affiliation and NpcLife remains authoritative for autonomous biography. A deeper unification of special-world NPC compensation can be considered later if it becomes gameplay-significant rather than display-only.
 
-### Recovery
+### Romantic exclusivity and Hook Up
 
-- `Spend Time` now also reduces stress when the relationship is healthy; relief scales with relationship strength and closeness.
-- Hostile relationships do not function as free stress recovery and can feel tense instead.
-- Existing Meditation remains the modest broadly available recovery action.
-- Therapy unlocks at age 13, uses the existing wellness action economy, removes substantially more stress, and reduces temporary strain severity.
-- Therapy is guardian-supported for minors in the simulation; independent adults pay 600 in game currency. Insufficient funds block before action consumption.
+- `RelationshipSystem` now owns current-romantic exclusivity for Ask Out, reconciliation, proposing, and marriage; UI checks mirror the same system rule rather than replacing it.
+- A player who already has a living partner, fiancé, or spouse can no longer Ask Out another otherwise date-eligible NPC and accidentally create overlapping current partners.
+- On an otherwise date-eligible adult NPC, `Ask out` becomes `Hook Up` while the player has another current romantic commitment.
+- Hook Up is adult-only. Existing teen dating remains supported, but the hookup action is unavailable when either person is under 18.
+- Hook Up uses the existing `relationship.milestone` action-economy budget for the exact NPC, so attempts cannot be rerolled freely in the same age.
+- A successful hookup does not convert the target into a second partner. Their existing friend/classmate/coworker/boss/etc. relationship type remains intact.
+- Successful hookups persist a per-target flat count in `GameFlags`; no save-schema bump is required.
+- Discovery risk rises with consecutive successful hookups with the same NPC, with additional bounded pressure from engagement/marriage and a jealous current partner.
+- If discovered, the current partner relationship loses score/opinion, records a permanent memory, increases stress, and creates a life-timeline consequence. A second bounded roll can end the relationship/engagement/marriage; marriage fallout records divorce state/counters correctly.
+- Legacy saves with more than one current romantic commitment are handled defensively: each living commitment can independently discover the hookup, while new Ask Out/reconcile/propose/marry actions cannot create another duplicate commitment.
 
-### Special-career freedom and contracts
+### Regression / local validation
 
-- `SpecialCareerExitSystem` owns voluntary Leave Path eligibility.
-- Leaving a path preserves completed credits/releases/bookings/seasons, awards, earnings, skills, NPC relationships, and archived Career Worlds.
-- An explicit `leftPath` marker overrides historical professional evidence so a voluntarily left career actually frees one of the two special-career commitment slots.
-- Successful professional re-entry clears `leftPath`; returning to a career does not erase its earlier history.
-- Acting/directing productions, music tours, modeling campaigns, live modeling representation terms, professional sports contracts, racing seasons, and racing contracts can temporarily lock voluntary exit.
-- Inherited royalty is not treated as ordinary employment; a future abdication mechanic should own that lifecycle.
-- Existing involuntary retirement/release remains separate from voluntary Leave Path.
+- New deterministic `careerRelationshipCoherenceRegression.ts` covers player special-career profile identity, NPC special-world role precedence/fallback, special-career income projection, Ask Out exclusivity, Hook Up availability, reconciliation exclusivity, escalating discovery probability, non-creation of a second partner, discovered-infidelity fallout, and the adult-only hookup boundary.
+- A targeted isolated TypeScript compile executed the actual changed CareerIdentity + RelationshipSystem modules against minimal typed infrastructure successfully.
+- The seeded `hookup-fallout-1` fixture executed successfully: hookup accepted, discovery occurred, the spouse became an ex/divorced, and both the hookup and discovery were recorded without converting the target into a partner.
+- Changed TS/TSX files pass syntax-oriented TypeScript transpilation.
+- GitHub Actions remains the authority for full dependency-backed type checks, all existing regressions, production build, and Pages deployment.
 
-### Professional sports renewal correction
+## Next after this patch is green
 
-- Sports contracts no longer silently auto-renew at term end.
-- Final-season salary is stamped before contract resolution as before.
-- A successful team renewal becomes a player-facing offer with exact team, years, salary, and expiry.
-- The player may accept, decline into free agency, or leave the sports path once the previous term is complete.
-- A valid pending renewal preserves the exact current team world/roster while the decision remains available, but `pro=false` prevents a phantom additional season.
-- Offer expiry or decline archives the former team and moves the player to free agency.
-- The established hard-age sports retirement rule remains an involuntary end-state and may supersede a nominal live term, preserving Phase 4D1 compatibility.
-
-### Event target-role coherence
-
-- Relationship-dependent procedural events now filter the target pool before eligibility and use that same pool for actual target selection.
-- Reusable target tags support minimum/maximum NPC age, adult/minor targets, relationship-role filters, and care-needs context.
-- Existing generated content receives compatibility rules: Family Favor requires a capable-age relative; Money Between Relatives requires an adult target; Care Question requires plausible care need; Sibling Competition requires an actual sibling-type relationship; Friend Loan requires a mature-enough friend.
-- A newborn can still be the subject of child-appropriate family stories, but cannot be selected as the actor in an adult-like favor/finance scenario.
-
-### Local validation
-
-- Synthetic stress/career-freedom regression: **64/64**.
-- Synthetic event-target role regression: **4/4**.
-- The stress/career harness compiles and executes the actual staged Commitment, Exit, Sports-contract, Stress, and Event-system modules against fabricated infrastructure only.
-- Changed TS/TSX files have passed syntax-oriented TypeScript validation; remaining standalone diagnostics are expected missing-module diagnostics from the partial staging tree.
-- No staged simulation file contains `Math.random()`.
-- GitHub Actions remains the final dependency-backed engine/test typecheck, complete regression, production build, and Pages deployment authority.
-
-If the existing 427 checks remain unchanged, the next CI run is expected to report 427 + 64 + 4 = **495 checks**. Do not call that count verified until GitHub prints it.
-
-## Next after this pass is green
-
-**Phase 4D6 — deeper rival / leader consequences across special-career paths.** The new stress/conduct framework should become one of the consequence channels used by bosses, managers, coaches, teachers, peers, and rivals rather than creating a separate scripted drama layer.
+**Phase 4D6 — deeper rival / leader consequences across special-career paths.** Use persistent leaders/rivals to influence advocacy, mentorship, conflict, conduct reviews, opportunity quality, delayed follow-ups, and remembered grudges. The existing stress/conduct framework should remain a shared consequence channel rather than spawning a parallel scripted-drama system.
 
 ## Known quality / architecture issues to keep visible
 
@@ -98,5 +68,6 @@ If the existing 427 checks remain unchanged, the next CI run is expected to repo
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - Persistent world population/performance profiling remains important as Phase 4 grows.
-- The ~726 kB main chunk should eventually be code-split.
-- Flat primitive special-career records remain acceptable for this pass; schema 10 is not justified yet.
+- The main application chunk should eventually be code-split.
+- Flat primitive special-career/flag records remain acceptable for this pass; schema 10 is not justified yet.
+- Special Career World NPC role/income projection is currently presentation-oriented; do not silently duplicate it into a second persistent career authority. If future gameplay needs exact career-world NPC compensation/history, integrate it deliberately with NpcLife rather than layering another truth on top.

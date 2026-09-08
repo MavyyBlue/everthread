@@ -13,6 +13,7 @@ const interactionEffects: Record<string,{base:number;happiness:number;karma?:num
 };
 
 const ASK_OUT_RELATIONSHIP_TYPES = new Set<RelationshipType>(['friend','best_friend','classmate','coworker','boss','teacher','principal','coach']);
+const CURRENT_ROMANTIC_TYPES = new Set<RelationshipType>(['partner','fiance','spouse']);
 
 function datingAgesCompatible(playerAge:number,npcAge:number){
   if(playerAge<14||npcAge<14)return false;
@@ -20,10 +21,96 @@ function datingAgesCompatible(playerAge:number,npcAge:number){
   return npcAge>=18;
 }
 
+function currentRomanticCommitments(state:GameState,excludeNpcId?:string){
+  return state.relationships.filter(rel=>rel.npcId!==excludeNpcId&&CURRENT_ROMANTIC_TYPES.has(rel.type)&&state.npcs[rel.npcId]?.alive);
+}
+
+export function hasCurrentRomanticCommitment(state:GameState,excludeNpcId?:string){return currentRomanticCommitments(state,excludeNpcId).length>0;}
+
 export function canAskOutNpc(state:GameState,npcId:string){
   const npc=state.npcs[npcId];
   const rel=state.relationships.find(item=>item.npcId===npcId);
-  return Boolean(npc?.alive&&rel&&ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&datingAgesCompatible(state.character.age,npc.age));
+  return Boolean(npc?.alive&&rel&&ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&datingAgesCompatible(state.character.age,npc.age)&&!hasCurrentRomanticCommitment(state,npcId));
+}
+
+export function canHookUpWithNpc(state:GameState,npcId:string){
+  const npc=state.npcs[npcId];
+  const rel=state.relationships.find(item=>item.npcId===npcId);
+  return Boolean(
+    npc?.alive&&rel&&state.character.age>=18&&npc.age>=18&&
+    ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&currentRomanticCommitments(state,npcId).length>0
+  );
+}
+
+export function canReconcileWithNpc(state:GameState,npcId:string){
+  const npc=state.npcs[npcId];
+  const rel=state.relationships.find(item=>item.npcId===npcId);
+  return Boolean(npc?.alive&&rel?.type==='ex'&&datingAgesCompatible(state.character.age,npc.age)&&!hasCurrentRomanticCommitment(state,npcId));
+}
+
+export function hookupDiscoveryChance(streak:number,commitmentType:RelationshipType,partner?:Npc){
+  const repeated=Math.max(0,Math.floor(streak)-1)*.10;
+  const commitmentBonus=commitmentType==='spouse'?.05:commitmentType==='fiance'?.03:0;
+  const jealousyBonus=partner?.traits.includes('jealous')?.05:0;
+  return clamp(.12+repeated+commitmentBonus+jealousyBonus,.12,.72);
+}
+
+export function hookUpWithNpc(state:GameState,npcId:string):EngineResult {
+  const npc=state.npcs[npcId];
+  const rel=state.relationships.find(item=>item.npcId===npcId);
+  if(!npc||!rel||!npc.alive)return{success:false,messages:[{text:'That relationship is unavailable.'}]};
+  if(state.character.age<18||npc.age<18)return{success:false,messages:[{text:'Hookups are only available between adults.'}]};
+  if(!ASK_OUT_RELATIONSHIP_TYPES.has(rel.type))return{success:false,messages:[{text:'A hookup is not available from this relationship.'}]};
+  const commitments=currentRomanticCommitments(state,npcId);
+  if(!commitments.length)return{success:false,messages:[{text:'You are not currently in another relationship. Ask this person out instead.'}]};
+  const gate=consumeAction(state,{policy:'relationship.milestone',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  const rng=createRng(state.seed,state.rngCounter);
+  const acceptance=clamp(rel.attraction*.50+rel.score*.25+rel.compatibility*.15+clamp(npc.hiddenOpinion,0,100)*.10,5,100)/100;
+  if(!rng.chance(acceptance)){
+    const text=`${npc.firstName} was not interested in hooking up.`;
+    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:1,text,npcIds:[npcId]});
+    state.rngCounter=rng.counter();
+    return{success:false,messages:[{text}]};
+  }
+
+  const countKey=`hookupCount:${npcId}`;
+  const streak=Number(state.flags[countKey]??0)+1;
+  state.flags[countKey]=streak;
+  state.flags.hookups=Number(state.flags.hookups??0)+1;
+  rel.score=clamp(rel.score+4);rel.attraction=clamp(rel.attraction+2);npc.hiddenOpinion=clamp(npc.hiddenOpinion+3,-100,100);
+  npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:'hookup',sentiment:4,summary:`Hooked up with ${state.character.firstName}.`,permanent:streak>=2});
+  state.character.stats.happiness=clamp(state.character.stats.happiness+2);
+  state.character.secondary.karma-=4;
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:1,text:`You hooked up with ${npc.firstName}.`,npcIds:[npcId],relationshipDelta:4});
+
+  const messages=[{text:`You and ${npc.firstName} hooked up.`}];
+  for(const commitment of commitments){
+    const partner=state.npcs[commitment.npcId];if(!partner?.alive)continue;
+    if(!rng.chance(hookupDiscoveryChance(streak,commitment.type,partner)))continue;
+    const oldType=commitment.type;
+    const damage=Math.round(clamp(18+(streak-1)*4+(oldType==='spouse'?6:oldType==='fiance'?3:0)+(partner.traits.includes('jealous')?5:0),18,46));
+    commitment.score=clamp(commitment.score-damage);
+    partner.hiddenOpinion=clamp(partner.hiddenOpinion-damage*.9,-100,100);
+    partner.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:'infidelity_discovery',sentiment:-damage,summary:`Discovered that ${state.character.firstName} hooked up with ${npc.firstName}.`,permanent:true});
+    state.flags.infidelityDiscoveries=Number(state.flags.infidelityDiscoveries??0)+1;
+    state.character.secondary.stress=clamp(state.character.secondary.stress+6);
+    state.character.stats.happiness=clamp(state.character.stats.happiness-5);
+    const endingChance=clamp(.05+(streak-1)*.07+(100-commitment.score)*.004+(partner.traits.includes('jealous')?.10:0)+(oldType==='spouse'?.08:oldType==='fiance'?.05:0),.05,.75);
+    const ended=rng.chance(endingChance);
+    if(ended){
+      commitment.type='ex';
+      partner.maritalStatus=oldType==='spouse'?'divorced':'single';
+      if(oldType==='spouse')state.flags.divorces=Number(state.flags.divorces??0)+1;
+      state.character.secondary.stress=clamp(state.character.secondary.stress+4);
+    }
+    const falloutText=ended
+      ?`${partner.firstName} found out about your hookup with ${npc.firstName} and ended your ${oldType==='spouse'?'marriage':oldType==='fiance'?'engagement':'relationship'}.`
+      :`${partner.firstName} found out about your hookup with ${npc.firstName}. Your relationship took a serious hit.`;
+    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:ended?3:2,text:falloutText,npcIds:[partner.id,npc.id],relationshipDelta:-damage});
+    messages.push({text:falloutText});
+  }
+  state.rngCounter=rng.counter();
+  return{success:true,messages};
 }
 
 export { processNpcLives as ageNpcs } from './NpcLifeSystem';
@@ -44,6 +131,7 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   const rel=state.relationships.find(r=>r.npcId===npcId);
   if (!npc || !rel) return {success:false,messages:[{text:'That relationship no longer exists.'}]};
   if (!npc.alive) return {success:false,messages:[{text:`You cannot interact with ${npc.firstName}; they have died.`}]};
+  if(action==='hook_up')return hookUpWithNpc(state,npcId);
   const spec=interactionEffects[action];
   if (!spec) return {success:false,messages:[{text:'That interaction is not available.'}]};
   if((action==='give_money'||action==='gift')&&state.finances.cash<(action==='give_money'?500:150))return{success:false,messages:[{text:'You do not have enough cash for that.'}]};
@@ -105,29 +193,23 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
     if(state.character.age>=18&&npc.age<18)return{success:false,messages:[{text:'Adult dating is limited to adults.'}]};
   }
   if((action==='propose'||action==='marry')&&(state.character.age<18||npc.age<18))return{success:false,messages:[{text:'Engagement and marriage are adult relationship milestones.'}]};
+  if((action==='ask_out'||action==='reconcile')&&hasCurrentRomanticCommitment(state,npcId))return{success:false,messages:[{text:'You are already in a relationship with someone else.'}]};
+  if((action==='propose'||action==='marry')&&hasCurrentRomanticCommitment(state,npcId))return{success:false,messages:[{text:'You already have another current romantic commitment.'}]};
   if(action==='ask_out'&&!ASK_OUT_RELATIONSHIP_TYPES.has(rel.type))return{success:false,messages:[{text:'Dating is not available from this relationship.'}]};
   if(action==='propose'&&rel.type!=='partner')return{success:false,messages:[{text:'You need to be dating before proposing.'}]};
   if(action==='marry'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'Marriage is not available in this relationship yet.'}]};
   if(action==='break_up'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'There is no dating relationship to end.'}]};
   if(action==='divorce'&&rel.type!=='spouse')return{success:false,messages:[{text:'You are not married to this person.'}]};
   if(action==='reconcile'&&rel.type!=='ex')return{success:false,messages:[{text:'Only an ex can be reconciled with.'}]};
-  if(action==='propose'&&state.relationships.some(r=>r.npcId!==npcId&&['fiance','spouse'].includes(r.type)))return{success:false,messages:[{text:'You are already committed to someone else.'}]};
-  if(action==='marry'&&state.relationships.some(r=>r.npcId!==npcId&&r.type==='spouse'))return{success:false,messages:[{text:'You are already married.'}]};
   const gate=consumeAction(state,{policy:'relationship.milestone',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const chance=clamp(rel.score*.55+rel.compatibility*.25+rel.attraction*.2+npc.hiddenOpinion*.15,0,100)/100;
   let success=true; let newType:RelationshipType=rel.type; let text='';
   if(action==='ask_out') { success=rng.chance(chance); newType=success?'partner':rel.type; text=success?`${npc.firstName} agrees to date you.`:`${npc.firstName} does not want to date you right now.`; if(success) npc.maritalStatus='dating'; }
   if(action==='propose') {
-    const alreadyCommitted=state.relationships.some(r=>r.npcId!==npcId&&['fiance','spouse'].includes(r.type));
-    if(rel.type!=='partner'||alreadyCommitted){success=false;text=alreadyCommitted?'You are already committed to someone else.':'You need to be dating before proposing.';}
-    else {success=rng.chance(chance+.08);newType=success?'fiance':rel.type;text=success?`${npc.firstName} says yes.`:`${npc.firstName} is not ready to get engaged.`;if(success)npc.maritalStatus='engaged';}
+    success=rng.chance(chance+.08);newType=success?'fiance':rel.type;text=success?`${npc.firstName} says yes.`:`${npc.firstName} is not ready to get engaged.`;if(success)npc.maritalStatus='engaged';
   }
-  if(action==='marry') {
-    const existingSpouse=state.relationships.some(r=>r.npcId!==npcId&&r.type==='spouse');
-    if(!['partner','fiance'].includes(rel.type)||existingSpouse){success=false;text=existingSpouse?'You are already married.':'Marriage is not available in this relationship yet.';}
-    else {success=true;newType='spouse';text=`You married ${npc.firstName} ${npc.lastName}.`;npc.maritalStatus='married';}
-  }
+  if(action==='marry') {success=true;newType='spouse';text=`You married ${npc.firstName} ${npc.lastName}.`;npc.maritalStatus='married';}
   if(action==='break_up'||action==='divorce') { if(!['partner','fiance','spouse'].includes(rel.type)) success=false; else {newType='ex';npc.maritalStatus=action==='divorce'?'divorced':'single';rel.score=clamp(rel.score-18);text=`You ${action==='divorce'?'divorced':'broke up with'} ${npc.firstName}.`;} }
   if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,chance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`; }
   if(!success && !text) text='That relationship step is not available right now.';
