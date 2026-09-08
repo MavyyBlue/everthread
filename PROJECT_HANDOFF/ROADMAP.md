@@ -26,9 +26,11 @@ In progress.
 8. **Pre-4D6 systemic strain & career-freedom pass:** green. High-stress consequences, recovery, explicit Leave Path semantics, contract-aware exits, sports renewal decisions, and role/age-aware procedural targeting.
 9. **Pre-4D6 career identity / relationship consistency:** green. Special-career identity is coherent across Life/People presentation; committed adults use the Hook Up route rather than creating duplicate current partners.
 10. **4D6 Deeper rival / leader consequences across paths:** green. Persistent leaders/rivals feed opportunity, mentorship/advocacy, conduct pressure, professional conflict, delayed follow-ups, and remembered grudges while existing lifecycle/stress systems retain formal release authority.
-11. **4D7A Special-career lifecycle foundation:** green; verified by run #47. Shared lifecycle projection distinguishes active work, projects, offers, contracts, free agency, step-away, retirement, and comeback eligibility without deleting history.
-12. **4D7B Player-facing retirement/comeback + residual end-state economics:** implementation/deployment pending. Surface compact lifecycle status/actions, preserve music catalog royalties/distribution terms after exit, and prevent phantom active-world/career-year progression.
-13. **4D8 Targeted special-career event chains:** next after 4D7 is fully green. Multi-year mentor, rivalry, comeback, project, team, agency, and crisis arcs grounded in real persistent NPCs and lifecycle history.
+11. **4D7A Special-career lifecycle foundation:** green; verified by run #47.
+12. **4D7B Player-facing retirement/comeback + residual end-state economics:** green; verified by run #48. Compact lifecycle status/actions are live; creative comebacks and final athletic retirement are coherent; music residual royalties preserve signed distribution terms without phantom career/world progression.
+13. **4D8A Targeted career-story foundation:** deployment pending. Add a bounded exact-NPC delayed-chain scheduler plus first three-beat mentor and rivalry arcs using existing Career Worlds, Relationships, NPC memories, and delayed events.
+14. **4D8B Path-specific multi-year arcs:** next after 4D8A is green. Acting/directing collaborators, music sleeper-hit/former-manager arcs, modeling agency reunions, team/coach histories, retirement/comeback opportunities, and other path-specific follow-ups.
+15. **4D8C Optional hardening/content expansion:** only if playtesting or queue/performance profiling shows the need before moving to later special-path ecosystems.
 
 ### Current compatibility rules
 
@@ -42,8 +44,10 @@ In progress.
 - Final-period compensation is settled before end-state changes.
 - Music distribution agreements are separate business terms from active Career World participation; residual catalog royalties keep the agreed share/reach rules after exit.
 - Procedural relationship stories require a plausible target, not merely any living NPC of a broad category.
-- Leader/rival influence uses the existing Social World + Relationship + NPC memory ownership model; it must not introduce a parallel professional-relationship graph.
-- Influence warnings can damage standing and opportunities but do not independently fire/release the player; formal end states stay in their owning lifecycle/stress systems.
+- Leader/rival influence and career-story chains use the existing Social World + Relationship + NPC memory ownership model; neither may introduce a parallel professional-relationship graph.
+- Influence/story consequences can alter relationships, pressure, reputation, fame, or opportunity context but do not independently fire/release the player.
+- Multi-year career stories must keep exact NPC continuity across delayed beats and cancel safely if that NPC is no longer valid.
+- Story queue growth stays bounded; do not flood Age Up with stacked narrative interruptions.
 
 ### Later Phase 4 extensions
 

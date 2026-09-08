@@ -17,6 +17,7 @@ import { processPetsYear } from './PetSystem';
 import { processFameYear } from './FameSystem';
 import { processLegalYear } from './CrimeSystem';
 import { processSpecialCareersYear } from './SpecialCareerSystem';
+import { processSpecialCareerStoriesYear } from './SpecialCareerStorySystem';
 import { processAnnualFinance } from './FinanceSystem';
 import { processStressConsequencesYear } from './StressConsequenceSystem';
 import { triggerRandomEvent } from './EventSystem';
@@ -49,6 +50,8 @@ export function ageUp(state:GameState):EngineResult {
     processFameYear(state);
     processLegalYear(state);
     processSpecialCareersYear(state);
+    // Career story openings are selected only after this age's worlds/projects/contracts have settled.
+    processSpecialCareerStoriesYear(state);
     processAnnualFinance(state);
     // Stress discipline happens after this year's income is settled so dismissal cannot erase already-earned pay.
     processStressConsequencesYear(state);

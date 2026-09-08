@@ -24,35 +24,40 @@ Residual economics are different from active employment. A completed music catal
 
 `CommitmentSystem.ts` owns active special-career capacity, enrollment compatibility, work/school restrictions, and player-facing same-age re-entry gating. Outside school the limit is two established special paths; during active enrollment it is one.
 
-Historical professional evidence and current commitment are different facts. A career may have credits/releases/bookings/seasons forever without remaining an active commitment forever. `SpecialCareerExitSystem.ts` therefore uses an explicit flat `leftPath` marker:
-
-- professional history stays intact;
-- `leftPath=true` overrides historical evidence for active-capacity calculations;
-- successful professional re-entry clears `leftPath`;
-- existing legacy over-cap saves preserve their paths;
-- training/practice alone still does not establish acting/music/modeling as a professional commitment.
-
-Do not clear historical counters to make a slot available. Current participation and lifetime history must remain separately recoverable.
+Historical professional evidence and current commitment are different facts. A career may have credits/releases/bookings/seasons forever without remaining an active commitment forever. `SpecialCareerExitSystem.ts` therefore uses an explicit flat `leftPath` marker. Completed history is preserved, `leftPath=true` overrides historical evidence for active-capacity calculations, and successful professional re-entry clears the marker. Do not clear historical counters to make a slot available.
 
 ## Unified deep-career lifecycle
 
-`SpecialCareerLifecycleSystem.ts` is a normalized view/transition layer over existing path-specific state; it is not another source of truth. Acting, music, sports, modeling, racing, and directing can project states such as developing, between work, project/season active, offer pending, contracted, free agent, stepped away, or retired.
+`SpecialCareerLifecycleSystem.ts` is a normalized view/transition layer over existing path-specific state; it is not another source of truth. Acting, music, sports, modeling, racing, and directing can project developing, between work, project/season active, offer pending, contracted, free agent, stepped away, or retired states.
 
 - `leftPath` is reversible voluntary step-away.
 - Formal retirement is distinct from Leave Path.
 - Acting, music, modeling, and directing may attempt a later-age comeback.
 - Professional sports and motorsport retirement are final for that life.
 - Same-age return after leaving/retiring is blocked to prevent lifecycle toggling from becoming a reroll/path-swap exploit.
-- `careerPauseYears` accumulates inactive gaps on re-entry so career-year accounting can exclude retired/stepped-away years where a path derives duration from calendar age.
-- Path-specific lifecycle owners remain authoritative when they already have richer retirement logic; for example, player-facing motorsport retirement routes through `RacingCareerCycleSystem`.
+- `careerPauseYears` accumulates inactive gaps on re-entry so career-year accounting can exclude retired/stepped-away years.
+- Path-specific lifecycle owners remain authoritative when they already have richer retirement logic; player-facing motorsport retirement routes through `RacingCareerCycleSystem`.
 
 ## Voluntary exit vs involuntary end state
 
-Leaving by player choice is not the same operation as retirement, release, dismissal, or institutional removal.
+Leaving by player choice is not the same operation as retirement, release, dismissal, or institutional removal. Voluntary Leave Path/retirement can be blocked by a live binding commitment. Involuntary end states remain allowed to supersede those restrictions when the owning lifecycle requires it. A contract must not become immunity from consequences.
 
-Voluntary Leave Path/retirement can be blocked by a live binding commitment: acting/directing production, music tour, modeling campaign/representation term, sports contract, racing season/contract. Once that obligation ends the player may step away or retire if the relevant lifecycle allows it.
+## Special-career story-chain ownership
 
-Involuntary end states remain allowed to supersede those restrictions when the owning lifecycle requires it. A contract must not become immunity from consequences. Inherited royalty is a life status rather than ordinary quit-able employment; future abdication should be its own lifecycle.
+`SpecialCareerStorySystem.ts` is a scheduler over existing state, not a new narrative-state authority.
+
+- A new chain must originate from a real current or just-completed Career World and an exact persistent NPC selected from existing leader/rival influence state.
+- The system stores only bounded scan/cooldown counters plus ordinary `DelayedEvent` entries. It does not add a second story graph to `GameState`.
+- The opening beat is queued only after the age's career worlds/projects/contracts have processed, so story eligibility reflects the career state that actually survived the year.
+- Story scanning uses a dedicated deterministic substream and does not advance the global `rngCounter`.
+- `specialCareerStoryScanAge` makes the annual scan idempotent even when no story starts.
+- At most one new career story starts per age, with a hard cap on queued special-career story beats before another opening can be added.
+- Follow-up choices use the existing delayed-event scheduler with `npcSelector:'payload'`, which preserves the exact NPC across years. Required relationship-type metadata is used primarily as a living/connected-target validity contract.
+- Social World history remains the affiliation record. A career NPC may later become a friend, enemy, romantic partner, spouse, ex, or other relationship type without losing the historical career connection.
+- Follow-ups may occur after the original Career World is archived, but they must never reactivate that world merely to tell a story.
+- Dead/invalid exact targets cancel the due follow-up instead of substituting another NPC.
+- Story choices should preferentially feed systems already present—relationship/hidden opinion, NPC memory, stress, confidence, fame/reputation, finances, lifecycle gates, offers, or delayed consequences—rather than inventing isolated story-only stats.
+- Story systems do not independently fire/release the player. Formal career end states remain with lifecycle/stress/path-specific owners.
 
 ## Decision-based contract renewal
 
@@ -70,9 +75,11 @@ Recovery remains systemic player agency through bounded wellness/therapy and qua
 
 Event category alone is not enough to prove a story makes sense. Eligibility and target selection must operate over the same plausible NPC candidate set. Reusable `target:*` tags can constrain age, adult/minor role, relationship subtype, or care-needs context. If a relationship story cannot resolve a plausible target, it is ineligible rather than rendered with a generic or unrelated person.
 
+Delayed chains with an exact payload target must preserve that exact target across future beats. A future story should cancel when its required target is no longer valid rather than silently rerolling to another NPC.
+
 ## Central action economy
 
-Every meaningful repeatable outcome-generating action remains classified through `src/core/actionEconomy.ts`. UI disabled states should mirror system gates, while system/engine enforcement remains authoritative. Controlled lifecycle transitions such as Leave Path/Retire are system actions even when they do not consume a random-outcome opportunity.
+Every meaningful repeatable outcome-generating action remains classified through `src/core/actionEconomy.ts`. UI disabled states should mirror system gates, while system/engine enforcement remains authoritative. Controlled lifecycle transitions such as Leave Path/Retire are system actions even when they do not consume a random-outcome opportunity. Required Age Up story events are consequences, not repeatable tap actions, so they do not need a separate action-economy policy.
 
 ## Contextual-information UI rule
 
@@ -82,13 +89,15 @@ Developer/system explanation copy belongs in the relevant fixed header `ⓘ` pre
 - The preview closes immediately on release/cancel/lost pointer capture.
 - It is read-only and never consumes actions, advances RNG, autosaves an outcome, or mutates state.
 - It measures rendered content and automatically reduces text scale to keep the complete explanation visible within available viewport space instead of becoming a scrolling mini-document.
-- Immediate gameplay gating reasons (for example, why a live contract prevents retirement) may remain beside/under the relevant disabled action because the player needs them to make a decision.
+- Immediate gameplay gating reasons may remain beside/under the relevant disabled action because the player needs them to make a decision.
+
+4D8 story events themselves are gameplay content and therefore appear through the normal event-decision surface; they do not require explanatory paragraphs in Career cards.
 
 ## Testing technique
 
-High-value regressions include deterministic state comparisons, same-age idempotence, final-period accrual before status change, exact offer terms, archive-without-delete behavior, explicit exit/re-entry, passive residual income without lifecycle resurrection, pause-aware career-year accounting, plausible event target pools, and old-save compatibility.
+High-value regressions include deterministic state comparisons, same-age idempotence, final-period accrual before status change, exact offer terms, archive-without-delete behavior, explicit exit/re-entry, passive residual income without lifecycle resurrection, pause-aware career-year accounting, plausible event target pools, exact delayed-event target continuity, dead-target cancellation, bounded story queues, and old-save compatibility.
 
-Specialized suites cover core, special-career worlds, music, social affiliation, modeling, racing, coherence, stress/career freedom, event-target role coherence, commitment exclusivity, career/relationship coherence, leader/rival influence, contextual information, and unified special-career lifecycle behavior. GitHub Actions remains the final dependency-backed semantic typecheck/build/deploy gate.
+Specialized suites cover core, special-career worlds, music, social affiliation, modeling, racing, coherence, stress/career freedom, event-target role coherence, commitment exclusivity, career/relationship coherence, leader/rival influence, contextual information, unified lifecycle behavior, and targeted special-career story chains. GitHub Actions remains the final dependency-backed semantic typecheck/build/deploy gate.
 
 ## Mobile-first technique
 

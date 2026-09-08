@@ -8,76 +8,85 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `6899cbd84775720cb17394f358aaa4a2ba486418`.
+The latest fully green expanded baseline is commit `8c714ad594c3eff4d762713f9fd89ae9c2df01ab`.
 
-- GitHub Actions run #47 (`34259848499`), job `102174773799`, completed successfully on 2026-09-08.
-- Run #47 expanded uploaded commit `a267ad105ed7e7201d34ffe3ebc4deacb6dd608a` into the build-bot commit above.
+- GitHub Actions run #48 (`34262635682`), job `102184141302`, completed successfully on 2026-09-08.
+- Run #48 expanded uploaded commit `daf83dd3068136924afe7af9298bc153857d99c9` into the build-bot commit above.
 - Source-overlay import, dependency install, engine/test typechecks, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
-- The full suite included 82 core regressions plus specialized suites; Phase 4D7A's lifecycle suite passed 38/38 and contextual information passed 8/8.
-- Phase 4D6 leader/rival consequences and the contextual-information mobile polish remain green.
-- Phase 4D7A special-career lifecycle foundation is green and public.
+- The suite included 82 core regressions plus specialized suites; Phase 4D7 lifecycle coverage passed 48/48 and contextual information passed 8/8.
+- Phase 4D6 leader/rival consequences, contextual-information mobile polish, 4D7A lifecycle foundation, and 4D7B player-facing retirement/comeback plus residual music economics are green and public.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-## Current work — Phase 4D7B player-facing end states and residual economics
+## Current work — Phase 4D8A targeted multi-year career-story foundation
 
-This overlay is **deployment pending** until GitHub Actions passes. It builds directly on the green 4D7A lifecycle foundation rather than introducing another career-state authority.
+This overlay is **deployment pending** until GitHub Actions passes. It builds on existing Social Worlds, Relationships, NPC memories, Career World influence, and the global delayed-event queue rather than introducing a parallel story graph.
 
-### Player-facing lifecycle UI
+### Story ownership and scheduling
 
-- Life Paths now surfaces the normalized lifecycle status for acting, music, professional sports, modeling, motorsport, and film directing directly in each path card.
-- The existing special-career capacity card remains the compact place for current commitment exits.
-- Established deep careers expose a separate `Retire` action when the shared lifecycle retirement gate allows it. Binding productions, tours, representation terms, sports contracts, and racing seasons/contracts still block voluntary retirement.
-- Motorsport retirement is routed through the existing racing lifecycle owner rather than bypassing it with the generic transition.
-- Stepped-away and retired creative paths remain visible as historical lifecycle rows. When re-entry is allowed, the UI explains that the next successful professional action starts the return/comeback; the existing professional action buttons remain the actual re-entry route.
-- Professional sports and motorsport retirement remain final for that life.
-- No extra explanatory developer paragraph is added to gameplay cards. New system context goes into the Career `ⓘ` preview under the approved contextual-information UI rule.
+- `SpecialCareerStorySystem.ts` scans current or just-completed deep Career Worlds after the age's career cycles settle.
+- It can start a story only from an exact persistent Career World NPC. 4D8A uses two general arc families: leader/mentor support and professional rivalry.
+- At most one new special-career chain may start in an age, and no new opening is added when two special-career story beats are already queued.
+- Story scanning is idempotent per age through `flags.specialCareerStoryScanAge` and uses a deterministic career-story substream that does not consume the core `rngCounter`.
+- Mentor and rivalry openings have multi-year per-career cooldown markers stored as bounded primitives on the existing special-career track. No schema bump is required.
+- Acting/directing projects that finish this age may seed a story from the people who just worked on them. Older archived worlds do not generate fresh story openings forever.
 
-### Music residual economics
+### Delayed event-chain integration
 
-- Leaving or retiring from music no longer erases an accepted distribution agreement. Distribution is a separate business term from active Career World participation.
-- Recent released catalog can continue its existing bounded stream/royalty tail after the player steps away or retires.
-- Passive catalog processing does not reactivate music, does not resurrect a Career World, does not advance active career years, and does not apply active manager-pressure/stress consequences.
-- Residual royalties remain subject to the already-signed distribution share/reach terms, preventing retirement/exit from becoming a royalty-share exploit.
-- Music career-year accounting now tracks cumulative inactive gaps through `careerPauseYears`, so a later creative comeback does not count retired/stepped-away years as active professional years.
-- Same-age residual processing remains idempotent through the existing `lastMusicCycleAge` guard.
+- Six new data-defined career-story beats live in `src/data/specialCareerStoryEvents.ts`: three mentor beats and three rivalry beats.
+- They are not part of the ordinary random event pool. The story system queues the opening against an exact NPC, and the existing delayed-event mechanism carries later beats across years.
+- Follow-up choices use `npcSelector:'payload'`, so the exact person is retained instead of being re-selected later.
+- Follow-ups require the persisted relationship/NPC to remain available. If the NPC dies or the relationship is no longer valid, the due event cancels cleanly instead of substituting a generic stranger.
+- Career affiliation remains owned by Social World history. A former colleague may become a friend, enemy, partner, spouse, or ex without losing the fact that the story began through a Career World.
+- Archived Career Worlds are not reactivated by later story beats.
 
-### Contextual-information UI rule
+### First 4D8A content
 
-Mavyy approved this as a permanent UI rule:
+**Mentor arc:** a strong Career World leader can offer guidance; accepting or cautiously engaging may lead years later to an introduction/opportunity and then a final legacy conversation about what that support meant.
 
-- Developer/system explanation copy belongs in the relevant header `ⓘ` preview instead of being repeated inside gameplay cards unless the player needs the text to make an immediate decision.
-- The preview follows the press/hold pointer, disappears on release, is read-only, and dynamically reduces its text scale to keep all explanation visible inside its available viewport area.
-- 4D7B adds music residual royalty/distribution context to that Career information popup when a music career exists.
+**Rivalry arc:** a high-pressure rival can turn routine competition personal; the feud resurfaces a year later and can eventually become a truce, mutual respect, or a lasting rivalry depending on player choices.
+
+The effects intentionally feed existing systems—relationship score, hidden opinion/memory through normal event resolution, stress, confidence, fame/public reputation, happiness, karma, and timeline history. They do not create a second professional-relationship authority or directly fire/release the player.
 
 ### Validation added in this patch
 
-The lifecycle regression expands beyond the green 38-check 4D7A baseline to cover:
+`specialCareerStoryRegression.ts` adds deterministic coverage for:
 
-- leaving music while preserving signed distribution terms;
-- retirement archiving the music Career World while preserving distribution terms;
-- post-retirement residual catalog royalties;
-- no phantom active career/world/career-year progression during residual processing;
-- no active management-pressure or stress effects while retired;
-- same-age residual idempotence;
-- comeback pause-year accounting; and
-- career-year totals that exclude the retired gap after comeback.
+- six unique data-defined story beats;
+- exact leader/rival targeting;
+- opening queue duplicate prevention and per-career cooldown stamps;
+- no core RNG consumption during queueing/scanning;
+- multi-year mentor progression through all three beats;
+- relationship-type evolution without losing the exact NPC;
+- archived-world follow-ups without Career World resurrection;
+- dead-NPC cancellation of delayed follow-ups;
+- mentor/rival candidate eligibility from real influence state;
+- estranged-target rejection;
+- just-ended project eligibility versus stale archived-world exclusion;
+- same-age scan idempotence; and
+- delayed-story queue pressure limits.
 
-No save-schema bump is required. `careerPauseYears` is a bounded primitive on the existing music/special-career track and older saves default cleanly to zero.
+## Next after 4D8A is green
 
-## Next after 4D7B is green
+Proceed to **Phase 4D8B — path-specific career arcs**. Prioritize content that existing state can already support without new core architecture:
 
-Finish any remaining 4D7 end-state edge cases revealed by Actions/playtesting, then proceed to **Phase 4D8 — targeted multi-year special-career event chains** grounded in persistent NPCs and lifecycle history.
+- acting/directing repeat collaborators and reunion projects;
+- music catalog sleeper-hit / former-manager / reunion arcs;
+- modeling agency reunion and reputation recovery/fallout;
+- sports/racing former team, coach, final-season, and post-retirement relationship follow-ups;
+- creative retirement/comeback opportunities that respect 4D7 lifecycle gates rather than bypassing them.
 
-The first 4D8 chains should favor systems already rich enough to support real continuity: mentor/manager arcs, rivalry escalation/cooling, comeback opportunities, repeated project collaborators, team/agency reunions, and crisis follow-ups. They should use existing Social Worlds, NPC memories, relationships, delayed consequences, action economy, and lifecycle states rather than introducing a parallel story graph.
+After 4D8B, evaluate whether a 4D8C hardening/content pass is useful before extending persistent-world depth to other special paths.
 
 ## Known quality / architecture issues to keep visible
 
 - Exact seeded replay serialization remains mandatory; do not introduce wall-clock IDs or unseeded simulation randomness.
 - Every meaningful player action stays under controlled system/GameEngine ownership. UI must not directly mutate critical career state.
-- Formal dismissal/release remains owned by existing stress or path-specific lifecycle systems; shared lifecycle/influence code is not a second firing authority.
+- Formal dismissal/release remains owned by existing stress or path-specific lifecycle systems; story/influence systems are not firing authorities.
 - Distribution agreements are business terms, not proof of active music Career World participation.
+- Career stories must use real persistent NPCs and Social World history; do not invent a second NPC/professional relationship graph.
+- Story queue growth must stay bounded as more chains are added.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - Persistent world population/performance profiling remains important as Phase 4 grows.

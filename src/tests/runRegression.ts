@@ -12,6 +12,7 @@ import { runCareerRelationshipCoherenceRegression } from './careerRelationshipCo
 import { runSpecialCareerInfluenceRegression } from './specialCareerInfluenceRegression';
 import { runContextualInfoRegression } from './contextualInfoRegression';
 import { runSpecialCareerLifecycleRegression } from './specialCareerLifecycleRegression';
+import { runSpecialCareerStoryRegression } from './specialCareerStoryRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -29,4 +30,5 @@ try{const checks=runCareerRelationshipCoherenceRegression();console.log(`Career 
 try{const checks=runSpecialCareerInfluenceRegression();console.log(`Special-career influence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runContextualInfoRegression();console.log(`Contextual info regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runSpecialCareerLifecycleRegression();console.log(`Special-career lifecycle regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runSpecialCareerStoryRegression();console.log(`Special-career story regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
