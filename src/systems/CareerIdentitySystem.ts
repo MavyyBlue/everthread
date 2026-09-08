@@ -2,7 +2,7 @@ import { jobById } from '../data/jobs';
 import type { GameState, Npc, SocialWorld, SocialWorldMember } from '../types/game';
 import { activeSpecialCareerPaths, type SpecialCareerPathKey } from './CommitmentSystem';
 
-type SpecialWorldKind = 'acting' | 'music' | 'sports' | 'combat' | 'military' | 'modeling' | 'racing' | 'directing';
+type SpecialWorldKind = 'acting' | 'music' | 'sports' | 'combat' | 'military' | 'politics' | 'modeling' | 'racing' | 'directing';
 type Track = Record<string, number | string | boolean>;
 
 export interface NpcCareerProjection {
@@ -42,6 +42,13 @@ function playerSpecialTitle(state:GameState,key:SpecialCareerPathKey){
   if(key==='music'&&String(track?.instrument??'').toLowerCase()==='vocals')return 'Recording Artist';
   if(key==='sports'&&typeof track?.sport==='string'&&track.sport.trim())return track.pro===true?`Professional ${track.sport} Athlete`:`${track.sport} Athlete`;
   if(key==='military'&&typeof track?.branch==='string'&&track.branch.trim())return /service$/i.test(track.branch.trim())?track.branch.trim():`${track.branch.trim()} Service`;
+  if(key==='politics'){
+    const office=typeof track?.office==='number'?Number(track.office):0;
+    if(office>=4)return 'National Officeholder';
+    if(office>=3)return 'Regional Officeholder';
+    if(office>=2)return 'City Officeholder';
+    if(office>=1)return 'Local Officeholder';
+  }
   return PLAYER_SPECIAL_TITLES[key];
 }
 
@@ -53,7 +60,7 @@ export function playerCareerLabel(state:GameState){
 }
 
 function specialWorldKind(world:SocialWorld):SpecialWorldKind|undefined {
-  return (['acting','music','sports','combat','military','modeling','racing','directing'] as const).find(kind=>world.id.startsWith(`special-${kind}-`));
+  return (['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const).find(kind=>world.id.startsWith(`special-${kind}-`));
 }
 
 function memberGroup(world:SocialWorld,member:SocialWorldMember){
@@ -87,6 +94,12 @@ function roleTitle(kind:SpecialWorldKind,tag:string,member:SocialWorldMember){
     if(tag==='support')return 'Unit Specialist';
     return 'Service Member';
   }
+  if(kind==='politics'){
+    if(tag==='staff')return member.role==='leader'?'Chief of Staff':'Political Staff';
+    if(tag==='coalition')return 'Political Ally';
+    if(tag==='opposition')return member.role==='leader'?'Opposition Leader':'Political Opponent';
+    return 'Political Professional';
+  }
   if(kind==='modeling'){
     if(tag==='agency')return member.role==='leader'?'Agency Director':'Modeling Agent';
     if(tag==='campaign')return 'Campaign Creative';
@@ -111,6 +124,7 @@ function roleBaseIncome(kind:SpecialWorldKind,tag:string,member:SocialWorldMembe
   if(kind==='sports')return tag==='coaching'?(member.role==='leader'?145000:95000):190000;
   if(kind==='combat')return tag==='coaches'?(member.role==='leader'?115000:82000):tag==='rivals'?90000:70000;
   if(kind==='military')return tag==='command'?(member.role==='leader'?105000:78000):tag==='support'?62000:56000;
+  if(kind==='politics')return tag==='staff'?(member.role==='leader'?118000:76000):tag==='coalition'?105000:92000;
   if(kind==='modeling')return tag==='agency'?(member.role==='leader'?105000:78000):tag==='campaign'?72000:82000;
   if(kind==='racing')return tag==='engineering'?(member.role==='leader'?150000:115000):tag==='rivals'?185000:98000;
   if(kind==='directing')return tag==='cast'?90000:tag==='department_heads'?110000:member.role==='leader'?155000:120000;

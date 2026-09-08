@@ -35,16 +35,16 @@ Status: green.
 
 In progress. These paths reuse persistent NPC/Social World ownership where recurring people materially change the simulation, without forcing every organization into the six-deep-career lifecycle type.
 
-1. **4E1 Combat Sports Persistent Fight Network:** green; verified by run #56 (`34280932226`) on expanded baseline `16fa2ef74f9b9bf55df62e23efa2d8c15f600b8c`. Persistent gym/circuit worlds now contain exact coaches, training partners, recurring rivals, exact-NPC fight history, bounded roster succession, People/Career identity integration, Leave Path continuity, and AI-semantic combat coverage. Combat regression passed 51/51 after CI caught and the production fix resolved missing head-coach succession.
-2. **4E2 Military Service Ecosystem:** current / deployment pending. Add recurring command, peer, and support relationships; persistent posting/service history; exact commander context for promotions; bounded command succession; People/Career identity continuity; and abstract/non-operational annual unit consequences while preserving the existing enlistment, training, rank, pay, and career-freedom authorities.
-3. **4E3 Politics Ecosystem:** next. Persistent campaign/office staff, colleagues/opponents/constituents as appropriate, office history, and relationship-driven political consequences.
+1. **4E1 Combat Sports Persistent Fight Network:** green; verified by run #56 (`34280932226`) on expanded baseline `16fa2ef74f9b9bf55df62e23efa2d8c15f600b8c`. Persistent gym/circuit worlds contain exact coaches, training partners, recurring rivals, exact-NPC fight history, bounded roster succession, People/Career identity integration, Leave Path continuity, and AI-semantic combat coverage. Combat regression passed 51/51 after CI caught and the production fix resolved missing head-coach succession.
+2. **4E2 Military Service Ecosystem:** green; verified by run #57 (`34285299697`) on expanded baseline `a585471648bd9cfa3ed29b13dfb2e45dbbde6def`. Exact commanders, peers, support personnel, bounded posting rotations, command succession, promotion context, People/Career identity continuity, Leave Path/re-entry, and deterministic passive unit processing passed 65/65 focused checks while all earlier suites remained green.
+3. **4E3 Politics Ecosystem:** current / deployment pending. Add persistent staff, political allies, recurring opposition, bounded exact succession, relationship-driven office consequences, four-year term history, same-level reelection renewal, higher-office chapter transitions, selective personnel continuity, People/Career identity integration, and Leave Path/re-entry while preserving the existing election/campaign and approval authorities.
 4. **Later special-career breadth:** royalty, organized crime, fictional intelligence/other organizations, commune/casino/zoo/museum remain valid later expansion targets, but they do **not** block Phase 5.
 
 ### Phase 4 closeout gate
 
 Phase 4 has an explicit exit line rather than an open-ended feature bucket:
 
-**4E2 Military → 4E3 Politics → one focused Phase 4 integration/consistency closeout → Phase 5.**
+**4E3 Politics → one focused Phase 4 integration/consistency closeout → Phase 5.**
 
 The closeout is for concrete bugs, cross-system consistency, save/performance checks, and regressions exposed by 4E2/4E3. It is not a reason to add every remaining special career before Phase 5. Later Phase-4-style ecosystems may resume after the generational foundation is stronger.
 
@@ -74,6 +74,7 @@ Future Q passes should remain rare and justified by cross-system leverage; gamep
 - Story queue growth stays bounded; do not flood Age Up with stacked narrative interruptions.
 - Testbench commands must route through real GameEngine APIs; availability should reuse real gates/projections when available.
 - Persistent special-career worlds may use the generic `SocialWorld` model without joining the six-deep `SpecialCareerWorldKind` when their lifecycle semantics differ; `special-*` affiliation still belongs to the same People/history ownership model.
+- Political and military persistence must observe existing authoritative career results rather than rolling a second promotion/election authority in the Career World layer.
 - Test-only state must be cloned, use `ai-test-*` slot IDs, and persist only to disposable in-memory storage during regression execution.
 
 ### Later Phase 4 extensions
@@ -84,7 +85,7 @@ Before introducing richer structured persisted Phase 4 objects, decide whether s
 
 ## Phase 5 — Generations / estates
 
-Begins after 4E2, 4E3, and the focused Phase 4 closeout. Planned: asset-specific wills, fictionalized estate administration/tax handling, richer NPC-owned assets/businesses, broader kin taxonomy if justified, and large-family/multi-generation performance validation.
+Begins after 4E3 and the focused Phase 4 closeout. Planned: asset-specific wills, fictionalized estate administration/tax handling, richer NPC-owned assets/businesses, broader kin taxonomy if justified, and large-family/multi-generation performance validation.
 
 ## Phase 6 — Credit / debt
 

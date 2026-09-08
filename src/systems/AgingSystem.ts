@@ -18,6 +18,7 @@ import { processFameYear } from './FameSystem';
 import { processLegalYear } from './CrimeSystem';
 import { processSpecialCareersYear } from './SpecialCareerSystem';
 import { processMilitaryCareerYear } from './MilitaryCareerWorldSystem';
+import { processPoliticsCareerYear } from './PoliticsCareerWorldSystem';
 import { processSpecialCareerStoriesYear } from './SpecialCareerStorySystem';
 import { processAnnualFinance } from './FinanceSystem';
 import { processStressConsequencesYear } from './StressConsequenceSystem';
@@ -53,6 +54,8 @@ export function ageUp(state:GameState):EngineResult {
     processSpecialCareersYear(state);
     // Generic military promotion/progression settles first; the persistent unit then binds that year to exact people/history.
     processMilitaryCareerYear(state);
+    // Generic political approval settles first; the persistent office then applies relationship-driven context and term continuity.
+    processPoliticsCareerYear(state);
     // Career story openings are selected only after this age's worlds/projects/contracts have settled.
     processSpecialCareerStoriesYear(state);
     processAnnualFinance(state);

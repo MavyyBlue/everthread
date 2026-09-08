@@ -13,6 +13,7 @@ function n(record:Track,key:string,def=0){return typeof record[key]==='number'?N
 function activeWorlds(state:GameState,key:SpecialCareerPathKey){return WORLD_KEYS.has(key)?specialCareerWorlds(state,key as SpecialCareerWorldKind).filter(world=>world.active):[];}
 function activeCombatWorlds(state:GameState){return (state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-combat-'));}
 function activeMilitaryWorlds(state:GameState){return (state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-military-'));}
+function activePoliticsWorlds(state:GameState){return (state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-politics-'));}
 
 export function specialCareerExitGate(state:GameState,key:SpecialCareerPathKey):CommitmentGate{
   if(!isSpecialCareerPathActive(state,key))return{allowed:false,message:`${specialCareerPathLabel(key)} is not currently an active special-career commitment.`};
@@ -36,6 +37,7 @@ function closePersistentWorlds(state:GameState,key:SpecialCareerPathKey){
   for(const world of activeWorlds(state,key))archiveSpecialCareerWorld(world,state.character.age);
   if(key==='combat')for(const world of activeCombatWorlds(state))archiveSpecialCareerWorld(world,state.character.age);
   if(key==='military')for(const world of activeMilitaryWorlds(state))archiveSpecialCareerWorld(world,state.character.age);
+  if(key==='politics')for(const world of activePoliticsWorlds(state))archiveSpecialCareerWorld(world,state.character.age);
 }
 
 /**
@@ -66,7 +68,7 @@ export function leaveSpecialCareer(state:GameState,key:SpecialCareerPathKey):Eng
   if(key==='racing'){c.racingPathway=false;c.contractActive=false;c.contractOfferPending=false;c.freeAgent=false;c.retired=false;c.contractRemaining=0;}
   if(key==='modeling'){c.agencyOfferPending=false;c.agencyContractActive=false;c.agencyStatus='inactive';c.campaignActive=false;}
   if(key==='music'){c.partnershipOfferPending=false;c.partnershipActive=false;}
-  if(key==='politics'){c.office=0;}
+  if(key==='politics'){c.office=0;c.status='left politics';}
   if(key==='military'){c.status='left service';}
   if(key==='crimeOrg'){c.rank='Former member';}
   closePersistentWorlds(state,key);

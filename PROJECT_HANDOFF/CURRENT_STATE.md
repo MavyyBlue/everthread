@@ -8,76 +8,85 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `16fa2ef74f9b9bf55df62e23efa2d8c15f600b8c`.
+The latest fully green expanded baseline is commit `a585471648bd9cfa3ed29b13dfb2e45dbbde6def`.
 
-- GitHub Actions run #56 (`34280932226`), job `102245248914`, completed successfully on 2026-09-08.
-- Run #56 expanded uploaded correction commit `3ea3f22ad6a2d8e44a20e8c6b78fd76fbc5909d7` into the build-bot commit above.
+- GitHub Actions run #57 (`34285299697`), job `102259367746`, completed successfully on 2026-09-08.
+- Run #57 expanded uploaded commit `1b78e6ea958b18b7814b93c50b71105bd0ed5145` into the build-bot commit above.
 - Source-overlay import, dependency install, engine/test typechecks, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
-- Phase 4E1 Combat Sports Persistent Fight Network passed 51/51 checks after run #55 correctly exposed a real missing-head-coach succession edge case and the production roster logic was fixed rather than weakening the regression.
+- Phase 4E2 Military Service Ecosystem passed 65/65 checks.
+- Phase 4E1 Combat Sports Persistent Fight Network remained green at 51/51 checks.
 - Phase 4D8B path-specific multi-year career arcs remained green at 68/68 checks.
 - Phase 4Q1 AI Interaction Testbench remained green at 41/41 checks and remains test-only.
 - Existing specialized suites remained green, including 82/82 core, 77/77 Career World, 48/48 lifecycle, 37/37 generic career-story, 25/25 influence, and 8/8 contextual-information checks.
-- Pages artifact `10077583075` deployed successfully. Save schema remains 9.
+- Pages artifact `10079232516` deployed successfully. Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
 ## Phase 4E1 combat-sports persistent fight network — green
 
-Combat sports now uses generic `SocialWorld` ownership under `special-combat-*` for persistent coaches, training partners, and recurring rivals. Exact rivals are used in sanctioned fictional bout history, NPC memories, and relationship consequences. Leave Path archives the gym/circuit without deleting people or history, and legal re-entry creates a new active chapter. Passive roster maintenance uses deterministic substreams and does not consume the core player RNG stream.
+Combat sports uses generic `SocialWorld` ownership under `special-combat-*` for persistent coaches, training partners, and recurring rivals. Exact rivals are used in sanctioned fictional bout history, NPC memories, and relationship consequences. Leave Path archives the gym/circuit without deleting people or history, and legal re-entry creates a new active chapter. Passive roster maintenance uses deterministic substreams and does not consume the core player RNG stream.
 
 The combat ecosystem is live and playable through the existing Career → Life Paths actions. People → Career Worlds discovers the persistent combat affiliations without a separate People implementation, and Career Identity projects active combat roles over unrelated autonomous NPC occupations without mutating `NpcLifeSystem` career truth.
 
-## Current work — Phase 4E2 military service ecosystem
+## Phase 4E2 military service ecosystem — green
 
-This overlay is **deployment pending** until GitHub Actions passes. It builds on the run #56 baseline and preserves the existing military enlistment, training, rank progression, finance, commitment, and Leave Path authorities.
+Military service uses generic `SocialWorld` ownership under `special-military-*` for exact commanders, service peers, and support personnel. Persistent postings last a bounded 3–6 years, archive cleanly, and preserve every NPC/relationship/history link. Command succession maintains one exact living leader, passive unit processing uses a deterministic substream, and existing generic military rank progression remains the sole promotion authority.
 
-### Persistent unit ownership
+Career Identity projects exact military-world roles over unrelated autonomous jobs while leaving underlying NPC career truth untouched. People → Career Worlds discovers current/former unit affiliations automatically. Leave Path archives the current posting immediately, and later legal re-entry creates a new unit chapter. The player’s branch-aware career label avoids duplicated `Service` wording.
 
-Military service gains a generic persistent organization namespace under `special-military-*` rather than widening the six-deep `SpecialCareerWorldKind`.
+## Current work — Phase 4E3 politics ecosystem
 
-- ordinary `Npc` records own exact commanders, service peers, and support personnel;
-- generic `SocialWorld` records own active/former unit membership and posting history;
-- ordinary Relationships own boss/coworker ties and their later personal evolution;
-- the existing flat military special-career track keeps bounded current-unit metrics and exact recent references only.
+This overlay is **deployment pending** until GitHub Actions passes. It builds directly on the run #57 baseline and preserves the existing campaign outcome, campaign cost, political action economy, approval drift, commitment, and Leave Path authorities.
 
-The first annual service-processing pass after enlistment creates a persistent fictional unit with a bounded command team, service peers, and support personnel. Old active military saves without a unit gain one naturally on their next Age Up without a save migration.
+### Persistent office ownership
 
-### Service consequences and continuity
+Politics gains a generic persistent organization namespace under `special-politics-*` rather than widening the six-deep `SpecialCareerWorldKind`.
 
-Annual unit processing uses a dedicated deterministic substream and does not consume `state.rngCounter`.
+- ordinary `Npc` records own exact staff, political allies, and recurring opposition figures;
+- generic `SocialWorld` records own active/former political-office affiliation history;
+- ordinary Relationships own coworker/enemy ties and their later personal evolution;
+- the existing flat politics special-career track keeps only bounded current-office metrics and exact recent references.
 
-- dead personnel leave active affiliation and are replaced only to bounded minimums;
-- loss of a commander establishes one exact living replacement rather than leaving phantom authority;
-- command support, unit cohesion, unit prestige, and service standing remain bounded projections;
-- strong command/cohesion can modestly improve confidence/discipline, while poor support/cohesion can add stress;
-- existing generic rank progression remains the sole promotion authority;
-- when that authority creates a rank-up, the military layer contextualizes the existing timeline entry to the exact current commander/unit and gives that commander a shared memory rather than creating a duplicate promotion;
-- postings last a deterministic bounded 3–6 years, then archive as service history and create a new exact unit chapter;
-- unit names are kept distinct across long service histories, with bounded NPC growth.
+A successful existing election still decides whether the player holds office. On the next annual political processing pass, Everthread creates the persistent political world around that office. Losing an election does not create a phantom office world.
 
-This remains gameplay-focused and abstract/non-operational. No practical military or weapons instruction is added.
+### Office continuity and relationship-driven consequences
 
-### Career identity, exit, and People continuity
+Annual political-world processing uses a dedicated deterministic substream and does not consume `state.rngCounter`.
 
-Career Identity now recognizes active military-world affiliation for NPC profiles: exact commanders, command staff, service peers, and unit specialists outrank an unrelated autonomous standard occupation in presentation while the underlying NPC career truth remains untouched.
+- active office staff, coalition allies, and opposition remain bounded small rosters;
+- deceased personnel leave active affiliation and are replaced only to configured minimums;
+- loss of a chief of staff or principal opposition leader establishes an exact living successor without deleting the former NPC;
+- staff support, coalition support, opposition pressure, office prestige, and political standing remain bounded projections;
+- strong staff/coalition relationships can modestly improve approval/confidence, while weak support or intense opposition can add stress or approval pressure;
+- ordinary relationship and hidden-opinion state can drift from sustained approval, so political career outcomes are not isolated from persistent NPC sentiment;
+- read-only Career Identity projects current staff/allies/opponents as political roles instead of unrelated autonomous jobs while the political affiliation is active.
 
-The player’s existing branch-aware identity is preserved, with one consistency fix: a branch already named `Air Service` now displays as `Air Service`, not `Air Service Service`.
+Politics remains fictional/abstract. This slice does not provide practical campaigning, lobbying, fundraising, persuasion, or electioneering instructions.
 
-People → Career Worlds already discovers all `special-*` organizations, so current and former military contacts work without parallel People UI. Leave Path archives the current unit immediately while preserving every NPC, relationship, memory, and prior posting. A later legal re-entry creates a new active military posting while prior units stay historical.
+### Terms, elections, and office history
 
-No structured player-save object or migration is added; save schema remains 9.
+The existing `enterPolitics()` result remains the only election authority. The political Career World observes that result rather than rolling a second election.
 
-### 4E2 validation
+- the first office chapter receives a bounded four-year term marker;
+- a later same-level election win renews the same office chapter instead of duplicating it;
+- winning a different office level archives the prior office and creates a new persistent political chapter;
+- selected strong living staff/allies/opponents may continue into the next chapter, preserving believable political history while limiting NPC growth;
+- an unrenewed term archives the current office, clears the active political commitment, and leaves former political people/history intact;
+- Leave Path archives the active political world immediately and a later legal return creates a new chapter rather than resurrecting an archived one.
 
-`militaryCareerWorldRegression.ts` adds 65 focused checks covering age/record enlistment gates, bounded roster creation, exact commander ownership, People integration, player/NPC career identity, read-only projections, existing training/action-economy behavior, RNG discipline, annual idempotence, relationship clocks, dead-peer replacement, command succession, exact promotion context/memory, posting rotation/history, Leave Path archival behavior, legal re-entry through the real `GameEngine`, normal Age Up integration, long-service population bounds, and unique persistent unit identities.
+No structured player-save object or migration is added; save schema remains 9. Existing politics saves with office state gain their first persistent office naturally through annual processing.
 
-The general 41/41 AI interaction testbench remains unchanged in this slice because there is not yet a shared exported military-enlist availability gate that covers both age/criminal-record eligibility and commitment rules. 4E2 avoids duplicating those rules inside test-only code; its integration regression calls the real existing `GameEngine.enlist()` / `GameEngine.ageUp()` path instead. Semantic military actions can be added later when availability can reuse one authoritative gate.
+### 4E3 validation
+
+`politicsCareerWorldRegression.ts` adds a broad focused suite covering existing age/budget/commitment campaign gates, deterministic office-world creation, bounded exact rosters, People integration, player/NPC career identity, read-only projections, core-RNG discipline, annual idempotence, relationship clocks, staff/opposition succession, approval/support consequences, same-level reelection, higher-office transitions, selective persistent carryover, term expiry, Leave Path/re-entry through the real `GameEngine`, deterministic seeded casts, unique office identities, and multi-term population bounds.
+
+The general 41/41 AI interaction testbench remains unchanged in this slice; 4E3 integration uses the real `GameEngine.campaign()` / `GameEngine.ageUp()` path directly rather than adding a duplicate politics-availability implementation to test-only code.
 
 ## Phase 4 exit line
 
-The agreed development timeline is now explicit:
+The agreed development timeline remains explicit:
 
-**4E2 Military → 4E3 Politics → one focused Phase 4 integration/consistency closeout → Phase 5 Generations / Estates.**
+**4E3 Politics → one focused Phase 4 integration/consistency closeout → Phase 5 Generations / Estates.**
 
 Royalty, organized crime, fictional intelligence organizations, commune/casino/zoo/museum, and other special-career breadth remain valid future expansions but do not block Phase 5.
 
