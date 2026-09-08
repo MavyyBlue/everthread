@@ -33,7 +33,7 @@ export function runSpecialCareerStoryRegression(){
   verify(specialCareerStoryEvents.length===6,'1 the 4D8A content slice must define six explicit chain beats');
   verify(Object.keys(specialCareerStoryEventById).length===6,'2 story event ids must remain unique in the dedicated delayed-event registry');
 
-  const mentor=modelingFixture('story-mentor-chain');const mentorRng=mentor.state.rngCounter;const mentorScore=mentor.leaderRel.score;
+  const mentor=modelingFixture('story-mentor-chain');const mentorRng=mentor.state.rngCounter;const mentorScore=mentor.leaderRel.score;const mentorOpinion=mentor.state.npcs[mentor.leaderId]!.hiddenOpinion;
   verify(queueSpecialCareerStoryStart(mentor.state,'mentor','modeling',mentor.world.id,mentor.leaderId),'3 a real Career World leader must be queueable as an exact mentor-story target');
   verify(mentor.state.rngCounter===mentorRng,'4 queuing a story opening must not consume the core simulation RNG stream');
   const openingDelay=mentor.state.delayedEvents.find(event=>event.eventId==='special_career_mentor_opening');
@@ -46,7 +46,7 @@ export function runSpecialCareerStoryRegression(){
   verify(opening?.eventId==='special_career_mentor_opening','9 the standard delayed-event pipeline must load dedicated special-career story definitions');
   verify(opening?.description.includes(`${mentor.state.npcs[mentor.leaderId]!.firstName} ${mentor.state.npcs[mentor.leaderId]!.lastName}`),'10 the opening copy must render the exact persistent NPC name');
   verify(resolvePendingEvent(mentor.state,'accept').success,'11 accepting mentor guidance must resolve through the normal event-choice engine');
-  verify(mentor.leaderRel.score===mentorScore+7,'12 mentor choices must feed the existing Relationship/hidden-opinion systems rather than a parallel professional graph');
+  verify(mentor.leaderRel.score===Math.min(100,mentorScore+7)&&mentor.state.npcs[mentor.leaderId]!.hiddenOpinion>mentorOpinion,'12 mentor choices must feed the bounded Relationship/hidden-opinion systems rather than a parallel professional graph');
   const mentorFollow=mentor.state.delayedEvents.find(event=>event.eventId==='special_career_mentor_followthrough');
   verify(mentorFollow?.dueAge===30&&mentorFollow.payload?.npcId===mentor.leaderId,'13 the mentor follow-up must preserve the exact NPC two years later');
 
