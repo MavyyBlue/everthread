@@ -7,6 +7,7 @@ import { activeSpecialCareerWorld, ensureSpecialCareerWorld, processSpecialCaree
 import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear } from './SpecialCareerEcosystemSystem';
 import { beginActingProject, beginDirectingProject, screenCareerOffer } from './ScreenCareerCycleSystem';
 import { beginMusicTour, launchMusicRelease, musicPartnershipDecision, processMusicCareerYear } from './MusicCareerCycleSystem';
+import { processCombatCareerYear, takeCombatFight, trainCombatCareer } from './CombatCareerWorldSystem';
 
 type CareerTrack = Record<string, number | string | boolean>;
 const track = (state:GameState,key:keyof GameState['specialCareers']) => (state.specialCareers[key] ??= {}) as CareerTrack;
@@ -32,6 +33,7 @@ export function processSpecialCareersYear(state:GameState){
     if(key==='crimeOrg'&&r.active===true){setN(r,'standing',clamp(n(r,'standing',30)+rng.int(-4,5)));}
   }
   state.rngCounter=rng.counter();
+  processCombatCareerYear(state);
   processSpecialCareerWorldsYear(state);
   processSpecialCareerEcosystemsYear(state);
   processMusicCareerYear(state);
@@ -112,13 +114,8 @@ export function pursueProSports(state:GameState,miniGameScore?:number):EngineRes
   state.rngCounter=rng.counter();return{success,messages:[{text}]};
 }
 
-export function trainCombat(state:GameState):EngineResult {
-  if(state.character.age<12)return{success:false,messages:[{text:'Combat-sport training is not available yet.'}]};const gate=consumeAction(state,{policy:'special.training',target:'combat'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const r=track(state,'combat');r.active=true;setN(r,'striking',clamp(n(r,'striking',state.character.talents.combat*.3)+3));setN(r,'grappling',clamp(n(r,'grappling',state.character.talents.combat*.3)+3));setN(r,'defense',clamp(n(r,'defense',25)+2));setN(r,'stamina',clamp(n(r,'stamina',state.health.fitness)+3));setN(r,'fightIQ',clamp(n(r,'fightIQ',state.character.stats.intelligence*.4)+2));state.health.fitness=clamp(state.health.fitness+2);return{success:true,messages:[{text:'You trained your combat-sport skills.'}]};
-}
-
-export function takeFight(state:GameState,miniGameScore?:number):EngineResult {
-  const r=track(state,'combat');if(state.character.age<16||!r.active)return{success:false,messages:[{text:'You are not ready for a sanctioned fictional bout.'}]};const gate=consumeAction(state,{policy:'special.fight'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-fight`,state.rngCounter);const power=(n(r,'striking')+n(r,'grappling')+n(r,'defense')+n(r,'stamina')+n(r,'fightIQ'))/5;const opp=rng.int(28,92);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.35;const win=rng.chance(clamp(50+(power-opp)*1.2+challengeBonus,8,92)/100);setN(r,'fights',n(r,'fights')+1);if(win){setN(r,'wins',n(r,'wins')+1);setN(r,'reputation',clamp(n(r,'reputation')+5));state.finances.cash+=Math.round(500+n(r,'reputation')*300);state.fame.fame=clamp(state.fame.fame+2);}else{setN(r,'losses',n(r,'losses')+1);state.character.stats.health=clamp(state.character.stats.health-rng.int(1,8));}if(n(r,'wins')>=10&&n(r,'reputation')>=65)setN(r,'titles',Math.max(1,n(r,'titles')));state.rngCounter=rng.counter();return{success:win,messages:[{text:win?'You won the fictional professional bout.':'You lost the bout. The result was simulated from your abstract skills.'}]};
-}
+export function trainCombat(state:GameState):EngineResult {return trainCombatCareer(state);}
+export function takeFight(state:GameState,miniGameScore?:number):EngineResult {return takeCombatFight(state,miniGameScore);}
 
 export function enlistMilitary(state:GameState,branch:string,officer=false):EngineResult {
   if(state.character.age<18)return{success:false,messages:[{text:'Military service requires adulthood.'}]};if(state.legal.criminalRecord.some(r=>r.convicted))return{success:false,messages:[{text:'Your criminal record prevents entry under current game rules.'}]};const r=track(state,'military');if(r.active===true)return{success:false,messages:[{text:'You are already in military service.'}]};r.active=true;r.branch=branch;r.path=officer?'officer':'enlisted';setN(r,'rank',officer?2:1);setN(r,'skill',40);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You joined the ${branch} on the ${officer?'officer':'enlisted'} path.`});return{success:true,messages:[{text:'You entered military service.'}]};

@@ -9,7 +9,8 @@ import {
   specialCareerRetirementGate,
   type DeepCareerPath,
 } from '../systems/SpecialCareerLifecycleSystem';
-import { specialCareerStartGate, type SpecialCareerPathKey } from '../systems/CommitmentSystem';
+import { isSpecialCareerPathActive, specialCareerStartGate, type SpecialCareerPathKey } from '../systems/CommitmentSystem';
+import { actionGateStatus } from '../core/actionEconomy';
 import { specialCareerWorlds } from '../systems/SpecialCareerWorldSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
@@ -155,6 +156,11 @@ function careerActions(state:GameState):AiActionView[]{
   add(gateAction('career.music.song','Release a song',specialCareerStartGate(state,'music')));
   add(gateAction('career.music.album','Release an album',specialCareerStartGate(state,'music')));
   add(gateAction('career.music.tour','Start a music tour',specialCareerStartGate(state,'music')));
+  const combatStart=specialCareerStartGate(state,'combat');
+  const combatTrainGate=combatStart.allowed?actionGateStatus(state,{policy:'special.training',target:'combat'}):combatStart;
+  const combatFightGate=!isSpecialCareerPathActive(state,'combat')?{allowed:false,message:'Begin combat-sport training before taking a fight.'}:actionGateStatus(state,{policy:'special.fight'});
+  add(gateAction('career.combat.train','Train in combat sports',combatTrainGate));
+  add(gateAction('career.combat.fight','Take a combat-sport bout',combatFightGate,['score']));
   add(primaryAction('career.modeling.lesson','Take a modeling lesson',state));
   add(gateAction('career.modeling.audition','Attend a modeling audition',specialCareerStartGate(state,'modeling')));
   add(gateAction('career.modeling.photoshoot','Book a modeling photoshoot',specialCareerStartGate(state,'modeling')));
@@ -285,6 +291,7 @@ function additionalInvariantIssues(state:GameState){
   const spouses=state.relationships.filter(rel=>rel.type==='spouse'&&!rel.estranged&&state.npcs[rel.npcId]?.alive);if(spouses.length>1)issues.push('multiple living active spouses');
   const delayedIds=new Set<string>();for(const delayed of state.delayedEvents){if(delayedIds.has(delayed.id))issues.push(`duplicate delayed-event id ${delayed.id}`);delayedIds.add(delayed.id);}
   for(const path of DEEP_PATHS){if(specialCareerWorlds(state,path).filter(world=>world.active).length>1)issues.push(`multiple active ${path} Career Worlds`);}
+  if((state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-combat-')).length>1)issues.push('multiple active combat Career Worlds');
   return issues;
 }
 
@@ -336,6 +343,8 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     case'career.music.song':return engine.musicRelease('song');
     case'career.music.album':return engine.musicRelease('album');
     case'career.music.tour':return engine.musicTour();
+    case'career.combat.train':return engine.combatTrain();
+    case'career.combat.fight':return engine.combatFight(typeof command.args?.score==='number'?command.args.score:undefined);
     case'career.modeling.lesson':return engine.model('lesson');
     case'career.modeling.audition':return engine.model('audition');
     case'career.modeling.photoshoot':return engine.model('photoshoot');

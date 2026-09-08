@@ -29,8 +29,17 @@ In progress.
 11. **4D7A Special-career lifecycle foundation:** green; verified by run #47.
 12. **4D7B Player-facing retirement/comeback + residual end-state economics:** green; verified by run #48. Compact lifecycle status/actions are live; creative comebacks and final athletic retirement are coherent; music residual royalties preserve signed distribution terms without phantom career/world progression.
 13. **4D8A Targeted career-story foundation:** green; verified by run #50. Exact persistent Career World NPCs can carry bounded three-beat mentor/rivalry chains across years and archived worlds through the existing delayed-event system.
-14. **4D8B Path-specific multi-year arcs:** current / deployment pending. Six two-beat history arcs resurface exact recently archived collaborators in acting, music, modeling, sports, racing, and directing. Consequences feed existing relationship/public/stat systems without directly creating career offers, reactivating worlds, or bypassing retirement/comeback gates. The slice includes a real AI-testbench Age Up/event-choice playthrough in its regression coverage.
-15. **4D8C Optional hardening/content expansion:** only if playtesting or queue/performance profiling shows the need before moving to later special-path ecosystems. Candidate later additions include true repeat-collaborator casting and story-originated opportunity offers routed through existing path-specific lifecycle APIs.
+14. **4D8B Path-specific multi-year arcs:** green; verified by run #54 (`34276175071`) on expanded baseline `3f63ceea5272b8419e31e099bf1a9cc84f0ccab8`. Six two-beat history arcs resurface exact recently archived collaborators in acting, music, modeling, sports, racing, and directing. The path-story suite passed 68/68 and the AI testbench remained 41/41.
+15. **4D8C Optional hardening/content expansion:** deferred unless playtesting or queue/performance profiling exposes a concrete need. Candidate later additions include true repeat-collaborator casting and story-originated opportunity offers routed through existing path-specific lifecycle APIs.
+
+### Phase 4E — Additional persistent special-career ecosystems
+
+In progress. These paths should reuse persistent NPC/Social World ownership where recurring people materially change the simulation, without forcing every organization into the six-deep-career lifecycle type.
+
+1. **4E1 Combat Sports Persistent Fight Network:** current / deployment pending. Persistent gym/circuit world with exact coaches, training partners, recurring rivals, exact-NPC fight history, bounded annual roster replacement, People/Career identity integration, Leave Path archive continuity, and AI-semantic combat interaction coverage.
+2. **4E2 Military Service Ecosystem:** planned candidate after 4E1. Recurring command/peer/unit relationships, posting/service history, promotion context, and consequences should remain abstract/non-operational.
+3. **4E3 Politics Ecosystem:** planned. Persistent campaign/office staff, colleagues/opponents/constituents as appropriate, office history, and relationship-driven political consequences.
+4. **Later 4E:** royalty, organized crime, fictional intelligence/other organizations, commune/casino/zoo/museum where persistent people add genuine simulation depth.
 
 ### Phase 4Q — Cross-cutting quality infrastructure
 
@@ -57,11 +66,12 @@ Future Q passes should remain rare and justified by cross-system leverage; gamep
 - Archived Career Worlds remain archived when a later story references them.
 - Story queue growth stays bounded; do not flood Age Up with stacked narrative interruptions.
 - Testbench commands must route through real GameEngine APIs; availability should reuse real gates/projections when available.
+- Persistent special-career worlds may use the generic `SocialWorld` model without joining the six-deep `SpecialCareerWorldKind` when their lifecycle semantics differ; `special-*` affiliation still belongs to the same People/history ownership model.
 - Test-only state must be cloned, use `ai-test-*` slot IDs, and persist only to disposable in-memory storage during regression execution.
 
 ### Later Phase 4 extensions
 
-Extend persistent worlds/depth to military, politics, royalty, organized crime, fictional intelligence/other organizations, and combat sports where recurring NPCs create meaningful simulation rather than another isolated menu.
+After the 4E foundations, continue only where persistent people and systemic consequences justify the extra world state. Organization breadth without meaningful NPC continuity is not completion.
 
 Before introducing richer structured persisted Phase 4 objects, decide whether save schema 10 is justified. Flat bounded primitive additions remain acceptable while schema 9 can represent them safely.
 

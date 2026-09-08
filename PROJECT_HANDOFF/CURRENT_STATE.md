@@ -8,80 +8,66 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `e55a43b1c3b90f93a080e73fe98dd81c40a9b871`.
+The latest fully green expanded baseline is commit `3f63ceea5272b8419e31e099bf1a9cc84f0ccab8`.
 
-- GitHub Actions run #53 (`34270610218`), job `102210955082`, completed successfully on 2026-09-08.
-- Run #53 expanded uploaded commit `d650a668ef8dc2ae9a24d96490ea7db59d23de5b` into the build-bot commit above.
+- GitHub Actions run #54 (`34276175071`), job `102229611302`, completed successfully on 2026-09-08.
+- Run #54 expanded uploaded commit `af8ab50b3a5bdd59822e41144fa2033a864febc4` into the build-bot commit above.
 - Source-overlay import, dependency install, engine/test typechecks, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
-- Phase 4Q1 AI Interaction Testbench passed 41/41 checks and remains test-only; no player UI, player-save metadata, or schema changes were introduced.
-- Phase 4D8A targeted multi-year career stories remain green at 37/37 checks.
-- Existing specialized suites remained green, including 48/48 special-career lifecycle checks, 25/25 influence checks, and 8/8 contextual-information checks.
-- Save schema remains 9.
+- Phase 4D8B path-specific multi-year career arcs passed 68/68 checks; the dedicated special-career story registry is now 18 beats while remaining outside the ordinary random-event pool.
+- Phase 4Q1 AI Interaction Testbench remained green at 41/41 checks and successfully exercised the 4D8B player-flow regression.
+- Existing specialized suites remained green, including 82/82 core, 77/77 Career World, 48/48 lifecycle, 37/37 generic career-story, 25/25 influence, and 8/8 contextual-information checks.
+- Pages artifact `10075800421` deployed successfully. Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-## Current work — Phase 4D8B path-specific multi-year career arcs
+## Current work — Phase 4E1 combat-sports persistent fight network
 
-This overlay is **deployment pending** until GitHub Actions passes. 4D8B extends the 4D8A scheduler rather than creating a second narrative engine.
+This overlay is **deployment pending** until GitHub Actions passes. 4D8C remains optional because run #54 exposed no queue, lifecycle, or performance defect that justifies delaying the next gameplay ecosystem. 4E1 therefore begins the next outward Phase 4 expansion with combat sports.
 
-### Recent-history resurfacing
+### Persistent combat Career World
 
-The generic 4D8A mentor/rival lane is intentionally unchanged: it begins only from a current or just-completed Career World. 4D8B adds a separate read-only candidate projection for recently archived professional worlds so old career history can surface later without reactivating the archived world.
+Combat sports now uses the same authoritative ownership model as the rest of Everthread without being forced into the six-deep-career lifecycle type:
 
-- Acting can reconnect with former cast/crew from a production archived within the last six years.
-- Music can reconnect with former management/creative collaborators from a recently archived music world.
-- Professional sports can resurface former coaching/team relationships for up to seven years after a team world ends.
-- Modeling can reconnect with former agency/campaign contacts.
-- Motorsport can resurface former engineering/race-team contacts for up to seven years.
-- Directing can reconnect with former department heads/producers/cast.
-- Exact targets must still be living, connected, non-estranged, non-enemy former collaborators with a sufficient relationship score.
-- The system chooses at most one strongest eligible collaborator per archived world and weights recency, relationship strength, hidden opinion, and leadership role.
-- Path-specific stories use a five-year per-career cooldown and bounded lineage markers on the existing flat special-career track.
+- normal `Npc` records own persistent coaches, training partners, and circuit rivals;
+- the existing `SocialWorld` model owns gym/circuit affiliation history under `special-combat-*`;
+- the ordinary Relationship system owns coach/coworker/enemy relationships and later personal evolution; and
+- the existing combat special-career track stores only bounded career metrics and exact recent references.
 
-### Shared scheduler and lifecycle safety
+A first successful training block creates one persistent combat organization with an original gym identity, a bounded coaching team, training partners, and recurring rivals. Annual processing uses a dedicated deterministic substream to replace dead roster members only up to minimum group size, drift gym prestige, and derive coach support, training chemistry, rivalry pressure, and career momentum. The core player RNG stream is not consumed by passive roster/world maintenance.
 
-Path stories share the same 4D8 scheduler, deterministic RNG substream, one-start-per-age rule, and two-beat queue cap as mentor/rival stories.
+Combat deliberately remains outside `SpecialCareerWorldKind` for this slice. That type still describes the six deep acting/music/sports/modeling/racing/directing ecosystems with their own lifecycle/story configuration. Reusing `SocialWorld` directly avoids widening every deep-career `Record<SpecialCareerWorldKind,...>` merely to gain persistence.
 
-- `storyPathLastStartAge`, `storyPathArcStarts`, `storyPathLastNpcId`, `storyPathLastWorldId`, and `storyPathLastArc` are bounded primitives on the existing career track; no new structured story graph or schema migration is added.
-- Direct queue validation binds each path arc to the correct career kind, a recent archived Career World, an exact eligible former member, and real career evidence.
-- Story choices use only existing EventSystem effects: relationship/hidden opinion, happiness, fame/public reputation, confidence, creativity, charisma, athleticism, discipline/willpower/karma, and stress.
-- No path-story effect creates a project, release, contract, team, agency agreement, Career World, retirement, dismissal, or comeback.
-- Creative careers remain retired/stepped-away until a later successful professional action passes the normal `specialCareerStartGate` / re-entry rules.
-- Professional sports and motorsport retirement remain final for the life even when former colleagues reconnect socially.
-- Archived worlds remain archived throughout every story beat.
+### Exact opponents and systemic consequences
 
-### 4D8B content
+The old anonymous combat opponent roll is replaced by exact persistent rivals from the active combat world.
 
-The dedicated special-career story registry grows from 6 to 18 beats while remaining outside the ordinary 691-event random pool.
+- A sanctioned fictional bout selects a living NPC from the persisted rival group.
+- The exact opponent ID, world ID, result, age, and purse are retained on bounded combat-track markers.
+- Timeline history names and links the exact opponent.
+- The rival receives a `combat_bout` memory and the normal relationship/hidden-opinion system changes.
+- Existing abstract striking/grappling/defense/stamina/fight-IQ, health, fame, reputation, purse, and title mechanics remain the outcome inputs/consequences.
+- The existing `special.fight` action budget still permits at most two major bouts per age.
+- Dead rivals cannot remain eligible opponents; bounded annual roster maintenance replaces them without deleting the old NPC or affiliation history.
 
-Six new two-beat path arcs are defined:
+This remains gameplay-focused and abstract. It does not add practical real-world fighting instruction.
 
-- Acting — `The Cast List Again` → `One More Scene`
-- Music — `The Song That Came Back` → `Second Life`
-- Modeling — `The Old Booking Book` → `Back in the Room`
-- Professional sports — `Message From the Old Locker Room` → `What They Remember`
-- Motorsport — `An Old Engineer Calls` → `The Data They Kept`
-- Directing — `The Crew Still Talks` → `Another Set, Maybe`
+### Career identity, exit, and People continuity
 
-These are deliberately opportunity-context stories rather than automatic employment offers. Their consequences feed systems the real career mechanics already consume, so later auditions, releases, bookings, seasons, free-agent profiles, or directing work can benefit or suffer naturally without bypassing lifecycle ownership.
+Combat-world affiliation integrates with existing cross-system coherence:
 
-### 4D8B validation
+- active combat commitment continues to display the player as `Combat Athlete`;
+- active coach/athlete affiliation can override an unrelated autonomous standard job in NPC profile presentation, using the same read-only role/income projection rule established for other special careers;
+- People → Career Worlds already discovers all `special-*` organization affiliations, so combat contacts appear there without a parallel People implementation;
+- Leave Path archives the active combat world while preserving every NPC, relationship, memory, and former affiliation; and
+- a later legal re-entry creates a new active combat world while the earlier one remains archived.
 
-`specialCareerPathStoryRegression.ts` adds 68 focused checks covering:
+No player save metadata or structured state object is added; save schema remains 9.
 
-- all six path-specific candidate families and exact archived-world targets;
-- active/just-ended/too-old world exclusion;
-- dead/estranged target cancellation before a new opening;
-- path/career mismatch rejection;
-- bounded cooldown and lineage markers;
-- no core-RNG consumption by direct queueing or annual story scanning;
-- exact NPC continuity across delayed beats and changing personal relationship types;
-- archived-world preservation and no retirement/comeback mutation;
-- final sports/racing retirement protection;
-- same-age scanner idempotence and one-start-per-age bounds; and
-- a real AI-testbench playthrough that Ages Up through `GameEngine`, receives the new acting reunion event, resolves the choice through EventSystem, and verifies zero invariant failures.
+### 4E1 validation
 
-The existing 4D8A regression remains 37 checks and now expects the combined 18-event dedicated registry.
+`combatCareerWorldRegression.ts` adds 51 focused checks covering underage gating, bounded world creation, exact coaches/rivals, People affiliation, NPC/player career identity, action-economy limits, exact fight targets/memories/timeline references, core RNG discipline, annual idempotence, dead-roster replacement, read-only projections, Leave Path archive semantics, re-entry without world resurrection, and AI-testbench semantic training/fighting through the real `GameEngine`.
+
+The AI testbench gains `career.combat.train` and `career.combat.fight` commands. Their availability reuses `specialCareerStartGate`, `isSpecialCareerPathActive`, and the real action-economy policies rather than duplicating combat eligibility rules. Its invariant watch also rejects multiple simultaneously active `special-combat-*` worlds.
 
 ## Phase 4Q1 AI interaction testbench — green
 
@@ -94,16 +80,13 @@ The existing 4D8A regression remains 37 checks and now expects the combined 18-e
 - Test metadata stays outside `GameState` and save schema 9.
 - The suite runs inside `npm test`, so a semantic interaction failure blocks the production build/deployment gate.
 
-4D8B is the first gameplay slice to actively use this testbench as part of its own feature validation.
+4D8B was the first gameplay slice to actively use this testbench; 4E1 extends the semantic surface to combat training and exact-NPC bouts.
 
-## Next after 4D8B is green
+## Next after 4E1 is green
 
-Playtest the path-specific history arcs for pacing, repetition, and whether career consequences feel meaningful. Then either:
+Human playtesting should verify that recurring coaches/rivals feel like a real career circle rather than decorative names, while deterministic regression watches exact-target integrity, world duplication, and roster bounds. If that foundation is healthy, continue Phase 4E with another currently shallow special path—military or politics are the strongest next candidates because both already have annual progression but lack persistent people around the player.
 
-- perform a small 4D8C hardening/content pass if queue/performance/player feedback reveals a real need; or
-- move to the next persistent special-career ecosystem rather than expanding counts for their own sake.
-
-A later deeper career-story pass can add true repeat-collaborator project casting or explicit story-originated opportunity offers, but those must route through existing path-specific start/offer systems and lifecycle gates rather than directly mutating career state from EventSystem.
+4D8C stays available only if story pacing/queue behavior later reveals a concrete defect. Do not expand 4D story counts merely because the slot exists.
 
 ## Known quality / architecture issues to keep visible
 
@@ -113,7 +96,8 @@ A later deeper career-story pass can add true repeat-collaborator project castin
 - Testbench action availability should reuse real gates/projections whenever one exists rather than duplicating eligibility rules.
 - Formal dismissal/release remains owned by existing stress or path-specific lifecycle systems; story/influence systems are not firing authorities.
 - Distribution agreements are business terms, not proof of active music Career World participation.
-- Career stories must use real persistent NPCs and Social World history; do not invent a second NPC/professional relationship graph.
+- Career stories and new special-career ecosystems must use real persistent NPCs and Social World history; do not invent a second NPC/professional relationship graph.
+- Not every persistent special-career organization must be added to the six-deep `SpecialCareerWorldKind`; reuse generic Social World ownership when lifecycle semantics differ and integration does not require widening the deep-career type.
 - Story queue growth and archived-world scans must remain bounded as more chains are added.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.

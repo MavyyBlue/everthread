@@ -115,11 +115,25 @@ Developer/system explanation copy belongs in the relevant fixed header `ⓘ` pre
 
 4D8 story events themselves are gameplay content and therefore appear through the normal event-decision surface; they do not require explanatory paragraphs in Career cards.
 
+## Additional special-career world technique
+
+The six-deep `SpecialCareerWorldKind` is a lifecycle/story configuration type, not a requirement that every persistent special-career organization must join that union. For paths such as combat sports, prefer the existing generic `SocialWorld` + `Npc` + Relationship ownership model with a stable `special-<path>-*` ID namespace when doing so avoids widening unrelated deep-career maps.
+
+- NPC identity/life history remains in ordinary `Npc` records.
+- Organization membership/roles/groups/history remains in `SocialWorld`.
+- Personal relationship type/score remains in RelationshipSystem state.
+- The special-career track stores bounded metrics and exact recent IDs only; do not create a second roster or professional-relationship graph.
+- Leave/retirement transitions archive current affiliation rather than deleting people/history.
+- Read-only Career Identity projection may override an unrelated autonomous standard occupation while an NPC has an active special-career affiliation, but it must not mutate `NpcLifeSystem` career truth.
+- Passive roster maintenance uses a dedicated deterministic substream where possible; outcome-generating player actions continue to consume the authoritative core RNG stream.
+- People → Career Worlds should discover generic `special-*` organization affiliation rather than requiring path-specific People UI.
+- Promote a path into a broader shared type only when several systems genuinely need the same lifecycle contract; do not broaden a type solely for presentation convenience.
+
 ## Testing technique
 
 High-value regressions include deterministic state comparisons, same-age idempotence, final-period accrual before status change, exact offer terms, archive-without-delete behavior, explicit exit/re-entry, passive residual income without lifecycle resurrection, pause-aware career-year accounting, plausible event target pools, exact delayed-event target continuity, dead-target cancellation, bounded story queues, old-save compatibility, semantic interaction transcripts, read-only observation, exact-entity inspection, persistence isolation, and per-command invariant watches.
 
-Specialized suites cover core, special-career worlds, music, social affiliation, modeling, racing, coherence, stress/career freedom, event-target role coherence, commitment exclusivity, career/relationship coherence, leader/rival influence, contextual information, unified lifecycle behavior, targeted special-career story chains, and the AI interaction testbench. GitHub Actions remains the final dependency-backed semantic typecheck/build/deploy gate.
+Specialized suites cover core, special-career worlds, music, social affiliation, modeling, racing, coherence, stress/career freedom, event-target role coherence, commitment exclusivity, career/relationship coherence, leader/rival influence, contextual information, unified lifecycle behavior, targeted special-career story chains, combat-career world behavior, and the AI interaction testbench. GitHub Actions remains the final dependency-backed semantic typecheck/build/deploy gate.
 
 The existing workflow already runs `npm test` before production build. Keeping the AI suite inside `runRegression.ts` means a semantic interaction failure stops deployment without changing the mobile upload workflow.
 

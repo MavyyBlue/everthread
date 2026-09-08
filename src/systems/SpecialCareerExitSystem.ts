@@ -11,6 +11,7 @@ const WORLD_KEYS = new Set<SpecialCareerPathKey>(['acting','music','sports','mod
 function career(state:GameState,key:SpecialCareerPathKey){return (state.specialCareers[key]??={}) as Track;}
 function n(record:Track,key:string,def=0){return typeof record[key]==='number'?Number(record[key]):def;}
 function activeWorlds(state:GameState,key:SpecialCareerPathKey){return WORLD_KEYS.has(key)?specialCareerWorlds(state,key as SpecialCareerWorldKind).filter(world=>world.active):[];}
+function activeCombatWorlds(state:GameState){return (state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-combat-'));}
 
 export function specialCareerExitGate(state:GameState,key:SpecialCareerPathKey):CommitmentGate{
   if(!isSpecialCareerPathActive(state,key))return{allowed:false,message:`${specialCareerPathLabel(key)} is not currently an active special-career commitment.`};
@@ -30,7 +31,10 @@ export function specialCareerExitGate(state:GameState,key:SpecialCareerPathKey):
   return{allowed:true};
 }
 
-function closePersistentWorlds(state:GameState,key:SpecialCareerPathKey){for(const world of activeWorlds(state,key))archiveSpecialCareerWorld(world,state.character.age);}
+function closePersistentWorlds(state:GameState,key:SpecialCareerPathKey){
+  for(const world of activeWorlds(state,key))archiveSpecialCareerWorld(world,state.character.age);
+  if(key==='combat')for(const world of activeCombatWorlds(state))archiveSpecialCareerWorld(world,state.character.age);
+}
 
 /**
  * Called only after a successful professional action. Stepped-away paths resume normally; creative careers may

@@ -2,7 +2,7 @@ import { jobById } from '../data/jobs';
 import type { GameState, Npc, SocialWorld, SocialWorldMember } from '../types/game';
 import { activeSpecialCareerPaths, type SpecialCareerPathKey } from './CommitmentSystem';
 
-type SpecialWorldKind = 'acting' | 'music' | 'sports' | 'modeling' | 'racing' | 'directing';
+type SpecialWorldKind = 'acting' | 'music' | 'sports' | 'combat' | 'modeling' | 'racing' | 'directing';
 type Track = Record<string, number | string | boolean>;
 
 export interface NpcCareerProjection {
@@ -53,7 +53,7 @@ export function playerCareerLabel(state:GameState){
 }
 
 function specialWorldKind(world:SocialWorld):SpecialWorldKind|undefined {
-  return (['acting','music','sports','modeling','racing','directing'] as const).find(kind=>world.id.startsWith(`special-${kind}-`));
+  return (['acting','music','sports','combat','modeling','racing','directing'] as const).find(kind=>world.id.startsWith(`special-${kind}-`));
 }
 
 function memberGroup(world:SocialWorld,member:SocialWorldMember){
@@ -77,6 +77,10 @@ function roleTitle(kind:SpecialWorldKind,tag:string,member:SocialWorldMember){
     if(tag==='coaching')return member.role==='leader'?'Head Coach':'Coach';
     return 'Professional Athlete';
   }
+  if(kind==='combat'){
+    if(tag==='coaches')return member.role==='leader'?'Head Combat Coach':'Combat Coach';
+    return 'Combat Athlete';
+  }
   if(kind==='modeling'){
     if(tag==='agency')return member.role==='leader'?'Agency Director':'Modeling Agent';
     if(tag==='campaign')return 'Campaign Creative';
@@ -99,6 +103,7 @@ function roleBaseIncome(kind:SpecialWorldKind,tag:string,member:SocialWorldMembe
   if(kind==='acting')return tag==='cast'?85000:tag==='production_leads'?(member.role==='leader'?125000:82000):56000;
   if(kind==='music')return tag==='creative'?90000:tag==='management'?(member.role==='leader'?115000:76000):54000;
   if(kind==='sports')return tag==='coaching'?(member.role==='leader'?145000:95000):190000;
+  if(kind==='combat')return tag==='coaches'?(member.role==='leader'?115000:82000):tag==='rivals'?90000:70000;
   if(kind==='modeling')return tag==='agency'?(member.role==='leader'?105000:78000):tag==='campaign'?72000:82000;
   if(kind==='racing')return tag==='engineering'?(member.role==='leader'?150000:115000):tag==='rivals'?185000:98000;
   if(kind==='directing')return tag==='cast'?90000:tag==='department_heads'?110000:member.role==='leader'?155000:120000;
