@@ -44,7 +44,7 @@ export function runSpecialCareerLifecycleRegression(){
   leave.character.age+=1;
   verify(specialCareerReentryGate(leave,'acting').allowed,'16 a creative path may become return-eligible after at least one Age Up');
   reactivateSpecialCareerPath(leave,'acting');
-  verify(leave.specialCareers.acting.leftPath===false&&isSpecialCareerPathActive(leave,'acting'),'17 reactivation must restore current commitment from preserved professional evidence');
+  verify(!specialCareerLifecycleView(leave,'acting').leftPath&&isSpecialCareerPathActive(leave,'acting'),'17 reactivation must restore current commitment from preserved professional evidence');
   verify(Number(leave.specialCareers.acting.returns??0)===1,'18 returning after an explicit step-away must be recorded without erasing history');
 
   const creativeRetire=createNewGame({seed:'lifecycle-creative-retirement'});creativeRetire.character.age=42;creativeRetire.education=[];creativeRetire.specialCareers.acting={active:true,credits:12,skill:91,reputation:88};
@@ -58,7 +58,7 @@ export function runSpecialCareerLifecycleRegression(){
   creativeRetire.character.age+=1;
   verify(specialCareerReentryGate(creativeRetire,'acting').allowed,'25 acting retirement can become comeback-eligible on a later age');
   reactivateSpecialCareerPath(creativeRetire,'acting');
-  verify(creativeRetire.specialCareers.acting.retired===false&&Number(creativeRetire.specialCareers.acting.comebacks??0)===1,'26 a successful creative comeback must clear retirement and record the comeback');
+  verify(!specialCareerLifecycleView(creativeRetire,'acting').retired&&Number(creativeRetire.specialCareers.acting.comebacks??0)===1,'26 a successful creative comeback must clear retirement and record the comeback');
 
   const finalRetire=createNewGame({seed:'lifecycle-final-retirement'});finalRetire.character.age=38;finalRetire.education=[];finalRetire.specialCareers.sports={active:true,pro:false,freeAgent:true,sport:'Soccer',seasonsPlayed:9,championships:1};
   verify(retireSpecialCareer(finalRetire,'sports').success,'27 a professional athlete in free agency must be able to formally retire');
