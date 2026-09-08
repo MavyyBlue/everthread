@@ -49,7 +49,6 @@ function targetRule(event:GameEventDefinition):TargetRule{
   if(event.id.includes('family_money_between_relatives_'))rule.minAge=Math.max(rule.minAge??0,18);
   if(event.id.includes('family_the_care_question_'))rule.needsCare=true;
   if(event.id.includes('family_sibling_competition_')){rule.types=SIBLING_RELATIONSHIP_TYPES;rule.minAge=Math.max(rule.minAge??0,6);}
-  if(event.id.includes('friends_the_loan_request_'))rule.minAge=Math.max(rule.minAge??0,16);
   return rule;
 }
 
