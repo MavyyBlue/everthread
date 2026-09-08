@@ -12,6 +12,7 @@ import {
 import { isSpecialCareerPathActive, specialCareerStartGate, type SpecialCareerPathKey } from '../systems/CommitmentSystem';
 import { actionGateStatus } from '../core/actionEconomy';
 import { specialCareerWorlds } from '../systems/SpecialCareerWorldSystem';
+import { persistentCareerWorlds, PERSISTENT_CAREER_WORLD_KINDS } from '../systems/CareerWorldCatalogSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -232,7 +233,7 @@ function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
   if(screen==='career')return{
     employment:{current:state.employment.current?structuredClone(state.employment.current):undefined,history:state.employment.history.slice(-6).map(item=>structuredClone(item)),partTimeJobs:state.employment.partTimeJobs.map(item=>structuredClone(item))},
     lifecycles:specialCareerLifecycleViews(state),
-    worlds:specialCareerWorlds(state).map(world=>({id:world.id,name:world.name,active:world.active,startedAge:world.startedAge,endedAge:world.endedAge,memberCount:world.members.length})),
+    worlds:persistentCareerWorlds(state).map(world=>({id:world.id,name:world.name,active:world.active,startedAge:world.startedAge,endedAge:world.endedAge,memberCount:world.members.length})),
     tracks:structuredClone(state.specialCareers),
   };
   return{
@@ -290,8 +291,7 @@ function additionalInvariantIssues(state:GameState){
   if(!Number.isFinite(state.finances.cash))issues.push('cash is non-finite');
   const spouses=state.relationships.filter(rel=>rel.type==='spouse'&&!rel.estranged&&state.npcs[rel.npcId]?.alive);if(spouses.length>1)issues.push('multiple living active spouses');
   const delayedIds=new Set<string>();for(const delayed of state.delayedEvents){if(delayedIds.has(delayed.id))issues.push(`duplicate delayed-event id ${delayed.id}`);delayedIds.add(delayed.id);}
-  for(const path of DEEP_PATHS){if(specialCareerWorlds(state,path).filter(world=>world.active).length>1)issues.push(`multiple active ${path} Career Worlds`);}
-  if((state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-combat-')).length>1)issues.push('multiple active combat Career Worlds');
+  for(const path of PERSISTENT_CAREER_WORLD_KINDS){if(persistentCareerWorlds(state,path).filter(world=>world.active).length>1)issues.push(`multiple active ${path} Career Worlds`);}
   return issues;
 }
 

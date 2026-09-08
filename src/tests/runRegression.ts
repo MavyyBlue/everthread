@@ -17,6 +17,7 @@ import { runSpecialCareerPathStoryRegression } from './specialCareerPathStoryReg
 import { runCombatCareerWorldRegression } from './combatCareerWorldRegression';
 import { runMilitaryCareerWorldRegression } from './militaryCareerWorldRegression';
 import { runPoliticsCareerWorldRegression } from './politicsCareerWorldRegression';
+import { runPhase4CloseoutRegression } from './phase4CloseoutRegression';
 import { runAiInteractionRegression } from './aiInteractionRegression';
 
 declare const process:{exitCode?:number};
@@ -40,5 +41,6 @@ try{const checks=await runSpecialCareerPathStoryRegression();console.log(`Specia
 try{const checks=await runCombatCareerWorldRegression();console.log(`Combat-career world regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=await runMilitaryCareerWorldRegression();console.log(`Military-career world regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=await runPoliticsCareerWorldRegression();console.log(`Politics-career world regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=await runPhase4CloseoutRegression();console.log(`Phase 4 closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=await runAiInteractionRegression();console.log(`AI interaction testbench regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
