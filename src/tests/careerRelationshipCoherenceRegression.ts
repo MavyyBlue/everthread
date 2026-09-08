@@ -54,7 +54,7 @@ export function runCareerRelationshipCoherenceRegression(){
   verify(Number(romance.flags[`hookupCount:${target.id}`])===1,'successful hookup must persist a per-NPC repeat count');
   verify(romance.relationships.find(rel=>rel.npcId===target.id)?.type==='friend','hookup must not silently convert the target into a second partner');
   verify(Number(romance.flags.infidelityDiscoveries)===1,'deterministic spouse fixture must receive the adverse discovery event');
-  verify(romance.relationships.find(rel=>rel.npcId===spouse.id)?.type==='ex'&&spouse.maritalStatus==='divorced','severe discovered infidelity can end the existing marriage without creating duplicate partners');
+  verify(romance.relationships.find(rel=>rel.npcId===spouse.id)?.type==='ex'&&romance.npcs[spouse.id]?.maritalStatus==='divorced','severe discovered infidelity can end the existing marriage without creating duplicate partners');
   verify(romance.timeline.some(entry=>entry.text.includes('found out about your hookup')),'partner fallout must be recorded in the life timeline');
 
   const teen=createNewGame({seed:'hookup-adult-boundary'});teen.character.age=17;
