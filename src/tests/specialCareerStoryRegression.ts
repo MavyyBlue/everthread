@@ -30,8 +30,8 @@ export function runSpecialCareerStoryRegression(){
   let checks=0;
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Special-career story regression failed: ${message}`);}
 
-  verify(specialCareerStoryEvents.length===6,'1 the 4D8A content slice must define six explicit chain beats');
-  verify(Object.keys(specialCareerStoryEventById).length===6,'2 story event ids must remain unique in the dedicated delayed-event registry');
+  verify(specialCareerStoryEvents.length===18,'1 the dedicated career-story registry must contain six generic beats plus twelve path-specific beats');
+  verify(Object.keys(specialCareerStoryEventById).length===18,'2 story event ids must remain unique in the dedicated delayed-event registry');
 
   const mentor=modelingFixture('story-mentor-chain');const mentorRng=mentor.state.rngCounter;const mentorScore=mentor.leaderRel.score;const mentorOpinion=mentor.state.npcs[mentor.leaderId]!.hiddenOpinion;
   verify(queueSpecialCareerStoryStart(mentor.state,'mentor','modeling',mentor.world.id,mentor.leaderId),'3 a real Career World leader must be queueable as an exact mentor-story target');
@@ -87,7 +87,7 @@ export function runSpecialCareerStoryRegression(){
   const endedWorld=ensureSpecialCareerWorld(ended,'acting','lead',{announce:false});ensureSpecialCareerRelationships(ended,endedWorld);const endedInfluence=specialCareerInfluenceView(ended,endedWorld,'acting');const endedLeader=endedInfluence.leaderNpcId!;const endedLeaderRel=ended.relationships.find(rel=>rel.npcId===endedLeader)!;endedLeaderRel.score=96;endedLeaderRel.compatibility=95;ended.npcs[endedLeader]!.hiddenOpinion=90;archiveSpecialCareerWorld(endedWorld,31);
   verify(specialCareerStoryStartCandidates(ended).some(candidate=>candidate.arc==='mentor'&&candidate.worldId===endedWorld.id),'31 a project that ended this age may still seed a story about the people who just worked on it');
   ended.character.age=32;ended.currentYear=2072;
-  verify(!specialCareerStoryStartCandidates(ended).some(candidate=>candidate.worldId===endedWorld.id),'32 older archived worlds must not keep generating fresh story openings forever');
+  verify(!specialCareerStoryStartCandidates(ended).some(candidate=>candidate.worldId===endedWorld.id),'32 older archived worlds must not keep generating fresh generic story openings forever');
 
   const scan=modelingFixture('story-scan-idempotence');const scanRng=scan.state.rngCounter;processSpecialCareerStoriesYear(scan.state);const queuedAfterFirst=scan.state.delayedEvents.filter(event=>event.eventId.startsWith('special_career_')).length;processSpecialCareerStoriesYear(scan.state);
   verify(scan.state.rngCounter===scanRng,'33 annual career-story scanning must use its own deterministic substream without perturbing core RNG');
