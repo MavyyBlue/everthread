@@ -83,10 +83,11 @@ function workplaceEmployment(state:GameState,world:SocialWorld):WorkplaceEmploym
 }
 
 function endWorkplaceEmployment(state:GameState,employment:WorkplaceEmployment){
-  const record=employment.record;record.endAge=state.character.age;
   if(employment.kind==='full_time'){
+    const record=employment.record;record.endAge=state.character.age;
     state.employment.history.push({...record});state.employment.current=undefined;
   }else{
+    const record=employment.record;record.endAge=state.character.age;
     state.employment.partTimeHistory??=[];state.employment.partTimeHistory.push({...record});
     state.employment.partTimeJobs=(state.employment.partTimeJobs??[]).filter(item=>item!==record);
     state.employment.partTimeJobIds=state.employment.partTimeJobs.map(item=>item.jobId);
