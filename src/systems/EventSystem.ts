@@ -14,15 +14,18 @@ const categoryWeight:Record<string,number>={childhood:1.05,school:1,friends:.9,f
 const FAMILY_RELATIONSHIP_TYPES=['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew'];
 const FRIEND_RELATIONSHIP_TYPES=['friend','best_friend'];
 const ROMANTIC_RELATIONSHIP_TYPES=['partner','fiance','spouse'];
+const SIBLING_RELATIONSHIP_TYPES=['sibling','half_sibling','stepsibling'];
 const PROCEDURAL_CATEGORIES=new Set(['childhood','school','friends','family','romance','work','money','health','travel','fame','crime_legal','strange']);
 const PROCEDURAL_MATURITY_FLOOR:Record<string,number>={friends:10,family:12,health:10,travel:14,strange:10};
+
+type TargetRule={minAge?:number;maxAge?:number;types?:string[];needsCare?:boolean};
 
 function routineEventChance(age:number){if(age<=2)return .42;if(age<=5)return .56;if(age<=13)return .64;if(age<=17)return .72;if(age<=40)return .70;if(age<=60)return .67;if(age<=80)return .64;return .60;}
 function isProceduralScenario(event:GameEventDefinition){return PROCEDURAL_CATEGORIES.has(event.category)&&/_\d+$/.test(event.id);}
 function proceduralMaturityFloor(event:GameEventDefinition){const base=PROCEDURAL_MATURITY_FLOOR[event.category]??event.minAge;if(event.category==='friends'&&event.id.includes('_the_loan_request_'))return Math.max(base,16);if(event.category==='family'&&event.id.includes('_money_between_relatives_'))return Math.max(base,16);if(event.category==='family'&&event.id.includes('_the_care_question_'))return Math.max(base,16);return base;}
 function hasLivingRelationship(state:GameState,types:readonly string[]){return state.relationships.some(rel=>types.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
 function inferredTargetSelector(event:GameEventDefinition){
-  const targetTag=event.tags.find(tag=>tag.startsWith('target:'));if(targetTag)return targetTag.slice('target:'.length);
+  const targetTag=event.tags.find(tag=>tag.startsWith('target:')&&!tag.startsWith('target:min-age:')&&!tag.startsWith('target:max-age:')&&!tag.startsWith('target:relationship:')&&!['target:adult','target:minor','target:needs-care'].includes(tag));if(targetTag)return targetTag.slice('target:'.length);
   if(!isProceduralScenario(event))return undefined;
   if(event.category==='friends')return'friend';
   if(event.category==='family')return'family';
@@ -30,6 +33,40 @@ function inferredTargetSelector(event:GameEventDefinition){
   if(event.category==='school')return'school_peer';
   return undefined;
 }
+
+function targetRule(event:GameEventDefinition):TargetRule{
+  const rule:TargetRule={};
+  for(const tag of event.tags){
+    if(tag==='target:adult')rule.minAge=Math.max(rule.minAge??0,18);
+    else if(tag==='target:minor')rule.maxAge=Math.min(rule.maxAge??17,17);
+    else if(tag==='target:needs-care')rule.needsCare=true;
+    else if(tag.startsWith('target:min-age:')){const value=Number(tag.slice('target:min-age:'.length));if(Number.isFinite(value))rule.minAge=Math.max(rule.minAge??0,value);}
+    else if(tag.startsWith('target:max-age:')){const value=Number(tag.slice('target:max-age:'.length));if(Number.isFinite(value))rule.maxAge=Math.min(rule.maxAge??value,value);}
+    else if(tag.startsWith('target:relationship:'))rule.types=tag.slice('target:relationship:'.length).split('|').filter(Boolean);
+  }
+  // Compatibility-aware rules for the existing procedural library. New content should prefer explicit target:* tags.
+  if(event.id.includes('family_family_favor_'))rule.minAge=Math.max(rule.minAge??0,12);
+  if(event.id.includes('family_money_between_relatives_'))rule.minAge=Math.max(rule.minAge??0,18);
+  if(event.id.includes('family_the_care_question_'))rule.needsCare=true;
+  if(event.id.includes('family_sibling_competition_')){rule.types=SIBLING_RELATIONSHIP_TYPES;rule.minAge=Math.max(rule.minAge??0,6);}
+  if(event.id.includes('friends_the_loan_request_'))rule.minAge=Math.max(rule.minAge??0,16);
+  return rule;
+}
+
+function schoolAffiliationIds(state:GameState,roles?:string[]){const world=(state.socialWorlds??[]).find(item=>item.kind==='school'&&item.active);if(!world)return new Set<string>();return new Set(world.members.filter(member=>(!roles||roles.includes(member.role))&&state.npcs[member.npcId]?.alive).map(member=>member.npcId));}
+function workplaceAffiliationIds(state:GameState,roles?:string[]){const worlds=(state.socialWorlds??[]).filter(item=>item.kind==='workplace'&&item.active);return new Set(worlds.flatMap(world=>world.members.filter(member=>member.leftAge===undefined&&(!roles||roles.includes(member.role))&&state.npcs[member.npcId]?.alive).map(member=>member.npcId)));}
+function currentWorkplaceForPayload(state:GameState,npcId?:string){return(state.socialWorlds??[]).find(world=>world.kind==='workplace'&&world.active&&world.workplace&&(!npcId||world.members.some(member=>member.npcId===npcId&&member.leftAge===undefined)));}
+
+function baseTargetCandidates(state:GameState,event:GameEventDefinition){
+  const selector=inferredTargetSelector(event);if(!selector)return[];let candidates:Relationship[]=[];
+  if(selector==='school'||selector==='school_peer'||selector==='school_authority'){const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;const ids=schoolAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
+  else if(selector==='work'||selector==='work_peer'||selector==='work_boss'){const roles=selector==='work_peer'?['coworker','direct_report']:selector==='work_boss'?['boss']:undefined;const ids=workplaceAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
+  else{const allowed=selector==='romantic'?ROMANTIC_RELATIONSHIP_TYPES:selector==='family'?FAMILY_RELATIONSHIP_TYPES:selector==='friend'?FRIEND_RELATIONSHIP_TYPES:[];candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
+  return candidates;
+}
+
+function targetMatchesRule(state:GameState,event:GameEventDefinition,rel:Relationship){const npc=state.npcs[rel.npcId];if(!npc?.alive)return false;const rule=targetRule(event);if(rule.minAge!==undefined&&npc.age<rule.minAge)return false;if(rule.maxAge!==undefined&&npc.age>rule.maxAge)return false;if(rule.types?.length&&!rule.types.includes(rel.type))return false;if(rule.needsCare&&npc.age<55&&npc.health>55)return false;return true;}
+function eligibleTargetCandidates(state:GameState,event:GameEventDefinition){return baseTargetCandidates(state,event).filter(rel=>targetMatchesRule(state,event,rel));}
 
 function eligible(state:GameState,event:GameEventDefinition){
   const age=state.character.age;const maturityFloor=isProceduralScenario(event)?proceduralMaturityFloor(event):event.minAge;if(age<Math.max(event.minAge,maturityFloor)||age>event.maxAge)return false;
@@ -45,8 +82,7 @@ function eligible(state:GameState,event:GameEventDefinition){
   if(event.tags.includes('requires:romantic')&&!hasLivingRelationship(state,ROMANTIC_RELATIONSHIP_TYPES))return false;
   if(event.tags.includes('requires:family')&&!hasLivingRelationship(state,FAMILY_RELATIONSHIP_TYPES))return false;
   if(event.tags.includes('requires:friend')&&!hasLivingRelationship(state,FRIEND_RELATIONSHIP_TYPES))return false;
-  if(isProceduralScenario(event)&&event.category==='friends'&&!hasLivingRelationship(state,FRIEND_RELATIONSHIP_TYPES))return false;
-  if(isProceduralScenario(event)&&event.category==='family'&&!hasLivingRelationship(state,FAMILY_RELATIONSHIP_TYPES))return false;
+  if(inferredTargetSelector(event)&&eligibleTargetCandidates(state,event).length===0)return false;
   if(event.id==='inheritance_notice'&&!state.relationships.some(r=>['parent','sibling'].includes(r.type)&&!state.npcs[r.npcId]?.alive))return false;
   const lastIndex=state.recentEventIds.lastIndexOf(event.id);if(lastIndex>=0&&state.recentEventIds.length-lastIndex<=event.cooldown)return false;
   return true;
@@ -63,16 +99,9 @@ export function processDelayedEvents(state:GameState):PendingEvent|undefined{
 }
 
 function pickRareEvent(state:GameState,rng:ReturnType<typeof createRng>){const triggered:GameEventDefinition[]=[];for(const event of rareEvents)if(eligible(state,event)&&rng.chance(event.probability))triggered.push(event);if(!triggered.length)return undefined;return rng.weighted(triggered.map(event=>({item:event,weight:Math.max(.000001,event.probability)})));}
-function schoolAffiliationIds(state:GameState,roles?:string[]){const world=(state.socialWorlds??[]).find(item=>item.kind==='school'&&item.active);if(!world)return new Set<string>();return new Set(world.members.filter(member=>(!roles||roles.includes(member.role))&&state.npcs[member.npcId]?.alive).map(member=>member.npcId));}
-function workplaceAffiliationIds(state:GameState,roles?:string[]){const worlds=(state.socialWorlds??[]).filter(item=>item.kind==='workplace'&&item.active);return new Set(worlds.flatMap(world=>world.members.filter(member=>member.leftAge===undefined&&(!roles||roles.includes(member.role))&&state.npcs[member.npcId]?.alive).map(member=>member.npcId)));}
-function currentWorkplaceForPayload(state:GameState,npcId?:string){return(state.socialWorlds??[]).find(world=>world.kind==='workplace'&&world.active&&world.workplace&&(!npcId||world.members.some(member=>member.npcId===npcId&&member.leftAge===undefined)));}
 
 function eventContextPayload(state:GameState,event:GameEventDefinition,rng:ReturnType<typeof createRng>):Record<string,unknown>|undefined{
-  const selector=inferredTargetSelector(event);if(!selector)return isProceduralScenario(event)?{suppressRelationshipFallback:true}:undefined;let candidates:Relationship[]=[];
-  if(selector==='school'||selector==='school_peer'||selector==='school_authority'){const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;const ids=schoolAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
-  else if(selector==='work'||selector==='work_peer'||selector==='work_boss'){const roles=selector==='work_peer'?['coworker','direct_report']:selector==='work_boss'?['boss']:undefined;const ids=workplaceAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
-  else{const allowed=selector==='romantic'?ROMANTIC_RELATIONSHIP_TYPES:selector==='family'?FAMILY_RELATIONSHIP_TYPES:selector==='friend'?FRIEND_RELATIONSHIP_TYPES:[];candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
-  if(!candidates.length)return{suppressRelationshipFallback:true};
+  const selector=inferredTargetSelector(event);if(!selector)return isProceduralScenario(event)?{suppressRelationshipFallback:true}:undefined;const candidates=eligibleTargetCandidates(state,event);if(!candidates.length)return{suppressRelationshipFallback:true};
   const chosen=rng.weighted(candidates.map(rel=>{const npc=state.npcs[rel.npcId]!;const recent=npc.memories.slice(-6);const memorySignal=recent.length?recent.reduce((sum,memory)=>sum+Math.abs(memory.sentiment),0)/recent.length:0;return{item:rel,weight:1+Math.abs(npc.hiddenOpinion)/45+Math.abs(rel.score-50)/65+memorySignal/18};}));
   const world=selector.startsWith('work')?currentWorkplaceForPayload(state,chosen.npcId):undefined;return{npcId:chosen.npcId,...(world?{worldId:world.id}:{})};
 }
@@ -85,8 +114,8 @@ function relationshipCandidates(state:GameState,selector:string|undefined,payloa
 function selectRelationshipTarget(state:GameState,selector:string|undefined,rng:ReturnType<typeof createRng>,payload?:Record<string,unknown>){const options=relationshipCandidates(state,selector,payload);return options.length?rng.pick(options):undefined;}
 
 function applyEffect(state:GameState,effect:ChoiceEffect|undefined,rng:ReturnType<typeof createRng>,payload?:Record<string,unknown>){if(!effect)return;let selectedRelationship:Relationship|undefined;
-  if(effect.stats)for(const[k,v]of Object.entries(effect.stats))if(v!==undefined)(state.character.stats as unknown as Record<string,number>)[k]=clamp((state.character.stats as unknown as Record<string,number>)[k]+v);
-  if(effect.secondary)for(const[k,v]of Object.entries(effect.secondary))if(v!==undefined){const obj=state.character.secondary as unknown as Record<string,number>;obj[k]=k==='karma'?(obj[k]??0)+v:clamp((obj[k]??0)+v);}
+  if(effect.stats)for(const[k,v]of Object.entries(effect.stats))if(v!==undefined)(state.character.stats as unknown as Record<string,number>)[k]=clamp((state.character.stats as unknown as Record<string,number>)[k]+Number(v));
+  if(effect.secondary)for(const[k,v]of Object.entries(effect.secondary))if(v!==undefined){const obj=state.character.secondary as unknown as Record<string,number>;obj[k]=k==='karma'?(obj[k]??0)+Number(v):clamp((obj[k]??0)+Number(v));}
   if(effect.money)state.finances.cash+=effect.money;if(effect.fame)state.fame.fame=clamp(state.fame.fame+effect.fame);if(effect.reputation)state.fame.publicReputation=clamp(state.fame.publicReputation+effect.reputation);if(effect.health)state.character.stats.health=clamp(state.character.stats.health+effect.health);if(effect.legalHeat)state.legal.investigationHeat=clamp(state.legal.investigationHeat+effect.legalHeat);
   if(effect.flags)Object.assign(state.flags,effect.flags);
   if(effect.relationship){const selector=effect.relationship.npcSelector??(typeof payload?.npcId==='string'?'payload':undefined);const rel=selector?selectRelationshipTarget(state,selector,rng,payload):payload?.suppressRelationshipFallback===true?undefined:selectRelationshipTarget(state,undefined,rng,payload);selectedRelationship=rel;if(rel){rel.score=clamp(rel.score+effect.relationship.delta);const npc=state.npcs[rel.npcId]!;npc.hiddenOpinion=clamp(npc.hiddenOpinion+effect.relationship.delta*.4,-100,100);if(effect.relationship.setType){rel.type=effect.relationship.setType;if(effect.relationship.setType==='ex'){npc.maritalStatus='divorced';npc.partnerId=undefined;}}npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:'event_choice',sentiment:effect.relationship.delta,summary:'A shared event changed the relationship.',permanent:Math.abs(effect.relationship.delta)>=15});}}

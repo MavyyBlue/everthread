@@ -21,6 +21,8 @@ import {
   specialCareerStartGate,
   type SpecialCareerPathKey,
 } from '../systems/CommitmentSystem';
+import { specialCareerExitGate } from '../systems/SpecialCareerExitSystem';
+import { sportsContractOffer } from '../systems/SportsCareerCycleSystem';
 
 export function CareerScreen({state,onResult}:{state:GameState;onResult:(r:EngineResult)=>void}){
   const[tab,setTab]=useState<'work'|'education'|'special'>('work');
@@ -87,11 +89,12 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
   const publicMove=(kind:string)=>!actionAllowed(state,[{policy:'special.politics.total'},{policy:'special.politics.kind',target:kind}]);
   const modelMove=(kind:string)=>!actionAllowed(state,[{policy:'special.model.total'},{policy:'special.model.kind',target:kind}]);
   const crimeOrgMove=(kind:string)=>!actionAllowed(state,[{policy:'special.crime_org.total'},{policy:'special.crime_org.kind',target:kind}]);
-  const sportsTrack=state.specialCareers.sports;
-  const sportsStatus=sportsTrack?.retired===true?'retired':sportsTrack?.pro===true?'pro contract':sportsTrack?.freeAgent===true?'free agent':sportsTrack?.active===true?'pathway':'not started';
+  const sportsTrack=state.specialCareers.sports;const renewal=sportsContractOffer(state);
+  const sportsStatus=sportsTrack?.retired===true?'retired':sportsTrack?.pro===true?'pro contract':renewal?'renewal decision':sportsTrack?.freeAgent===true?'free agent':sportsTrack?.active===true?'pathway':'not started';
   const sportsSeasons=Number(sportsTrack?.seasonsPlayed??0);const sportsRetired=sportsTrack?.retired===true;const sportsActive=pathActive('sports');const racingActive=pathActive('racing');
   return <>
-    <section className="action-card"><div className="section-heading"><div><p className="eyebrow">Major commitments</p><h2>Special-career capacity</h2></div><span>{capacity.active.length}/{capacity.limit} active</span></div><p>{capacity.inSchool?'School leaves room for one active special-career path. Regular and part-time jobs are unavailable while you balance both.':'Outside school, you can pursue up to two active special-career paths at once.'}</p>{capacity.active.length>0&&<p className="memory">Active: {capacity.active.map(specialCareerPathLabel).join(' · ')}</p>}{capacity.overLimit&&<p className="muted">This older save is above the new limit. Existing paths are preserved and remain playable, but no additional special career can begin until you are back within capacity.</p>}</section>
+    <section className="action-card"><div className="section-heading"><div><p className="eyebrow">Major commitments</p><h2>Special-career capacity</h2></div><span>{capacity.active.length}/{capacity.limit} active</span></div><p>{capacity.inSchool?'School leaves room for one active special-career path. Regular and part-time jobs are unavailable while you balance both.':'Outside school, you can pursue up to two active special-career paths at once.'}</p>{capacity.active.length>0&&<div className="stack">{capacity.active.map(key=>{const exit=specialCareerExitGate(state,key);return <article className="school-group-card joined" key={`active-${key}`}><div><strong>{specialCareerPathLabel(key)}</strong><small>{exit.allowed?'You may step away now. Completed history will remain.':exit.message}</small></div><div className="school-group-actions"><button className="secondary-button" disabled={!exit.allowed} onClick={()=>onResult(gameEngine.leaveSpecialCareer(key))}>Leave Path</button></div></article>})}</div>}{capacity.overLimit&&<p className="muted">This older save is above the new limit. Existing paths are preserved and remain playable, but no additional special career can begin until you are back within capacity.</p>}</section>
+    {renewal&&<section className="action-card"><div className="section-heading"><div><p className="eyebrow">Sports contract decision</p><h2>{renewal.team}</h2></div><span>expires after age {renewal.expiresAge}</span></div><p>{renewal.years} year{renewal.years===1?'':'s'} · {formatMoney(renewal.salary)}/year. Your previous term is complete, so you may accept, decline into free agency, or leave Professional sports above.</p><div className="button-row"><button disabled={!actionAllowed(state,{policy:'special.pro_contract'})} onClick={()=>onResult(gameEngine.sportsContract('accept'))}>Accept renewal</button><button className="secondary-button" disabled={!actionAllowed(state,{policy:'special.pro_contract'})} onClick={()=>onResult(gameEngine.sportsContract('decline'))}>Decline</button></div></section>}
     <div className="special-paths">
       <Path title="Acting" stat={`Skill ${Math.round(Number(state.specialCareers.acting?.skill??0))}`} actions={[
         ['Lesson',()=>gameEngine.actingLesson(),training('acting')||(state.character.age>=18&&state.finances.cash<120)],
@@ -114,7 +117,7 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
         ['Golf',()=>gameEngine.sportsJoin('Golf'),sportsActive||sportsRetired||startBlocked('sports')],
         ['Volleyball',()=>gameEngine.sportsJoin('Volleyball'),sportsActive||sportsRetired||startBlocked('sports')],
         ['Train',()=>gameEngine.sportsTrain(),sportsRetired||!sportsActive||training('sports')],
-        ['Seek pro contract',()=>launchChallenge('sports',score=>gameEngine.sportsPro(score)),sportsRetired||!sportsActive||state.character.age<18||Number(sportsTrack?.skill??0)<58||sportsTrack?.pro===true||!actionAllowed(state,{policy:'special.pro_contract'})],
+        ['Seek pro contract',()=>launchChallenge('sports',score=>gameEngine.sportsPro(score)),sportsRetired||!sportsActive||Boolean(renewal)||state.character.age<18||Number(sportsTrack?.skill??0)<58||sportsTrack?.pro===true||!actionAllowed(state,{policy:'special.pro_contract'})],
       ]} onResult={onResult}/>
       <Path title="Combat sports" stat={`Wins ${Number(state.specialCareers.combat?.wins??0)} · titles ${Number(state.specialCareers.combat?.titles??0)}`} actions={[
         ['Train',()=>gameEngine.combatTrain(),startBlocked('combat')||training('combat')],

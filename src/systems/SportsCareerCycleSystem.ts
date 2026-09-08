@@ -1,8 +1,9 @@
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
+import { consumeAction } from '../core/actionEconomy';
 import type { createRng } from '../core/rng';
-import type { GameState, SocialWorld } from '../types/game';
-import { archiveSpecialCareerWorld } from './SpecialCareerWorldSystem';
+import type { EngineResult, GameState, SocialWorld } from '../types/game';
+import { activeSpecialCareerWorld, archiveSpecialCareerWorld } from './SpecialCareerWorldSystem';
 
 type Track = Record<string, number | string | boolean>;
 type Rng = ReturnType<typeof createRng>;
@@ -12,6 +13,13 @@ export interface SportsSeasonContext {
   chemistry: number;
   rivalry: number;
   prestige: number;
+}
+
+export interface SportsContractOfferView {
+  team: string;
+  years: number;
+  salary: number;
+  expiresAge: number;
 }
 
 type SportProfile = {
@@ -32,7 +40,9 @@ const SPORT_PROFILES: Record<string, SportProfile> = {
 };
 
 function n(record:Track,key:string,def=0){return typeof record[key]==='number'?record[key] as number:def;}
+function s(record:Track,key:string,def=''){return typeof record[key]==='string'?record[key] as string:def;}
 function setN(record:Track,key:string,value:number){record[key]=Math.round(value*100)/100;}
+function sportsTrack(state:GameState){return (state.specialCareers.sports??={}) as Track;}
 
 function profileFor(career:Track):SportProfile {
   return SPORT_PROFILES[String(career.sport??'')] ?? {appearances:30,teamSport:true,unit:'games'};
@@ -139,7 +149,7 @@ function shouldRetire(state:GameState,career:Track,rng:Rng){
 }
 
 function retireFromSports(state:GameState,career:Track,world:SocialWorld){
-  career.active=false;career.pro=false;career.freeAgent=false;career.retired=true;
+  career.active=false;career.pro=false;career.freeAgent=false;career.retired=true;career.renewalOfferPending=false;
   setN(career,'retirementAge',state.character.age);setN(career,'contractRemaining',0);
   archiveSpecialCareerWorld(world,state.character.age);
   state.timeline.push({
@@ -148,30 +158,42 @@ function retireFromSports(state:GameState,career:Track,world:SocialWorld){
   });
 }
 
+function createRenewalOffer(state:GameState,career:Track,world:SocialWorld,seasonScore:number,rng:Rng){
+  const maxYears=state.character.age>=38?2:4;const years=rng.int(1,maxYears);const current=Math.max(50000,n(career,'salary',80000));const performanceFactor=.88+seasonScore/260+state.fame.fame/900;const salary=Math.round(clamp(current*performanceFactor*rng.int(94,112)/100,60000,7500000));career.renewalOfferPending=true;career.renewalOfferTeam=world.name;setN(career,'renewalOfferYears',years);setN(career,'renewalOfferSalary',salary);setN(career,'renewalOfferCreatedAge',state.character.age);setN(career,'renewalOfferExpiresAge',state.character.age+1);career.pro=false;career.freeAgent=false;setN(career,'contractRemaining',0);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`${world.name} offered you a ${years}-year renewal at ${salary.toLocaleString()} per year. The decision is yours.`});
+}
+
 function resolveContract(state:GameState,career:Track,world:SocialWorld,seasonScore:number,context:SportsSeasonContext,rng:Rng){
   let remaining=n(career,'contractRemaining',Math.max(1,n(career,'contractYears',1)));
   remaining=Math.max(0,remaining-1);setN(career,'contractRemaining',remaining);
 
+  // Hard retirement remains an involuntary career end-state and is intentionally allowed to supersede a live term.
   if(shouldRetire(state,career,rng)){retireFromSports(state,career,world);return;}
   if(remaining>0)return;
 
   const agePenalty=Math.max(0,state.character.age-35)*2.2;
   const renewalChance=clamp(10+seasonScore*.48+context.momentum*.17+n(career,'reputation',45)*.14+context.chemistry*.08+n(career,'fitness',70)*.08-agePenalty,8,93)/100;
-  if(rng.chance(renewalChance)){
-    const maxYears=state.character.age>=38?2:4;
-    const years=rng.int(1,maxYears);
-    const current=Math.max(50000,n(career,'salary',80000));
-    const performanceFactor=.88+seasonScore/260+state.fame.fame/900;
-    const salary=Math.round(clamp(current*performanceFactor*rng.int(94,112)/100,60000,7500000));
-    setN(career,'contractYears',years);setN(career,'contractRemaining',years);setN(career,'salary',salary);
-    setN(career,'contractRenewals',n(career,'contractRenewals')+1);
-    career.freeAgent=false;
-    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`${world.name} renewed your contract for ${years} year${years===1?'':'s'} at ${salary.toLocaleString()} per year.`});
-  }else{
+  if(rng.chance(renewalChance)){createRenewalOffer(state,career,world,seasonScore,rng);}
+  else{
     career.pro=false;career.freeAgent=true;setN(career,'releasedAge',state.character.age);setN(career,'contractRemaining',0);
     archiveSpecialCareerWorld(world,state.character.age);
     state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`${world.name} did not renew your contract after the season. You entered free agency.`});
   }
+}
+
+export function sportsContractOffer(state:GameState):SportsContractOfferView|undefined{
+  const career=sportsTrack(state);if(career.renewalOfferPending!==true)return;const expiresAge=n(career,'renewalOfferExpiresAge',state.character.age);if(state.character.age>expiresAge)return;return{team:s(career,'renewalOfferTeam','current team'),years:Math.max(1,Math.round(n(career,'renewalOfferYears',1))),salary:Math.max(0,Math.round(n(career,'renewalOfferSalary'))),expiresAge};
+}
+
+export function expireSportsContractOffer(state:GameState){
+  const career=sportsTrack(state);if(career.renewalOfferPending!==true)return;const expiresAge=n(career,'renewalOfferExpiresAge',state.character.age);if(state.character.age<=expiresAge)return;const world=activeSpecialCareerWorld(state,'sports');career.renewalOfferPending=false;career.pro=false;career.freeAgent=true;setN(career,'contractRemaining',0);if(world)archiveSpecialCareerWorld(world,state.character.age);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`Your renewal opportunity with ${s(career,'renewalOfferTeam',world?.name??'your team')} expired. You entered free agency.`});
+}
+
+export function sportsContractDecision(state:GameState,action:'accept'|'decline'):EngineResult{
+  const offer=sportsContractOffer(state);if(!offer)return{success:false,messages:[{text:'There is no current professional sports renewal offer to review.'}]};const career=sportsTrack(state);const world=activeSpecialCareerWorld(state,'sports');
+  if(action==='accept'&&!world)return{success:false,messages:[{text:'The team attached to that renewal could not be resolved. The offer remains pending so your career history is not mutated.'}]};
+  const gate=consumeAction(state,{policy:'special.pro_contract'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};career.renewalOfferPending=false;
+  if(action==='decline'){career.pro=false;career.freeAgent=true;setN(career,'contractRemaining',0);if(world)archiveSpecialCareerWorld(world,state.character.age);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You declined ${offer.team}'s renewal and entered professional sports free agency.`});return{success:true,messages:[{text:'You declined the renewal and entered free agency.'}]};}
+  career.active=true;career.pro=true;career.freeAgent=false;career.leftPath=false;setN(career,'contractYears',offer.years);setN(career,'contractRemaining',offer.years);setN(career,'salary',offer.salary);setN(career,'contractSignedAge',state.character.age);setN(career,'contractRenewals',n(career,'contractRenewals')+1);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You accepted ${offer.team}'s ${offer.years}-year renewal at ${offer.salary.toLocaleString()} per year.`});return{success:true,messages:[{text:`You accepted the ${offer.years}-year renewal with ${offer.team}.`}]};
 }
 
 /** Resolves exactly one professional season for the current age, then contract/retirement state. */

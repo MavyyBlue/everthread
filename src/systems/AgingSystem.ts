@@ -18,6 +18,7 @@ import { processFameYear } from './FameSystem';
 import { processLegalYear } from './CrimeSystem';
 import { processSpecialCareersYear } from './SpecialCareerSystem';
 import { processAnnualFinance } from './FinanceSystem';
+import { processStressConsequencesYear } from './StressConsequenceSystem';
 import { triggerRandomEvent } from './EventSystem';
 import { evaluateAchievements, evaluateChallenges } from './AchievementSystem';
 import { checkDeath } from './DeathSystem';
@@ -49,7 +50,9 @@ export function ageUp(state:GameState):EngineResult {
     processLegalYear(state);
     processSpecialCareersYear(state);
     processAnnualFinance(state);
-    // School/workplace transitions can create NPCs after the autonomy pass; initialize them before events/UI observe the new year.
+    // Stress discipline happens after this year's income is settled so dismissal cannot erase already-earned pay.
+    processStressConsequencesYear(state);
+    // School/workplace/career transitions can create or archive NPC affiliations after the autonomy pass.
     initializeMissingNpcLives(state);
 
     if(state.legal.imprisoned)state.flags.prisonYears=Number(state.flags.prisonYears??0)+1;

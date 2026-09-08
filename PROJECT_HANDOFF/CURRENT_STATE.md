@@ -8,107 +8,95 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-`main` at `1b8c5f656b3dc6e4a071cd7d17d173fb8e546666`, tree `759a2a2e445b4d1acc4d64adf96a2af72a9b1864`.
+`main` is `2dccb47ba0a27587cfda7ff48402b558b7100ee2`, tree `b7024d7ee5a0de49a839d880d0b232376191efe6`.
 
-- Phase 4D5 — Racing Seasons / Team Contracts / Championship Cycles is deployed and green.
-- GitHub Actions run #31 (`34141759533`) passed overlay import, engine/test type checks, every regression suite, production build, Pages upload, deployment, and cleanup.
-- Run #31 uploaded head: `2f20c1c1ef8dc1ef2e0b7c5ac19c625dfa8a7c36`.
-- Run #31 job: `101805078385`.
-- Expanded bot commit: `1b8c5f656b3dc6e4a071cd7d17d173fb8e546666`.
-- Pages artifact: `10026169984`.
-- Run #31 reported core 82/82, special-career 77/77, music 76/76, social-affiliation 23/23, modeling 46/46, and racing 86/86: **390 checks passed** across those gates.
-- Production build transformed 103 modules and deployed successfully to GitHub Pages.
-- The main application chunk was 717.26 kB minified (206.01 kB gzip), so future route/code splitting remains a visible performance task rather than a release blocker.
+- Phase 4D5 Racing is green.
+- The pre-4D6 coherence pass is also green.
+- GitHub Actions run #32 (`34148978761`), job `101827001795`, passed overlay import, engine/test type checks, every regression suite, production build, Pages upload, deployment, and cleanup.
+- Run #32 uploaded head: `53df92eab41719416feaaf6eeb4bff07736cacc4`.
+- Expanded bot commit: `2dccb47ba0a27587cfda7ff48402b558b7100ee2`.
+- Run #32 reported core 82/82, special-career 77/77, music 76/76, social-affiliation 23/23, modeling 46/46, racing 86/86, and coherence 37/37: **427 checks passed**.
+- Production build transformed 104 modules and deployed successfully to GitHub Pages.
+- Pages artifact: `10028684986`, 760367 bytes, SHA-256 `d3f2d9b635b0d6fae6a2a072856616e2ec349064dfac6ec67b71d44788cc4f63`.
+- The primary application chunk was 726.49 kB minified / 208.88 kB gzip. Code splitting remains a visible later performance task, not a current release blocker.
 - Save schema remains 9.
 
-Verified Phase 4D5 behavior includes persistent legacy team preservation, non-fabricated pre-4D5 racing history, multi-round Age Up season resolution, bounded detailed standings, contract renewals/releases/free agency/team movement, deterministic relationship-driven performance, normal finance/tax integration for salary and prize income, and clean retirement/final-season settlement.
+Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, and character histories must never be copied into production/default fixtures or auto-loaded for another player.
+## Current work — pre-4D6 stress, recovery, career freedom & event-role coherence
 
-## Current work — pre-4D6 coherence pass
+This integrated pass is implemented and locally validated, but remains **deployment pending** until a GitHub Actions run proves the exact overlay.
 
-This pass is intentionally corrective and cross-system. It should be deployed and verified before Phase 4D6 begins.
+### Stress consequence framework
 
-### People folder current/former clarity
+- Stress below 90 does not receive the new high-strain incident modifier.
+- At 90+ stress, deterministic probability rises toward 100 stress but never reaches certainty.
+- Temporary gameplay strain states are `Burnout`, `Emotional Volatility`, and `Chronic Strain`; they are simulation modifiers, not clinical diagnoses.
+- At most one new stress incident can be generated per age.
+- Full-time and part-time workplace incidents can be mistakes, conflicts, or minor accidents and feed the exact job record, workplace tension/reputation, health, relationships, and persistent per-workplace incident counts.
+- School incidents can affect attendance, conduct, academic performance, happiness, and school relationships.
+- Persistent special-career worlds can receive strain-related professional mistakes/conflicts/accidents.
+- Three incidents create review eligibility rather than automatic firing/dismissal. Reviews consider performance/standing, leader relationship, incident count, and current stress.
+- Ordinary full-time or part-time work can end in a warning or dismissal without mutating another employer; post-secondary school can result in probation or dismissal; compulsory school uses support/discipline rather than automatic expulsion.
+- Contracted special careers can still be involuntarily released for serious repeated incidents. Voluntary contract restrictions do not provide immunity from employer/team consequences.
+- Stress consequences run after annual finance settlement so work already completed that year remains paid/taxed even if the position ends afterward.
 
-- School, Work, and Career Worlds continue to preserve both current and former institutional relationships.
-- Membership remains derived from persistent `SocialWorld` history rather than rewriting `Relationship.type`.
-- Current affiliations sort before former affiliations even when a former relationship has a higher personal score.
-- Former affiliations remain selectable/history-preserving but are visually muted in the relationship tree.
-- Current/fomer projection records exact role, world name, start age, and end age where available.
-- Current cards receive an explicit CURRENT badge; former cards appear underneath current affiliations.
+### Recovery
 
-### Career / education commitment rules
+- `Spend Time` now also reduces stress when the relationship is healthy; relief scales with relationship strength and closeness.
+- Hostile relationships do not function as free stress recovery and can feel tense instead.
+- Existing Meditation remains the modest broadly available recovery action.
+- Therapy unlocks at age 13, uses the existing wellness action economy, removes substantially more stress, and reduces temporary strain severity.
+- Therapy is guardian-supported for minors in the simulation; independent adults pay 600 in game currency. Insufficient funds block before action consumption.
 
-- Outside active school enrollment, the player may pursue at most **two established special-career paths** at once.
-- During active school enrollment, the limit is **one established special-career path**.
-- School always blocks starting a full-time regular job.
-- School with no active special career still permits part-time work.
-- School plus an active special career blocks starting both full-time and part-time regular work.
-- Starting a special career while enrolled requires regular and part-time jobs to be left first.
-- Enrolling while holding a full-time job is blocked; the game never silently resigns on the player's behalf.
-- Enrolling with more than one established special career is blocked.
-- Enrolling with one special career plus an existing part-time job is blocked until the player leaves the part-time job.
-- Existing older saves above the new special-career limit preserve every established path. Existing paths stay usable; only additional path starts are blocked until capacity is available.
-- Raw historical `active=true` flags from old acting/music/modeling training are not sufficient evidence of a professional commitment. Real evidence such as credits/projects/representation, releases/professional worlds, or modeling bookings/agency state is required.
-- Preparatory acting lessons, music practice, and modeling lessons can build skill without silently consuming a professional-career slot.
-- Royal birth is an inherited current special-life commitment rather than an optional path the player can be unexpectedly blocked from acknowledging later.
-- Player-facing enforcement is centralized through `CommitmentSystem` + `GameEngine`; UI disabled states mirror the same gates.
+### Special-career freedom and contracts
 
-### Event context / maturity coherence
+- `SpecialCareerExitSystem` owns voluntary Leave Path eligibility.
+- Leaving a path preserves completed credits/releases/bookings/seasons, awards, earnings, skills, NPC relationships, and archived Career Worlds.
+- An explicit `leftPath` marker overrides historical professional evidence so a voluntarily left career actually frees one of the two special-career commitment slots.
+- Successful professional re-entry clears `leftPath`; returning to a career does not erase its earlier history.
+- Acting/directing productions, music tours, modeling campaigns, live modeling representation terms, professional sports contracts, racing seasons, and racing contracts can temporarily lock voluntary exit.
+- Inherited royalty is not treated as ordinary employment; a future abdication mechanic should own that lifecycle.
+- Existing involuntary retirement/release remains separate from voluntary Leave Path.
 
-- Procedural friend events require a living, non-estranged friend and bind effects to that exact NPC.
-- Procedural family events require real living family context and bind effects to an actual eligible relative.
-- Procedural romance/school context uses real eligible persistent NPC context where appropriate.
-- Procedural events without a legitimate target suppress generic relationship fallback, preventing unrelated NPC relationships from changing because of an untargeted story.
-- Generic family dilemmas that assume meaningful independence are pushed out of early childhood; money/care-heavy variants use stronger teen maturity floors.
-- Friend loan requests, generic health/travel/strange procedural scenarios, and similarly independent choices receive age floors appropriate to the choices they present.
-- Genuine childhood-specific events remain available at young ages.
-- Fixed events with explicit `requires:*` / `target:*` tags retain their existing contextual contracts.
+### Professional sports renewal correction
 
-### Local validation before packaging
+- Sports contracts no longer silently auto-renew at term end.
+- Final-season salary is stamped before contract resolution as before.
+- A successful team renewal becomes a player-facing offer with exact team, years, salary, and expiry.
+- The player may accept, decline into free agency, or leave the sports path once the previous term is complete.
+- A valid pending renewal preserves the exact current team world/roster while the decision remains available, but `pro=false` prevents a phantom additional season.
+- Offer expiry or decline archives the former team and moves the player to free agency.
+- The established hard-age sports retirement rule remains an involuntary end-state and may supersede a nominal live term, preserving Phase 4D1 compatibility.
 
-- dedicated synthetic coherence regression: **37/37 checks passed** in the local focused harness;
-- coverage includes current-vs-former ordering, legacy-over-cap preservation, school/work/special-career mutual-exclusion rules, preparatory-vs-professional evidence, inherited royalty commitment, missing-friend rejection, maturity floors, exact friend/family binding, and prevention of untargeted relationship leakage;
-- no real player save data is used by the regression fixture;
-- changed TS/TSX files receive syntax/transpile validation before packaging;
-- GitHub Actions remains the authoritative dependency-backed semantic typecheck, full regression, build, and deploy gate.
+### Event target-role coherence
 
-## Next after this coherence pass is green
+- Relationship-dependent procedural events now filter the target pool before eligibility and use that same pool for actual target selection.
+- Reusable target tags support minimum/maximum NPC age, adult/minor targets, relationship-role filters, and care-needs context.
+- Existing generated content receives compatibility rules: Family Favor requires a capable-age relative; Money Between Relatives requires an adult target; Care Question requires plausible care need; Sibling Competition requires an actual sibling-type relationship; Friend Loan requires a mature-enough friend.
+- A newborn can still be the subject of child-appropriate family stories, but cannot be selected as the actor in an adult-like favor/finance scenario.
 
-**Phase 4D6 — deeper rival / leader consequences across special-career paths.** Build on the now-stable career lifecycles and clarified commitment rules rather than adding another isolated career.
+### Local validation
 
-## Existing major completed foundations
+- Synthetic stress/career-freedom regression: **64/64**.
+- Synthetic event-target role regression: **4/4**.
+- The stress/career harness compiles and executes the actual staged Commitment, Exit, Sports-contract, Stress, and Event-system modules against fabricated infrastructure only.
+- Changed TS/TSX files have passed syntax-oriented TypeScript validation; remaining standalone diagnostics are expected missing-module diagnostics from the partial staging tree.
+- No staged simulation file contains `Math.random()`.
+- GitHub Actions remains the final dependency-backed engine/test typecheck, complete regression, production build, and Pages deployment authority.
 
-- Core Age Up transaction and pending-event lock.
-- Save migrations through schema 9.
-- Central action-economy ledger.
-- Persistent school and workplace social worlds.
-- Full NPC life simulation and adult descendant biography handoff.
-- Multi-slot saves, generations, legacy/past lives.
-- Standard careers, finance, assets, investments, businesses.
-- Health, crime/legal/prison, fame, pets, travel.
-- Phase 4A persistent special-career worlds.
-- Phase 4B career ecosystem consequences.
-- Phase 4C Career Worlds UI and social consequences.
-- Phase 4D1 sports seasons/contracts.
-- Phase 4D2 acting/directing productions.
-- Phase 4D3 music release/catalog/tour/distribution cycles.
-- Post-4D3 social-affiliation/friendship/dating correction.
-- Phase 4D4 modeling campaign/agency contract cycles plus generalized music quality corrections.
-- Phase 4D5 racing season/team-contract/championship cycles.
-- 691 event definitions as of the 0.12.0 tracking baseline.
-- Mobile-first React/PWA shell.
+If the existing 427 checks remain unchanged, the next CI run is expected to report 427 + 64 + 4 = **495 checks**. Do not call that count verified until GitHub prints it.
+
+## Next after this pass is green
+
+**Phase 4D6 — deeper rival / leader consequences across special-career paths.** The new stress/conduct framework should become one of the consequence channels used by bosses, managers, coaches, teachers, peers, and rivals rather than creating a separate scripted drama layer.
 
 ## Known quality / architecture issues to keep visible
 
-- Exact seeded replay serialization regression remains mandatory; do not introduce wall-clock IDs/randomness.
-- Every meaningful new player action must be explicitly classified in the central action economy.
+- Exact seeded replay serialization remains mandatory; do not introduce wall-clock IDs or unseeded simulation randomness.
+- Every meaningful action stays in the central action economy.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
-- Persistent career worlds add NPC/history load; continue population/performance profiling as Phase 4 grows.
-- The 717 kB minified main chunk should eventually be code-split rather than merely raising the warning threshold.
-- Flat primitive special-career records are acceptable while bounded/readable; reconsider schema 10 if future systems genuinely require nested persistent histories.
-- Existing older direct `SpecialCareerSystem` exports remain compatibility paths; player-facing GameEngine routes own corrected practice and modern career lifecycles. Avoid creating new alternate mutation routes that bypass commitment gates.
-- Real player saves may be inspected for QA evidence but must never be shipped, auto-loaded, or copied into production/default regression fixtures.
-- Handoff docs must update in meaningful normal bundles so current/next state never drifts behind code.
+- Persistent world population/performance profiling remains important as Phase 4 grows.
+- The ~726 kB main chunk should eventually be code-split.
+- Flat primitive special-career records remain acceptable for this pass; schema 10 is not justified yet.

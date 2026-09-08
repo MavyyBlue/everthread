@@ -12,28 +12,28 @@ const SPECIAL_PATH_LABELS: Record<SpecialCareerPathKey,string> = {
 };
 
 function n(record:Record<string,number|string|boolean>|undefined,key:string){return typeof record?.[key]==='number'?Number(record[key]):0;}
-function hasSpecialCareerWorld(state:GameState,key:SpecialCareerPathKey){return (state.socialWorlds??[]).some(world=>world.kind==='organization'&&world.id.startsWith(`special-${String(key)}-`));}
+function hasSpecialCareerWorld(state:GameState,key:SpecialCareerPathKey){return (state.socialWorlds??[]).some(world=>world.kind==='organization'&&world.active&&world.id.startsWith(`special-${String(key)}-`));}
 
 export function isActivelyEnrolled(state:GameState){
   return state.education.some(record=>!record.graduated&&!record.droppedOut&&!record.endAge);
 }
 
 /**
- * A special-career slot represents a real established/pursued path, not raw skill practice.
- * Legacy saves sometimes carry active=true from old acting/music/modeling training behavior,
- * so those paths require professional evidence instead of trusting the raw flag alone.
+ * A special-career slot represents a real current commitment, not raw skill practice or lifetime history.
+ * Legacy saves sometimes carry active=true from old acting/music/modeling training behavior, so those paths
+ * require professional evidence unless the player has explicitly left the path. Completed history is preserved.
  */
 export function isSpecialCareerPathActive(state:GameState,key:SpecialCareerPathKey){
   const career=state.specialCareers[key];
   if(key==='royalty'&&state.flags.royalBirth===true)return true;
   if(!career)return false;
-  if(career.retired===true)return false;
+  if(career.retired===true||career.leftPath===true)return false;
   if(key==='acting')return career.currentProjectActive===true||career.offerPending===true||n(career,'credits')>0||n(career,'agent')>0||hasSpecialCareerWorld(state,key);
   if(key==='music')return career.tourActive===true||career.partnershipActive===true||typeof career.professionalStartAge==='number'||n(career,'songsReleased')+n(career,'albumsReleased')>0||hasSpecialCareerWorld(state,key);
   if(key==='modeling')return career.campaignActive===true||career.agencyContractActive===true||career.agencyOfferPending===true||n(career,'jobs')>0||hasSpecialCareerWorld(state,key);
   if(key==='racing')return career.racingPathway===true||career.active===true||career.freeAgent===true||hasSpecialCareerWorld(state,key);
   if(key==='directing')return career.currentProjectActive===true||career.offerPending===true||n(career,'filmsDirected')>0||hasSpecialCareerWorld(state,key);
-  if(key==='sports')return career.active===true||career.pro===true||career.freeAgent===true;
+  if(key==='sports')return career.active===true||career.pro===true||career.freeAgent===true||career.renewalOfferPending===true;
   if(key==='politics')return career.active===true||n(career,'office')>0;
   if(key==='royalty')return career.active===true;
   return career.active===true;

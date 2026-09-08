@@ -7,64 +7,42 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 ### Phase 4A — Persistent career worlds
 Status: green.
 
-Foundation: acting productions, music collaborators/management, professional sports teams, modeling agencies/networks, racing teams, directing productions, and persistent career NPCs through `SocialWorld(kind: "organization")`.
-
 ### Phase 4B — Career ecosystem consequences
 Status: green.
-
-Added direct career relationships, leaders/managers, persistent rivals, momentum, awards/scandals, sports contracts, acting/directing project completion, and annual idempotence.
 
 ### Phase 4C — Career Worlds UI + social consequences
 Status: green.
 
-Added Career UI ecosystem visibility, People → Career Worlds affiliation, chemistry/guidance/rivalry interaction, and relationship-driven career outcomes.
-
 ### Phase 4D — Deep career cycles
 In progress.
 
-1. **Phase 4D1 — Professional Sports Seasons & Contract Lifecycle:** green. Yearly seasons/circuits, records, salary accrual before contract resolution, renewals/free agency, and explicit retirement.
-2. **Phase 4D2 — Acting & Directing Production Cycles:** green. Multi-age productions, overlap protection, release economics/reception, follow-up offers, and studio-backed directing opportunities. Deployed special-career regression: 77 checks.
-3. **Phase 4D3 — Music Release / Album / Tour Cycles:** green. Bounded recent catalog history, multi-age stream/royalty tails, fanbase drift, relationship-driven management pressure, year-spanning tours, tour economics/fatigue, and distribution-partnership tradeoffs.
-4. **Post-4D3 Social Affiliation / Friends / Dating correction:** green. Work-folder affiliation isolation, close institutional Friends overlap, and age-eligible romance without erasing SocialWorld history. Verified run #26.
-5. **Phase 4D4 — Modeling Campaign / Agency Contract Cycles:** green. One-year campaign periods, bounded campaign history, representation contracts/offers/renewals, commission/reach tradeoffs, relationship-driven booking quality, earnings history, and bounded industry pressure while preserving existing modeling worlds and old aggregate jobs. Verified run #29.
-6. **Phase 4D5 — Racing Seasons / Team Contract / Championship Cycles:** green. Multi-round seasons, championship standings, team contracts/renewals/releases/free agency, team movement with archived prior worlds, age-stamped salary/prize accrual, bounded detailed season history, relationship-driven engineering/team performance, abstract incident/mechanical pressure, and clean retirement while preserving pre-4D5 aggregate history. Verified run #31.
-7. **Pre-4D6 coherence pass:** in progress. Current/former People-folder prioritization, centralized school/work/special-career commitment limits, and context/maturity-safe procedural event eligibility. Must be green before continuing.
-8. **Phase 4D6 — deeper rival/leader consequences across paths.**
-9. Remaining retirement/end-state handling.
-10. Targeted special-career event chains.
+1. **4D1 Professional Sports Seasons & Contract Lifecycle:** green.
+2. **4D2 Acting & Directing Production Cycles:** green.
+3. **4D3 Music Release / Album / Tour Cycles:** green.
+4. **Post-4D3 Social Affiliation / Friends / Dating correction:** green.
+5. **4D4 Modeling Campaign / Agency Contract Cycles:** green.
+6. **4D5 Racing Seasons / Team Contract / Championship Cycles:** green; verified run #31.
+7. **Pre-4D6 coherence pass:** green; verified run #32. Current/former People ordering, centralized school/work/special-career commitment limits, and context/maturity-safe procedural event eligibility.
+8. **Pre-4D6 systemic strain & career-freedom pass:** deployment pending. High-stress full-time/part-time work, school, and special-career consequences; bounded strain states; Spend Time/meditation/therapy recovery; explicit Leave Path semantics; contract-aware voluntary exits; player-facing professional-sports renewal decisions; role/age-aware procedural NPC targeting.
+9. **4D6 deeper rival / leader consequences across paths.** Use persistent leaders/rivals to influence advocacy, mentorship, conflict, conduct reviews, opportunity quality, delayed follow-ups, and remembered grudges.
+10. **Remaining retirement/end-state handling.** Generalize lifecycle/end-state UI across older special paths without deleting history.
+11. **Targeted special-career event chains.** Multi-year mentor, rivalry, comeback, project, team, agency, and crisis arcs grounded in real persistent NPCs.
 
-### Phase 4D4 accompanying quality corrections
+### Current compatibility rules
 
-The 4D4 bundle also generalized long-form playtest findings without embedding any player save:
-
-- childhood music practice no longer starts professional career years;
-- professional music tenure derives from persisted professional evidence;
-- release-title generation remembers exact prior timeline titles beyond the six-slot detailed catalog;
-- tour operating costs are rebalanced upward to constrain extreme net margins.
-
-### Phase 4D5 compatibility rules
-
-- existing race-team worlds and NPC rosters survive legacy normalization;
-- pre-4D5 seasons/titles remain aggregate history and are not retroactively fabricated into detailed standings;
-- detailed six-slot season history begins only with seasons actually completed under 4D5;
-- contracts and team membership are separate facts: release/free agency/retirement archive current affiliation without deleting old team history;
-- final-season salary and prize earnings are resolved before contract or retirement transitions and flow through normal annual finance/tax processing.
-
-### Pre-4D6 coherence rules
-
-- School / Work / Career Worlds keep history, but current affiliations render before muted former affiliations.
-- Special-career capacity is two outside school and one during active enrollment.
-- School blocks full-time work; school plus a special career blocks new part-time work as well.
-- Existing over-cap saves preserve established paths rather than silently deleting careers.
-- Training-only legacy flags do not count as professional acting/music/modeling evidence.
-- Procedural relationship stories require real eligible NPC context, and untargeted procedural stories cannot mutate a random relationship.
-- Early-age procedural content is filtered by maturity where its choices assume teen/adult independence.
+- Existing saves above the two-career cap preserve all established paths.
+- Training-only legacy acting/music/modeling flags do not consume professional slots without real evidence.
+- Explicitly leaving a path preserves history but frees capacity; professional re-entry can reactivate it later.
+- Voluntary exit respects live project/season/contract obligations; involuntary retirement/release remains separate.
+- Sports renewal is a decision rather than silent auto-renewal.
+- Final-period compensation is settled before end-state changes.
+- Procedural relationship stories require a plausible target, not merely any living NPC of a broad category.
 
 ### Later Phase 4 extensions
 
-Extend persistent worlds/depth to military, politics, royalty, organized crime, fictional intelligence/other special organizations where appropriate, and combat sports if a persistent gym/promoter/rival layer adds meaningful simulation.
+Extend persistent worlds/depth to military, politics, royalty, organized crime, fictional intelligence/other organizations, and combat sports where the added recurring NPC layer creates meaningful simulation rather than another isolated menu.
 
-Before introducing richer structured Phase 4 persisted objects, decide whether save schema 10 is justified.
+Before introducing richer structured persisted Phase 4 objects, decide whether save schema 10 is justified.
 
 ## Phase 5 — Generations / estates
 
@@ -76,7 +54,7 @@ Planned: vehicle financing, repossession, creditworthiness/history, personal-loa
 
 ## Phase 7 — Persistent world consequences
 
-Planned: exact event cooldown tracking, expanded delayed consequence chains, more persistent target-aware follow-ups, parenting/property/business/school/special-career delayed consequences, and a deeper national/world event layer.
+Planned: exact event cooldown tracking, expanded delayed consequence chains, more persistent target-aware follow-ups, parenting/property/business/school/special-career delayed consequences, and deeper national/world events.
 
 ## Cross-cutting later gates
 
@@ -86,7 +64,7 @@ Planned: exact event cooldown tracking, expanded delayed consequence chains, mor
 - PWA install/offline upgrade QA;
 - iOS/Android standalone behavior;
 - regional name-pool expansion and long-dynasty repetition analysis;
-- continued bulk/stress simulations as persistent systems grow;
+- code splitting for the growing application chunk;
 - generalized balance simulations informed by real player saves without shipping those saves as fixtures.
 
 ## Scope philosophy

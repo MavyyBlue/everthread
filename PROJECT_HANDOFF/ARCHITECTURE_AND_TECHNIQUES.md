@@ -2,257 +2,101 @@
 
 ## Core ownership model
 
-Everthread has one authoritative `GameState`.
+Everthread has one authoritative `GameState`. Preferred direction remains UI → `GameEngine` / system API → controlled state mutation → autosave / Age Up processing → UI render. React screens display state and request actions; they do not directly mutate critical simulation state.
 
-Preferred direction: UI → `GameEngine` / system API → controlled state mutation → autosave / Age Up processing → UI render.
+## Determinism, saves, and yearly processors
 
-React screens display state and request actions. They should not directly mutate critical age, money, relationship, family, work, health, asset, legal, investment, or progression state.
+Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current save schema remains 9; bounded primitive additions to existing flags/special-career tracks do not by themselves justify schema 10.
 
-## System boundaries
-
-Keep major domains modular: Character, Aging, Events, Relationships, NPC autonomy, Education/schools, Career/workplaces, Special careers/organizations, Finance, Health, Assets/property, Investments, Business, Crime/legal/prison, Fame, Pets/travel, Generations/inheritance, and Save/migrations.
-
-Prefer small reusable APIs over giant condition chains.
-
-## Data-driven simulation
-
-Use structured content/state and generic engines when possible. Social Worlds are shared by schools, workplaces, and special-career organizations; action policies remain central; NPC biography state remains separate from player relationship state. Do not create a parallel subsystem when the existing model already expresses the concept.
-
-## Affiliation vs relationship
-
-An NPC’s relationship type answers “what is this person to the player now?” A Social World answers “where/how did these people know each other?”
-
-A classmate can become a friend/spouse and remain in School; a coworker can become an enemy/partner and remain in Work; a castmate/team rival/creative partner can change personal relationship and remain in Career Worlds. Never encode persistent institutional affiliation only inside `Relationship.type`.
-
-## Deterministic RNG
-
-Core simulation uses seeded RNG.
-
-- no `Math.random()` for simulation state;
-- no wall-clock runtime IDs;
-- use state-scoped `makeStateId`;
-- use independent deterministic substreams when a new subsystem should not perturb the main RNG sequence;
-- exact replay regression remains mandatory;
-- migrations should not consume player RNG unless explicitly part of old behavior.
-
-## Yearly processor idempotence
-
-A yearly system that changes contracts, seasons, delayed consequences, royalties, tours, campaigns, or other once-per-age state must defend against duplicate execution.
-
-Persist a last-processed age/year marker in the appropriate existing state and return early for repeated processing. Phase 4 uses this for ecosystem years, sports seasons/contracts, music catalog/tour processing, modeling campaign/agency processing, and racing season/contract processing.
+Real player saves are diagnostic evidence only. Generalize the failure shape into fabricated deterministic regression fixtures; never ship a tester's seed, IDs, NPCs, or history.
 
 ## Period accrual before end-state transitions
 
-When one Age Up represents a completed period of work, resolve what was earned during that period before changing end-of-period status.
+When an Age Up represents completed work, settle what was earned before changing end-of-period status. Sports and racing stamp final-period earnings before renewal/release/retirement. The stress consequence processor runs after annual finance settlement so a dismissal caused by that year's strain does not retroactively erase already-earned wages.
 
-Professional sports stamps `seasonSalaryDue` / `lastSeasonAge` before renewal, release, or retirement. Phase 4D5 racing follows the same ownership rule with age-stamped `seasonSalaryDue` plus `seasonPrizeDue` before renewal, release, team movement, or retirement. Annual Finance can then pay and tax what was actually earned even if career status changes later in the same Age Up.
+## Social worlds and affiliation history
 
-Prefer an explicit age-stamped accrual over temporarily keeping an invalid status alive just so another system can see it.
+`SocialWorld` owns school/work/career affiliation history. NPC objects own people; `Relationship` owns the current personal bond. Archive worlds/memberships rather than deleting them. Current affiliations sort above muted former affiliations in People, but former NPCs/history remain reachable.
 
-## Multi-age project and season lifecycle without duplicate state
+## Commitment capacity and explicit exit state
 
-For careers where a project or season should take meaningful time, do not resolve the entire career event in the button click. Start the period in the existing special-career track, bind it to the exact persistent Social World, and let a later Age Up finalize it.
+`CommitmentSystem.ts` owns active special-career capacity, enrollment compatibility, and work/school restrictions. Outside school the limit is two established special paths; during active enrollment it is one.
 
-Phase 4D2 uses this for acting/directing. Phase 4D4 uses it for modeling campaigns: booking starts the campaign and pays only an advance; the next Age Up settles performance, remaining compensation, bonus, commission, reputation/fame effects, pressure, and history. Phase 4D5 uses it for motorsport: Race starts an 18–24 round season and the next Age Up resolves the championship, wins/podiums/points, incidents/mechanical issues, earnings, pressure, and contract consequences.
+Historical professional evidence and current commitment are different facts. A career may have credits/releases/bookings/seasons forever without remaining an active commitment forever. `SpecialCareerExitSystem.ts` therefore uses an explicit flat `leftPath` marker:
 
-Use this pattern when a future career needs a season/project lifecycle but does not yet justify a new save schema.
+- professional history stays intact;
+- `leftPath=true` overrides historical evidence for active-capacity calculations;
+- successful professional re-entry clears `leftPath`;
+- existing legacy over-cap saves preserve their paths;
+- training/practice alone still does not establish acting/music/modeling as a professional commitment.
 
-## Bounded flat history inside generic career tracks
+Do not clear historical counters to make a slot available. Current participation and lifetime history must remain separately recoverable.
 
-The special-career tracks are intentionally generic persisted records. Primitive additions do not require a schema bump, but they must stay understandable and bounded.
+## Voluntary exit vs involuntary end state
 
-Phase 4D3 music uses numbered recent-catalog slots rather than an unbounded hidden array/string blob. Phase 4D4 modeling mirrors that pattern with six rotating detailed campaign slots while retaining lifetime campaign/earnings aggregates. Phase 4D5 racing uses six rotating detailed season slots while lifetime seasons, wins, podiums, points, titles, earnings, teams, and best-result aggregates continue independently.
+Leaving by player choice is not the same operation as retirement, release, dismissal, or institutional removal.
 
-Do not encode arbitrary nested state as serialized JSON strings merely to avoid a migration. If several future systems genuinely need nested persistent histories, introduce a real typed structure and schema migration instead.
+Voluntary Leave Path can be blocked by a live binding commitment: acting/directing production, music tour, modeling campaign/representation term, sports contract, racing season/contract. Once that obligation ends the player may step away and free the slot.
 
-## Multi-age passive tails
+Involuntary end states remain allowed to supersede those restrictions when the owning lifecycle requires it. Examples include the existing hard-age sports retirement and employer/team release after repeated serious conduct incidents. A contract must not become immunity from consequences.
 
-A release can keep mattering after the click without becoming an unbounded yearly object.
+Inherited royalty is a life status rather than ordinary quit-able employment; future abdication should be its own lifecycle.
 
-Phase 4D3 music applies deterministic, capped three-age stream/royalty tails to recent catalog slots. Every slot carries a last-processed age while the music career carries `lastMusicCycleAge`, so duplicate calls cannot mint royalties twice.
+## Decision-based contract renewal
 
-This pattern is appropriate for residual income/attention that should decay predictably and then stop being actively processed.
+Offers create decisions, not silent buffs. Professional sports now follows the established racing/modeling philosophy at term end:
 
-## Tradeoff and term contracts
+- complete the final period and stamp salary first;
+- end the old contract;
+- if the team wants the player back, persist an exact renewal offer (team, term, salary, expiry);
+- keep the exact team world active while a valid renewal is pending, but keep `pro=false` so no phantom season resolves;
+- acceptance restores the contract on that same team;
+- decline/expiry archives the former team and enters free agency.
 
-Offers should create an actual decision, not a free buff.
+A missing/corrupt team world must not consume the player's renewal action or silently destroy a pending offer.
 
-Phase 4D3 distribution partnerships exchange an advance and reach multiplier for a future royalty share. Phase 4D4 agency contracts exchange booking reach/representation upside for explicit commission and term limits. Phase 4D5 racing contracts preserve exact team, term, salary, offer type, and expiry; renewals retain an authentic current team while new-team contracts change affiliation only after acceptance.
+## Stress is a risk pressure, not a deterministic punishment
 
-A persistent organization/world and a temporary business or employment contract are separate facts. Ending a contract should not delete authentic affiliation history.
+`StressConsequenceSystem.ts` owns the cross-system high-strain framework.
 
-## Persistent modeling network vs representation
+- below 90 stress: no new high-strain incident modifier;
+- 90–100: incident probability rises but remains capped below certainty;
+- at most one new stress incident is generated per age;
+- temporary fictionalized strain states can increase risk and decay with recovery;
+- incident/review histories are bounded flat counters keyed to the authentic current institution/world, including separate full-time and part-time workplace records;
+- three incidents make formal review possible; they do not guarantee dismissal, and dismissal closes only the exact affected employment/career institution;
+- review outcomes use existing performance/standing and leader relationships where available.
 
-The existing modeling `SocialWorld(kind: "organization")` is the persistent professional network: agency staff, campaign team contacts, and rivals. Formal representation is contract state layered onto that world.
+This shared pressure system should later feed Phase 4D6 leader/rival behavior rather than being duplicated inside each career.
 
-Rules:
+## Recovery is systemic player agency
 
-- do not create a second modeling world merely because representation is accepted, renewed, declined, or lost;
-- an unrepresented model can remain connected to the same network;
-- pre-4D4 aggregate `jobs` remain valid historical facts;
-- do not fabricate detailed campaign records for old instant jobs;
-- new completed campaigns append only bounded recent detail plus lifetime aggregates;
-- renewal/release changes contract status, not historical affiliation.
+Stress needs credible relief routes or it becomes a punishment meter.
 
-## Persistent racing team vs team contract
+- Meditation remains modest bounded recovery through the central wellness action budget.
+- Therapy unlocks in the teen years, uses the same wellness budget, gives stronger relief, and can reduce temporary strain. Adult cost checks happen before action consumption.
+- Spend Time can reduce stress after a successful relationship interaction; stronger close relationships generally provide more relief, while hostile relationships do not.
 
-The racing `SocialWorld(kind: "organization")` owns real team affiliation, recurring engineering/team contacts, and rivals. The racing track owns the current contract, season, free-agency, and retirement state.
+Recovery effects are owned by systems/GameEngine orchestration, not UI mutation.
 
-Rules:
+## Procedural event target-role contracts
 
-- legacy racers reuse their existing active team world and NPC roster when 4D5 initializes contract lifecycle state;
-- pre-4D5 `seasons` and `titles` remain aggregate history and are never retroactively converted into invented detailed championship records;
-- a renewal keeps the same team world and relationships;
-- release or declined/expired renewal archives the former team world and moves the driver into free agency without erasing history;
-- a new-team offer must not create a team world merely by existing; create/archive affiliation only when the player accepts the contract;
-- a free agent keeps `racingPathway` history without a fake active team;
-- retirement archives active team affiliation, blocks future racing seasons, and preserves old teams/season records;
-- a final season still accrues salary/prize before release, contract expiry, team movement, or retirement.
+Event category alone is not enough to prove a story makes sense. Eligibility and target selection must operate over the same plausible NPC candidate set.
 
-## Skill pathway vs professional career activation
+Reusable `target:*` tags can constrain minimum/maximum NPC age, adult/minor role, relationship subtype, or care-needs context. Existing procedural content can receive compatibility rules until content data is explicitly tagged.
 
-Training/practice and professional tenure are different concepts.
-
-Music practice may build skill during childhood, but it must not automatically mark the player as a professional musician or increment professional career years. The first real release starts professional tenure, and annual processing derives `years` from recoverable professional evidence.
-
-Use the same distinction for future careers where childhood training precedes professional entry.
-
-## Historical uniqueness without unbounded state
-
-A bounded detailed UI history must not accidentally make generation logic forget older history.
-
-Music keeps only six detailed recent catalog slots, but title selection can also read exact prior release names from the existing career timeline. This avoids casual lifetime title reuse without introducing an unbounded parallel title array or a save migration.
-
-Generation should remain deterministic from seed + career ordinal. Timeline inspection is used only as historical collision evidence, not as hidden random state.
-
-## Shared special-career relationship initialization
-
-Career-world member relationship initialization lives in `SpecialCareerRelationshipSystem.ts` rather than being owned by the ecosystem processor itself.
-
-This keeps one deterministic implementation for leader/boss, rival/enemy, and peer/coworker relationship creation while allowing individual career-cycle systems to ensure their world is socially initialized without creating a circular dependency through `SpecialCareerEcosystemSystem`.
-
-`SpecialCareerEcosystemSystem` re-exports the helper for source compatibility with existing callers.
+If a relationship story cannot resolve a plausible target, it is ineligible rather than rendered with a generic person or allowed to mutate an unrelated relationship. This is how Everthread avoids newborns asking for adult favors, non-siblings appearing in sibling competition, and similar context failures.
 
 ## Central action economy
 
-Every meaningful clickable action must be classified as unlimited/configuration, resource-limited, per-age limited, cooldown-based, or consequence-escalating.
-
-Use `src/core/actionEconomy.ts`. UI disabled states mirror policy for UX, but engine/system enforcement remains authoritative. Failed-but-executed random attempts generally consume their opportunity; blocked actions should not partially consume claims.
-
-Current Phase 4 business/contract policies include `special.music_business`, `special.model.agency_seek`, `special.model.business`, `special.racing_contract_seek`, and `special.racing_business`. Existing `special.race` remains the one-season-per-age racing commitment gate.
-
-## Persistent social worlds
-
-`SocialWorld` is the reusable institution/organization layer. Current consumers include school, workplace, and Phase 4 special-career organization worlds.
-
-Worlds own memberships/groups/affiliation history. NPC objects own the person. Relationships own the player-facing personal bond. Archive old worlds instead of deleting history.
-
-## NPC simulation tiers
-
-Important people receive full annual simulation; background acquaintances can use cheaper cadence. Promote meaningful family/friend/enemy/romantic characters when required. New persistent systems must respect the population budget rather than making every background NPC expensive forever.
-
-## Save migration discipline
-
-Current save schema: 9.
-
-Bump only for genuinely new persisted structure that existing state cannot safely represent. When bumping, initialize deterministically, preserve old meaning, migrate rewind snapshots, test old-save migration, consider generation continuation, and never silently discard major player history.
-
-Phase 4D4 and Phase 4D5 remain within bounded primitive special-career state and therefore do not justify schema 10.
-
-## Mobile-first technique
-
-Primary widths: 360 / 390 / 412 / 430px. Favor bottom navigation/sheets, clear cards, 44px+ meaningful touch controls, compact stat grids, safe-area padding, readable text, no hover-only behavior, and limited simultaneous dense controls.
-
-## Simulation-first consequence design
-
-Features should interact: school history affects admissions/careers; workplace relationships affect performance; career-world chemistry affects momentum/projects/releases/tours/campaigns/racing seasons; crime/legal history affects work; health affects sports/lifespan; wealth affects assets/business; children/relationships affect inheritance/generations.
-
-Avoid isolated meters that never matter anywhere else.
+Every meaningful clickable action remains classified through `src/core/actionEconomy.ts`. Therapy reuses `wellness.total` + a `wellness.activity:therapy` target; sports renewal reuses the established professional-contract decision budget. UI disabled states should mirror system gates, while system/engine enforcement remains authoritative.
 
 ## Testing technique
 
-Use deterministic setups with controlled seeds/state. High-value patterns include same seed + same history ⇒ identical result; compare states differing in one intended variable; call yearly processors twice to test idempotence; archive/end and verify history remains; generation handoff and old-save migration; and stress long lives/many generations for bounded growth.
+High-value regressions include deterministic state comparisons, same-age idempotence, final-period accrual before status change, exact offer terms, archive-without-delete behavior, explicit exit/re-entry, plausible event target pools, and old-save compatibility.
 
-Keep specialized regression suites separate when that makes failures easier to diagnose. Music, modeling, and racing each have dedicated career regressions.
+Specialized suites currently cover core, special-career worlds, music, social affiliation, modeling, racing, coherence, stress/career freedom, and event-target role coherence. GitHub Actions remains the final dependency-backed semantic typecheck/build/deploy gate.
 
-For racing specifically, regression coverage should include legacy-team preservation, no fake historical backfill, overlap blocking before action consumption, salary/prize accrual before end-state transitions, renewal/release/free-agency movement, offer expiry, final-season retirement pay, deterministic standings, and bounded six-slot history.
+## Mobile-first technique
 
-GitHub Actions remains the final dependency-backed build gate.
-
-## Real-save diagnostic policy
-
-Real player saves can reveal state combinations, bugs, and balance problems synthetic tests miss. They are diagnostic evidence only.
-
-When a playtest save exposes a problem:
-
-1. identify the generalized owning-system failure;
-2. build a fabricated deterministic regression that reproduces the failure shape;
-3. fix the owning system without save-specific conditionals;
-4. preserve unrelated existing state/history;
-5. never copy the player's seed, slot, NPCs, character history, or save JSON into production/default fixtures;
-6. never make a fresh install or new life auto-load a tester's save.
-
-Balance observations from real saves should inform generalized simulations and tuning, not hard-coded corrections for one life.
-
-## Folder membership is a projection, not a second relationship type
-
-People folders may overlap when different facts justify membership.
-
-- School / Work / Career Worlds membership should primarily come from persistent SocialWorld affiliation, not generic Relationship labels.
-- A career-world peer may use `Relationship.type = "coworker"` for interaction semantics while still not belonging in Work unless they also share a real workplace.
-- Archived SocialWorlds preserve institutional history unless the product explicitly introduces a current-only view.
-- Friends & Social may project a very close institutional connection without overwriting classmate/coworker/boss/teacher state.
-- Changing the personal relationship to partner/spouse/friend must not delete original School/Work/Career Worlds history.
-
-## Dating eligibility is separate from institutional affiliation
-
-`Relationship.type` should not require converting every classmate/coworker/boss/teacher into `friend` before romance is possible.
-
-For Ask out:
-
-- enforce living NPC and teen/adult age compatibility first;
-- permit only explicitly supported non-family relationship categories;
-- family types remain blocked regardless of score;
-- successful romance changes personal relationship state while SocialWorld preserves where the pair originally knew each other;
-- UI visibility mirrors the same system helper used by the relationship action so button and engine cannot silently disagree.
-
-## Commitment capacity is a shared policy, not scattered UI logic
-
-`CommitmentSystem.ts` owns read-only compatibility-aware gates for active enrollment, established special-career commitments, full-time work, part-time work, and school enrollment. Player-facing `GameEngine` methods enforce the same gates that Career UI uses for disabled states and explanatory copy.
-
-Rules:
-
-- outside school, allow at most two established special-career paths;
-- during active enrollment, allow at most one;
-- full-time work cannot begin while enrolled;
-- part-time work remains available during school only when there is no active special-career commitment;
-- starting a special career during school requires ordinary work to be left first;
-- enrollment never silently resigns/quits/retire paths for the player; incompatible commitments must be ended explicitly;
-- an older save already above a new limit is preserved: existing paths remain usable, while new starts are blocked;
-- preparatory skill practice is not automatically professional commitment. Legacy acting/music/modeling `active=true` flags require real professional evidence before consuming capacity;
-- inherited statuses such as royal birth must be represented consistently rather than becoming an optional start action that can be nonsensically blocked later.
-
-Do not add new player-facing career entry routes that bypass these shared gates.
-
-## People folder recency is an affiliation projection
-
-School, Work, and Career Worlds remain historical projections over `SocialWorld` membership. They do not delete former people merely to declutter the UI. Instead, derive an affiliation projection per NPC containing current/former status, role, world name, and dates.
-
-Current means the world is active and the member has no `leftAge`. Current affiliations sort before former affiliations regardless of relationship score. Former affiliations sort below current by recency and are visually muted but remain selectable.
-
-This is presentation/projection state only; it must not overwrite `Relationship.type`, NPC identity, or archived SocialWorld history.
-
-## Procedural events require legitimate context
-
-Procedural event category is not sufficient evidence that a relevant NPC exists. Relationship-dependent stories must resolve eligibility and target context before presentation.
-
-- friend stories require a living non-estranged friend;
-- family stories require an eligible living family relationship;
-- romance and institutional target stories use explicit/current eligible relationships;
-- an inferred/explicit target is carried in the event payload so choice effects affect that exact NPC;
-- if a procedural story has no legitimate target, generic relationship fallback is suppressed rather than mutating an unrelated NPC;
-- maturity floors can be stricter than raw family `minAge` when the scenario/choices assume independent money, travel, care, or adult-like decision-making;
-- genuinely child-appropriate childhood events remain available.
-
-Prefer improving eligibility/context contracts over patching one nonsensical sentence at a time.
-
+Primary widths remain 360 / 390 / 412 / 430px. Favor bottom navigation/sheets, 44px+ meaningful touch controls, compact readable cards, safe-area padding, and explanatory disabled states for locked commitments. The growing ~726 kB main application chunk remains a future code-splitting target.

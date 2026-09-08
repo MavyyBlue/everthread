@@ -3,7 +3,7 @@ import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import type { GameState, SocialWorld } from '../types/game';
 import { specialCareerWorlds, type SpecialCareerWorldKind } from './SpecialCareerWorldSystem';
-import { processSportsSeasonYear } from './SportsCareerCycleSystem';
+import { expireSportsContractOffer, processSportsSeasonYear } from './SportsCareerCycleSystem';
 import { expireScreenCareerOffers, finalizeScreenCareerProject } from './ScreenCareerCycleSystem';
 import { processModelingCareerYear } from './ModelingCareerCycleSystem';
 import { expireRacingContractOffer, processRacingCareerYear } from './RacingCareerCycleSystem';
@@ -176,6 +176,7 @@ function finalizeTemporaryProject(state:GameState,kind:'acting'|'directing',worl
 
 export function processSpecialCareerEcosystemsYear(state:GameState){
   expireScreenCareerOffers(state);
+  expireSportsContractOffer(state);
   expireRacingContractOffer(state);
   for(const world of specialCareerWorlds(state)){
     if(world.active)ensureSpecialCareerRelationships(state,world);
@@ -185,6 +186,7 @@ export function processSpecialCareerEcosystemsYear(state:GameState){
       world.groups.push({id:makeStateId(state,`special-${kind}-resolved`),name:'Completed Project',kind:`special:${kind}:resolved`,minAge:0,memberNpcIds:[],prestige:Number(track(state,kind).lastProjectScore??50)});
       continue;
     }
+    if(world.active&&kind==='sports'&&track(state,'sports').renewalOfferPending===true)continue;
     if(world.active&&['music','sports','modeling','racing'].includes(kind))processPersistentCareerYear(state,kind,world);
   }
 }
