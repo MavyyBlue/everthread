@@ -14,7 +14,6 @@ Status: green.
 Status: green.
 
 ### Phase 4D — Deep career cycles
-In progress.
 
 1. **4D1 Professional Sports Seasons & Contract Lifecycle:** green.
 2. **4D2 Acting & Directing Production Cycles:** green.
@@ -34,12 +33,20 @@ In progress.
 
 ### Phase 4E — Additional persistent special-career ecosystems
 
-In progress. These paths should reuse persistent NPC/Social World ownership where recurring people materially change the simulation, without forcing every organization into the six-deep-career lifecycle type.
+In progress. These paths reuse persistent NPC/Social World ownership where recurring people materially change the simulation, without forcing every organization into the six-deep-career lifecycle type.
 
-1. **4E1 Combat Sports Persistent Fight Network:** current / deployment pending. Persistent gym/circuit world with exact coaches, training partners, recurring rivals, exact-NPC fight history, bounded annual roster replacement, People/Career identity integration, Leave Path archive continuity, and AI-semantic combat interaction coverage.
-2. **4E2 Military Service Ecosystem:** planned candidate after 4E1. Recurring command/peer/unit relationships, posting/service history, promotion context, and consequences should remain abstract/non-operational.
-3. **4E3 Politics Ecosystem:** planned. Persistent campaign/office staff, colleagues/opponents/constituents as appropriate, office history, and relationship-driven political consequences.
-4. **Later 4E:** royalty, organized crime, fictional intelligence/other organizations, commune/casino/zoo/museum where persistent people add genuine simulation depth.
+1. **4E1 Combat Sports Persistent Fight Network:** green; verified by run #56 (`34280932226`) on expanded baseline `16fa2ef74f9b9bf55df62e23efa2d8c15f600b8c`. Persistent gym/circuit worlds now contain exact coaches, training partners, recurring rivals, exact-NPC fight history, bounded roster succession, People/Career identity integration, Leave Path continuity, and AI-semantic combat coverage. Combat regression passed 51/51 after CI caught and the production fix resolved missing head-coach succession.
+2. **4E2 Military Service Ecosystem:** current / deployment pending. Add recurring command, peer, and support relationships; persistent posting/service history; exact commander context for promotions; bounded command succession; People/Career identity continuity; and abstract/non-operational annual unit consequences while preserving the existing enlistment, training, rank, pay, and career-freedom authorities.
+3. **4E3 Politics Ecosystem:** next. Persistent campaign/office staff, colleagues/opponents/constituents as appropriate, office history, and relationship-driven political consequences.
+4. **Later special-career breadth:** royalty, organized crime, fictional intelligence/other organizations, commune/casino/zoo/museum remain valid later expansion targets, but they do **not** block Phase 5.
+
+### Phase 4 closeout gate
+
+Phase 4 has an explicit exit line rather than an open-ended feature bucket:
+
+**4E2 Military → 4E3 Politics → one focused Phase 4 integration/consistency closeout → Phase 5.**
+
+The closeout is for concrete bugs, cross-system consistency, save/performance checks, and regressions exposed by 4E2/4E3. It is not a reason to add every remaining special career before Phase 5. Later Phase-4-style ecosystems may resume after the generational foundation is stronger.
 
 ### Phase 4Q — Cross-cutting quality infrastructure
 
@@ -71,13 +78,13 @@ Future Q passes should remain rare and justified by cross-system leverage; gamep
 
 ### Later Phase 4 extensions
 
-After the 4E foundations, continue only where persistent people and systemic consequences justify the extra world state. Organization breadth without meaningful NPC continuity is not completion.
+After the Phase 4 closeout, additional organization breadth waits until it is justified by the later roadmap. Persistent people and systemic consequences remain the quality bar; raw feature count is not completion.
 
 Before introducing richer structured persisted Phase 4 objects, decide whether save schema 10 is justified. Flat bounded primitive additions remain acceptable while schema 9 can represent them safely.
 
 ## Phase 5 — Generations / estates
 
-Planned: asset-specific wills, fictionalized estate administration/tax handling, richer NPC-owned assets/businesses, broader kin taxonomy if justified, and large-family/multi-generation performance validation.
+Begins after 4E2, 4E3, and the focused Phase 4 closeout. Planned: asset-specific wills, fictionalized estate administration/tax handling, richer NPC-owned assets/businesses, broader kin taxonomy if justified, and large-family/multi-generation performance validation.
 
 ## Phase 6 — Credit / debt
 

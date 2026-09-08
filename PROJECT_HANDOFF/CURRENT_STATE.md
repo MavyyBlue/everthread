@@ -8,66 +8,78 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `3f63ceea5272b8419e31e099bf1a9cc84f0ccab8`.
+The latest fully green expanded baseline is commit `16fa2ef74f9b9bf55df62e23efa2d8c15f600b8c`.
 
-- GitHub Actions run #54 (`34276175071`), job `102229611302`, completed successfully on 2026-09-08.
-- Run #54 expanded uploaded commit `af8ab50b3a5bdd59822e41144fa2033a864febc4` into the build-bot commit above.
+- GitHub Actions run #56 (`34280932226`), job `102245248914`, completed successfully on 2026-09-08.
+- Run #56 expanded uploaded correction commit `3ea3f22ad6a2d8e44a20e8c6b78fd76fbc5909d7` into the build-bot commit above.
 - Source-overlay import, dependency install, engine/test typechecks, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
-- Phase 4D8B path-specific multi-year career arcs passed 68/68 checks; the dedicated special-career story registry is now 18 beats while remaining outside the ordinary random-event pool.
-- Phase 4Q1 AI Interaction Testbench remained green at 41/41 checks and successfully exercised the 4D8B player-flow regression.
+- Phase 4E1 Combat Sports Persistent Fight Network passed 51/51 checks after run #55 correctly exposed a real missing-head-coach succession edge case and the production roster logic was fixed rather than weakening the regression.
+- Phase 4D8B path-specific multi-year career arcs remained green at 68/68 checks.
+- Phase 4Q1 AI Interaction Testbench remained green at 41/41 checks and remains test-only.
 - Existing specialized suites remained green, including 82/82 core, 77/77 Career World, 48/48 lifecycle, 37/37 generic career-story, 25/25 influence, and 8/8 contextual-information checks.
-- Pages artifact `10075800421` deployed successfully. Save schema remains 9.
+- Pages artifact `10077583075` deployed successfully. Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-## Current work — Phase 4E1 combat-sports persistent fight network
+## Phase 4E1 combat-sports persistent fight network — green
 
-This overlay is **deployment pending** until GitHub Actions passes. 4D8C remains optional because run #54 exposed no queue, lifecycle, or performance defect that justifies delaying the next gameplay ecosystem. 4E1 therefore begins the next outward Phase 4 expansion with combat sports.
+Combat sports now uses generic `SocialWorld` ownership under `special-combat-*` for persistent coaches, training partners, and recurring rivals. Exact rivals are used in sanctioned fictional bout history, NPC memories, and relationship consequences. Leave Path archives the gym/circuit without deleting people or history, and legal re-entry creates a new active chapter. Passive roster maintenance uses deterministic substreams and does not consume the core player RNG stream.
 
-### Persistent combat Career World
+The combat ecosystem is live and playable through the existing Career → Life Paths actions. People → Career Worlds discovers the persistent combat affiliations without a separate People implementation, and Career Identity projects active combat roles over unrelated autonomous NPC occupations without mutating `NpcLifeSystem` career truth.
 
-Combat sports now uses the same authoritative ownership model as the rest of Everthread without being forced into the six-deep-career lifecycle type:
+## Current work — Phase 4E2 military service ecosystem
 
-- normal `Npc` records own persistent coaches, training partners, and circuit rivals;
-- the existing `SocialWorld` model owns gym/circuit affiliation history under `special-combat-*`;
-- the ordinary Relationship system owns coach/coworker/enemy relationships and later personal evolution; and
-- the existing combat special-career track stores only bounded career metrics and exact recent references.
+This overlay is **deployment pending** until GitHub Actions passes. It builds on the run #56 baseline and preserves the existing military enlistment, training, rank progression, finance, commitment, and Leave Path authorities.
 
-A first successful training block creates one persistent combat organization with an original gym identity, a bounded coaching team, training partners, and recurring rivals. Annual processing uses a dedicated deterministic substream to replace dead roster members only up to minimum group size, drift gym prestige, and derive coach support, training chemistry, rivalry pressure, and career momentum. The core player RNG stream is not consumed by passive roster/world maintenance.
+### Persistent unit ownership
 
-Combat deliberately remains outside `SpecialCareerWorldKind` for this slice. That type still describes the six deep acting/music/sports/modeling/racing/directing ecosystems with their own lifecycle/story configuration. Reusing `SocialWorld` directly avoids widening every deep-career `Record<SpecialCareerWorldKind,...>` merely to gain persistence.
+Military service gains a generic persistent organization namespace under `special-military-*` rather than widening the six-deep `SpecialCareerWorldKind`.
 
-### Exact opponents and systemic consequences
+- ordinary `Npc` records own exact commanders, service peers, and support personnel;
+- generic `SocialWorld` records own active/former unit membership and posting history;
+- ordinary Relationships own boss/coworker ties and their later personal evolution;
+- the existing flat military special-career track keeps bounded current-unit metrics and exact recent references only.
 
-The old anonymous combat opponent roll is replaced by exact persistent rivals from the active combat world.
+The first annual service-processing pass after enlistment creates a persistent fictional unit with a bounded command team, service peers, and support personnel. Old active military saves without a unit gain one naturally on their next Age Up without a save migration.
 
-- A sanctioned fictional bout selects a living NPC from the persisted rival group.
-- The exact opponent ID, world ID, result, age, and purse are retained on bounded combat-track markers.
-- Timeline history names and links the exact opponent.
-- The rival receives a `combat_bout` memory and the normal relationship/hidden-opinion system changes.
-- Existing abstract striking/grappling/defense/stamina/fight-IQ, health, fame, reputation, purse, and title mechanics remain the outcome inputs/consequences.
-- The existing `special.fight` action budget still permits at most two major bouts per age.
-- Dead rivals cannot remain eligible opponents; bounded annual roster maintenance replaces them without deleting the old NPC or affiliation history.
+### Service consequences and continuity
 
-This remains gameplay-focused and abstract. It does not add practical real-world fighting instruction.
+Annual unit processing uses a dedicated deterministic substream and does not consume `state.rngCounter`.
+
+- dead personnel leave active affiliation and are replaced only to bounded minimums;
+- loss of a commander establishes one exact living replacement rather than leaving phantom authority;
+- command support, unit cohesion, unit prestige, and service standing remain bounded projections;
+- strong command/cohesion can modestly improve confidence/discipline, while poor support/cohesion can add stress;
+- existing generic rank progression remains the sole promotion authority;
+- when that authority creates a rank-up, the military layer contextualizes the existing timeline entry to the exact current commander/unit and gives that commander a shared memory rather than creating a duplicate promotion;
+- postings last a deterministic bounded 3–6 years, then archive as service history and create a new exact unit chapter;
+- unit names are kept distinct across long service histories, with bounded NPC growth.
+
+This remains gameplay-focused and abstract/non-operational. No practical military or weapons instruction is added.
 
 ### Career identity, exit, and People continuity
 
-Combat-world affiliation integrates with existing cross-system coherence:
+Career Identity now recognizes active military-world affiliation for NPC profiles: exact commanders, command staff, service peers, and unit specialists outrank an unrelated autonomous standard occupation in presentation while the underlying NPC career truth remains untouched.
 
-- active combat commitment continues to display the player as `Combat Athlete`;
-- active coach/athlete affiliation can override an unrelated autonomous standard job in NPC profile presentation, using the same read-only role/income projection rule established for other special careers;
-- People → Career Worlds already discovers all `special-*` organization affiliations, so combat contacts appear there without a parallel People implementation;
-- Leave Path archives the active combat world while preserving every NPC, relationship, memory, and former affiliation; and
-- a later legal re-entry creates a new active combat world while the earlier one remains archived.
+The player’s existing branch-aware identity is preserved, with one consistency fix: a branch already named `Air Service` now displays as `Air Service`, not `Air Service Service`.
 
-No player save metadata or structured state object is added; save schema remains 9.
+People → Career Worlds already discovers all `special-*` organizations, so current and former military contacts work without parallel People UI. Leave Path archives the current unit immediately while preserving every NPC, relationship, memory, and prior posting. A later legal re-entry creates a new active military posting while prior units stay historical.
 
-### 4E1 validation
+No structured player-save object or migration is added; save schema remains 9.
 
-`combatCareerWorldRegression.ts` adds 51 focused checks covering underage gating, bounded world creation, exact coaches/rivals, People affiliation, NPC/player career identity, action-economy limits, exact fight targets/memories/timeline references, core RNG discipline, annual idempotence, dead-roster replacement, read-only projections, Leave Path archive semantics, re-entry without world resurrection, and AI-testbench semantic training/fighting through the real `GameEngine`.
+### 4E2 validation
 
-The AI testbench gains `career.combat.train` and `career.combat.fight` commands. Their availability reuses `specialCareerStartGate`, `isSpecialCareerPathActive`, and the real action-economy policies rather than duplicating combat eligibility rules. Its invariant watch also rejects multiple simultaneously active `special-combat-*` worlds.
+`militaryCareerWorldRegression.ts` adds 65 focused checks covering age/record enlistment gates, bounded roster creation, exact commander ownership, People integration, player/NPC career identity, read-only projections, existing training/action-economy behavior, RNG discipline, annual idempotence, relationship clocks, dead-peer replacement, command succession, exact promotion context/memory, posting rotation/history, Leave Path archival behavior, legal re-entry through the real `GameEngine`, normal Age Up integration, long-service population bounds, and unique persistent unit identities.
+
+The general 41/41 AI interaction testbench remains unchanged in this slice because there is not yet a shared exported military-enlist availability gate that covers both age/criminal-record eligibility and commitment rules. 4E2 avoids duplicating those rules inside test-only code; its integration regression calls the real existing `GameEngine.enlist()` / `GameEngine.ageUp()` path instead. Semantic military actions can be added later when availability can reuse one authoritative gate.
+
+## Phase 4 exit line
+
+The agreed development timeline is now explicit:
+
+**4E2 Military → 4E3 Politics → one focused Phase 4 integration/consistency closeout → Phase 5 Generations / Estates.**
+
+Royalty, organized crime, fictional intelligence organizations, commune/casino/zoo/museum, and other special-career breadth remain valid future expansions but do not block Phase 5.
 
 ## Phase 4Q1 AI interaction testbench — green
 
@@ -79,14 +91,6 @@ The AI testbench gains `career.combat.train` and `career.combat.fight` commands.
 - Supplied fixtures are cloned, assigned `ai-test-*` slots, and isolated from real IndexedDB/localStorage through disposable test persistence.
 - Test metadata stays outside `GameState` and save schema 9.
 - The suite runs inside `npm test`, so a semantic interaction failure blocks the production build/deployment gate.
-
-4D8B was the first gameplay slice to actively use this testbench; 4E1 extends the semantic surface to combat training and exact-NPC bouts.
-
-## Next after 4E1 is green
-
-Human playtesting should verify that recurring coaches/rivals feel like a real career circle rather than decorative names, while deterministic regression watches exact-target integrity, world duplication, and roster bounds. If that foundation is healthy, continue Phase 4E with another currently shallow special path—military or politics are the strongest next candidates because both already have annual progression but lack persistent people around the player.
-
-4D8C stays available only if story pacing/queue behavior later reveals a concrete defect. Do not expand 4D story counts merely because the slot exists.
 
 ## Known quality / architecture issues to keep visible
 

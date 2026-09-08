@@ -12,6 +12,7 @@ function career(state:GameState,key:SpecialCareerPathKey){return (state.specialC
 function n(record:Track,key:string,def=0){return typeof record[key]==='number'?Number(record[key]):def;}
 function activeWorlds(state:GameState,key:SpecialCareerPathKey){return WORLD_KEYS.has(key)?specialCareerWorlds(state,key as SpecialCareerWorldKind).filter(world=>world.active):[];}
 function activeCombatWorlds(state:GameState){return (state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-combat-'));}
+function activeMilitaryWorlds(state:GameState){return (state.socialWorlds??[]).filter(world=>world.kind==='organization'&&world.active&&world.id.startsWith('special-military-'));}
 
 export function specialCareerExitGate(state:GameState,key:SpecialCareerPathKey):CommitmentGate{
   if(!isSpecialCareerPathActive(state,key))return{allowed:false,message:`${specialCareerPathLabel(key)} is not currently an active special-career commitment.`};
@@ -34,6 +35,7 @@ export function specialCareerExitGate(state:GameState,key:SpecialCareerPathKey):
 function closePersistentWorlds(state:GameState,key:SpecialCareerPathKey){
   for(const world of activeWorlds(state,key))archiveSpecialCareerWorld(world,state.character.age);
   if(key==='combat')for(const world of activeCombatWorlds(state))archiveSpecialCareerWorld(world,state.character.age);
+  if(key==='military')for(const world of activeMilitaryWorlds(state))archiveSpecialCareerWorld(world,state.character.age);
 }
 
 /**

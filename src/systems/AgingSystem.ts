@@ -17,6 +17,7 @@ import { processPetsYear } from './PetSystem';
 import { processFameYear } from './FameSystem';
 import { processLegalYear } from './CrimeSystem';
 import { processSpecialCareersYear } from './SpecialCareerSystem';
+import { processMilitaryCareerYear } from './MilitaryCareerWorldSystem';
 import { processSpecialCareerStoriesYear } from './SpecialCareerStorySystem';
 import { processAnnualFinance } from './FinanceSystem';
 import { processStressConsequencesYear } from './StressConsequenceSystem';
@@ -50,6 +51,8 @@ export function ageUp(state:GameState):EngineResult {
     processFameYear(state);
     processLegalYear(state);
     processSpecialCareersYear(state);
+    // Generic military promotion/progression settles first; the persistent unit then binds that year to exact people/history.
+    processMilitaryCareerYear(state);
     // Career story openings are selected only after this age's worlds/projects/contracts have settled.
     processSpecialCareerStoriesYear(state);
     processAnnualFinance(state);
