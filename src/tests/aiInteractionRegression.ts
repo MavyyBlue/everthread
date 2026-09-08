@@ -49,7 +49,7 @@ export async function runAiInteractionRegression(){
     verify(resolved.invariantIssues.length===0,'25 event resolution must run invariant watches immediately after the interaction');
 
     await bench.flushPersistence();const keys=bench.storageKeys();
-    verify(keys.every(key=>key.startsWith('everthread-save-ai-test-')),'26 any intercepted test storage writes must remain isolated to test-only save keys');
+    const isolatedSaveKey=`everthread-save-${bench.getState().slotId}`;verify(keys.includes(isolatedSaveKey),'26 GameEngine autosaves must be intercepted under the testbench-owned in-memory save key');
     verify(JSON.stringify(pristine)===pristineSerialized,'27 the caller-owned source/player state must remain untouched after a complete interaction sequence');
   } finally {await bench.dispose();}
 
