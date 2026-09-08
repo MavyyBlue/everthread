@@ -28,9 +28,15 @@ In progress.
 10. **4D6 Deeper rival / leader consequences across paths:** green. Persistent leaders/rivals feed opportunity, mentorship/advocacy, conduct pressure, professional conflict, delayed follow-ups, and remembered grudges while existing lifecycle/stress systems retain formal release authority.
 11. **4D7A Special-career lifecycle foundation:** green; verified by run #47.
 12. **4D7B Player-facing retirement/comeback + residual end-state economics:** green; verified by run #48. Compact lifecycle status/actions are live; creative comebacks and final athletic retirement are coherent; music residual royalties preserve signed distribution terms without phantom career/world progression.
-13. **4D8A Targeted career-story foundation:** deployment pending. Add a bounded exact-NPC delayed-chain scheduler plus first three-beat mentor and rivalry arcs using existing Career Worlds, Relationships, NPC memories, and delayed events.
-14. **4D8B Path-specific multi-year arcs:** next after 4D8A is green. Acting/directing collaborators, music sleeper-hit/former-manager arcs, modeling agency reunions, team/coach histories, retirement/comeback opportunities, and other path-specific follow-ups.
+13. **4D8A Targeted career-story foundation:** green; verified by run #50. Exact persistent Career World NPCs can carry bounded three-beat mentor/rivalry chains across years and archived worlds through the existing delayed-event system.
+14. **4D8B Path-specific multi-year arcs:** next gameplay slice after cross-cutting 4Q1 is green. Acting/directing collaborators, music sleeper-hit/former-manager arcs, modeling agency reunions, team/coach histories, retirement/comeback opportunities, and other path-specific follow-ups.
 15. **4D8C Optional hardening/content expansion:** only if playtesting or queue/performance profiling shows the need before moving to later special-path ecosystems.
+
+### Phase 4Q — Cross-cutting quality infrastructure
+
+**4Q1 AI Interaction Testbench:** deployment pending. Add a test-only semantic interface over the real `GameEngine` for machine-readable observations, stable action IDs, exact entity inspection, deterministic scenario transcripts, state diffs, invariant watches, and isolated in-memory persistence. It must not add player UI, player save metadata, a new save schema, or a parallel gameplay implementation. The suite runs inside `npm test`, which already blocks production build/deployment on failure.
+
+Future Q passes should remain rare and justified by cross-system leverage; gameplay expansion remains the primary direction after 4Q1.
 
 ### Current compatibility rules
 
@@ -48,6 +54,8 @@ In progress.
 - Influence/story consequences can alter relationships, pressure, reputation, fame, or opportunity context but do not independently fire/release the player.
 - Multi-year career stories must keep exact NPC continuity across delayed beats and cancel safely if that NPC is no longer valid.
 - Story queue growth stays bounded; do not flood Age Up with stacked narrative interruptions.
+- Testbench commands must route through real GameEngine APIs; availability should reuse real gates/projections when available.
+- Test-only state must be cloned, use `ai-test-*` slot IDs, and persist only to disposable in-memory storage during regression execution.
 
 ### Later Phase 4 extensions
 
@@ -76,7 +84,8 @@ Planned: exact event cooldown tracking, expanded delayed consequence chains, mor
 - iOS/Android standalone behavior;
 - regional name-pool expansion and long-dynasty repetition analysis;
 - code splitting for the growing application chunk;
-- generalized balance simulations informed by real player saves without shipping those saves as fixtures.
+- generalized balance simulations informed by real player saves without shipping those saves as fixtures;
+- continued expansion of AI semantic interaction coverage as new player-facing systems are added.
 
 ## Scope philosophy
 

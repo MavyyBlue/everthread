@@ -8,68 +8,82 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `8c714ad594c3eff4d762713f9fd89ae9c2df01ab`.
+The latest fully green expanded baseline is commit `ffa07d891fd812d4d0a8b4f5f5d3b14218fcac18`.
 
-- GitHub Actions run #48 (`34262635682`), job `102184141302`, completed successfully on 2026-09-08.
-- Run #48 expanded uploaded commit `daf83dd3068136924afe7af9298bc153857d99c9` into the build-bot commit above.
+- GitHub Actions run #50 (`34266625933`), job `102197486549`, completed successfully on 2026-09-08.
+- Run #50 expanded uploaded commit `126bb733409c78e2807a0b0e1948aa49aa37bf40` into the build-bot commit above.
 - Source-overlay import, dependency install, engine/test typechecks, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
-- The suite included 82 core regressions plus specialized suites; Phase 4D7 lifecycle coverage passed 48/48 and contextual information passed 8/8.
-- Phase 4D6 leader/rival consequences, contextual-information mobile polish, 4D7A lifecycle foundation, and 4D7B player-facing retirement/comeback plus residual music economics are green and public.
+- Phase 4D8A targeted multi-year career stories passed 37/37 after the regression correction in run #50.
+- Existing specialized suites remained green, including 48/48 special-career lifecycle checks, 25/25 influence checks, and 8/8 contextual-information checks.
+- Phase 4D6 leader/rival consequences, contextual-information mobile polish, 4D7 lifecycle/end-state work, and 4D8A mentor/rival story foundation are green and public.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-## Current work — Phase 4D8A targeted multi-year career-story foundation
+## Current work — Phase 4Q1 AI interaction testbench
 
-This overlay is **deployment pending** until GitHub Actions passes. It builds on existing Social Worlds, Relationships, NPC memories, Career World influence, and the global delayed-event queue rather than introducing a parallel story graph.
+This overlay is **deployment pending** until GitHub Actions passes. 4Q1 is a cross-cutting QA infrastructure pass inserted before 4D8B. It does not replace, recreate, or visually alter the player interface.
 
-### Story ownership and scheduling
+### Player separation contract
 
-- `SpecialCareerStorySystem.ts` scans current or just-completed deep Career Worlds after the age's career cycles settle.
-- It can start a story only from an exact persistent Career World NPC. 4D8A uses two general arc families: leader/mentor support and professional rivalry.
-- At most one new special-career chain may start in an age, and no new opening is added when two special-career story beats are already queued.
-- Story scanning is idempotent per age through `flags.specialCareerStoryScanAge` and uses a deterministic career-story substream that does not consume the core `rngCounter`.
-- Mentor and rivalry openings have multi-year per-career cooldown markers stored as bounded primitives on the existing special-career track. No schema bump is required.
-- Acting/directing projects that finish this age may seed a story from the people who just worked on them. Older archived worlds do not generate fresh story openings forever.
+- The player application remains `App.tsx` → the existing screens/components → `GameEngine` → authoritative `GameState`/systems → `SaveSystem`.
+- The AI testbench exists only under `src/tests/` and is imported only by the regression runner. Production source does not import it.
+- The production Vite entrypoint remains unchanged. No AI mode, developer menu, test button, hidden player route, or alternate player interface is added.
+- The testbench never receives a live player state object by reference. Supplied fixtures are `structuredClone`d before use.
+- Every testbench life is reassigned to an `ai-test-*` slot id before GameEngine interaction.
+- During regression execution, browser persistence globals are replaced with an isolated in-memory `Storage` shim and `indexedDB` is disabled for the harness lifetime. Forced GameEngine autosaves therefore write only to disposable test memory.
+- The original global persistence objects are restored only after the isolated engine's save queue is flushed.
+- Testbench metadata such as screen selection, before/after observations, transcripts, and diffs lives outside `GameState`; it is not added to save schema 9.
 
-### Delayed event-chain integration
+### Semantic AI interface
 
-- Six new data-defined career-story beats live in `src/data/specialCareerStoryEvents.ts`: three mentor beats and three rivalry beats.
-- They are not part of the ordinary random event pool. The story system queues the opening against an exact NPC, and the existing delayed-event mechanism carries later beats across years.
-- Follow-up choices use `npcSelector:'payload'`, so the exact person is retained instead of being re-selected later.
-- Follow-ups require the persisted relationship/NPC to remain available. If the NPC dies or the relationship is no longer valid, the due event cancels cleanly instead of substituting a generic stranger.
-- Career affiliation remains owned by Social World history. A former colleague may become a friend, enemy, partner, spouse, or ex without losing the fact that the story began through a Career World.
-- Archived Career Worlds are not reactivated by later story beats.
+`src/tests/aiInteractionTestbench.ts` adds a machine-readable interaction surface over the real `GameEngine` rather than a second gameplay implementation.
 
-### First 4D8A content
+- Five semantic screens mirror the player navigation domains: `life`, `people`, `activities`, `career`, and `assets`.
+- Observations expose stable IDs, exact NPC/entity IDs, current state summaries, pending-event choices, special-career lifecycle projections, Career Worlds, and current assets rather than relying on pixel coordinates or CSS selectors.
+- Stable action IDs route through the same public `GameEngine` APIs the player interface uses: Age Up/event choices, relationship interactions and milestones, wellness, standard career actions, deep-career actions, lifecycle exit/retirement, and representative asset/investment/business actions.
+- Relationship-specific availability reuses `canAskOutNpc`, `canHookUpWithNpc`, and `canReconcileWithNpc`.
+- Deep-career start/exit/retirement availability reuses `CommitmentSystem`, `SpecialCareerExitSystem`, and `SpecialCareerLifecycleSystem` gates.
+- Required pending events semantically block non-event interactions so the harness reflects the player's modal interaction contract even if a lower-level engine method could otherwise be called directly.
+- Private setup commands such as forced events are test-only commands and are never exposed by player UI action lists.
 
-**Mentor arc:** a strong Career World leader can offer guidance; accepting or cautiously engaging may lead years later to an introduction/opportunity and then a final legacy conversation about what that support meant.
+### Interaction diagnostics
 
-**Rivalry arc:** a high-pressure rival can turn routine competition personal; the feud resurfaces a year later and can eventually become a truce, mutual respect, or a lasting rivalry depending on player choices.
+Every semantic command produces:
 
-The effects intentionally feed existing systems—relationship score, hidden opinion/memory through normal event resolution, stress, confidence, fame/public reputation, happiness, karma, and timeline history. They do not create a second professional-relationship authority or directly fire/release the player.
+- the command and authoritative `EngineResult`;
+- before/after screen observations;
+- a bounded machine-readable state diff;
+- immediate `validateState()` results plus focused watches for negative age, non-finite cash, duplicate active spouses, duplicate delayed-event IDs, and duplicate active deep-career worlds.
 
-### Validation added in this patch
+The harness also exposes `inspectNpc()`, `inspectCareer()`, `inspectTimeline()`, `availableActions()`, and deterministic `runScenario()` transcripts. The goal is to make multi-step feature validation easy enough to run before packaging future gameplay work.
 
-`specialCareerStoryRegression.ts` adds deterministic coverage for:
+### Validation added in 4Q1
 
-- six unique data-defined story beats;
-- exact leader/rival targeting;
-- opening queue duplicate prevention and per-career cooldown stamps;
-- no core RNG consumption during queueing/scanning;
-- multi-year mentor progression through all three beats;
-- relationship-type evolution without losing the exact NPC;
-- archived-world follow-ups without Career World resurrection;
-- dead-NPC cancellation of delayed follow-ups;
-- mentor/rival candidate eligibility from real influence state;
-- estranged-target rejection;
-- just-ended project eligibility versus stale archived-world exclusion;
-- same-age scan idempotence; and
-- delayed-story queue pressure limits.
+`aiInteractionRegression.ts` adds 41 focused checks covering:
 
-## Next after 4D8A is green
+- cloned fixture ownership and `ai-test-*` slot isolation;
+- read-only observation;
+- semantic coverage for all five navigation domains;
+- GameEngine routing and action-ledger mutation;
+- before/after diffs and invariant watches;
+- real NPC creation, inspection, exact targeting, and Ask Out eligibility;
+- unresolved-event blocking and exact EventSheet choice projection;
+- event resolution through GameEngine;
+- in-memory save interception with no caller-owned state mutation;
+- normalized special-career lifecycle/Career World inspection;
+- semantic retirement using the real lifecycle owner and archive behavior;
+- archived Career World affiliation history on exact NPCs;
+- deterministic identical transcripts for identical seeded scripts; and
+- mutation-free rejection of unknown semantic commands.
 
-Proceed to **Phase 4D8B — path-specific career arcs**. Prioritize content that existing state can already support without new core architecture:
+`runRegression.ts` now awaits the AI interaction suite after the existing specialized regressions. Because the current deployment workflow already runs `npm test` before `npm run build`, a 4Q1 failure automatically prevents production build and Pages deployment without requiring a workflow rewrite.
+
+This meaningful bundle also explicitly deletes the stale root `everthread-source-fixed.zip` left behind by the earlier filename mistake. The active mobile importer still recognizes only the exact root file `everthread-source.zip`.
+
+## Next after 4Q1 is green
+
+Return immediately to **Phase 4D8B — path-specific career arcs** and use the new semantic harness for implementation validation before packaging. Priorities remain:
 
 - acting/directing repeat collaborators and reunion projects;
 - music catalog sleeper-hit / former-manager / reunion arcs;
@@ -77,12 +91,14 @@ Proceed to **Phase 4D8B — path-specific career arcs**. Prioritize content that
 - sports/racing former team, coach, final-season, and post-retirement relationship follow-ups;
 - creative retirement/comeback opportunities that respect 4D7 lifecycle gates rather than bypassing them.
 
-After 4D8B, evaluate whether a 4D8C hardening/content pass is useful before extending persistent-world depth to other special paths.
+As future systems are added, extend semantic action coverage alongside the player-facing feature instead of creating a separate test-only gameplay rule set.
 
 ## Known quality / architecture issues to keep visible
 
 - Exact seeded replay serialization remains mandatory; do not introduce wall-clock IDs or unseeded simulation randomness.
-- Every meaningful player action stays under controlled system/GameEngine ownership. UI must not directly mutate critical career state.
+- Every meaningful player action stays under controlled system/GameEngine ownership. UI and AI testbench must not directly mutate critical career state during interaction execution.
+- AI observation/projection code must remain read-only; setup fixtures may be fabricated before the isolated engine is created.
+- Testbench action availability should reuse real gates/projections whenever one exists rather than duplicating eligibility rules.
 - Formal dismissal/release remains owned by existing stress or path-specific lifecycle systems; story/influence systems are not firing authorities.
 - Distribution agreements are business terms, not proof of active music Career World participation.
 - Career stories must use real persistent NPCs and Social World history; do not invent a second NPC/professional relationship graph.

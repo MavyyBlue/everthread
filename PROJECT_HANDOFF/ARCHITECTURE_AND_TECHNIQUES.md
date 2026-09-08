@@ -4,6 +4,8 @@
 
 Everthread has one authoritative `GameState`. Preferred direction remains UI → `GameEngine` / system API → controlled state mutation → autosave / Age Up processing → UI render. React screens display state and request actions; they do not directly mutate critical simulation state.
 
+The test-only AI interaction layer follows the same ownership direction: semantic command → `GameEngine` → controlled system mutation → semantic observation. It must never become a second gameplay engine.
+
 ## Determinism, saves, and yearly processors
 
 Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current save schema remains 9; bounded primitive additions to existing flags/special-career tracks do not by themselves justify schema 10.
@@ -59,6 +61,26 @@ Leaving by player choice is not the same operation as retirement, release, dismi
 - Story choices should preferentially feed systems already present—relationship/hidden opinion, NPC memory, stress, confidence, fame/reputation, finances, lifecycle gates, offers, or delayed consequences—rather than inventing isolated story-only stats.
 - Story systems do not independently fire/release the player. Formal career end states remain with lifecycle/stress/path-specific owners.
 
+## AI interaction testbench isolation
+
+`src/tests/aiInteractionTestbench.ts` is a regression-only semantic interface, not a player feature.
+
+- It is reachable only from test modules and the regression runner. `App.tsx`, `main.tsx`, player screens, and production systems do not import it.
+- A supplied fixture is cloned before use. The caller-owned object is never the engine's mutable state.
+- The clone is reassigned to an `ai-test-*` slot id so even a forced GameEngine save cannot use a player slot key.
+- During the harness lifetime, `indexedDB` is disabled and `localStorage` is replaced with a private in-memory `Storage` implementation. The engine therefore exercises its ordinary save path while all writes remain disposable test-process memory.
+- The harness flushes the engine save queue before restoring global persistence objects. Never restore persistence while a queued test save can still run.
+- Testbench-only metadata—selected semantic screen, observations, diffs, transcripts, and invariant reports—must stay outside `GameState` and therefore outside save schema/migrations.
+- Semantic actions use stable IDs and entity IDs, never screen coordinates or CSS selectors.
+- Commands call public `GameEngine` methods. Do not reproduce the underlying outcome logic inside the harness.
+- Availability reuses existing read-only gates/projections whenever practical. Relationship actions use the RelationshipSystem availability helpers; deep-career actions use commitment/exit/lifecycle gates.
+- Pending required events impose an interface-level action lock so the semantic surface matches the real modal player flow.
+- Private test setup commands may force deterministic fixtures/events, but they are not advertised as player actions and must not become production UI.
+- Every executed command should immediately run state validation/invariant watches and emit a compact before/after diff so the exact corrupting interaction can be identified.
+- Deterministic scenario transcripts should omit wall-clock persistence metadata such as `lastSavedAt` from their semantic comparison surface.
+
+The testbench should grow alongside future player features. When a new player interaction matters to regression coverage, add a semantic command that routes to the same engine API rather than inventing a special testing mutation shortcut.
+
 ## Decision-based contract renewal
 
 Offers create decisions, not silent buffs. Professional sports follows the established racing/modeling philosophy at term end: complete the final period and stamp salary first; end the old contract; persist exact renewal terms when offered; keep the exact team world coherent while a decision is pending; acceptance restores the contract; decline/expiry archives the former team and enters free agency.
@@ -95,9 +117,11 @@ Developer/system explanation copy belongs in the relevant fixed header `ⓘ` pre
 
 ## Testing technique
 
-High-value regressions include deterministic state comparisons, same-age idempotence, final-period accrual before status change, exact offer terms, archive-without-delete behavior, explicit exit/re-entry, passive residual income without lifecycle resurrection, pause-aware career-year accounting, plausible event target pools, exact delayed-event target continuity, dead-target cancellation, bounded story queues, and old-save compatibility.
+High-value regressions include deterministic state comparisons, same-age idempotence, final-period accrual before status change, exact offer terms, archive-without-delete behavior, explicit exit/re-entry, passive residual income without lifecycle resurrection, pause-aware career-year accounting, plausible event target pools, exact delayed-event target continuity, dead-target cancellation, bounded story queues, old-save compatibility, semantic interaction transcripts, read-only observation, exact-entity inspection, persistence isolation, and per-command invariant watches.
 
-Specialized suites cover core, special-career worlds, music, social affiliation, modeling, racing, coherence, stress/career freedom, event-target role coherence, commitment exclusivity, career/relationship coherence, leader/rival influence, contextual information, unified lifecycle behavior, and targeted special-career story chains. GitHub Actions remains the final dependency-backed semantic typecheck/build/deploy gate.
+Specialized suites cover core, special-career worlds, music, social affiliation, modeling, racing, coherence, stress/career freedom, event-target role coherence, commitment exclusivity, career/relationship coherence, leader/rival influence, contextual information, unified lifecycle behavior, targeted special-career story chains, and the AI interaction testbench. GitHub Actions remains the final dependency-backed semantic typecheck/build/deploy gate.
+
+The existing workflow already runs `npm test` before production build. Keeping the AI suite inside `runRegression.ts` means a semantic interaction failure stops deployment without changing the mobile upload workflow.
 
 ## Mobile-first technique
 
