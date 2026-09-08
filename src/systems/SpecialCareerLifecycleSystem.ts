@@ -136,7 +136,7 @@ export function retireSpecialCareer(state:GameState,key:DeepCareerPath):EngineRe
   const gate=specialCareerRetirementGate(state,key);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const c=career(state,key);c.retired=true;c.leftPath=false;c.active=false;c.retirementAge=state.character.age;c.retirements=n(c,'retirements')+1;
   if(key==='acting'||key==='directing'){c.currentProjectActive=false;c.offerPending=false;}
-  if(key==='music'){c.tourActive=false;c.partnershipOfferPending=false;c.partnershipActive=false;c.distributionPartner=false;}
+  if(key==='music'){c.tourActive=false;c.partnershipOfferPending=false;c.partnershipActive=false;}
   if(key==='sports'){c.pro=false;c.freeAgent=false;c.renewalOfferPending=false;c.contractRemaining=0;}
   if(key==='modeling'){c.campaignActive=false;c.agencyOfferPending=false;c.agencyContractActive=false;c.agencyStatus='retired';}
   if(key==='racing'){c.racingPathway=false;c.seasonActive=false;c.contractActive=false;c.contractOfferPending=false;c.freeAgent=false;c.contractRemaining=0;}

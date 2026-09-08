@@ -9,6 +9,7 @@ import {
   specialCareerRetirementGate,
 } from '../systems/SpecialCareerLifecycleSystem';
 import { activeSpecialCareerWorld, ensureSpecialCareerWorld, processSpecialCareerWorldsYear, specialCareerWorlds } from '../systems/SpecialCareerWorldSystem';
+import { processMusicCareerYear } from '../systems/MusicCareerCycleSystem';
 
 export function runSpecialCareerLifecycleRegression(){
   let checks=0;
@@ -88,6 +89,27 @@ export function runSpecialCareerLifecycleRegression(){
   processSpecialCareerWorldsYear(retiredWorld);
   verify(!modelWorld.active&&!activeSpecialCareerWorld(retiredWorld,'modeling'),'37 a retired persistent career must not keep a current Career World alive');
   verify(!specialCareerStartGate(finalRetire,'sports').allowed,'38 the shared start gate must keep final sports retirement disabled in the existing Life Paths UI as well as the engine');
+
+
+  const leaveMusic=createNewGame({seed:'lifecycle-music-business-terms'});leaveMusic.character.age=29;leaveMusic.education=[];leaveMusic.specialCareers.music={active:true,professionalStartAge:24,songsReleased:2,years:6,distributionPartner:true,distributionPartnerName:'Parallel House',distributionShare:.25,distributionReach:1.3};ensureSpecialCareerWorld(leaveMusic,'music','vocals',{announce:false});
+  verify(leaveSpecialCareer(leaveMusic,'music').success,'39 an unbound established musician must be able to step away');
+  verify(leaveMusic.specialCareers.music.distributionPartner===true&&Number(leaveMusic.specialCareers.music.distributionShare)===.25,'40 stepping away from music must preserve signed distribution terms instead of creating a royalty-share escape');
+
+  const passiveMusic=createNewGame({seed:'lifecycle-passive-music'});passiveMusic.character.age=30;passiveMusic.currentYear=2060;passiveMusic.education=[];passiveMusic.character.secondary.stress=41;passiveMusic.specialCareers.music={active:true,professionalStartAge:25,songsReleased:1,years:6,fanbase:12000,careerMomentum:72,creativeChemistry:68,distributionPartner:true,distributionPartnerName:'Violet Arc Music',distributionShare:.25,distributionReach:1.2,catalogCount:1,catalogLifetimeStreams:100000,catalogRoyalties:400,catalog1Title:'Residual Signal',catalog1Kind:'song',catalog1Reception:'strong reception',catalog1LaunchAge:30,catalog1Quality:82,catalog1LaunchStreams:100000,catalog1LifetimeStreams:100000,catalog1LastAnnualStreams:100000,catalog1LastProcessedAge:30};
+  const passiveWorld=ensureSpecialCareerWorld(passiveMusic,'music','vocals',{announce:false});
+  verify(retireSpecialCareer(passiveMusic,'music').success,'41 an established musician between tours must be able to formally retire');
+  verify(passiveMusic.specialCareers.music.distributionPartner===true&&!passiveWorld.active,'42 music retirement must archive the Career World while preserving signed distribution terms');
+  const retiredYears=Number(passiveMusic.specialCareers.music.years);const stressBeforeResidual=passiveMusic.character.secondary.stress;passiveMusic.character.age=31;passiveMusic.currentYear=2061;const cashBeforeResidual=passiveMusic.finances.cash;
+  processMusicCareerYear(passiveMusic);
+  verify(passiveMusic.finances.cash>cashBeforeResidual&&Number(passiveMusic.specialCareers.music.lastCatalogTailRoyalties)>0,'43 a retired recent catalog must continue generating residual royalties');
+  verify(passiveMusic.specialCareers.music.active===false&&Number(passiveMusic.specialCareers.music.years)===retiredYears&&!activeSpecialCareerWorld(passiveMusic,'music'),'44 residual catalog processing must not reactivate the career, advance career years, or resurrect its Career World');
+  verify(Number(passiveMusic.specialCareers.music.managementPressure)===0&&passiveMusic.character.secondary.stress===stressBeforeResidual,'45 passive catalog economics must not keep applying active-management pressure or career stress');
+  const residualCash=passiveMusic.finances.cash;const residualStreams=Number(passiveMusic.specialCareers.music.catalogLifetimeStreams);processMusicCareerYear(passiveMusic);
+  verify(passiveMusic.finances.cash===residualCash&&Number(passiveMusic.specialCareers.music.catalogLifetimeStreams)===residualStreams,'46 same-age passive catalog processing must remain idempotent');
+  passiveMusic.character.age=32;passiveMusic.currentYear=2062;processMusicCareerYear(passiveMusic);reactivateSpecialCareerPath(passiveMusic,'music');
+  verify(Number(passiveMusic.specialCareers.music.careerPauseYears)===2&&!specialCareerLifecycleView(passiveMusic,'music').retired,'47 a later music comeback must record the inactive years without erasing retirement history');
+  passiveMusic.specialCareers.music.active=true;passiveMusic.character.age=33;passiveMusic.currentYear=2063;processMusicCareerYear(passiveMusic);
+  verify(Number(passiveMusic.specialCareers.music.years)===7,'48 music career-year accounting must exclude the two retired years after a comeback');
 
   return checks;
 }

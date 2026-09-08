@@ -248,12 +248,28 @@ function professionalMusicStartAge(state:GameState,career:Track){
   return candidates.length?Math.min(...candidates):state.character.age;
 }
 
+function completedMusicYears(state:GameState,career:Track,professionalStart:number){
+  const pauseYears=Math.max(0,n(career,'careerPauseYears'));
+  const endAge=career.leftPath===true?n(career,'leftPathAge',state.character.age):career.retired===true?n(career,'retirementAge',state.character.age):state.character.age;
+  return Math.max(1,endAge-professionalStart+1-pauseYears);
+}
+
 /** Annual music lifecycle. Runs after the shared career ecosystem has calculated momentum. */
 export function processMusicCareerYear(state:GameState){
   const career=state.specialCareers.music as Track|undefined;if(!career)return;
   const releases=n(career,'songsReleased')+n(career,'albumsReleased');
   if(releases<=0){career.active=false;setN(career,'years',0);return;}
-  career.active=true;const professionalStart=professionalMusicStartAge(state,career);setN(career,'professionalStartAge',professionalStart);setN(career,'years',Math.max(1,state.character.age-professionalStart+1));
+  const professionalStart=professionalMusicStartAge(state,career);setN(career,'professionalStartAge',professionalStart);
+  const inactive=career.leftPath===true||career.retired===true;
+  if(inactive){
+    career.active=false;setN(career,'years',completedMusicYears(state,career,professionalStart));
+    if(n(career,'lastMusicCycleAge',-1)===state.character.age)return;setN(career,'lastMusicCycleAge',state.character.age);
+    career.partnershipOfferPending=false;setN(career,'managementPressure',0);
+    const momentum=clamp(n(career,'careerMomentum',50));const chemistry=clamp(n(career,'creativeChemistry',50));const tailStreams=processCatalogTail(state,career,momentum,chemistry);
+    setN(career,'lastFanbaseDrift',Math.round(tailStreams*.006));
+    return;
+  }
+  career.active=true;setN(career,'years',completedMusicYears(state,career,professionalStart));
   if(n(career,'lastMusicCycleAge',-1)===state.character.age)return;setN(career,'lastMusicCycleAge',state.character.age);
   const world=activeSpecialCareerWorld(state,'music');if(!world)return;
   const relationships=musicRelationships(state,world);const momentum=clamp(n(career,'careerMomentum',50));const rng=createRng(`${state.seed}-music-cycle-${world.id}-${state.currentYear}`);

@@ -41,6 +41,10 @@ export function reactivateSpecialCareerPath(state:GameState,key:SpecialCareerPat
   if(!c)return;
   const wasLeft=c.leftPath===true;const wasRetired=c.retired===true;
   if(wasRetired&&!isCreativeComebackPath(key))return;
+  if(wasLeft||wasRetired){
+    const exitAge=wasLeft?n(c,'leftPathAge',state.character.age):n(c,'retirementAge',state.character.age);
+    c.careerPauseYears=n(c,'careerPauseYears')+Math.max(0,state.character.age-exitAge);
+  }
   c.leftPath=false;
   if(wasLeft){c.lastReturnAge=state.character.age;c.returns=n(c,'returns')+1;}
   delete c.leftPathAge;
@@ -55,7 +59,7 @@ export function leaveSpecialCareer(state:GameState,key:SpecialCareerPathKey):Eng
   if(key==='sports'){c.pro=false;c.freeAgent=false;c.renewalOfferPending=false;c.retired=false;c.contractRemaining=0;}
   if(key==='racing'){c.racingPathway=false;c.contractActive=false;c.contractOfferPending=false;c.freeAgent=false;c.retired=false;c.contractRemaining=0;}
   if(key==='modeling'){c.agencyOfferPending=false;c.agencyContractActive=false;c.agencyStatus='inactive';c.campaignActive=false;}
-  if(key==='music'){c.partnershipOfferPending=false;c.distributionPartner=false;c.partnershipActive=false;}
+  if(key==='music'){c.partnershipOfferPending=false;c.partnershipActive=false;}
   if(key==='politics'){c.office=0;}
   if(key==='military'){c.status='left service';}
   if(key==='crimeOrg'){c.rank='Former member';}

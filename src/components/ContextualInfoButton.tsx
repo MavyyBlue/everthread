@@ -11,6 +11,7 @@ type Track=Record<string,number|string|boolean>;
 type InfoEntry={title:string;summary:string;notes:string[]};
 const CAREER_WORLD_RELATIONSHIP_NOTE='Build chemistry, Seek guidance, and Ease rivalry use the normal NPC relationship limits. Chemistry affects next-year momentum, release/tour performance, campaign results, racing seasons, or project impact; hostile rivalry and weak chemistry increase pressure.';
 const MUSIC_COLLECTIVE_NOTE='A music collective is your persistent creative/management circle. Distribution offers are separate business terms, so an expired offer does not erase those relationships or their career history.';
+const MUSIC_RESIDUAL_NOTE='Stepping away from or retiring from music does not erase released work. Existing catalog tails can keep producing streams and royalties without keeping a Career World active, and signed distribution terms still apply to those residual royalties.';
 const CAREER_LIFECYCLE_NOTE='Special careers separate current participation from permanent history. Stepping away frees a commitment slot without erasing past work. Formal retirement ends the current career chapter; acting, music, modeling, and directing can attempt a later-age comeback, while professional sports and motorsport retirement is final for that life.';
 const TAB_INFO:Record<MainInfoTab,InfoEntry>={
   life:{
@@ -118,7 +119,7 @@ function popoverStyle(x:number,y:number):CSSProperties{
 
 export function ContextualInfoButton({tab,state}:{tab:MainInfoTab;state:GameState}){
   const[open,setOpen]=useState(false);const[anchor,setAnchor]=useState({x:0,y:0});const activePointer=useRef<number|undefined>(undefined);const keyboardHeld=useRef(false);const popoverRef=useRef<HTMLElement|null>(null);const info=TAB_INFO[tab];
-  const influence=tab==='career'?careerInfluenceSnapshots(state):[];const lifecycle=tab==='career'?specialCareerLifecycleViews(state):[];const hasMusicWorld=influence.some(item=>item.kind==='music');const notes=tab==='career'&&hasMusicWorld?[...info.notes,MUSIC_COLLECTIVE_NOTE]:info.notes;
+  const influence=tab==='career'?careerInfluenceSnapshots(state):[];const lifecycle=tab==='career'?specialCareerLifecycleViews(state):[];const hasMusicWorld=influence.some(item=>item.kind==='music');const hasMusicCareer=lifecycle.some(item=>item.key==='music');const notes=tab==='career'?[...info.notes,...(hasMusicWorld?[MUSIC_COLLECTIVE_NOTE]:[]),...(hasMusicCareer?[MUSIC_RESIDUAL_NOTE]:[])]:info.notes;
   const fitKey=`${tab}|${notes.length}|${lifecycle.map(item=>`${item.key}:${item.stage}`).join(',')}|${influence.map(item=>`${item.worldId}:${Math.round(item.leaderSupport)}:${Math.round(item.rivalPressure)}:${Math.round(item.opportunityModifier)}:${Math.round(item.conductRisk)}:${item.processed}`).join(',')}`;
   const beginAt=(x:number,y:number)=>{setAnchor({x,y});setOpen(true);};
   const endHold=()=>{activePointer.current=undefined;keyboardHeld.current=false;setOpen(false);};
