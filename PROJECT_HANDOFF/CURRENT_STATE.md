@@ -8,72 +8,65 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The last fully green deployment baseline is expanded commit `f59a494025099fee7efacc1028c3d6c95d0a1347`.
+The latest fully green deployment baseline is expanded commit `4f29030464088383d99520998fd056d51a0b6f46`.
 
-- GitHub Actions run #38 (`34191585874`), job `101950586478`, completed successfully on 2026-09-08.
-- The run passed source-overlay import, dependency install, engine/test type checks, the regression suite, production build, Pages artifact upload, deployment, and cleanup.
-- Run #38 tested uploaded source commit `cbade560df5fa06527e64d2081800ef107370fbd`; the workflow expanded it into the build-bot commit above.
-- Phase 4D5 Racing remains green.
-- The pre-4D6 coherence pass remains green.
-- The pre-4D6 systemic strain / recovery / career-freedom / event-role pass is green.
+- GitHub Actions run #41 (`34195742362`), job `101962949260`, completed successfully on 2026-09-08.
+- Source-overlay import, dependency install, engine/test typechecks, all regression suites, the production build, Pages artifact upload, and Pages deployment all passed.
+- Run #41 expanded uploaded commit `ce9e92fbc9bc984370b7b04212470d93430a3433` into the build-bot commit above.
+- Regression counts included core 82/82, special-career world 77/77, music 76/76, social affiliation 23/23, modeling 46/46, racing 86/86, coherence 37/37, stress/career freedom 64/64, event-target roles 4/4, commitment exclusivity 10/10, and career/relationship coherence 19/19.
+- The pre-4D6 career identity / relationship consistency pass is therefore green: special careers project correctly on the Life profile, special Career World roles take presentation precedence over unrelated autonomous standard jobs, romantic exclusivity is enforced, and committed adults receive Hook Up rather than a duplicate Ask Out path.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-## Current work — pre-4D6 career identity & relationship consistency
+## Current work — Phase 4D6 leader / rival consequences
 
-Mavyy identified two playtest coherence problems before Phase 4D6.
+Phase 4D6 is now implementation/deployment pending. Its purpose is to make the recurring people inside special Career Worlds shape actual career outcomes instead of functioning mainly as labels and relationship flavor.
 
-The main consistency overlay is expanded on `main`. Run #39 (`34195169895`) exposed only a TypeScript control-flow narrowing error in the new regression fixture; the follow-up repair fixed that without changing gameplay.
+### Shared influence architecture
 
-Run #40 (`34195436029`), job `101962002262`, then proved both **engine and test typechecks pass**. The core suite passed 82/82, special-career 77/77, music 76/76, modeling 46/46, racing 86/86, coherence 37/37, stress/career-freedom 64/64, event-target 4/4, commitment exclusivity 10/10, and the new career/relationship coherence regression 19/19. The sole failure was an older `socialAffiliationRegression` assertion that still expected `Ask out` for a classmate after the fixture had already created a current partner. Under the newly approved exclusivity rule, that NPC should expose `Hook Up` instead. Build and Pages deployment were skipped because the regression command correctly returned nonzero.
+- New `SpecialCareerInfluenceSystem.ts` is a shared layer for acting, music, sports, modeling, racing, and directing.
+- It reads existing Career World membership plus authoritative Relationship/NPC state. It does **not** create another relationship or affiliation authority.
+- Leader support is derived from the existing leader relationship, hidden opinion, compatibility, and bounded personality effects.
+- Rival pressure uses explicit `:rivals` groups when a path provides them. Acting, directing, and other worlds without an explicit rival group can derive a competitive peer from poor relationship history, competitive/aggressive traits, and remembered career hostility without overwriting that NPC's relationship type.
+- The layer writes only flat primitive metrics into the existing special-career track: leader support, rival pressure, conduct risk, opportunity modifier, current leader/rival IDs, counts, and one bounded pending follow-up. This does not justify schema 10.
+- Influence randomness uses a career-world/year namespaced seeded RNG rather than consuming the shared gameplay RNG or shifting the existing ecosystem RNG stream.
 
-The next repair changes only `socialAffiliationRegression.ts` plus this handoff note. It updates the older preservation test to the new intended rule: before commitment, adult institutional relationships can be Ask Out candidates; after commitment, otherwise eligible adults become Hook Up candidates; minors and family are candidates for neither. Production gameplay code remains untouched. Treat this consistency pass as **deployment pending** until the next GitHub Actions run passes every gate.
+### Systemic consequences
 
-### Career identity coherence
+- Leader support can produce mentorship: small skill/reputation growth, reduced stress, improved leader relationship, and an NPC memory.
+- Strong leaders can advocate for the player, increasing the quality of the next career cycle and scheduling a next-age follow-up whose success still depends on the relationship remaining healthy.
+- Weak leader support plus existing stress incidents/scandal/high strain can produce a conduct review and warning. This layer intentionally does **not** fire/release the player; `StressConsequenceSystem` and the path-specific contract/lifecycle modules retain formal release authority.
+- High rival pressure can escalate into conflict, relationship/hidden-opinion damage, stress, an opportunity penalty, and a delayed grudge follow-up. Repeated hostility becomes a permanent NPC memory rather than parallel rivalry state.
+- Delayed leader/rival follow-ups can recover, follow through, cool off, or deepen depending on the current relationship and stress state when the next age arrives. Archived acting/directing worlds can still resolve a scheduled follow-up because the exact world/NPC IDs are retained.
+- Only one pending influence follow-up is retained per career path. Rival grudges outrank conduct reviews, and conduct reviews outrank advocacy if multiple follow-ups compete in the same career cycle. This keeps persisted state bounded.
 
-- `CareerIdentitySystem.ts` is a read-only projection layer for player/NPC career presentation; it does not create a second authoritative career state.
-- The Life profile gives active established special-career commitments precedence over the ordinary employment fallback. A professional modeling path therefore reads `Model` instead of `Unemployed`.
-- When two special-career commitments are active, both remain visible rather than silently hiding one.
-- Player-facing special-career titles use current track context where available, such as recording artist, sport/athlete, military branch, model, racing driver, and director.
-- NPC profile career identity gives an active special Career World precedence over an unrelated autonomous standard job. Career World group + member role derive a professional title and retain the exact organization name.
-- Example failure shape covered by regression: an NPC who has a standard Barista biography but is the active leader of Orbit Records management displays `Music Manager · Orbit Records`, not Barista.
-- Special-career NPC income is shown as a deterministic **estimated** role income derived from career kind, role/group prestige, salary index, and a stable NPC-specific factor. This avoids presenting the unrelated standard-job wage as the special-career salary while making clear it is a projection rather than rewriting `NpcLifeState` finance history.
-- Archived special Career Worlds stop overriding an NPC's current ordinary-career biography. Affiliation history remains visible through Social Worlds.
-- `NpcLifeSystem` is deliberately not rewritten in this coherence patch; SocialWorld remains authoritative for professional affiliation and NpcLife remains authoritative for autonomous biography.
+### Career-cycle integration
 
-### Romantic exclusivity and Hook Up
+- Persistent career momentum now receives a bounded opportunity modifier from the influence layer. Sports seasons/renewals, modeling cycles, racing seasons/contracts, and the music annual lifecycle already consume shared momentum, so leader/rival consequences reach those systems without bespoke parallel formulas.
+- Acting/directing project impact receives the same bounded modifier before existing release economics, awards/scandals, and follow-up offer generation. This lets recurring production relationships affect later opportunity quality naturally.
+- Effective rivalry pressure passed into existing cycle/scandal logic is the stronger of the old explicit-rival pressure and the new shared influence pressure.
+- Existing Career Worlds UI actions (`Seek guidance`, `Ease rivalry`, `Build chemistry`) remain on the normal NPC interaction action economy. Improving those relationships can now change next-year support/pressure rather than requiring new spam-able career buttons.
 
-- `RelationshipSystem` owns current-romantic exclusivity for Ask Out, reconciliation, proposing, and marriage; UI checks mirror the same system rule rather than replacing it.
-- A player who already has a living partner, fiancé, or spouse can no longer Ask Out another otherwise date-eligible NPC and accidentally create overlapping current partners.
-- On an otherwise date-eligible adult NPC, `Ask out` becomes `Hook Up` while the player has another current romantic commitment.
-- Hook Up is adult-only. Existing teen dating remains supported, but the hookup action is unavailable when either person is under 18.
-- Hook Up uses the existing `relationship.milestone` action-economy budget for the exact NPC, so attempts cannot be rerolled freely in the same age.
-- A successful hookup does not convert the target into a second partner. Their existing friend/classmate/coworker/boss/etc. relationship type remains intact.
-- Successful hookups persist a per-target flat count in `GameFlags`; no save-schema bump is required.
-- Discovery risk rises with consecutive successful hookups with the same NPC, with additional bounded pressure from engagement/marriage and a jealous current partner.
-- If discovered, the current partner relationship loses score/opinion, records a permanent memory, increases stress, and creates a life-timeline consequence. A second bounded roll can end the relationship/engagement/marriage; marriage fallout records divorce state/counters correctly.
-- Legacy saves with more than one current romantic commitment are handled defensively.
+### Validation added in this patch
 
-### Regression / validation
+- New deterministic `specialCareerInfluenceRegression.ts` covers leader support, explicit rivals, bounded modifiers, conduct-risk growth, competitive-peer fallback without relationship-type mutation, all six supported Career World kinds, same-age idempotency, leader-review recovery, permanent rival grudges, persistent-career momentum integration, and temporary acting-project integration.
+- A targeted strict TypeScript compile of the changed modules/tests against typed compatibility stubs passes.
+- A deterministic executable smoke test of the real influence module passed leader/rival projection, same-age idempotency, and delayed permanent-grudge behavior.
+- GitHub Actions remains the authority for full repository typechecks, all existing regressions, production build, and Pages deployment. Treat Phase 4D6 as **deployment pending** until the post-upload workflow passes every gate.
 
-- New deterministic `careerRelationshipCoherenceRegression.ts` covers player special-career profile identity, NPC special-world role precedence/fallback, special-career income projection, Ask Out exclusivity, Hook Up availability, reconciliation exclusivity, escalating discovery probability, non-creation of a second partner, discovered-infidelity fallout, and the adult-only hookup boundary.
-- Run #40 proved this new regression passes 19/19.
-- Run #40 also proved both engine and tests compile under the real dependency-backed TypeScript configuration.
-- The remaining regression incompatibility is an old expectation, not a production behavior failure; this repair updates that expectation while preserving the social-affiliation test's original coverage.
-- GitHub Actions remains the authority for all regressions, production build, and Pages deployment.
+## Next after Phase 4D6 is green
 
-## Next after this patch is green
-
-**Phase 4D6 — deeper rival / leader consequences across special-career paths.** Use persistent leaders/rivals to influence advocacy, mentorship, conflict, conduct reviews, opportunity quality, delayed follow-ups, and remembered grudges. The existing stress/conduct framework should remain a shared consequence channel rather than spawning a parallel scripted-drama system.
+Continue the Phase 4D deep-cycle roadmap with broader retirement/end-state handling across older special paths, then targeted multi-year special-career event chains grounded in the persistent NPCs and consequence state established here.
 
 ## Known quality / architecture issues to keep visible
 
 - Exact seeded replay serialization remains mandatory; do not introduce wall-clock IDs or unseeded simulation randomness.
-- Every meaningful action stays in the central action economy.
+- Every meaningful player action stays in the central action economy.
+- Formal dismissal/release must remain owned by the existing stress or path-specific lifecycle system; leader/rival influence must not become a second employment authority.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - Persistent world population/performance profiling remains important as Phase 4 grows.
-- The main application chunk should eventually be code-split.
+- The main production application chunk is still above the preferred size threshold and should eventually be code-split.
 - Flat primitive special-career/flag records remain acceptable for this pass; schema 10 is not justified yet.
-- Special Career World NPC role/income projection is currently presentation-oriented; if future gameplay needs exact career-world NPC compensation/history, integrate it deliberately with NpcLife rather than layering another truth on top.
+- Special Career World NPC role/income projection remains presentation-oriented; future exact NPC special-career compensation must integrate deliberately with `NpcLifeSystem` rather than layering another truth on top.

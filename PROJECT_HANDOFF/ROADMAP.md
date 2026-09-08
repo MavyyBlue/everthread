@@ -23,10 +23,11 @@ In progress.
 5. **4D4 Modeling Campaign / Agency Contract Cycles:** green.
 6. **4D5 Racing Seasons / Team Contract / Championship Cycles:** green; verified run #31.
 7. **Pre-4D6 coherence pass:** green; verified run #32. Current/former People ordering, centralized school/work/special-career commitment limits, and context/maturity-safe procedural event eligibility.
-8. **Pre-4D6 systemic strain & career-freedom pass:** deployment pending. High-stress full-time/part-time work, school, and special-career consequences; bounded strain states; Spend Time/meditation/therapy recovery; explicit Leave Path semantics; contract-aware voluntary exits; player-facing professional-sports renewal decisions; role/age-aware procedural NPC targeting.
-9. **4D6 deeper rival / leader consequences across paths.** Use persistent leaders/rivals to influence advocacy, mentorship, conflict, conduct reviews, opportunity quality, delayed follow-ups, and remembered grudges.
-10. **Remaining retirement/end-state handling.** Generalize lifecycle/end-state UI across older special paths without deleting history.
-11. **Targeted special-career event chains.** Multi-year mentor, rivalry, comeback, project, team, agency, and crisis arcs grounded in real persistent NPCs.
+8. **Pre-4D6 systemic strain & career-freedom pass:** green; verified by the later fully green build line. High-stress full-time/part-time work, school, and special-career consequences; bounded strain states; Spend Time/meditation/therapy recovery; explicit Leave Path semantics; contract-aware voluntary exits; player-facing professional-sports renewal decisions; role/age-aware procedural NPC targeting.
+9. **Pre-4D6 career identity / relationship consistency:** green; verified run #41. Special career identity is coherent across Life/People presentation, romantic exclusivity blocks duplicate current partners, and committed adults use the Hook Up path with bounded discovery/fallout.
+10. **4D6 deeper rival / leader consequences across paths:** implementation/deployment pending. Persistent leaders/rivals now feed a shared opportunity modifier, mentorship/advocacy, conduct warnings, professional conflict, delayed follow-ups, and remembered grudges while existing stress/contract systems retain formal release authority.
+11. **Remaining retirement/end-state handling.** Generalize lifecycle/end-state UI across older special paths without deleting history.
+12. **Targeted special-career event chains.** Multi-year mentor, rivalry, comeback, project, team, agency, and crisis arcs grounded in real persistent NPCs.
 
 ### Current compatibility rules
 
@@ -37,6 +38,8 @@ In progress.
 - Sports renewal is a decision rather than silent auto-renewal.
 - Final-period compensation is settled before end-state changes.
 - Procedural relationship stories require a plausible target, not merely any living NPC of a broad category.
+- Leader/rival influence uses the existing Social World + Relationship + NPC memory ownership model; it must not introduce a parallel professional-relationship graph.
+- Phase 4D6 warnings can damage standing and opportunities but do not independently fire/release the player; formal end states stay in their owning lifecycle/stress systems.
 
 ### Later Phase 4 extensions
 

@@ -8,6 +8,7 @@ import { expireScreenCareerOffers, finalizeScreenCareerProject } from './ScreenC
 import { processModelingCareerYear } from './ModelingCareerCycleSystem';
 import { expireRacingContractOffer, processRacingCareerYear } from './RacingCareerCycleSystem';
 import { ensureSpecialCareerRelationships } from './SpecialCareerRelationshipSystem';
+import { processSpecialCareerInfluenceYear, resolveSpecialCareerInfluenceFollowup, specialCareerInfluenceView } from './SpecialCareerInfluenceSystem';
 
 export { ensureSpecialCareerRelationships } from './SpecialCareerRelationshipSystem';
 
@@ -69,23 +70,23 @@ export function specialCareerWorldView(state:GameState,world:SocialWorld):Specia
   const kind=specialCareerWorldKind(world);if(!kind)return;
   const liveMembers=world.members.filter(member=>member.leftAge===undefined&&state.npcs[member.npcId]?.alive);
   const relevantMembers=world.active?liveMembers:world.members.filter(member=>Boolean(state.npcs[member.npcId]));
-  const rival=careerRival(state,world);
+  const explicitRival=careerRival(state,world);const influence=specialCareerInfluenceView(state,world,kind);const rivalNpcId=influence.rivalNpcId??explicitRival?.id;
   const leader=relevantMembers.find(member=>member.role==='leader'&&state.npcs[member.npcId]?.alive);
   const supportRelations=relevantMembers
-    .filter(member=>member.npcId!==rival?.id)
+    .filter(member=>member.npcId!==rivalNpcId)
     .map(member=>state.relationships.find(rel=>rel.npcId===member.npcId))
     .filter((rel):rel is GameState['relationships'][number]=>Boolean(rel));
   const chemistry=clamp(average(supportRelations.map(rel=>rel.score),50));
-  const rivalRel=rival?state.relationships.find(rel=>rel.npcId===rival.id):undefined;
-  const rivalry=rivalRel?clamp(100-rivalRel.score):0;
+  const rivalRel=rivalNpcId?state.relationships.find(rel=>rel.npcId===rivalNpcId):undefined;
+  const rivalry=Math.max(rivalRel?clamp(100-rivalRel.score):0,influence.rivalPressure);
   const prestigeGroups=world.groups.filter(group=>!group.kind.endsWith(':resolved'));
   const prestige=clamp(average(prestigeGroups.map(group=>group.prestige),50));
   const peer=relevantMembers
-    .filter(member=>member.role!=='leader'&&member.npcId!==rival?.id&&state.npcs[member.npcId]?.alive)
+    .filter(member=>member.role!=='leader'&&member.npcId!==rivalNpcId&&state.npcs[member.npcId]?.alive)
     .map(member=>({member,rel:state.relationships.find(rel=>rel.npcId===member.npcId)}))
     .filter((entry):entry is {member:SocialWorld['members'][number];rel:GameState['relationships'][number]}=>Boolean(entry.rel))
     .sort((a,b)=>a.rel.score-b.rel.score)[0]?.member;
-  return {kind,prestige,chemistry,rivalry,memberCount:relevantMembers.length,leaderNpcId:leader?.npcId,rivalNpcId:rival?.id,peerNpcId:peer?.npcId};
+  return {kind,prestige,chemistry,rivalry,memberCount:relevantMembers.length,leaderNpcId:leader?.npcId,rivalNpcId,peerNpcId:peer?.npcId};
 }
 
 function addCareerMemory(state:GameState,npcId:string|undefined,kind:string,sentiment:number,summary:string,permanent=false){
@@ -128,13 +129,14 @@ function processPersistentCareerYear(state:GameState,kind:SpecialCareerWorldKind
   setNumber(career,'lastEcosystemAge',state.character.age);
   const rng=createRng(`${state.seed}-special-ecosystem-${world.id}-${state.currentYear}`);
   ensureSpecialCareerRelationships(state,world);
+  const influence=processSpecialCareerInfluenceYear(state,kind,world);
   const view=specialCareerWorldView(state,world)!;
-  const prestige=view.prestige;const chemistry=view.chemistry;
+  const prestige=view.prestige;const chemistry=view.chemistry;const rivalry=Math.max(view.rivalry,influence.rivalPressure);
   const skill=careerSkill(kind,career);const reputation=numberValue(career,'reputation',45);
-  const momentum=clamp(skill*.40+prestige*.25+reputation*.17+state.fame.fame*.10+chemistry*.08+rng.int(-10,10));
-  setNumber(career,'worldPrestige',prestige);setNumber(career,'careerChemistry',chemistry);setNumber(career,'rivalryTemperature',view.rivalry);setNumber(career,'careerMomentum',momentum);setNumber(career,'ecosystemYears',numberValue(career,'ecosystemYears')+1);
+  const momentum=clamp(skill*.40+prestige*.25+reputation*.17+state.fame.fame*.10+chemistry*.08+influence.opportunityModifier+rng.int(-10,10));
+  setNumber(career,'worldPrestige',prestige);setNumber(career,'careerChemistry',chemistry);setNumber(career,'rivalryTemperature',rivalry);setNumber(career,'careerMomentum',momentum);setNumber(career,'ecosystemYears',numberValue(career,'ecosystemYears')+1);
 
-  const rival=view.rivalNpcId?state.npcs[view.rivalNpcId]:undefined;if(rival)career.rivalNpcId=rival.id;
+  const rival=influence.rivalNpcId?state.npcs[influence.rivalNpcId]:view.rivalNpcId?state.npcs[view.rivalNpcId]:undefined;if(rival)career.rivalNpcId=rival.id;
   for(const member of world.members){
     const rel=state.relationships.find(item=>item.npcId===member.npcId);if(!rel)continue;
     rel.yearsKnown=Math.max(rel.yearsKnown,state.character.age-world.startedAge+1);
@@ -142,15 +144,15 @@ function processPersistentCareerYear(state:GameState,kind:SpecialCareerWorldKind
     else if(rel.type==='enemy')rel.score=clamp(rel.score+rng.int(-2,1));
   }
 
-  if(kind==='sports')processSportsSeasonYear(state,career,world,{momentum,chemistry,rivalry:view.rivalry,prestige},rng);
-  if(kind==='modeling')processModelingCareerYear(state,career,world,{momentum,chemistry,rivalry:view.rivalry,prestige},rng);
-  if(kind==='racing')processRacingCareerYear(state,career,world,{momentum,chemistry,rivalry:view.rivalry,prestige},rng);
+  if(kind==='sports')processSportsSeasonYear(state,career,world,{momentum,chemistry,rivalry,prestige},rng);
+  if(kind==='modeling')processModelingCareerYear(state,career,world,{momentum,chemistry,rivalry,prestige},rng);
+  if(kind==='racing')processRacingCareerYear(state,career,world,{momentum,chemistry,rivalry,prestige},rng);
   if(!world.active)return;
 
   const awardChance=momentum>=68?clamp((momentum-58)/130,.04,.27):0;
   if(awardChance&&rng.chance(awardChance))awardCareer(state,kind,career,world,rival?.id);
   const chemistryRisk=Math.max(0,55-chemistry)/1900;
-  const rivalryRisk=view.rivalry/6000;
+  const rivalryRisk=rivalry/6000;
   const scandalChance=clamp(.012+(100-state.fame.publicReputation)/1800+state.character.secondary.stress/3200+chemistryRisk+rivalryRisk,.01,.13);
   if(rng.chance(scandalChance))careerScandal(state,kind,career,world,rival?.id,rng);
 
@@ -163,13 +165,14 @@ function processPersistentCareerYear(state:GameState,kind:SpecialCareerWorldKind
 function finalizeTemporaryProject(state:GameState,kind:'acting'|'directing',world:SocialWorld){
   const career=track(state,kind);const rng=createRng(`${state.seed}-special-project-${world.id}-${state.currentYear}`);
   ensureSpecialCareerRelationships(state,world);
+  const influence=processSpecialCareerInfluenceYear(state,kind,world);
   const view=specialCareerWorldView(state,world)!;
-  const prestige=view.prestige;const chemistry=view.chemistry;
-  const score=clamp(careerSkill(kind,career)*.44+prestige*.27+numberValue(career,'reputation',40)*.12+state.fame.fame*.07+chemistry*.10+rng.int(-12,14));
-  setNumber(career,'projectsCompleted',numberValue(career,'projectsCompleted')+1);setNumber(career,'projectChemistry',chemistry);setNumber(career,'rivalryTemperature',view.rivalry);setNumber(career,'lastProjectScore',score);setNumber(career,'bestProjectScore',Math.max(numberValue(career,'bestProjectScore'),score));
-  const rival=view.rivalNpcId?state.npcs[view.rivalNpcId]:undefined;if(rival)career.rivalNpcId=rival.id;
+  const prestige=view.prestige;const chemistry=view.chemistry;const rivalry=Math.max(view.rivalry,influence.rivalPressure);
+  const score=clamp(careerSkill(kind,career)*.44+prestige*.27+numberValue(career,'reputation',40)*.12+state.fame.fame*.07+chemistry*.10+influence.opportunityModifier+rng.int(-12,14));
+  setNumber(career,'projectsCompleted',numberValue(career,'projectsCompleted')+1);setNumber(career,'projectChemistry',chemistry);setNumber(career,'rivalryTemperature',rivalry);setNumber(career,'lastProjectScore',score);setNumber(career,'bestProjectScore',Math.max(numberValue(career,'bestProjectScore'),score));
+  const rival=influence.rivalNpcId?state.npcs[influence.rivalNpcId]:view.rivalNpcId?state.npcs[view.rivalNpcId]:undefined;if(rival)career.rivalNpcId=rival.id;
   if(score>=78&&rng.chance(clamp((score-64)/70,.12,.42)))awardCareer(state,kind,career,world,rival?.id);
-  const scandalChance=clamp(.01+(100-state.fame.publicReputation)/2000+state.character.secondary.stress/3600+Math.max(0,55-chemistry)/2300+view.rivalry/7500,.01,.10);
+  const scandalChance=clamp(.01+(100-state.fame.publicReputation)/2000+state.character.secondary.stress/3600+Math.max(0,55-chemistry)/2300+rivalry/7500,.01,.10);
   if(rng.chance(scandalChance))careerScandal(state,kind,career,world,rival?.id,rng);
   finalizeScreenCareerProject(state,kind,career,world,score,rng);
 }
@@ -181,6 +184,7 @@ export function processSpecialCareerEcosystemsYear(state:GameState){
   for(const world of specialCareerWorlds(state)){
     if(world.active)ensureSpecialCareerRelationships(state,world);
     const kind=specialCareerWorldKind(world);if(!kind)continue;
+    resolveSpecialCareerInfluenceFollowup(state,kind,world);
     if((kind==='acting'||kind==='directing')&&!world.active&&world.endedAge===state.character.age&&!world.groups.some(group=>group.kind.endsWith(':resolved'))){
       finalizeTemporaryProject(state,kind,world);
       world.groups.push({id:makeStateId(state,`special-${kind}-resolved`),name:'Completed Project',kind:`special:${kind}:resolved`,minAge:0,memberNpcIds:[],prestige:Number(track(state,kind).lastProjectScore??50)});

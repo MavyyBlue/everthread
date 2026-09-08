@@ -9,6 +9,7 @@ import { runStressCareerRegression } from './stressCareerRegression';
 import { runEventTargetRegression } from './eventTargetRegression';
 import { runCommitmentExclusivityRegression } from './commitmentExclusivityRegression';
 import { runCareerRelationshipCoherenceRegression } from './careerRelationshipCoherenceRegression';
+import { runSpecialCareerInfluenceRegression } from './specialCareerInfluenceRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -23,4 +24,5 @@ try{const checks=runStressCareerRegression();console.log(`Stress / career-freedo
 try{const checks=runEventTargetRegression();console.log(`Event-target role regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runCommitmentExclusivityRegression();console.log(`Commitment exclusivity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runCareerRelationshipCoherenceRegression();console.log(`Career / relationship coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runSpecialCareerInfluenceRegression();console.log(`Special-career influence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
