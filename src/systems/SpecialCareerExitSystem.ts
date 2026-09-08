@@ -2,6 +2,7 @@ import { makeStateId } from '../core/ids';
 import type { EngineResult, GameState } from '../types/game';
 import { isSpecialCareerPathActive, specialCareerPathLabel, type CommitmentGate, type SpecialCareerPathKey } from './CommitmentSystem';
 import { archiveSpecialCareerWorld, specialCareerWorlds, type SpecialCareerWorldKind } from './SpecialCareerWorldSystem';
+import { isCreativeComebackPath } from './SpecialCareerLifecycleSystem';
 
 type Track = Record<string, number | string | boolean>;
 
@@ -31,11 +32,19 @@ export function specialCareerExitGate(state:GameState,key:SpecialCareerPathKey):
 
 function closePersistentWorlds(state:GameState,key:SpecialCareerPathKey){for(const world of activeWorlds(state,key))archiveSpecialCareerWorld(world,state.character.age);}
 
+/**
+ * Called only after a successful professional action. Stepped-away paths resume normally; creative careers may
+ * return from retirement after the lifecycle gate allows a later-age comeback. Athletic retirement remains final.
+ */
 export function reactivateSpecialCareerPath(state:GameState,key:SpecialCareerPathKey){
   const c=state.specialCareers[key] as Track|undefined;
   if(!c)return;
+  const wasLeft=c.leftPath===true;const wasRetired=c.retired===true;
+  if(wasRetired&&!isCreativeComebackPath(key))return;
   c.leftPath=false;
+  if(wasLeft){c.lastReturnAge=state.character.age;c.returns=n(c,'returns')+1;}
   delete c.leftPathAge;
+  if(wasRetired){c.retired=false;c.lastComebackAge=state.character.age;c.comebacks=n(c,'comebacks')+1;}
 }
 
 export function leaveSpecialCareer(state:GameState,key:SpecialCareerPathKey):EngineResult{

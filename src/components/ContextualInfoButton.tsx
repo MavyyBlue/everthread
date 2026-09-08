@@ -1,7 +1,8 @@
-import { useRef, useState, type CSSProperties } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { GameState } from '../types/game';
 import { specialCareerWorldKind } from '../systems/SpecialCareerEcosystemSystem';
 import { specialCareerInfluenceView } from '../systems/SpecialCareerInfluenceSystem';
+import { specialCareerLifecycleViews } from '../systems/SpecialCareerLifecycleSystem';
 import { specialCareerWorlds, type SpecialCareerWorldKind } from '../systems/SpecialCareerWorldSystem';
 
 export type MainInfoTab='life'|'people'|'activities'|'career'|'assets';
@@ -10,6 +11,7 @@ type Track=Record<string,number|string|boolean>;
 type InfoEntry={title:string;summary:string;notes:string[]};
 const CAREER_WORLD_RELATIONSHIP_NOTE='Build chemistry, Seek guidance, and Ease rivalry use the normal NPC relationship limits. Chemistry affects next-year momentum, release/tour performance, campaign results, racing seasons, or project impact; hostile rivalry and weak chemistry increase pressure.';
 const MUSIC_COLLECTIVE_NOTE='A music collective is your persistent creative/management circle. Distribution offers are separate business terms, so an expired offer does not erase those relationships or their career history.';
+const CAREER_LIFECYCLE_NOTE='Special careers separate current participation from permanent history. Stepping away frees a commitment slot without erasing past work. Formal retirement ends the current career chapter; acting, music, modeling, and directing can attempt a later-age comeback, while professional sports and motorsport retirement is final for that life.';
 const TAB_INFO:Record<MainInfoTab,InfoEntry>={
   life:{
     title:'How Life works',
@@ -45,6 +47,7 @@ const TAB_INFO:Record<MainInfoTab,InfoEntry>={
       'Leader support and rival pressure usually change opportunity quality, momentum, project impact, or professional pressure before they create a dramatic event.',
       'Strong leaders can mentor or advocate. Weak leader relationships combined with stress, incidents, or scandals can create conduct reviews. Rivalries can cool down or become remembered grudges.',
       'The influence layer does not independently fire or release you. Existing contract, lifecycle, and stress systems still own formal career end states.',
+      CAREER_LIFECYCLE_NOTE,
       CAREER_WORLD_RELATIONSHIP_NOTE,
     ],
   },
@@ -100,17 +103,41 @@ export function careerInfluenceSnapshots(state:GameState):CareerInfluenceSnapsho
   return snapshots;
 }
 
+/** Pure fit calculation so the no-scroll contextual preview can be regression tested without a DOM. */
+export function contextualInfoScale(contentHeight:number,availableHeight:number,minScale=.46){
+  if(!Number.isFinite(contentHeight)||!Number.isFinite(availableHeight)||contentHeight<=0||availableHeight<=0)return 1;
+  if(contentHeight<=availableHeight)return 1;
+  return Math.max(minScale,Math.min(1,(availableHeight/contentHeight)*.965));
+}
+
 function popoverStyle(x:number,y:number):CSSProperties{
-  const viewportWidth=window.innerWidth;const viewportHeight=window.innerHeight;const width=Math.max(220,Math.min(360,viewportWidth-24));const half=width/2;
-  const left=Math.min(Math.max(x,12+half),viewportWidth-12-half);const above=y>viewportHeight*.54;const available=above?y-28:viewportHeight-y-28;
-  return {position:'fixed',zIndex:190,left,top:above?y-16:y+16,transform:above?'translate(-50%,-100%)':'translate(-50%,0)',width,maxHeight:Math.max(160,Math.min(560,available)),overflow:'hidden',pointerEvents:'none',padding:'13px 14px',borderRadius:18,border:'1px solid var(--line)',background:'color-mix(in srgb,var(--surface) 96%,transparent)',boxShadow:'0 20px 64px rgba(0,0,0,.38)',backdropFilter:'blur(18px)',textAlign:'left'};
+  const viewportWidth=window.innerWidth;const viewportHeight=window.innerHeight;const width=Math.max(220,Math.min(400,viewportWidth-16));const half=width/2;
+  const left=Math.min(Math.max(x,8+half),viewportWidth-8-half);const aboveSpace=Math.max(0,y-24);const belowSpace=Math.max(0,viewportHeight-y-24);const above=aboveSpace>belowSpace;const available=above?aboveSpace:belowSpace;
+  return {position:'fixed',zIndex:190,left,top:above?y-14:y+14,transform:above?'translate(-50%,-100%)':'translate(-50%,0)',width,maxHeight:Math.max(96,Math.min(620,available)),overflow:'hidden',pointerEvents:'none',padding:'11px 12px',borderRadius:18,border:'1px solid var(--line)',background:'color-mix(in srgb,var(--surface) 96%,transparent)',boxShadow:'0 20px 64px rgba(0,0,0,.38)',backdropFilter:'blur(18px)',textAlign:'left',fontSize:'1rem'};
 }
 
 export function ContextualInfoButton({tab,state}:{tab:MainInfoTab;state:GameState}){
-  const[open,setOpen]=useState(false);const[anchor,setAnchor]=useState({x:0,y:0});const activePointer=useRef<number|undefined>(undefined);const keyboardHeld=useRef(false);const info=TAB_INFO[tab];
-  const influence=tab==='career'?careerInfluenceSnapshots(state):[];const hasMusicWorld=influence.some(item=>item.kind==='music');const notes=tab==='career'&&hasMusicWorld?[...info.notes,MUSIC_COLLECTIVE_NOTE]:info.notes;
+  const[open,setOpen]=useState(false);const[anchor,setAnchor]=useState({x:0,y:0});const activePointer=useRef<number|undefined>(undefined);const keyboardHeld=useRef(false);const popoverRef=useRef<HTMLElement|null>(null);const info=TAB_INFO[tab];
+  const influence=tab==='career'?careerInfluenceSnapshots(state):[];const lifecycle=tab==='career'?specialCareerLifecycleViews(state):[];const hasMusicWorld=influence.some(item=>item.kind==='music');const notes=tab==='career'&&hasMusicWorld?[...info.notes,MUSIC_COLLECTIVE_NOTE]:info.notes;
+  const fitKey=`${tab}|${notes.length}|${lifecycle.map(item=>`${item.key}:${item.stage}`).join(',')}|${influence.map(item=>`${item.worldId}:${Math.round(item.leaderSupport)}:${Math.round(item.rivalPressure)}:${Math.round(item.opportunityModifier)}:${Math.round(item.conductRisk)}:${item.processed}`).join(',')}`;
   const beginAt=(x:number,y:number)=>{setAnchor({x,y});setOpen(true);};
   const endHold=()=>{activePointer.current=undefined;keyboardHeld.current=false;setOpen(false);};
+
+  useLayoutEffect(()=>{
+    if(!open)return;const node=popoverRef.current;if(!node)return;
+    node.style.fontSize='1rem';
+    let scale=contextualInfoScale(node.scrollHeight,node.clientHeight,.46);
+    for(let pass=0;pass<5;pass+=1){
+      node.style.fontSize=`${scale}rem`;
+      if(node.scrollHeight<=node.clientHeight+1)break;
+      const ratio=Math.min(.98,(node.clientHeight/node.scrollHeight)*.965);
+      const next=Math.max(.46,scale*ratio);
+      if(Math.abs(next-scale)<.006)break;
+      scale=next;
+    }
+    node.style.fontSize=`${scale}rem`;
+  },[open,anchor.x,anchor.y,fitKey]);
+
   return <>
     <button className="icon-button" style={{touchAction:'none'}}
       aria-label={`Explain ${tab} systems — press and hold`} aria-expanded={open} aria-describedby={open?'contextual-info-popover':undefined} title="Press and hold for screen information"
@@ -121,12 +148,13 @@ export function ContextualInfoButton({tab,state}:{tab:MainInfoTab;state:GameStat
       onPointerCancel={endHold} onLostPointerCapture={()=>{if(activePointer.current!==undefined)endHold();}}
       onKeyDown={event=>{if((event.key==='Enter'||event.key===' ')&&!event.repeat){event.preventDefault();keyboardHeld.current=true;const rect=event.currentTarget.getBoundingClientRect();beginAt(rect.left+rect.width/2,rect.bottom-2);}}}
       onKeyUp={event=>{if((event.key==='Enter'||event.key===' ')&&keyboardHeld.current){event.preventDefault();endHold();}}} onBlur={()=>{if(keyboardHeld.current)endHold();}}>ⓘ</button>
-    {open&&<aside id="contextual-info-popover" role="tooltip" style={popoverStyle(anchor.x,anchor.y)}>
-      <strong style={{display:'block',fontSize:'.88rem',marginBottom:5}}>{info.title}</strong>
-      <p style={{fontSize:'.7rem',lineHeight:1.38,margin:'0 0 8px',color:'var(--text)'}}>{info.summary}</p>
-      <div style={{display:'grid',gap:5}}>{notes.map(note=><p key={note} style={{fontSize:'.67rem',lineHeight:1.35,margin:0,color:'var(--muted)'}}>• {note}</p>)}</div>
-      {tab==='career'&&influence.length>0&&<div style={{marginTop:9,paddingTop:8,borderTop:'1px solid var(--line)'}}><strong style={{display:'block',fontSize:'.7rem',marginBottom:5}}>Live career influence</strong>{influence.map(item=><div key={item.worldId} style={{fontSize:'.64rem',lineHeight:1.35,marginTop:5,color:'var(--muted)'}}><strong style={{color:'var(--text)'}}>{item.worldName} · {kindLabel(item.kind)}</strong><br/>{item.leaderName?`Leader ${item.leaderName}`:'No active leader'}{item.rivalName?` · Rival ${item.rivalName}`:' · No current rival'}<br/>Support {Math.round(item.leaderSupport)} · rival pressure {Math.round(item.rivalPressure)} · opportunity {signed(item.opportunityModifier)} · conduct {Math.round(item.conductRisk)} · {item.processed?'processed this age':'current projection'}{item.lastEvent?` · latest: ${item.lastEvent}`:''}</div>)}</div>}
-      <small style={{display:'block',fontSize:'.6rem',lineHeight:1.3,marginTop:8,color:'var(--muted)'}}>Read-only. This preview disappears when you release the info button and never consumes an action or changes game state.</small>
+    {open&&<aside ref={popoverRef} id="contextual-info-popover" role="tooltip" style={popoverStyle(anchor.x,anchor.y)}>
+      <strong style={{display:'block',fontSize:'.9em',lineHeight:1.2,marginBottom:'.34em'}}>{info.title}</strong>
+      <p style={{fontSize:'.72em',lineHeight:1.34,margin:'0 0 .62em',color:'var(--text)'}}>{info.summary}</p>
+      <div style={{display:'grid',gap:'.34em'}}>{notes.map(note=><p key={note} style={{fontSize:'.68em',lineHeight:1.31,margin:0,color:'var(--muted)'}}>• {note}</p>)}</div>
+      {tab==='career'&&lifecycle.length>0&&<div style={{marginTop:'.62em',paddingTop:'.52em',borderTop:'1px solid var(--line)'}}><strong style={{display:'block',fontSize:'.72em',marginBottom:'.25em'}}>Career lifecycle</strong>{lifecycle.map(item=><div key={item.key} style={{fontSize:'.65em',lineHeight:1.28,marginTop:'.22em',color:'var(--muted)'}}><strong style={{color:'var(--text)'}}>{item.label}</strong> · {item.status}{item.retirementFinal?' · final retirement':item.retired&&item.comebackAllowed?' · comeback possible later':item.leftPath&&item.comebackAllowed?' · return possible later':''}</div>)}</div>}
+      {tab==='career'&&influence.length>0&&<div style={{marginTop:'.62em',paddingTop:'.52em',borderTop:'1px solid var(--line)'}}><strong style={{display:'block',fontSize:'.72em',marginBottom:'.25em'}}>Live career influence</strong>{influence.map(item=><div key={item.worldId} style={{fontSize:'.64em',lineHeight:1.28,marginTop:'.3em',color:'var(--muted)'}}><strong style={{color:'var(--text)'}}>{item.worldName} · {kindLabel(item.kind)}</strong><br/>{item.leaderName?`Leader ${item.leaderName}`:'No active leader'}{item.rivalName?` · Rival ${item.rivalName}`:' · No current rival'}<br/>Support {Math.round(item.leaderSupport)} · rival pressure {Math.round(item.rivalPressure)} · opportunity {signed(item.opportunityModifier)} · conduct {Math.round(item.conductRisk)} · {item.processed?'processed this age':'current projection'}{item.lastEvent?` · latest: ${item.lastEvent}`:''}</div>)}</div>}
+      <small style={{display:'block',fontSize:'.61em',lineHeight:1.25,marginTop:'.62em',color:'var(--muted)'}}>Read-only. This preview disappears when you release the info button, automatically fits its explanation to the available space, and never consumes an action or changes game state.</small>
     </aside>}
   </>;
 }

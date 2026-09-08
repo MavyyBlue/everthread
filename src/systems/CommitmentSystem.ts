@@ -10,6 +10,7 @@ export interface CommitmentGate {
 const SPECIAL_PATH_LABELS: Record<SpecialCareerPathKey,string> = {
   acting:'Acting', music:'Music', sports:'Professional sports', combat:'Combat sports', politics:'Politics', royalty:'Royalty', military:'Military', crimeOrg:'Organized crime', modeling:'Modeling', racing:'Motorsport', directing:'Film directing', secretAgency:'Intelligence service', commune:'Commune leadership', casino:'Casino', zoo:'Zoo', museum:'Museum',
 };
+const CREATIVE_COMEBACK_PATHS=new Set<SpecialCareerPathKey>(['acting','music','modeling','directing']);
 
 function n(record:Record<string,number|string|boolean>|undefined,key:string){return typeof record?.[key]==='number'?Number(record[key]):0;}
 function hasSpecialCareerWorld(state:GameState,key:SpecialCareerPathKey){return (state.socialWorlds??[]).some(world=>world.kind==='organization'&&world.active&&world.id.startsWith(`special-${String(key)}-`));}
@@ -51,7 +52,21 @@ export function specialCareerCapacity(state:GameState){
   return{active,limit,inSchool,overLimit:active.length>limit};
 }
 
+/** Lifecycle-aware return gate shared by UI availability and GameEngine start enforcement. */
+export function specialCareerReentryGate(state:GameState,key:SpecialCareerPathKey):CommitmentGate{
+  const career=state.specialCareers[key];if(!career)return{allowed:true};
+  const leftAge=typeof career.leftPathAge==='number'?Number(career.leftPathAge):-1;
+  if(career.leftPath===true&&leftAge>=state.character.age)return{allowed:false,message:`You stepped away from ${specialCareerPathLabel(key)} this year. Age up before attempting a return.`};
+  if(career.retired===true){
+    if(!CREATIVE_COMEBACK_PATHS.has(key))return{allowed:false,message:`Your ${specialCareerPathLabel(key)} retirement is final for this life.`};
+    const retirementAge=typeof career.retirementAge==='number'?Number(career.retirementAge):-1;
+    if(retirementAge>=state.character.age)return{allowed:false,message:`You retired from ${specialCareerPathLabel(key)} this year. Age up before attempting a comeback.`};
+  }
+  return{allowed:true};
+}
+
 export function specialCareerStartGate(state:GameState,key:SpecialCareerPathKey):CommitmentGate{
+  const returnGate=specialCareerReentryGate(state,key);if(!returnGate.allowed)return returnGate;
   // Existing/legacy paths stay usable so an old conflicting save is never bricked.
   if(isSpecialCareerPathActive(state,key))return{allowed:true};
   const hasFullTime=Boolean(state.employment.current);const hasPartTime=(state.employment.partTimeJobs??[]).length>0;

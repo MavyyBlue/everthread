@@ -23,23 +23,34 @@ In progress.
 5. **4D4 Modeling Campaign / Agency Contract Cycles:** green.
 6. **4D5 Racing Seasons / Team Contract / Championship Cycles:** green; verified run #31.
 7. **Pre-4D6 coherence pass:** green; verified run #32. Current/former People ordering, centralized school/work/special-career commitment limits, and context/maturity-safe procedural event eligibility.
-8. **Pre-4D6 systemic strain & career-freedom pass:** green; verified by the later fully green build line. High-stress full-time/part-time work, school, and special-career consequences; bounded strain states; Spend Time/meditation/therapy recovery; explicit Leave Path semantics; contract-aware voluntary exits; player-facing professional-sports renewal decisions; role/age-aware procedural NPC targeting.
+8. **Pre-4D6 systemic strain & career-freedom pass:** green. High-stress work/school/special-career consequences; bounded strain states; recovery routes; explicit Leave Path semantics; contract-aware voluntary exits; player-facing sports renewal decisions; role/age-aware procedural NPC targeting.
 9. **Pre-4D6 career identity / relationship consistency:** green; verified run #41. Special career identity is coherent across Life/People presentation, romantic exclusivity blocks duplicate current partners, and committed adults use the Hook Up path with bounded discovery/fallout.
-10. **4D6 deeper rival / leader consequences across paths:** implementation/deployment pending. Persistent leaders/rivals now feed a shared opportunity modifier, mentorship/advocacy, conduct warnings, professional conflict, delayed follow-ups, and remembered grudges while existing stress/contract systems retain formal release authority.
-11. **Remaining retirement/end-state handling.** Generalize lifecycle/end-state UI across older special paths without deleting history.
-12. **Targeted special-career event chains.** Multi-year mentor, rivalry, comeback, project, team, agency, and crisis arcs grounded in real persistent NPCs.
+10. **4D6 deeper rival / leader consequences across paths:** green; verified run #43. Persistent leaders/rivals feed shared opportunity modifiers, mentorship/advocacy, conduct warnings, professional conflict, delayed follow-ups, and remembered grudges while existing stress/contract systems retain formal release authority.
+11. **Contextual-information mobile polish:** green; verified run #44. Header information is press-and-hold/finger-following, and repeated Career World developer explanations were removed from gameplay cards.
+12. **4D7 Retirement & End-State Unification:** in progress.
+    - **4D7A shared lifecycle foundation:** deployment pending. Normalize six deep-career lifecycle states; distinguish step-away, retirement, free agency, and project gaps; add creative comeback vs final athletic retirement semantics; prevent same-age return and persistent-world resurrection; make contextual info auto-fit and carry lifecycle explanation/status.
+    - **4D7B player-facing lifecycle actions + residual economics:** next. Expose compact retirement/comeback UX, normalize annual processors around left/retired state, and preserve appropriate post-career economics such as catalog royalties without recreating active professional worlds.
+    - **4D7C lifecycle edge-state hardening if required by 4D7B QA:** final-period/end-state interactions, old-save reconciliation, and any path-specific cleanup exposed by regressions/playtesting.
+13. **Targeted special-career event chains:** after 4D7. Multi-year mentor, rivalry, comeback, project, team, agency, and crisis arcs grounded in real persistent NPCs and lifecycle history.
 
 ### Current compatibility rules
 
 - Existing saves above the two-career cap preserve all established paths.
 - Training-only legacy acting/music/modeling flags do not consume professional slots without real evidence.
 - Explicitly leaving a path preserves history but frees capacity; professional re-entry can reactivate it later.
-- Voluntary exit respects live project/season/contract obligations; involuntary retirement/release remains separate.
+- Same-age return after leaving/creative retirement is blocked; Age Up must occur before a comeback attempt.
+- Voluntary exit/retirement respects live project/season/contract obligations; involuntary retirement/release remains separate.
+- Creative deep careers may support later comeback; professional sports and motorsport retirement are final for the current life.
+- Historical career evidence must never recreate a current Career World while a path is explicitly left or retired.
 - Sports renewal is a decision rather than silent auto-renewal.
 - Final-period compensation is settled before end-state changes.
 - Procedural relationship stories require a plausible target, not merely any living NPC of a broad category.
 - Leader/rival influence uses the existing Social World + Relationship + NPC memory ownership model; it must not introduce a parallel professional-relationship graph.
 - Phase 4D6 warnings can damage standing and opportunities but do not independently fire/release the player; formal end states stay in their owning lifecycle/stress systems.
+
+### UI explanation rule
+
+When a mechanic needs developer/system explanation, update the relevant fixed-header contextual `ⓘ` preview rather than adding repeating explanatory paragraphs to gameplay cards. The contextual preview must remain mobile/touch accessible, read-only, and automatically fit all explanatory text into the available popup area.
 
 ### Later Phase 4 extensions
 

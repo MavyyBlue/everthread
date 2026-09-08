@@ -43,6 +43,7 @@ export function ensureSpecialCareerWorld(state:GameState,kind:SpecialCareerWorld
 
 function shouldHavePersistentWorld(state:GameState,kind:SpecialCareerWorldKind){
   const career=state.specialCareers[kind] as Track|undefined;if(!career)return false;
+  if(career.leftPath===true||career.retired===true)return false;
   if(kind==='music')return career.active===true&&(numberValue(career,'songsReleased')>0||numberValue(career,'albumsReleased')>0||numberValue(career,'fanbase')>=2500);
   if(kind==='sports')return career.active===true&&(career.pro===true||career.renewalOfferPending===true);
   if(kind==='modeling')return career.active===true&&numberValue(career,'jobs')>0;
