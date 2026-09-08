@@ -52,25 +52,31 @@ export function specialCareerCapacity(state:GameState){
 }
 
 export function specialCareerStartGate(state:GameState,key:SpecialCareerPathKey):CommitmentGate{
+  // Existing/legacy paths stay usable so an old conflicting save is never bricked.
   if(isSpecialCareerPathActive(state,key))return{allowed:true};
+  const hasFullTime=Boolean(state.employment.current);const hasPartTime=(state.employment.partTimeJobs??[]).length>0;
+  if(hasFullTime||hasPartTime){
+    const workLabel=hasFullTime&&hasPartTime?'full-time and part-time jobs':hasFullTime?'full-time job':'part-time job';
+    return{allowed:false,message:`Leave your ${workLabel} before starting a special career. Special careers cannot be combined with ordinary full-time or part-time employment.`};
+  }
   const capacity=specialCareerCapacity(state);
   if(capacity.active.length>=capacity.limit){
     const context=capacity.inSchool?'while enrolled in school':'at the same time';
     return{allowed:false,message:`You can pursue only ${capacity.limit} active special career path${capacity.limit===1?'':'s'} ${context}. End or retire from an active special career before starting another.`};
   }
-  if(capacity.inSchool&&(Boolean(state.employment.current)||(state.employment.partTimeJobs??[]).length>0)){
-    return{allowed:false,message:'While enrolled, starting a special career requires leaving your regular and part-time jobs first.'};
-  }
   return{allowed:true};
 }
 
 export function fullTimeJobGate(state:GameState):CommitmentGate{
-  if(isActivelyEnrolled(state))return{allowed:false,message:'Full-time jobs are unavailable while you are actively enrolled in school. Part-time work remains available unless you are also pursuing a special career.'};
+  const special=activeSpecialCareerPaths(state);
+  if(special.length>0)return{allowed:false,message:`Full-time jobs are unavailable while you are pursuing ${special.length===1?specialCareerPathLabel(special[0]):'active special careers'}. Leave or retire from your active special career commitment${special.length===1?'':'s'} before taking ordinary full-time work.`};
+  if(isActivelyEnrolled(state))return{allowed:false,message:'Full-time jobs are unavailable while you are actively enrolled in school.'};
   return{allowed:true};
 }
 
 export function partTimeJobGate(state:GameState):CommitmentGate{
-  if(isActivelyEnrolled(state)&&activeSpecialCareerPaths(state).length>0)return{allowed:false,message:'Part-time jobs are unavailable while you are balancing school with an active special career.'};
+  const special=activeSpecialCareerPaths(state);
+  if(special.length>0)return{allowed:false,message:`Part-time jobs are unavailable while you are pursuing ${special.length===1?specialCareerPathLabel(special[0]):'active special careers'}. Leave or retire from your active special career commitment${special.length===1?'':'s'} before taking ordinary part-time work.`};
   return{allowed:true};
 }
 
