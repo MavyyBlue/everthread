@@ -25,6 +25,7 @@ import { processStressConsequencesYear } from './StressConsequenceSystem';
 import { triggerRandomEvent } from './EventSystem';
 import { evaluateAchievements, evaluateChallenges } from './AchievementSystem';
 import { checkDeath } from './DeathSystem';
+import { processNpcInheritanceTrusts, releaseMatureInheritanceTrust } from './EstateSystem';
 
 function snapshotForRewind(state:GameState){if(!state.flags.rewindEnabled)return;const clone=structuredClone(state);clone.yearlySnapshots=[];const encoded=JSON.stringify(clone);state.yearlySnapshots.push({age:state.character.age,state:encoded});state.yearlySnapshots=state.yearlySnapshots.slice(-35);}
 
@@ -35,10 +36,11 @@ export function ageUp(state:GameState):EngineResult {
   state.flags.ageUpLocked=true;snapshotForRewind(state);
   try{
     state.character.age+=1;state.currentYear+=1;
-    // World and economy state first; systems below consume the new-year indices.
     processEconomyYear(state);
+    releaseMatureInheritanceTrust(state);
     processHealthYear(state);
     processNpcLives(state);
+    processNpcInheritanceTrusts(state);
     processFamilyPlanningYear(state);
     processEducationYear(state);
     processSchoolWorldYear(state);
@@ -52,16 +54,11 @@ export function ageUp(state:GameState):EngineResult {
     processFameYear(state);
     processLegalYear(state);
     processSpecialCareersYear(state);
-    // Generic military promotion/progression settles first; the persistent unit then binds that year to exact people/history.
     processMilitaryCareerYear(state);
-    // Generic political approval settles first; the persistent office then applies relationship-driven context and term continuity.
     processPoliticsCareerYear(state);
-    // Career story openings are selected only after this age's worlds/projects/contracts have settled.
     processSpecialCareerStoriesYear(state);
     processAnnualFinance(state);
-    // Stress discipline happens after this year's income is settled so dismissal cannot erase already-earned pay.
     processStressConsequencesYear(state);
-    // School/workplace/career transitions can create or archive NPC affiliations after the autonomy pass.
     initializeMissingNpcLives(state);
 
     if(state.legal.imprisoned)state.flags.prisonYears=Number(state.flags.prisonYears??0)+1;
@@ -75,8 +72,5 @@ export function ageUp(state:GameState):EngineResult {
   } finally {state.flags.ageUpLocked=false;}
 }
 
-export function finalizeAgeUp(state:GameState){
-  if(!state.flags.pendingDeathCheck)return false;delete state.flags.pendingDeathCheck;const died=checkDeath(state);evaluateAchievements(state);evaluateChallenges(state);enforceStateInvariants(state);return died;
-}
-
+export function finalizeAgeUp(state:GameState){if(!state.flags.pendingDeathCheck)return false;delete state.flags.pendingDeathCheck;const died=checkDeath(state);evaluateAchievements(state);evaluateChallenges(state);enforceStateInvariants(state);return died;}
 export function rewindToAge(state:GameState,age:number):EngineResult {if(!state.flags.rewindEnabled)return{success:false,messages:[{text:'Rewind is disabled for this save.'}]};const snap=[...state.yearlySnapshots].reverse().find(s=>s.age===age);if(!snap)return{success:false,messages:[{text:'No yearly snapshot is available for that age.'}]};const restored=migrateSave(JSON.parse(snap.state) as unknown);const preservedSnapshots=state.yearlySnapshots.filter(s=>s.age<=age);for(const key of Object.keys(state) as Array<keyof GameState>) delete (state as unknown as Record<string,unknown>)[key as string];Object.assign(state,restored);state.yearlySnapshots=preservedSnapshots;state.flags.rewinds=Number(state.flags.rewinds??0)+1;return{success:true,messages:[{text:`Rewound to age ${age}. This save remains marked as rewind-enabled.`}]};}

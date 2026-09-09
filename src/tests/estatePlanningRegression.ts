@@ -1,5 +1,7 @@
 import { createNewGame } from '../systems/CharacterSystem';
+import { ageUp } from '../systems/AgingSystem';
 import { continueAsChild } from '../systems/GenerationSystem';
+import { checkDeath } from '../systems/DeathSystem';
 import { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from '../systems/EstateSystem';
 import { migrateSave, SAVE_VERSION } from '../services/SaveSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
@@ -12,18 +14,22 @@ function child(state:GameState,id:string,name:string,age=28):Npc{
   return npc;
 }
 
+function spouse(state:GameState,id='estate-spouse',name='Morgan',age=58):Npc{
+  const npc:Npc={id,firstName:name,lastName:state.character.lastName,age,alive:true,health:88,happiness:76,wealth:20000,countryId:state.character.countryId,city:state.character.city,sexuality:'bisexual',fertility:45,maritalStatus:'married',traits:['loyal','responsible'],hiddenOpinion:80,memories:[],parentIds:[],childIds:[],simulationTier:'background'};
+  state.npcs[id]=npc;ensureNpcLife(state,npc);
+  state.relationships.push({id:`rel-${id}`,npcId:id,type:'spouse',score:88,attraction:80,compatibility:80,yearsKnown:20});
+  return npc;
+}
+
 function property(state:GameState,id:string,name:string,value:number):PropertyAsset{
   const asset:PropertyAsset={id,typeId:'starter_house_standard',name,location:state.character.city,purchasePrice:value,marketValue:value,condition:85,age:10,amenities:[]};state.assets.properties.push(asset);return asset;
 }
-
 function collectible(state:GameState,id:string,name:string,value:number):CollectibleAsset{
   const asset:CollectibleAsset={id,itemId:'fixture-collectible',name,estimatedValue:value,authenticity:100,condition:90,rarity:'rare'};state.assets.collectibles.push(asset);return asset;
 }
-
 function business(state:GameState,id:string,name:string,value:number):Business{
   const asset:Business={id,industryId:'software',name,foundedAge:30,capital:100000,revenue:250000,expenses:150000,profit:100000,employees:8,demand:70,reputation:75,valuation:value,productIds:[],priceIndex:1,marketingBudget:10000,compensationIndex:1,bankrupt:false};state.businesses.push(asset);return asset;
 }
-
 function fixture(seed:string){const state=createNewGame({seed});state.character.age=60;state.currentYear=2086;state.finances.cash=120000;const a=child(state,'estate-a','Ari',32),b=child(state,'estate-b','Bryn',29);return{state,a,b};}
 
 export function runEstatePlanningRegression(){
@@ -38,7 +44,7 @@ export function runEstatePlanningRegression(){
   const legacy=createNewGame({seed:'estate-schema-legacy'});const legacyCounter=legacy.rngCounter;delete legacy.inheritance.assetBequests;
   const migrated=migrateSave(legacy);
   verify(migrated.saveVersion===9&&Array.isArray(migrated.inheritance.assetBequests),'existing v9 saves normalize deterministically to an empty asset-bequest list');
-  verify(migrated.rngCounter===legacyCounter,'v10 migration does not consume player RNG');
+  verify(migrated.rngCounter===legacyCounter,'estate migration normalization does not consume player RNG');
 
   const minor=createNewGame({seed:'estate-minor'});const minorChild=child(minor,'minor-child','Mina',1);
   verify(!setWill(minor,[{npcId:minorChild.id,percentage:100}]).success,'minors cannot author an estate plan');
@@ -72,16 +78,15 @@ export function runEstatePlanningRegression(){
   verify(severePreview.distributableValue===0,'insolvent estates do not pass unsecured debt away while preserving heir value');
 
   const investmentDebt=fixture('estate-investment-debt');investmentDebt.state.finances.cash=0;investmentDebt.state.assets={properties:[],vehicles:[],collectibles:[]};investmentDebt.state.businesses=[];investmentDebt.state.investments.positions=[{securityId:'aurora_index',units:1000,averageCost:100}];investmentDebt.state.investments.prices.aurora_index=100;investmentDebt.state.finances.liabilities=[{id:'investment-debt',kind:'personal',principal:60000,balance:60000,annualRate:.08,annualPayment:8000,remainingYears:8}];
-  const investmentPreview=previewEstate(investmentDebt.state);
-  approx(investmentPreview.distributableValue,40000,1,'estate debt is settled from investments before remaining units pass to heirs');
+  const investmentPreview=previewEstate(investmentDebt.state);approx(investmentPreview.distributableValue,40000,1,'estate debt is settled from investments before remaining units pass to heirs');
 
   const zeroShare=fixture('estate-zero-share');zeroShare.state.finances.cash=0;const zeroHome=property(zeroShare.state,'zero-home','Named Home',180000);setWill(zeroShare.state,[{npcId:zeroShare.a.id,percentage:100}]);setEstateAssetBequest(zeroShare.state,'property',zeroHome.id,zeroShare.b.id);
   const zeroPreview=previewEstate(zeroShare.state);const zeroB=zeroPreview.heirs.find(heir=>heir.npcId===zeroShare.b.id)!;
   verify(zeroB.percentage===0&&zeroB.properties.some(asset=>asset.id===zeroHome.id),'a child with a zero residuary share can still receive a valid specific bequest');
 
   const handoff=fixture('estate-handoff');handoff.state.finances.cash=50000;const handoffHome=property(handoff.state,'handoff-home','Handoff Home',250000);setWill(handoff.state,[{npcId:handoff.a.id,percentage:40},{npcId:handoff.b.id,percentage:60}]);setEstateAssetBequest(handoff.state,'property',handoffHome.id,handoff.a.id);const handoffPreview=previewEstate(handoff.state);const expected=handoffPreview.heirs.find(heir=>heir.npcId===handoff.a.id)!.inheritanceValue;handoff.state.character.alive=false;
-  verify(continueAsChild(handoff.state,handoff.a.id).success,'continuation succeeds with a v10 estate plan');
-  verify(handoff.state.assets.properties.some(asset=>asset.id===handoffHome.id),'selected descendant receives the property specifically bequeathed to them');
+  verify(continueAsChild(handoff.state,handoff.a.id).success,'continuation succeeds with an estate plan');
+  verify(handoff.state.assets.properties.some(asset=>asset.id===handoffHome.id),'selected adult descendant receives the property specifically bequeathed to them');
   approx(Number(handoff.state.flags.inheritanceReceived),expected,1,'actual continuation inheritance matches the pre-handoff estate preview');
   verify(handoff.state.inheritance.will.length===0&&(handoff.state.inheritance.assetBequests?.length??0)===0,'a deceased parent estate plan does not leak into the new protagonist generation');
 
@@ -89,6 +94,33 @@ export function runEstatePlanningRegression(){
   const deadPreview=previewEstate(deadBeneficiary.state);
   verify(!deadPreview.heirs.some(heir=>heir.npcId===deadBeneficiary.b.id),'dead descendants are removed from estate allocations');
   verify(deadPreview.heirs.some(heir=>heir.properties.some(asset=>asset.id===deadHome.id))||deadPreview.forcedSaleIds.includes(`property:${deadHome.id}`),'an invalidated bequest returns to normal estate handling instead of disappearing');
+
+  const spouseEstate=fixture('estate-spouse-default');const surviving=spouse(spouseEstate.state);spouseEstate.state.finances.cash=400000;
+  setWill(spouseEstate.state,[{npcId:spouseEstate.a.id,percentage:70},{npcId:spouseEstate.b.id,percentage:30}]);
+  const spousePreview=previewEstate(spouseEstate.state);const spouseShare=spousePreview.heirs.find(heir=>heir.npcId===surviving.id);const spouseA=spousePreview.heirs.find(heir=>heir.npcId===spouseEstate.a.id);const spouseB=spousePreview.heirs.find(heir=>heir.npcId===spouseEstate.b.id);
+  approx(spouseShare?.percentage??0,50,.01,'a legacy child-only will reserves the default surviving-spouse half');
+  approx(spouseA?.percentage??0,35,.01,'legacy child shares are proportionally applied inside the descendant half');
+  approx(spouseB?.percentage??0,15,.01,'legacy child shares preserve their relative weighting inside the descendant half');
+  verify(setWill(spouseEstate.state,[{npcId:surviving.id,percentage:25},{npcId:spouseEstate.a.id,percentage:50},{npcId:spouseEstate.b.id,percentage:25}]).success,'new estate plans can explicitly include a surviving spouse');
+  verify(setEstateAssetBequest(spouseEstate.state,'collectible',collectible(spouseEstate.state,'spouse-heirloom','Spouse Heirloom',25000).id,surviving.id).success,'specific assets can be left to a spouse');
+
+  const widowState=fixture('estate-widow-state');const widow=spouse(widowState.state,'widow-spouse','Jamie',59);verify(checkDeath(widowState.state,true),'forced death did not occur');
+  verify(widow.maritalStatus==='widowed','surviving spouse marital status did not transition to widowed at death');
+  verify(widow.memories.some(memory=>memory.kind==='bereavement'),'surviving spouse did not retain a bereavement memory');
+  verify(previewEstate(widowState.state).heirs.some(heir=>heir.npcId===widow.id&&heir.role==='spouse'),'widowed survivor is still recognized as the deceased character spouse for estate settlement');
+
+  const trustState=createNewGame({seed:'estate-minor-trust'});trustState.character.age=48;trustState.currentYear=2074;trustState.finances.cash=250000;const teen=child(trustState,'teen-heir','Tess',17);const trustHome=property(trustState,'trust-home','Trust Home',300000);setEstateAssetBequest(trustState,'property',trustHome.id,teen.id);const trustPreview=previewEstate(trustState);const trustExpected=trustPreview.heirs.find(heir=>heir.npcId===teen.id)!.inheritanceValue;trustState.character.alive=false;
+  verify(continueAsChild(trustState,teen.id).success,'minor descendant continuation failed');
+  verify(Boolean(trustState.inheritance.trust)&&Number(trustState.flags.inheritancePending)===trustExpected,'minor inheritance was not placed into the protected trust');
+  verify(trustState.assets.properties.length===0&&trustState.finances.cash<trustExpected,'minor could immediately control inherited property or fortune');
+  verify(ageUp(trustState).success,'minor heir could not age to trust release');
+  verify(trustState.character.age===18&&!trustState.inheritance.trust,'protected inheritance did not release at age 18');
+  verify(trustState.assets.properties.some(asset=>asset.id===trustHome.id),'specifically inherited property did not transfer from trust at adulthood');
+  verify(Number(trustState.flags.inheritanceReceived)===trustExpected&&Number(trustState.flags.inheritancePending)===0,'inheritance receipt flags did not move from pending to received at adulthood');
+
+  const siblingTrust=fixture('estate-offscreen-minor');siblingTrust.b.age=12;siblingTrust.state.finances.cash=200000;setWill(siblingTrust.state,[{npcId:siblingTrust.a.id,percentage:50},{npcId:siblingTrust.b.id,percentage:50}]);const beforeMinorWealth=siblingTrust.b.wealth;siblingTrust.state.character.alive=false;
+  verify(continueAsChild(siblingTrust.state,siblingTrust.a.id).success,'adult sibling continuation failed in minor sibling trust scenario');
+  const offscreenMinor=siblingTrust.state.npcs[siblingTrust.b.id];verify(Boolean(offscreenMinor?.inheritanceTrust)&&offscreenMinor?.wealth===beforeMinorWealth,'offscreen minor sibling received spendable inheritance before adulthood');
 
   return checks;
 }

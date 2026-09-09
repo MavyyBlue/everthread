@@ -32,7 +32,12 @@ function epitaph(state:GameState,cause:string){const nw=netWorth(state);const ch
 
 export function checkDeath(state:GameState,force=false):boolean {
   if(!state.character.alive)return true;const rng=createRng(`${state.seed}-death`,state.rngCounter);const chance=deathProbability(state);if(!force&&!rng.chance(chance)){state.rngCounter=rng.counter();return false;}
-  const cause=determineCause(state,rng);state.character.alive=false;state.character.causeOfDeath=cause;const value=netWorth(state);const children=state.relationships.filter(r=>r.type==='child').length;const spouseRel=state.relationships.find(r=>r.type==='spouse');const spouse=spouseRel?state.npcs[spouseRel.npcId]:undefined;
+  const cause=determineCause(state,rng);state.character.alive=false;state.character.causeOfDeath=cause;const value=netWorth(state);const children=state.relationships.filter(r=>r.type==='child').length;const spouseRel=state.relationships.find(r=>r.type==='spouse'&&!r.estranged);const spouse=spouseRel?state.npcs[spouseRel.npcId]:undefined;
+  if(spouse?.alive){
+    spouse.maritalStatus='widowed';
+    if(spouse.partnerId===state.character.id)spouse.partnerId=undefined;
+    spouse.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:spouse.age,kind:'bereavement',sentiment:-10,summary:`${state.character.firstName} ${state.character.lastName} died.`,permanent:true});
+  }
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'death',importance:3,text:`You died at age ${state.character.age} from ${cause}.`});
   const milestones=state.timeline.filter(t=>t.importance===3).slice(-12).map(t=>t.text);const life:CompletedLife={id:makeStateId(state,'life'),generation:state.legacy.generation,character:structuredClone(state.character),ageAtDeath:state.character.age,cause,netWorth:value,career:state.employment.current?.title??state.employment.history.at(-1)?.title,spouse:spouse?`${spouse.firstName} ${spouse.lastName}`:undefined,children,fame:state.fame.fame,milestones,epitaph:epitaph(state,cause),timeline:structuredClone(state.timeline)};
   state.completedLives.push(life);state.legacy.completedLifeIds.push(life.id);state.rngCounter=rng.counter();return true;
