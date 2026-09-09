@@ -21,6 +21,7 @@ import { runPhase4CloseoutRegression } from './phase4CloseoutRegression';
 import { runEventCoherenceRegression } from './eventCoherenceRegression';
 import { runPeopleWorkspaceRegression } from './peopleWorkspaceRegression';
 import { runAiInteractionRegression } from './aiInteractionRegression';
+import { runEstatePlanningRegression } from './estatePlanningRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -47,4 +48,5 @@ try{const checks=await runPhase4CloseoutRegression();console.log(`Phase 4 closeo
 try{const checks=await runEventCoherenceRegression();console.log(`Random-event coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=await runPeopleWorkspaceRegression();console.log(`People Threadspace regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=await runAiInteractionRegression();console.log(`AI interaction testbench regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runEstatePlanningRegression();console.log(`Phase 5 estate-planning regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

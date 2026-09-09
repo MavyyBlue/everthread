@@ -13,10 +13,19 @@ function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{con
 
 function stripRuntime(state:GameState){const copy=structuredClone(state);delete copy.flags.ageUpLocked;return copy;}
 
+function normalizeAssetBequests(state:GameState){
+  const validKinds=new Set(['property','business','collectible']);
+  const seen=new Set<string>();
+  state.inheritance.assetBequests=(Array.isArray(state.inheritance.assetBequests)?state.inheritance.assetBequests:[]).filter(entry=>{
+    if(!entry||!validKinds.has(entry.kind)||typeof entry.assetId!=='string'||typeof entry.beneficiaryNpcId!=='string')return false;
+    const key=`${entry.kind}:${entry.assetId}`;if(seen.has(key))return false;seen.add(key);return true;
+  });
+}
+
 export function migrateSave(raw:unknown):GameState {
   if(!raw||typeof raw!=='object')throw new Error('Save is not an object');const state=structuredClone(raw) as GameState;let version=Number(state.saveVersion??1);
   if(version<2){state.travel=state.travel??{visitedCountries:[state.character.countryId],visitedCities:[state.character.city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}};version=2;}
-  if(version<3){state.inheritance=state.inheritance??{will:[],inheritBusinesses:true,inheritProperties:true};state.yearlySnapshots=state.yearlySnapshots??[];version=3;}
+  if(version<3){state.inheritance=state.inheritance??{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]};state.yearlySnapshots=state.yearlySnapshots??[];version=3;}
   if(version<4){const entityCount=Object.keys(state.npcs??{}).length+(state.relationships?.length??0)+(state.timeline?.length??0)+(state.delayedEvents?.length??0)+(state.businesses?.length??0)+(state.pets?.length??0)+(state.finances?.liabilities?.length??0)+(state.health?.conditions?.length??0);state.idCounter=10000+entityCount;version=4;}
   if(version<5){
     state.familyPlanning=state.familyPlanning??{};
@@ -88,11 +97,15 @@ export function migrateSave(raw:unknown):GameState {
     version=8;
   }
   if(version<9){
-    // NPC autonomy history becomes persistent in v9. Initialization is deterministic and does not consume the player RNG stream.
     initializeMissingNpcLives(state);
     version=9;
   }
-  if(version>SAVE_VERSION)throw new Error(`Save version ${version} is newer than this build supports.`);state.saveVersion=SAVE_VERSION;state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.socialWorlds=state.socialWorlds??[];state.employment.partTimeJobs=state.employment.partTimeJobs??[];state.employment.partTimeHistory=state.employment.partTimeHistory??[];state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};initializeMissingNpcLives(state);return enforceStateInvariants(state);
+  if(version>SAVE_VERSION)throw new Error(`Save version ${version} is newer than this build supports.`);
+  state.saveVersion=SAVE_VERSION;
+  state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;
+  state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.socialWorlds=state.socialWorlds??[];
+  state.inheritance=state.inheritance??{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]};state.inheritance.assetBequests??=[];normalizeAssetBequests(state);
+  state.employment.partTimeJobs=state.employment.partTimeJobs??[];state.employment.partTimeHistory=state.employment.partTimeHistory??[];state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};initializeMissingNpcLives(state);return enforceStateInvariants(state);
 }
 
 export async function saveGame(state:GameState):Promise<void>{state.lastSavedAt=new Date().toISOString();const clean=stripRuntime(state);if(!canUseIndexedDb()){localStorage.setItem(`everthread-save-${state.slotId}`,JSON.stringify(clean));return;}const db=await openDb();await new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(clean);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();}

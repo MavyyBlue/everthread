@@ -1,4 +1,4 @@
-import type { Business, Character, CollectibleAsset, EngineResult, GameState, InvestmentPosition, Loan, Npc, PropertyAsset, Relationship } from '../types/game';
+import type { Character, EngineResult, GameState, Npc, Relationship } from '../types/game';
 import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
@@ -7,6 +7,9 @@ import { jobById } from '../data/jobs';
 import { migrateLegacyWorkplaceWorlds } from './WorkplaceSystem';
 import { migrateLegacySchoolWorlds } from './SchoolWorldSystem';
 import { ensureNpcLife, initializeMissingNpcLives } from './NpcLifeSystem';
+import { settleEstate } from './EstateSystem';
+
+export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
 function npcToCharacter(state:GameState,npc:Npc):Character {
   const rng=createRng(`${state.seed}-descendant-${npc.id}`,state.rngCounter);
@@ -20,127 +23,6 @@ function npcToCharacter(state:GameState,npc:Npc):Character {
     talents:{music:clamp(state.character.talents.music*.35+rng.int(10,55)),acting:clamp(state.character.talents.acting*.35+rng.int(10,55)),athletics:clamp(state.character.talents.athletics*.35+rng.int(10,55)),business:clamp(state.character.talents.business*.35+rng.int(10,55)),crime:clamp(state.character.talents.crime*.35+rng.int(10,55)),social:clamp(state.character.talents.social*.35+rng.int(10,55)),combat:clamp(state.character.talents.combat*.35+rng.int(10,55))},
     birthCircumstance:'into the family you previously built',familyWealthTier:netWorth(state)>5000000?'wealthy':netWorth(state)>500000?'comfortable':'middle',traits:[...npc.traits],specialTalents:[],
   };
-}
-
-type HeirShare={npc:Npc;ratio:number};
-type EstateItem=
-  | {kind:'property';id:string;value:number;property:PropertyAsset;mortgage?:Loan}
-  | {kind:'business';id:string;value:number;business:Business}
-  | {kind:'collectible';id:string;value:number;collectible:CollectibleAsset};
-
-interface EstateSettlement {
-  cash:number;
-  properties:PropertyAsset[];
-  businesses:Business[];
-  collectibles:CollectibleAsset[];
-  investments:InvestmentPosition[];
-  liabilities:Loan[];
-  inheritanceValue:number;
-  siblingValue:number;
-  forcedSales:number;
-}
-
-function livingChildShares(state:GameState):HeirShare[] {
-  const children=state.relationships
-    .filter(rel=>rel.type==='child')
-    .map(rel=>state.npcs[rel.npcId])
-    .filter((npc):npc is Npc=>Boolean(npc?.alive));
-  if(!children.length)return[];
-  const validWill=state.inheritance.will.filter(entry=>entry.percentage>0&&children.some(child=>child.id===entry.npcId));
-  const willTotal=validWill.reduce((sum,entry)=>sum+entry.percentage,0);
-  if(willTotal>0){
-    const ratioById=new Map(validWill.map(entry=>[entry.npcId,entry.percentage/willTotal]));
-    return children.map(npc=>({npc,ratio:ratioById.get(npc.id)??0})).filter(entry=>entry.ratio>0);
-  }
-  return children.map(npc=>({npc,ratio:1/children.length}));
-}
-
-function mortgageFor(state:GameState,property:PropertyAsset){
-  return property.mortgageId?state.finances.liabilities.find(loan=>loan.id===property.mortgageId):undefined;
-}
-
-function propertyEquity(state:GameState,property:PropertyAsset){return Math.max(0,property.marketValue-(mortgageFor(state,property)?.balance??0));}
-function propertySaleValue(state:GameState,property:PropertyAsset){return Math.max(0,property.marketValue-(mortgageFor(state,property)?.balance??0)-Math.round(property.marketValue*.035));}
-function itemSaleValue(state:GameState,item:EstateItem){
-  if(item.kind==='property')return propertySaleValue(state,item.property);
-  if(item.kind==='business')return item.business.bankrupt?0:item.business.valuation*.95;
-  return item.collectible.estimatedValue*.92;
-}
-
-function settleEstate(state:GameState,selectedChildId:string):EstateSettlement {
-  const heirs=livingChildShares(state);
-  const selected=heirs.find(heir=>heir.npc.id===selectedChildId);
-  if(!selected)return{cash:0,properties:[],businesses:[],collectibles:[],investments:[],liabilities:[],inheritanceValue:0,siblingValue:0,forcedSales:0};
-
-  let liquid=Math.max(0,state.finances.cash);
-  let forcedSales=0;
-  const candidateItems:EstateItem[]=[];
-
-  for(const vehicle of state.assets.vehicles)liquid+=Math.max(0,vehicle.value*.96);
-
-  for(const property of state.assets.properties){
-    const equity=propertyEquity(state,property);
-    if(state.inheritance.inheritProperties&&equity>0)candidateItems.push({kind:'property',id:property.id,value:equity,property,mortgage:mortgageFor(state,property)});
-    else liquid+=propertySaleValue(state,property);
-  }
-  for(const business of state.businesses){
-    if(state.inheritance.inheritBusinesses&&!business.bankrupt&&business.valuation>0)candidateItems.push({kind:'business',id:business.id,value:business.valuation,business});
-    else if(!business.bankrupt)liquid+=business.valuation*.95;
-  }
-  for(const collectible of state.assets.collectibles)candidateItems.push({kind:'collectible',id:collectible.id,value:Math.max(0,collectible.estimatedValue),collectible});
-
-  // Mortgages are settled with or travel alongside their properties. Other debts are estate obligations.
-  const nonMortgageDebt=state.finances.liabilities.filter(loan=>loan.kind!=='mortgage').reduce((sum,loan)=>sum+Math.max(0,loan.balance),0);
-  if(liquid<nonMortgageDebt){
-    // Sell the least costly-to-liquidate legacy items first so debts cannot disappear while valuable assets survive untouched.
-    candidateItems.sort((a,b)=>(itemSaleValue(state,b)/Math.max(1,b.value))-(itemSaleValue(state,a)/Math.max(1,a.value)));
-    while(liquid<nonMortgageDebt&&candidateItems.length){const sold=candidateItems.shift()!;liquid+=itemSaleValue(state,sold);forcedSales+=1;}
-  }
-  liquid=Math.max(0,liquid-nonMortgageDebt);
-
-  const investmentValue=state.investments.positions.reduce((sum,position)=>sum+position.units*(state.investments.prices[position.securityId]??0),0);
-  const initialTotal=liquid+investmentValue+candidateItems.reduce((sum,item)=>sum+item.value,0);
-  const preliminaryTargets=new Map(heirs.map(heir=>[heir.npc.id,initialTotal*heir.ratio]));
-  const assignedValue=new Map(heirs.map(heir=>[heir.npc.id,investmentValue*heir.ratio]));
-  const assignedItems=new Map(heirs.map(heir=>[heir.npc.id,[] as EstateItem[]]));
-
-  // Preserve indivisible assets only when an heir can absorb them without grossly defeating the will/equal-share target.
-  for(const item of [...candidateItems].sort((a,b)=>b.value-a.value)){
-    const ranked=[...heirs].sort((a,b)=>((preliminaryTargets.get(b.npc.id)??0)-(assignedValue.get(b.npc.id)??0))-((preliminaryTargets.get(a.npc.id)??0)-(assignedValue.get(a.npc.id)??0)));
-    const heir=ranked[0]!;
-    const remaining=Math.max(0,(preliminaryTargets.get(heir.npc.id)??0)-(assignedValue.get(heir.npc.id)??0));
-    if(heirs.length>1&&item.value>remaining*1.10){liquid+=itemSaleValue(state,item);forcedSales+=1;continue;}
-    assignedItems.get(heir.npc.id)!.push(item);assignedValue.set(heir.npc.id,(assignedValue.get(heir.npc.id)??0)+item.value);
-  }
-
-  const retainedTotal=[...assignedItems.values()].flat().reduce((sum,item)=>sum+item.value,0);
-  const finalTotal=liquid+investmentValue+retainedTotal;
-  const finalTargets=new Map(heirs.map(heir=>[heir.npc.id,finalTotal*heir.ratio]));
-  const cashNeeds=heirs.map(heir=>({heir,need:Math.max(0,(finalTargets.get(heir.npc.id)??0)-(assignedValue.get(heir.npc.id)??0))}));
-  const totalNeed=cashNeeds.reduce((sum,entry)=>sum+entry.need,0);
-  const cashByHeir=new Map<string,number>();
-  for(const {heir,need} of cashNeeds)cashByHeir.set(heir.npc.id,totalNeed>0?liquid*(need/totalNeed):liquid*heir.ratio);
-
-  let siblingValue=0;
-  for(const heir of heirs){
-    const itemValue=(assignedItems.get(heir.npc.id)??[]).reduce((sum,item)=>sum+item.value,0);
-    const inheritedInvestment=investmentValue*heir.ratio;
-    const inheritedCash=cashByHeir.get(heir.npc.id)??0;
-    const total=itemValue+inheritedInvestment+inheritedCash;
-    if(heir.npc.id!==selectedChildId){heir.npc.wealth=Math.max(0,Math.round(heir.npc.wealth+total));siblingValue+=total;}
-  }
-
-  const selectedItems=assignedItems.get(selectedChildId)??[];
-  const properties=selectedItems.filter((item):item is Extract<EstateItem,{kind:'property'}>=>item.kind==='property').map(item=>structuredClone(item.property));
-  const businesses=selectedItems.filter((item):item is Extract<EstateItem,{kind:'business'}>=>item.kind==='business').map(item=>structuredClone(item.business));
-  const collectibles=selectedItems.filter((item):item is Extract<EstateItem,{kind:'collectible'}>=>item.kind==='collectible').map(item=>structuredClone(item.collectible));
-  const propertyIds=new Set(properties.map(property=>property.id));
-  const liabilities=state.finances.liabilities.filter(loan=>loan.kind==='mortgage'&&loan.assetId&&propertyIds.has(loan.assetId)).map(loan=>structuredClone(loan));
-  const investments=state.investments.positions.map(position=>({...position,units:position.units*selected.ratio})).filter(position=>position.units>0.000001);
-  const itemValue=selectedItems.reduce((sum,item)=>sum+item.value,0);
-  const selectedInvestmentValue=investmentValue*selected.ratio;
-  const selectedCash=cashByHeir.get(selectedChildId)??0;
-  return {cash:selectedCash,properties,businesses,collectibles,investments,liabilities,inheritanceValue:itemValue+selectedInvestmentValue+selectedCash,siblingValue,forcedSales};
 }
 
 function relation(state:GameState,npcId:string,type:Relationship['type'],score:number,yearsKnown:number):Relationship {
@@ -173,10 +55,8 @@ function rebuildDescendantRelationships(state:GameState, originalChild:Npc, prev
     add(npc.id,fullSibling?'sibling':'half_sibling',58,Math.min(originalChild.age,npc.age));siblings.push(npc);
   }
 
-  // Children of a biological sibling remain nieces/nephews after control changes.
   for(const sibling of siblings)for(const childId of sibling.childIds)add(childId,'niece_nephew',48,state.npcs[childId]?.age??0);
 
-  // A stepparent's other children are stepsiblings when they do not already share a biological parent with the player.
   for(const rel of [...result].filter(rel=>rel.type==='stepparent')){
     const stepparent=state.npcs[rel.npcId];
     for(const childId of stepparent?.childIds??[]){if(childId!==originalChild.id&&!parentIds.has(childId))add(childId,'stepsibling',45,Math.min(originalChild.age,state.npcs[childId]?.age??0));}
@@ -188,7 +68,6 @@ function rebuildDescendantRelationships(state:GameState, originalChild:Npc, prev
     for(const grandchildId of state.npcs[childId]?.childIds??[])add(grandchildId,'grandchild',62,state.npcs[grandchildId]?.age??0);
   }
 
-  // Keep established friendships so changing protagonists does not erase the descendant's entire social world.
   for(const oldRel of state.relationships){
     if(result.length>=28)break;
     if(seen.has(oldRel.npcId)||!state.npcs[oldRel.npcId]?.alive)continue;
@@ -244,7 +123,6 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.currentYear=newCharacter.birthYear+newCharacter.age;
   state.relationships=rebuildDescendantRelationships(state,originalChild,previousPlayerId);
   state.education=descendantEducation(originalChild);
-  // Social worlds belong to the controlled protagonist, not to the dynasty globally; reconstruct this descendant's own school/work history.
   state.socialWorlds=[];
   state.employment=descendantEmployment(state,originalChild);
   migrateLegacySchoolWorlds(state);
@@ -267,6 +145,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.delayedEvents=[];
   state.pendingEvent=undefined;
   state.recentEventIds=[];
+  state.inheritance={will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]};
   state.legacy.generation+=1;
   state.flags.famousDescendant=(parentLife?.fame??0)>=60;
   state.flags.inheritanceReceived=settlement.inheritanceValue;
@@ -278,13 +157,4 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.yearlySnapshots=[];
   initializeMissingNpcLives(state);
   return{success:true,messages:[{text:`Generation ${state.legacy.generation}: now playing as ${newCharacter.firstName}.`}]};
-}
-
-export function setWill(state:GameState,beneficiaries:Array<{npcId:string;percentage:number}>):EngineResult {
-  const children=new Set(state.relationships.filter(r=>r.type==='child').map(r=>r.npcId));
-  if(beneficiaries.some(b=>!children.has(b.npcId)))return{success:false,messages:[{text:'Beneficiaries must be your children under the current will system.'}]};
-  const total=beneficiaries.reduce((s,b)=>s+b.percentage,0);
-  if(Math.abs(total-100)>.01)return{success:false,messages:[{text:'Will percentages must add up to 100%.'}]};
-  state.inheritance.will=beneficiaries;
-  return{success:true,messages:[{text:'Your will was updated.'}]};
 }

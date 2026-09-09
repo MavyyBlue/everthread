@@ -8,154 +8,115 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline entering this polish bundle is commit `d05e0ca399f8be7ae56f77a8d120861f725428c4`.
+The latest fully green expanded baseline entering Phase 5 is commit `a2fdde1e091747812d6875285c22828153c981ee`.
 
-- GitHub Actions run #64 (`34312990224`) completed successfully on 2026-09-09.
-- Run #64 expanded upload commit `9104e0750d9f1000d126593eed2ea82114b7b3f3` into the build-bot commit above.
+- GitHub Actions run #65 (`34314240397`) completed successfully on 2026-09-09.
+- Run #65 expanded upload commit `7f84a4f77825ebaaadf770651833c917f41672ec` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
-- Phase 4H People Threadspace is green on this baseline; Phase 4G Random Event Coherence remains 72/72 and the established earlier Phase 4 regressions remain green through the full suite.
+- Phase 4H People Threadspace and its final connection-label playtest polish are green.
+- Phase 4G Random Event Coherence remains 72/72 and all established Phase 4 regressions remained green through run #65.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
 
-## Phase 4 status
+## Phase 4 — closed
 
-Phase 4 was originally closed after the integration gate, then deliberately reopened for polish at Mavyy's direction before Phase 5. This does not change Phase 5's intended Generations / Estates scope.
+Phase 4 is closed after run #65. The persistent Career World ecosystems, integration/coherence closeout, random-event consequence layer, AI Interaction Testbench, and unified People Threadspace are all green.
 
-### Phase 4E1 — Combat Sports Persistent Fight Network — green
+### Threadspace final state
 
-Combat sports uses generic `SocialWorld` ownership under `special-combat-*` for exact coaches, training partners, and recurring rivals. Sanctioned fictional bouts target exact persisted rivals; memories, timeline entries, relationship consequences, succession, Leave Path archival, and later legal re-entry preserve the same NPC/world history.
+`PeopleWorkspaceSystem.ts` remains a read-only projection over the seven established People categories. One canonical node exists per NPC even when several categories/worlds connect to that person. Real parent/child and partner structure remains graph-owned simulation truth rather than invented UI relationships.
 
-### Phase 4E2 — Military Service Ecosystem — green
+`PeopleWorkspace.tsx` is a mobile-first shared graph workspace with category expansion, pan/pinch/wheel navigation, Focus on You, Fit Visible, search/filtering, viewport culling, and the existing rich NPC profile sheet. Connection labels are presentation-only, OFF by default, and when enabled sit directly beneath their associated NPC node rather than over the graph line.
 
-Military service uses `special-military-*` worlds for exact commanders, service peers, and support personnel. Bounded posting rotations, command succession, promotion context, People/Career identity continuity, and deterministic passive unit processing preserve existing enlistment/rank/pay authority.
+Threadspace camera/filter/layout state is not persisted into `GameState`.
 
-### Phase 4E3 — Politics Ecosystem — green
+## Current work — Phase 5A Estate Planning & Asset Bequests — deployment pending
 
-Politics uses `special-politics-*` worlds for exact staff, political allies, and recurring opposition. Four-year terms, same-level renewal at the term boundary, higher-office transitions, selective personnel continuity, relationship-driven office pressure/support, succession, People/Career identity, Leave Path, and re-entry preserve the existing election/campaign authority rather than creating a second election roll.
+Phase 5 begins by deepening the existing `GenerationSystem` estate authority rather than replacing it.
 
-### Phase 4F — Integration & Consistency Closeout — green
+### Estate authority
 
-Run #60 (`34289835933`) verified the nine-family Career World catalog and structural Career World invariant layer. The expanded baseline from that gate was `8d5527a045f02d3a15d6831be079ac7d5f6c9de5` and the dedicated closeout suite passed 88/88.
+A dedicated `EstateSystem.ts` owns estate planning, read-only estate preview, debt settlement, asset liquidation priority, residuary shares, specific bequests, and the final settlement consumed by descendant continuation.
 
-- Career UI recognizes acting, music, sports, combat, military, politics, modeling, racing, and directing worlds.
-- Impossible duplicate active worlds are conservatively archived rather than erased.
-- member/group symmetry, bounded prestige, stale termination metadata, and supplemental-world ownership are repaired without inventing career results.
-- AI Career observation uses the same persistent Career World catalog.
+Planned/implemented in this bundle:
 
-### Phase 4G — Random Event Coherence & Consequences — green
+- existing percentage wills remain the residuary-estate authority;
+- an empty will means equal shares among living children;
+- specific properties, operating businesses, and collectibles may be left to a named living child;
+- a specific bequest takes priority over percentage balancing but never causes estate obligations to disappear;
+- unassigned transferable assets are liquidated before specifically bequeathed assets when debt requires sales;
+- investments are now available to satisfy remaining unsecured estate obligations rather than passing untouched while debt vanishes;
+- stale/deceased-beneficiary bequests fall back to normal estate handling;
+- unassigned property/business retention preferences remain backward-compatible fallback behavior;
+- the selected descendant receives exactly the same settlement shown by the read-only preview;
+- the deceased protagonist's personal estate plan resets after generational handoff instead of leaking into the next protagonist.
 
-Run #62 verified the event-coherence layer at 72/72 checks.
+The new asset-bequest field is backward-compatible and optional in schema 9. New lives initialize it, and `migrateSave()` normalizes missing/invalid lists on every load, including rewind restoration. A schema bump is deliberately not required for this additive structure.
 
-- The random pool remains 691 events, including 664 procedural variants across 80 dilemma families.
-- Procedural dilemmas use situation-specific choices rather than broad category-generic buttons.
-- target-aware social/family/romance/school/work events bind the exact persistent NPC when appropriate.
-- event relationship changes affect that exact relationship and write meaningful NPC memories.
-- money, work-performance, and academic-performance consequences synchronize with their authoritative systems rather than only secondary display stats.
-- travel vignettes require genuine travel history where the content assumes it.
-- timeline and semantic results preserve meaningful event deltas.
-- pre-4G pending procedural events remain resolvable; hidden legacy semantic aliases map old callers onto the equivalent coherent modern choice without exposing stale choices to the player.
+### Player UX
 
-## Phase 4H — People Threadspace — green baseline; targeted presentation polish in progress
+Assets gains an **Estate** tab for adults with living children.
 
-Phase 4H replaces the old one-folder-at-a-time People tree presentation with one unified, mobile-first relationship workspace while preserving the existing NPC/Relationship/SocialWorld truth underneath it.
+- Shows estimated distributable estate and obligations.
+- Allows editable percentage shares with an Equal Shares reset.
+- Allows fallback keep/sell preferences for unassigned properties and businesses.
+- Allows specific owned properties, operating businesses, and collectibles to be assigned to an individual living child.
+- Shows a per-child projected inheritance summary from the same estate planner used by actual settlement.
 
-Run #64 is the fully green Phase 4H baseline. Mavyy is playtesting targeted Threadspace presentation details before moving to Phase 5; these are concrete playtest fixes rather than a new feature subphase.
+The death sheet now includes an estate review and shows each eligible descendant's projected inheritance before the player chooses who to continue as.
 
-### Threadspace model
+All estate-plan mutations route through `GameEngine` into `EstateSystem`; UI does not directly mutate inheritance state.
 
-`PeopleWorkspaceSystem.ts` is a read-only projection over the existing seven People categories:
+### Phase 5A regression / deployment gate
 
-- Player Family
-- Relatives
-- Friends & Social
-- Romantic History
-- School
-- Work
-- Career Worlds
+`estatePlanningRegression.ts` adds focused coverage for:
 
-One canonical node is produced per NPC. A person who is simultaneously a friend, coworker, former classmate, and Career World leader remains one person with multiple labeled category memberships rather than duplicated UI identities.
+- schema-9 compatibility and missing-bequest normalization without RNG consumption;
+- adult estate-plan gates;
+- specific property/business/collectible bequests;
+- read-only preview behavior;
+- retention-preference fallback;
+- debt sale priority and insolvency;
+- investments paying estate obligations before inheritance;
+- zero-residuary-share heirs receiving a named bequest;
+- preview-to-continuation equality;
+- estate-plan reset on descendant continuation; and
+- dead-beneficiary fallback.
 
-Real parent/child and partner links remain graph edges. The projection never invents NPC-to-NPC friendships or other social facts that the simulation does not own.
-
-### Threadspace interaction / mobile UX
-
-`PeopleWorkspace.tsx` provides the player-facing graph workspace.
-
-- all seven category hubs occupy the same logical space around the player;
-- tapping a hub expands/collapses its NPC nodes;
-- multiple hubs may be expanded simultaneously;
-- blank-space finger dragging pans the workspace;
-- two-finger pinch zooms around the gesture midpoint; desktop wheel zoom is also supported;
-- Focus on You and Fit Visible controls recover navigation quickly;
-- a collapsible filter panel controls category visibility, deceased NPCs, former affiliations, minimum relationship strength, and search by name/relationship/role/world;
-- connection labels are a presentation-only filter option, off by default; when enabled, each NPC's relevant relationship/role/world labels sit directly beneath that NPC node instead of being drawn over the connecting line;
-- pressing an NPC opens the existing rich NPC profile sheet, preserving relationship actions, milestones, life/career/finance/health/legal/public history, workplace concerns, shared worlds, and memories.
-
-Camera position, zoom, filter state, connection-label visibility, and graph layout are presentation state only. They are not written into `GameState`, so save schema remains 9.
-
-### Sustainable layout / performance
-
-The layout uses deterministic category sectors and expanding radial rings rather than a giant fixed DOM tree.
-
-- category hubs stay close to the player while NPCs expand outward inside their category sector;
-- canonical nodes receive stable deterministic coordinates for a given model/view;
-- logical coordinate space may become large without allocating a huge bitmap or DOM canvas;
-- React node rendering is viewport-culled;
-- SVG edges are rendered only when both endpoints are in the culled viewport set;
-- the People screen is lazy-loaded from `App.tsx`, allowing Vite to split Threadspace code/CSS away from the initial application path.
-
-The dedicated regression includes dense-cast layout checks at 180 and 1,000 people to prevent overlapping-node/boundary-pile regressions.
-
-### AI People semantic coverage
-
-The regression-only AI interface is expanded alongside the actual People redesign rather than in a separate feature phase.
-
-- People observation includes the same canonical seven-category workspace projection.
-- exact multi-category membership is visible semantically.
-- the existing bounded convenience actions remain, plus a generic exact-NPC interaction command for NPCs beyond the convenience list.
-- Argue, Meet someone, workplace concerns, Try for child, and Adopt are represented through real `GameEngine` actions and existing gates.
-- adult family-planning presentation boundaries remain aligned with the player People UI.
-- `inspectPeopleWorkspace()` is a read-only exact projection helper.
-
-The testbench remains isolated from production UI/player saves and adds no test-only `GameState` properties.
-
-### 4H deployment gate
-
-The core Phase 4H deployment gate was satisfied by run #64. Any follow-up Threadspace polish bundle still must pass the same repository gate before it is treated as green:
+Phase 5A is not green until GitHub Actions passes:
 
 - engine and tests TypeScript gates;
-- every existing regression including 4G 72/72 and AI 41/41;
-- the Threadspace regression;
+- every established regression from Phases 1–4;
+- the new estate-planning regression;
 - production Vite build;
 - Pages artifact upload; and
 - live Pages deployment.
 
-If CI exposes a real flaw, fix the root cause rather than weakening the regression.
+If CI finds a real flaw, fix the owning layer rather than weakening the regression.
+
+## Phase 5 next slices after 5A is green
+
+Continue the roadmap without replacing the estate foundation:
+
+- fictionalized estate administration / settlement consequences;
+- richer NPC-owned assets and businesses so family wealth exists outside the controlled protagonist;
+- broader kin taxonomy only where it improves real family-tree behavior;
+- stronger dynasty wealth/history summaries;
+- large-family/multi-generation performance validation beyond the already-green three-/eight-generation foundation; and
+- further death → estate review → descendant continuation polish where playtesting proves it useful.
 
 ## Phase 4Q1 AI Interaction Testbench — green baseline
 
-`src/tests/aiInteractionTestbench.ts` is a regression-only semantic interface over the real `GameEngine`.
-
-- Five semantic screens mirror Life, People, Activities, Career, and Assets.
-- Stable semantic actions call real public GameEngine methods rather than parallel gameplay logic.
-- Exact NPC/entity inspection, before/after state diffs, invariant watches, and deterministic scenario transcripts are available to feature regressions.
-- Supplied fixtures are cloned, assigned `ai-test-*` slots, and isolated from real IndexedDB/localStorage through disposable test persistence.
-- Test metadata stays outside `GameState` and save schema 9.
-- The established AI regression is 41/41 on the run #64 baseline; 4H People-specific semantic coverage remains additive through its dedicated regression without weakening those 41 checks.
-
-## Phase 4 exit condition
-
-The Phase 4H core gate is satisfied. Phase 4 remains held only for concrete playtest defects Mavyy identifies before beginning Phase 5; do not invent another polish subphase. Once the requested Threadspace presentation fixes are green, continue to **Phase 5 — Generations / Estates**.
+`src/tests/aiInteractionTestbench.ts` remains regression-only and uses real `GameEngine` actions. Five semantic screens mirror Life, People, Activities, Career, and Assets. Exact NPC/entity inspection, before/after diffs, invariant watches, deterministic transcripts, disposable persistence, and read-only People projection remain green. Test metadata stays outside `GameState`.
 
 ## Known quality / architecture issues to keep visible
 
 - Exact seeded replay serialization remains mandatory; do not introduce wall-clock IDs or unseeded simulation randomness.
-- Every meaningful player action stays under controlled system/GameEngine ownership. UI and AI testbench must not directly mutate critical state during interaction execution.
-- AI observation/projection code must remain read-only; setup fixtures may be fabricated before the isolated engine is created.
+- Every meaningful player action stays under controlled system/GameEngine ownership.
+- AI observation/projection code remains read-only.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
-- Persistent world and People-graph population/performance profiling remains important across long dynasties.
-- The production application chunk remains above the preferred size threshold; Threadspace is lazy-loaded so this feature should not unnecessarily inflate the initial path, but broader code-splitting remains future work.
-- Flat primitive special-career/flag records remain acceptable; schema 10 is not justified by Phase 4 polish alone.
+- Persistent world, People graph, estate, and dynasty population/performance profiling remains important across long generations.
+- The production application chunk remains above the preferred size threshold; broader code-splitting remains future work.
 - Special Career World NPC role/income projection remains presentation-oriented; future exact NPC special-career compensation must integrate deliberately with `NpcLifeSystem` rather than creating another career truth.

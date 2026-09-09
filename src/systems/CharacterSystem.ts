@@ -92,7 +92,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     timeline:[{id:'birth',year:2026,age:0,category:'birth',importance:3,text:`You were born ${character.birthCircumstance} in ${city}, ${country.name}.`}],
     delayedEvents:[],recentEventIds:[],achievements:achievements.map(a=>({id:a.id,completed:false,progress:0})),challenges:[],
     legacy:{generation:1,totalFamilyWealth:familyCash,totalYearsSimulated:0,familyTreeNpcIds:[p1.id,p2.id],accountCollectibleIds:[],completedLifeIds:[]},completedLives:[],
-    travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true},familyPlanning:{},actionLedger:{age:character.age,uses:{},lastUsedAge:{},revision:0},
+    travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]},familyPlanning:{},actionLedger:{age:character.age,uses:{},lastUsedAge:{},revision:0},
     economy:{inflationIndex:1,housingIndex:1,salaryIndex:1,businessDemandIndex:1,year:2026},
     flags:{sandbox:options.sandbox ?? false,rewindEnabled:options.rewindEnabled ?? false,debugEnabled:false},
     settings:{theme:'system',accent:'#7357ff',sound:true,haptics:true,animations:true,textScale:1,notifications:false,minigames:true,profanityFilter:false,autoSave:true,highContrast:false,reducedMotion:false},
