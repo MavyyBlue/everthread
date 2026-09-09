@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import './styles.css';
 import './brand.css';
 import { useGameState, gameEngine } from './stores/gameStore';
 import { LifeScreen } from './screens/LifeScreen';
-import { PeopleScreen } from './screens/PeopleScreen';
 import { ActivitiesScreen } from './screens/ActivitiesScreen';
 import { CareerScreen } from './screens/CareerScreen';
 import { AssetsScreen } from './screens/AssetsScreen';
@@ -17,6 +16,7 @@ import { ContextualInfoButton } from './components/ContextualInfoButton';
 import { allocateSaveSlotId, getActiveSaveSlotId, listSaveSlots, loadGame, loadSettings, saveGame, setActiveSaveSlotId } from './services/SaveSystem';
 import type { EngineResult } from './types/game';
 
+const PeopleScreen=lazy(()=>import('./screens/PeopleScreen').then(module=>({default:module.PeopleScreen})));
 const tabs=[['life','Life','◉'],['people','People','♡'],['activities','Activities','＋'],['career','Career','▣'],['assets','Assets','◆']] as const;
 const officialEverthreadIcon='./icons/everthread-icon-192.png';
 type Tab=typeof tabs[number][0];
@@ -29,7 +29,7 @@ export default function App(){const state=useGameState(s=>s);const[tab,setTab]=u
  const onResult=(result:EngineResult)=>{const message=result.messages.at(-1)?.text??(result.success?'Done.':'That did not work.');setToast(message);window.setTimeout(()=>setToast(''),2600);if(state.settings.haptics&&navigator.vibrate)navigator.vibrate(result.success?8:[20,30,20]);if(state.settings.sound)playResultTone(result.success);};
  if(!booted)return <div className="boot-screen"><img className="brand-icon" src={officialEverthreadIcon} alt="" aria-hidden="true"/><strong>Everthread</strong><small>Opening your life…</small></div>;
  return <div className="app-shell"><header className="app-bar"><button className="brand-button" onClick={()=>setTab('life')} aria-label="Go to Life"><img className="brand-icon brand-icon--small" src={officialEverthreadIcon} alt="" aria-hidden="true"/><span><strong>Everthread</strong><small>Life Unwritten</small></span></button><div style={{display:'flex',gap:8}}><ContextualInfoButton tab={tab} state={state}/><button className="icon-button" onClick={()=>setMeta(true)} aria-label="Progress, life saves, and settings">•••</button></div></header>
-  <div className="screen-host">{tab==='life'&&<LifeScreen state={state} onResult={onResult}/>} {tab==='people'&&<PeopleScreen state={state} onResult={onResult}/>} {tab==='activities'&&<ActivitiesScreen state={state} onResult={onResult}/>} {tab==='career'&&<CareerScreen state={state} onResult={onResult}/>} {tab==='assets'&&<AssetsScreen state={state} onResult={onResult}/>}</div>
+  <div className="screen-host">{tab==='life'&&<LifeScreen state={state} onResult={onResult}/>} {tab==='people'&&<Suspense fallback={<main className="screen"><div className="empty-card">Opening Threadspace…</div></main>}><PeopleScreen state={state} onResult={onResult}/></Suspense>} {tab==='activities'&&<ActivitiesScreen state={state} onResult={onResult}/>} {tab==='career'&&<CareerScreen state={state} onResult={onResult}/>} {tab==='assets'&&<AssetsScreen state={state} onResult={onResult}/>}</div>
   <nav className="bottom-nav" aria-label="Primary navigation">{tabs.map(([id,label,icon])=><button className={tab===id?'active':''} key={id} onClick={()=>setTab(id)} aria-current={tab===id?'page':undefined}><span aria-hidden="true">{icon}</span><small>{label}</small></button>)}</nav>
   <EventSheet state={state} onResult={onResult}/><DeathSheet state={state} onResult={onResult} onNewLife={()=>setNewLife(true)} onRandomLife={()=>void createRandomLife()}/><MetaSheet open={meta} onClose={()=>setMeta(false)} onNewLife={()=>{setMeta(false);setNewLife(true);}} onLifeOpened={()=>{setMeta(false);setTab('life');}}/><BottomSheet open={newLife} title="Create a new life" onClose={()=>setNewLife(false)} wide><NewLifeForm onCreated={()=>{setNewLife(false);setTab('life');}}/></BottomSheet><Toast message={toast}/>
  </div>;

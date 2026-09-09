@@ -1,31 +1,17 @@
 import { useState } from 'react';
 import type { EngineResult, GameState } from '../types/game';
-import { SearchField } from '../components/SearchField';
 import { BottomSheet } from '../components/BottomSheet';
-import { RelationshipTree } from '../components/RelationshipTree';
+import { PeopleWorkspace } from '../components/PeopleWorkspace';
 import { gameEngine } from '../stores/gameStore';
 import { actionAllowed } from '../core/actionEconomy';
-import { buildPeopleRelationshipGraph, peopleFolderSummaries, type PeopleFolderId } from '../systems/PeopleGraphSystem';
 import { canReportCoworker, workplaceRoleForNpc } from '../systems/WorkplaceSystem';
 import { npcLifeSummary } from '../systems/NpcLifeSystem';
 import { canAskOutNpc, canHookUpWithNpc, canReconcileWithNpc } from '../systems/RelationshipSystem';
 import { npcCareerProjection } from '../systems/CareerIdentitySystem';
 import { formatMoney } from '../core/format';
 
-const folderGlyph: Record<PeopleFolderId,string> = {
-  player_family:'⌂', relatives:'⌘', friends:'○', romance:'♡', school:'◇', work:'□', career:'◎',
-};
-
 export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:EngineResult)=>void}){
-  const[q,setQ]=useState('');
   const[selectedNpcId,setSelectedNpcId]=useState<string>();
-  const[folder,setFolder]=useState<PeopleFolderId>();
-  const query=q.trim().toLowerCase();
-  const rows=state.relationships
-    .filter(r=>{const n=state.npcs[r.npcId];return n&&(!query||`${n.firstName} ${n.lastName} ${r.type}`.toLowerCase().includes(query));})
-    .sort((a,b)=>b.score-a.score);
-  const summaries=peopleFolderSummaries(state);
-  const graph=folder?buildPeopleRelationshipGraph(state,folder):undefined;
   const selected=selectedNpcId?state.relationships.find(r=>r.npcId===selectedNpcId):undefined;
   const npc=selected?state.npcs[selected.npcId]:undefined;
   const npcWorlds=npc?state.socialWorlds.filter(world=>world.members.some(member=>member.npcId===npc.id)):[];
@@ -49,29 +35,12 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:Engin
     <div className="sheet-section"><h3>Memories</h3>{npc.memories.slice(-5).reverse().map(m=><p className="memory" key={m.id}>{m.summary}</p>)}{!npc.memories.length&&<p className="muted">No major memories yet.</p>}</div>
   </>}</BottomSheet>;
 
-  if(folder&&graph){
-    const summary=summaries.find(item=>item.id===folder)!;
-    return <main className="screen people-tree-screen">
-      <div className="screen-title"><div><p className="eyebrow">Relationship tree</p><h1>{summary.title}</h1></div><button className="secondary-button" onClick={()=>setFolder(undefined)}>‹ Folders</button></div>
-      <section className="tree-intro-card"><div><strong>{summary.count} {summary.count===1?'person':'people'}</strong><p>{summary.description}</p></div><span className="tree-folder-glyph">{folderGlyph[folder]}</span></section>
-      {summary.count>0?<RelationshipTree state={state} graph={graph} onSelect={setSelectedNpcId}/>:<div className="empty-card">No one is in this relationship folder yet. As persistent NPC worlds expand, new connections will appear here automatically.</div>}
-      {folder==='player_family'&&state.character.age>=18&&<FamilyPlanningCard state={state} onResult={onResult} partnerId={partner?.npcId} expecting={expecting} canTryChild={canTryChild} canAdopt={canAdopt} newbornPresent={newbornPresent}/>} 
-      {personSheet}
-    </main>;
-  }
-
-  return <main className="screen"><div className="screen-title"><div><p className="eyebrow">People</p><h1>Relationships</h1></div><button className="secondary-button" disabled={!actionAllowed(state,{policy:'social.meet'})} onClick={()=>onResult(gameEngine.performActivity('meet_date'))}>Meet someone</button></div>
-    <SearchField value={q} onChange={setQ} placeholder="Search every relationship"/>
-    {query?<><div className="section-heading"><h2>Search results</h2><span>{rows.length} found</span></div><div className="stack">{rows.map(rel=><PersonRow key={rel.id} state={state} npcId={rel.npcId} onSelect={setSelectedNpcId}/>) }{rows.length===0&&<div className="empty-card">No matching relationships.</div>}</div></>:
-    <><div className="section-heading"><div><p className="eyebrow">Your circles</p><h2>Relationship folders</h2></div><span>{state.relationships.length} people</span></div><div className="people-folder-grid">{summaries.map(summary=><button className="people-folder-card" key={summary.id} onClick={()=>setFolder(summary.id)}><div className="people-folder-top"><span className="people-folder-glyph">{folderGlyph[summary.id]}</span><strong>{summary.count}</strong></div><h3>{summary.title}</h3><p>{summary.description}</p><small>{summary.previewNames.length?summary.previewNames.join(' · '):'No connections yet'}</small><span className="folder-open-label">Open tree ›</span></button>)}</div></>}
+  return <main className="screen people-workspace-screen">
+    <div className="screen-title"><div><p className="eyebrow">People</p><h1>Relationships</h1></div><button className="secondary-button" disabled={!actionAllowed(state,{policy:'social.meet'})} onClick={()=>onResult(gameEngine.performActivity('meet_date'))}>Meet someone</button></div>
+    <PeopleWorkspace state={state} onSelect={setSelectedNpcId}/>
     {state.character.age>=18&&<FamilyPlanningCard state={state} onResult={onResult} partnerId={partner?.npcId} expecting={expecting} canTryChild={canTryChild} canAdopt={canAdopt} newbornPresent={newbornPresent}/>} 
     {personSheet}
   </main>;
-}
-
-function PersonRow({state,npcId,onSelect}:{state:GameState;npcId:string;onSelect:(id:string)=>void}){
-  const rel=state.relationships.find(r=>r.npcId===npcId);const n=state.npcs[npcId];if(!rel||!n)return null;
-  return <button className="person-card" onClick={()=>onSelect(npcId)}><div className="npc-monogram">{n.firstName[0]}</div><div className="grow"><strong>{n.firstName} {n.lastName}</strong><small>{rel.type.replaceAll('_',' ')} · age {n.age}{!n.alive?' · deceased':''}</small><div className="mini-meter"><span style={{width:`${rel.score}%`}}/></div></div><strong>{Math.round(rel.score)}</strong></button>;
 }
 
 function FamilyPlanningCard({state,onResult,partnerId,expecting,canTryChild,canAdopt,newbornPresent}:{state:GameState;onResult:(r:EngineResult)=>void;partnerId?:string;expecting:GameState['familyPlanning']['pregnancy'];canTryChild:boolean;canAdopt:boolean;newbornPresent:boolean}){

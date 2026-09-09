@@ -10,9 +10,11 @@ import {
   type DeepCareerPath,
 } from '../systems/SpecialCareerLifecycleSystem';
 import { isSpecialCareerPathActive, specialCareerStartGate, type SpecialCareerPathKey } from '../systems/CommitmentSystem';
-import { actionGateStatus } from '../core/actionEconomy';
+import { actionAllowed, actionGateStatus } from '../core/actionEconomy';
 import { specialCareerWorlds } from '../systems/SpecialCareerWorldSystem';
 import { persistentCareerWorlds, PERSISTENT_CAREER_WORLD_KINDS } from '../systems/CareerWorldCatalogSystem';
+import { canReportCoworker } from '../systems/WorkplaceSystem';
+import { peopleWorkspaceSemanticView } from '../systems/PeopleWorkspaceSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -117,10 +119,13 @@ function primaryAction(id:string,label:string,state:GameState,args?:string[]):Ai
 }
 
 const DEEP_PATHS:DeepCareerPath[]=['acting','music','sports','modeling','racing','directing'];
-const PEOPLE_INTERACTIONS=['conversation','compliment','spend_time','gift','apologize','prank','insult'] as const;
+const PEOPLE_INTERACTIONS=['conversation','compliment','spend_time','gift','apologize','prank','argue','insult'] as const;
 
 function relationshipActions(state:GameState):AiActionView[]{
   const blocked=unresolvedReason(state);const actions:AiActionView[]=[];
+  actions.push(boolGate('people.interact','Interact with an exact person',!blocked,blocked,['npcId','action']));
+  const meetAllowed=!blocked&&actionAllowed(state,{policy:'social.meet'});
+  actions.push(boolGate('people.meet','Meet someone',meetAllowed,blocked??(meetAllowed?undefined:'You already used this social opportunity.')));
   for(const rel of state.relationships.filter(item=>state.npcs[item.npcId]?.alive&&!item.estranged).slice(0,16)){
     const npc=state.npcs[rel.npcId]!;const target=`${npc.firstName} ${npc.lastName}`;
     for(const interaction of PEOPLE_INTERACTIONS){
@@ -138,6 +143,16 @@ function relationshipActions(state:GameState):AiActionView[]{
       actions.push(boolGate('people.break_up',`End engagement with ${target}`,!blocked,blocked,['npcId'],npc.id));
     }
     if(rel.type==='spouse')actions.push(boolGate('people.divorce',`Divorce ${target}`,!blocked,blocked,['npcId'],npc.id));
+    if(canReportCoworker(state,npc.id))actions.push(boolGate('people.report_workplace',`Raise a work concern involving ${target}`,!blocked,blocked,['npcId'],npc.id));
+  }
+  if(state.character.age>=18){
+    const partner=state.relationships.find(rel=>['partner','fiance','spouse'].includes(rel.type)&&state.npcs[rel.npcId]?.alive);
+    const expecting=Boolean(state.familyPlanning.pregnancy);
+    const newbornPresent=state.relationships.some(rel=>rel.type==='child'&&state.npcs[rel.npcId]?.alive&&state.npcs[rel.npcId]?.age===0);
+    const childAllowed=Boolean(!blocked&&partner&&!expecting&&!newbornPresent&&actionAllowed(state,{policy:'family.child_attempt'}));
+    const adoptAllowed=Boolean(!blocked&&!expecting&&!newbornPresent&&actionAllowed(state,{policy:'family.adoption'}));
+    actions.push(boolGate('people.have_child','Try for a child',childAllowed,blocked??(!partner?'A current partner is required.':expecting?'A pregnancy is already in progress.':newbornPresent?'A newborn is already present this year.':childAllowed?undefined:'This family-planning opportunity is unavailable.'),['partnerId'],partner?.npcId));
+    actions.push(boolGate('people.adopt','Adopt a child',adoptAllowed,blocked??(expecting?'A pregnancy is already in progress.':newbornPresent?'A newborn is already present this year.':adoptAllowed?undefined:'This adoption opportunity is unavailable.')));
   }
   return actions;
 }
@@ -224,6 +239,7 @@ function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
     recentTimeline:state.timeline.slice(-8).map(entry=>({age:entry.age,category:entry.category,title:entry.title,text:entry.text,npcIds:entry.npcIds})),
   };
   if(screen==='people')return{
+    workspace:peopleWorkspaceSemanticView(state),
     people:state.relationships.map(rel=>npcView(state,rel.npcId)).filter(Boolean).slice(0,24),
   };
   if(screen==='activities')return{
@@ -317,13 +333,23 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     case'activities.diet':return engine.performActivity('diet');
     case'activities.meet_date':return engine.performActivity('meet_date');
     case'activities.therapy':return engine.therapy();
+    case'people.interact':return engine.interactWithCharacter(argString(command,'npcId'),argString(command,'action'));
     case'people.interact.conversation':return engine.interactWithCharacter(argString(command,'npcId'),'conversation');
     case'people.interact.compliment':return engine.interactWithCharacter(argString(command,'npcId'),'compliment');
     case'people.interact.spend_time':return engine.interactWithCharacter(argString(command,'npcId'),'spend_time');
     case'people.interact.gift':return engine.interactWithCharacter(argString(command,'npcId'),'gift');
     case'people.interact.apologize':return engine.interactWithCharacter(argString(command,'npcId'),'apologize');
     case'people.interact.prank':return engine.interactWithCharacter(argString(command,'npcId'),'prank');
+    case'people.interact.argue':return engine.interactWithCharacter(argString(command,'npcId'),'argue');
     case'people.interact.insult':return engine.interactWithCharacter(argString(command,'npcId'),'insult');
+    case'people.meet':return engine.performActivity('meet_date');
+    case'people.report_workplace':return engine.reportCoworker(argString(command,'npcId'));
+    case'people.have_child':{
+      const explicit=typeof command.args?.partnerId==='string'?command.args.partnerId:undefined;
+      const partnerId=explicit??state.relationships.find(rel=>['partner','fiance','spouse'].includes(rel.type)&&state.npcs[rel.npcId]?.alive)?.npcId;
+      return engine.haveChild(partnerId,false);
+    }
+    case'people.adopt':return engine.haveChild(undefined,true);
     case'people.hook_up':return engine.interactWithCharacter(argString(command,'npcId'),'hook_up');
     case'people.ask_out':return engine.relationshipAction(argString(command,'npcId'),'ask_out');
     case'people.propose':return engine.relationshipAction(argString(command,'npcId'),'propose');
@@ -395,6 +421,7 @@ export class EverthreadAiTestbench {
   renderText(screen=this.currentScreen){return renderAiObservation(this.observe(screen));}
   availableActions(screen=this.currentScreen){return this.observe(screen).actions;}
   inspectNpc(npcId:string){return npcView(this.engine.getState(),npcId);}
+  inspectPeopleWorkspace(){return peopleWorkspaceSemanticView(this.engine.getState());}
   inspectCareer(path:DeepCareerPath){
     const state=this.engine.getState();return{lifecycle:specialCareerLifecycleViews(state).find(view=>view.key===path),track:structuredClone(state.specialCareers[path]??{}),worlds:specialCareerWorlds(state,path).map(world=>({id:world.id,name:world.name,active:world.active,startedAge:world.startedAge,endedAge:world.endedAge,members:world.members.map(member=>({...member}))}))};
   }

@@ -2,7 +2,9 @@
 
 This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
 
-## Current macro phase — Phase 4: Special-Career Ecosystems
+## Current macro phase — Phase 4: Special-Career Ecosystems + final polish
+
+Phase 4 was previously closed after 4F, then intentionally reopened before Phase 5 so established mechanics receive targeted coherence/UI polish. This does not broaden or redefine Phase 5.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -28,34 +30,65 @@ Status: green.
 11. **4D7A Special-career lifecycle foundation:** green; verified by run #47.
 12. **4D7B Retirement/comeback + residual end-state economics:** green; verified by run #48.
 13. **4D8A Targeted career-story foundation:** green; verified by run #50.
-14. **4D8B Path-specific multi-year arcs:** green; verified by run #54 (`34276175071`) on expanded baseline `3f63ceea5272b8419e31e099bf1a9cc84f0ccab8`. Path-story regression passed 68/68 and AI testbench remained 41/41.
+14. **4D8B Path-specific multi-year arcs:** green; verified by run #54 (`34276175071`). Path-story regression passed 68/68 and AI testbench remained 41/41.
 15. **4D8C Optional hardening/content expansion:** deferred unless later playtesting exposes a concrete need.
 
 ### Phase 4E — Additional persistent special-career ecosystems
 
 1. **4E1 Combat Sports Persistent Fight Network:** green; verified by run #56 (`34280932226`) on expanded baseline `16fa2ef74f9b9bf55df62e23efa2d8c15f600b8c`. Combat regression 51/51.
 2. **4E2 Military Service Ecosystem:** green; verified by run #57 (`34285299697`) on expanded baseline `a585471648bd9cfa3ed29b13dfb2e45dbbde6def`. Military regression 65/65.
-3. **4E3 Politics Ecosystem:** green; verified by run #59 (`34287594480`) on expanded baseline `7e098777cdc3173b49b880797f8670661c470361`. Politics regression 80/80; all earlier suites remained green. Run #58 was correctly rejected as a no-op because the wrong ZIP had been uploaded; #59 is the verified feature deployment.
+3. **4E3 Politics Ecosystem:** green; verified by run #59 (`34287594480`) on expanded baseline `7e098777cdc3173b49b880797f8670661c470361`. Politics regression 80/80.
 4. **Later special-career breadth:** royalty, organized crime, fictional intelligence/other organizations, commune/casino/zoo/museum remain valid later expansion targets, but they do **not** block Phase 5.
 
-### Phase 4 closeout gate — current / deployment pending
+### Phase 4F — Integration & Consistency Closeout
+Status: green; verified by run #60 (`34289835933`) on expanded baseline `8d5527a045f02d3a15d6831be079ac7d5f6c9de5`. Closeout regression 88/88.
 
-The final Phase 4 pass is integration and consistency work, not another feature-family expansion.
+- unified player-facing Career Worlds catalog across nine persistent career families;
+- structural Career World validation/repair for duplicate/orphan worlds, membership topology, stale active/archived metadata, and bounded group values;
+- shared AI/player Career World catalog semantics;
+- cross-career coexistence, Leave Path history, save round-trip, migration repair, and repeated-chapter population validation.
 
-- unify the player-facing Career Worlds catalog across acting/music/sports/combat/military/politics/modeling/racing/directing;
-- show combat, military, and politics current/history chapters in the existing Career Worlds bottom sheet using their real system projections;
-- harden `enforceStateInvariants()` / `validateState()` against duplicate active worlds, orphan supplemental worlds, stale active/archived metadata, duplicate/asymmetric membership, and invalid group prestige;
-- make the AI testbench Career observation use the same nine-kind catalog;
-- verify cross-career coexistence, commitment capacity, Leave Path history, Career Identity, save round trips/migration repair, and repeated career-chapter population bounds through a dedicated 88-check closeout suite;
-- keep save schema 9 and preserve all existing career outcome authorities.
+### Phase 4G — Random Event Coherence & Consequences
+Status: green; verified by run #62 (`34305181164`) on expanded baseline `b7cd8d7806dce3e7e6ca677622ea7b7878f13ddd`. Random-event coherence regression 72/72.
 
-If this gate passes the full CI/build/deploy pipeline, **Phase 4 is complete and Phase 5 becomes the current macro phase.**
+- preserve the 691-event library / 664 procedural variants / 80 dilemma families;
+- replace broad generic procedural decision sets with situation-specific choices;
+- bind exact NPC targets where the event premise requires a person;
+- make consequences meaningfully affect the systems the dilemma is about;
+- synchronize work and academic event effects with authoritative career/education records;
+- preserve money/relationship deltas and meaningful target memories;
+- maintain compatibility for old pending procedural events and old semantic choice callers without showing obsolete choices to new players.
+
+### Phase 4H — People Threadspace
+Status: **current / deployment pending**.
+
+Goal: preserve all existing People simulation truth while replacing the one-folder-at-a-time presentation with one unified, original, mobile-first node workspace.
+
+Implementation direction:
+
+- keep the established seven categories: Player Family, Relatives, Friends & Social, Romantic History, School, Work, Career Worlds;
+- represent each NPC once canonically even when several categories/affiliations point to them;
+- category hubs expand/collapse their NPC nodes inside one shared pannable workspace;
+- multiple category graphs may remain open at once;
+- preserve real parent/child/partner edges and never invent NPC-to-NPC social facts;
+- tap an NPC node to open the existing rich NPC profile/action sheet;
+- support touch panning, pinch zoom, Focus on You, Fit Visible, search, relationship-strength filtering, deceased/former-affiliation filters, and per-category visibility;
+- keep camera/filter/layout state out of `GameState` and save schema 9;
+- deterministic sector/ring layout plus viewport culling must remain usable for very large lifetime casts;
+- lazy-load the People/Threadspace UI so graph code/CSS does not unnecessarily inflate the initial application path;
+- expose the same canonical graph projection to the AI testbench;
+- expand People semantic coverage for exact-NPC interaction, Argue, Meet someone, workplace concerns, Try for child, and Adopt through real `GameEngine` actions;
+- add a dedicated Threadspace regression including multi-category canonical identity, filtering, real structural links, AI parity, caller isolation, and 180/1,000-person layout stress.
+
+**4H is green only after both TypeScript gates, all existing regressions, the new Threadspace suite, production build, artifact upload, and Pages deployment pass.**
+
+After 4H is green, Phase 4 closes again. Do not add another planned Phase 4 polish slice; only a concrete defect found by CI/playtesting may interrupt the transition.
 
 ### Phase 4Q — Cross-cutting quality infrastructure
 
-**4Q1 AI Interaction Testbench:** green; verified by run #53 (`34270610218`) on expanded baseline `e55a43b1c3b90f93a080e73fe98dd81c40a9b871`. The regression-only semantic interface uses real `GameEngine` actions, exact entity inspection, deterministic transcripts, diffs, invariant watches, and isolated in-memory persistence. It adds no player UI, player-save metadata, save schema, or parallel gameplay implementation.
+**4Q1 AI Interaction Testbench:** green baseline; verified at 41/41 through run #62. The regression-only semantic interface uses real `GameEngine` actions, exact entity inspection, deterministic transcripts, diffs, invariant watches, and isolated in-memory persistence. It adds no player UI, player-save metadata, save schema, or parallel gameplay implementation.
 
-Future Q passes should remain rare and justified by cross-system leverage; gameplay expansion remains the primary direction.
+4H extends the People semantic surface in the same testbench as part of the real People redesign rather than creating a separate QA feature phase.
 
 ### Current compatibility rules
 
@@ -73,12 +106,16 @@ Future Q passes should remain rare and justified by cross-system leverage; gamep
 - Persistent special-career worlds may use generic `SocialWorld` ownership without joining the six-deep `SpecialCareerWorldKind` when lifecycle semantics differ.
 - Political and military persistence observes existing authoritative election/promotion results rather than rolling a second authority.
 - The invariant layer may repair impossible Career World topology but must not invent career results, contracts, elections, promotions, retirements, or relationships.
+- Random-event coherence must preserve exact saved pending-event completion across upgrades.
+- Threadspace is a projection of NPC/Relationship/SocialWorld truth; it must never become a second relationship database.
 - Testbench commands route through real GameEngine APIs; observation uses real read-only projections/catalogs.
 - Test-only state stays cloned, uses `ai-test-*` slot IDs, and persists only to disposable in-memory storage.
 
 ## Phase 5 — Generations / Estates
 
-**Next after the Phase 4 closeout is green.** Planned direction:
+**Begins after Phase 4H is green. Its original scope remains unchanged.**
+
+Planned direction:
 
 - asset-specific wills rather than only broad inherit-business/property toggles;
 - fictionalized estate administration and tax/settlement handling;
@@ -106,9 +143,9 @@ Planned: exact event cooldown tracking, expanded delayed consequence chains, mor
 - PWA install/offline upgrade QA;
 - iOS/Android standalone behavior;
 - regional name-pool expansion and long-dynasty repetition analysis;
-- code splitting for the growing application chunk;
+- broader code splitting for the growing application chunk;
 - generalized balance simulations informed by real player saves without shipping those saves as fixtures;
-- continued expansion of AI semantic interaction coverage as authoritative shared gates become available.
+- continued expansion of AI semantic interaction coverage alongside authoritative player systems.
 
 ## Scope philosophy
 
