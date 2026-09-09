@@ -8,15 +8,12 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `b7cd8d7806dce3e7e6ca677622ea7b7878f13ddd`.
+The latest fully green expanded baseline entering this polish bundle is commit `d05e0ca399f8be7ae56f77a8d120861f725428c4`.
 
-- GitHub Actions run #62 (`34305181164`) completed successfully on 2026-09-09.
-- Run #62 expanded correction upload commit `82490825179333f71104e1ca4f69896e6af2ee2c` into the build-bot commit above.
+- GitHub Actions run #64 (`34312990224`) completed successfully on 2026-09-09.
+- Run #64 expanded upload commit `9104e0750d9f1000d126593eed2ea82114b7b3f3` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
-- Phase 4G Random Event Coherence passed 72/72 checks after the run #61 failures were fixed at their real causes: curly-apostrophe dilemma recognition and backward-compatible legacy semantic choice aliases.
-- Phase 4F closeout remained green at 88/88; Politics 80/80, Military 65/65, Combat 51/51, path stories 68/68, lifecycle 48/48, and the AI Interaction Testbench 41/41 all remained green.
-- Pages artifact `10086397606` deployed successfully.
-- Production main JS is about 887.01 kB minified / 250.12 kB gzip. The >700 kB warning remains tracked optimization debt, not a deployment blocker.
+- Phase 4H People Threadspace is green on this baseline; Phase 4G Random Event Coherence remains 72/72 and the established earlier Phase 4 regressions remain green through the full suite.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
@@ -59,9 +56,11 @@ Run #62 verified the event-coherence layer at 72/72 checks.
 - timeline and semantic results preserve meaningful event deltas.
 - pre-4G pending procedural events remain resolvable; hidden legacy semantic aliases map old callers onto the equivalent coherent modern choice without exposing stale choices to the player.
 
-## Current work — Phase 4H People Threadspace — deployment pending
+## Phase 4H — People Threadspace — green baseline; targeted presentation polish in progress
 
 Phase 4H replaces the old one-folder-at-a-time People tree presentation with one unified, mobile-first relationship workspace while preserving the existing NPC/Relationship/SocialWorld truth underneath it.
+
+Run #64 is the fully green Phase 4H baseline. Mavyy is playtesting targeted Threadspace presentation details before moving to Phase 5; these are concrete playtest fixes rather than a new feature subphase.
 
 ### Threadspace model
 
@@ -90,9 +89,10 @@ Real parent/child and partner links remain graph edges. The projection never inv
 - two-finger pinch zooms around the gesture midpoint; desktop wheel zoom is also supported;
 - Focus on You and Fit Visible controls recover navigation quickly;
 - a collapsible filter panel controls category visibility, deceased NPCs, former affiliations, minimum relationship strength, and search by name/relationship/role/world;
+- connection labels are a presentation-only filter option, off by default; when enabled, each NPC's relevant relationship/role/world labels sit directly beneath that NPC node instead of being drawn over the connecting line;
 - pressing an NPC opens the existing rich NPC profile sheet, preserving relationship actions, milestones, life/career/finance/health/legal/public history, workplace concerns, shared worlds, and memories.
 
-Camera position, zoom, filter state, and graph layout are presentation state only. They are not written into `GameState`, so save schema remains 9.
+Camera position, zoom, filter state, connection-label visibility, and graph layout are presentation state only. They are not written into `GameState`, so save schema remains 9.
 
 ### Sustainable layout / performance
 
@@ -122,11 +122,11 @@ The testbench remains isolated from production UI/player saves and adds no test-
 
 ### 4H deployment gate
 
-`peopleWorkspaceRegression.ts` is the dedicated integration/stress suite. 4H is not green until GitHub Actions passes:
+The core Phase 4H deployment gate was satisfied by run #64. Any follow-up Threadspace polish bundle still must pass the same repository gate before it is treated as green:
 
 - engine and tests TypeScript gates;
 - every existing regression including 4G 72/72 and AI 41/41;
-- the new Threadspace regression;
+- the Threadspace regression;
 - production Vite build;
 - Pages artifact upload; and
 - live Pages deployment.
@@ -142,13 +142,11 @@ If CI exposes a real flaw, fix the root cause rather than weakening the regressi
 - Exact NPC/entity inspection, before/after state diffs, invariant watches, and deterministic scenario transcripts are available to feature regressions.
 - Supplied fixtures are cloned, assigned `ai-test-*` slots, and isolated from real IndexedDB/localStorage through disposable test persistence.
 - Test metadata stays outside `GameState` and save schema 9.
-- The established AI regression is 41/41 on the run #62 baseline; 4H adds People-specific semantic coverage through its dedicated regression without weakening those 41 checks.
+- The established AI regression is 41/41 on the run #64 baseline; 4H People-specific semantic coverage remains additive through its dedicated regression without weakening those 41 checks.
 
 ## Phase 4 exit condition
 
-After 4H passes the full CI/build/deploy gate, Phase 4 closes again. Do not create another polish subphase unless playtesting or CI identifies a concrete defect that would be irresponsible to carry forward.
-
-The next macro phase remains **Phase 5 — Generations / Estates**, with its original purpose unchanged.
+The Phase 4H core gate is satisfied. Phase 4 remains held only for concrete playtest defects Mavyy identifies before beginning Phase 5; do not invent another polish subphase. Once the requested Threadspace presentation fixes are green, continue to **Phase 5 — Generations / Estates**.
 
 ## Known quality / architecture issues to keep visible
 

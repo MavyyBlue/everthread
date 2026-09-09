@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react';
+import { Fragment, useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react';
 import type { GameState } from '../types/game';
 import {
   DEFAULT_PEOPLE_WORKSPACE_EXPANDED_FOLDERS,
@@ -39,6 +39,7 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
   const[query,setQuery]=useState('');
   const[includeDeceased,setIncludeDeceased]=useState(true);
   const[includeFormer,setIncludeFormer]=useState(true);
+  const[showConnectionLabels,setShowConnectionLabels]=useState(false);
   const[minRelationship,setMinRelationship]=useState(0);
 
   const model=useMemo(()=>buildPeopleWorkspaceModel(state),[state]);
@@ -46,6 +47,21 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
     visibleFolderIds:visibleFolders,expandedFolderIds:expandedFolders,query,includeDeceased,includeFormer,minRelationship,
   }),[model,visibleFolders,expandedFolders,query,includeDeceased,includeFormer,minRelationship]);
   const nodeById=useMemo(()=>new Map(projection.nodes.map(node=>[node.id,node] as const)),[projection.nodes]);
+  const labelsByPersonId=useMemo(()=>{
+    const result=new Map<string,string[]>();
+    const personIds=new Set(projection.visiblePersonIds);
+    const add=(personId:string,label:string)=>{
+      if(!label)return;
+      const current=result.get(personId)??[];
+      if(!current.includes(label))current.push(label);
+      result.set(personId,current);
+    };
+    for(const edge of projection.edges){
+      if(personIds.has(edge.from))add(edge.from,edge.label);
+      if(personIds.has(edge.to))add(edge.to,edge.label);
+    }
+    return result;
+  },[projection.edges,projection.visiblePersonIds]);
 
   useLayoutEffect(()=>{
     const element=viewportRef.current;if(!element)return;
@@ -82,7 +98,7 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
   const resetFilters=()=>{
     setVisibleFolders([...DEFAULT_PEOPLE_WORKSPACE_VISIBLE_FOLDERS]);
     setExpandedFolders([...DEFAULT_PEOPLE_WORKSPACE_EXPANDED_FOLDERS]);
-    setQuery('');setIncludeDeceased(true);setIncludeFormer(true);setMinRelationship(0);
+    setQuery('');setIncludeDeceased(true);setIncludeFormer(true);setShowConnectionLabels(false);setMinRelationship(0);
   };
 
   const focusPlayer=()=>setCamera({x:0,y:0,scale:.78});
@@ -183,6 +199,7 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
       <div className="threadspace-filter-grid">
         <label><input type="checkbox" checked={includeDeceased} onChange={event=>setIncludeDeceased(event.target.checked)}/>Show deceased</label>
         <label><input type="checkbox" checked={includeFormer} onChange={event=>setIncludeFormer(event.target.checked)}/>Show former affiliations</label>
+        <label><input type="checkbox" checked={showConnectionLabels} onChange={event=>setShowConnectionLabels(event.target.checked)}/>Show connection labels</label>
       </div>
       <label className="threadspace-range"><span>Minimum relationship <strong>{minRelationship}</strong></span><input type="range" min="0" max="90" step="5" value={minRelationship} onChange={event=>setMinRelationship(Number(event.target.value))}/></label>
       <div className="threadspace-folder-filter"><strong>Visible circles</strong>{PEOPLE_FOLDERS.map(folder=><label key={folder.id}><input type="checkbox" checked={visibleFolders.includes(folder.id)} onChange={()=>toggleVisible(folder.id)}/><span>{folderGlyph[folder.id]}</span>{folder.title}</label>)}</div>
@@ -203,10 +220,8 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
         <svg className="threadspace-edges" width="1" height="1" aria-hidden="true">
           {renderedEdges.map(edge=>{
             const from=nodeById.get(edge.from),to=nodeById.get(edge.to);if(!from||!to)return null;
-            const labelX=(from.x+to.x)/2,labelY=(from.y+to.y)/2;
             return <g key={edge.id} className={`threadspace-edge threadspace-edge--${edge.kind}`}>
               <line x1={from.x} y1={from.y} x2={to.x} y2={to.y}/>
-              {camera.scale>=.48&&<text x={labelX} y={labelY-5}>{edge.label}</text>}
             </g>;
           })}
         </svg>
@@ -218,10 +233,13 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
               <span className="threadspace-node-glyph">{folderGlyph[folderId]}</span><div><strong>{folder.title}</strong><small>{folder.count} {folder.count===1?'person':'people'} · {node.expanded?'collapse':'expand'}</small></div>
             </button>;
           }
-          const person=node.person!;const rel=state.relationships.find(item=>item.npcId===person.id);const memberships=person.memberships.filter(item=>expandedFolders.includes(item.folderId)&&visibleFolders.includes(item.folderId));
-          return <button className={`threadspace-node threadspace-node--person ${!person.alive?'deceased':''}`} key={node.id} style={{left:node.x,top:node.y}} onClick={()=>onSelect(person.id)}>
-            <span className="threadspace-person-mark">{person.name[0]}</span><div className="threadspace-person-copy"><strong>{person.name}</strong><small>{rel?.type.replaceAll('_',' ')??'connection'} · age {person.age}{!person.alive?' · deceased':''}</small>{memberships.length>1&&<em>{memberships.length} circles</em>}</div><b>{Math.round(person.relationshipScore)}</b>
-          </button>;
+          const person=node.person!;const rel=state.relationships.find(item=>item.npcId===person.id);const memberships=person.memberships.filter(item=>expandedFolders.includes(item.folderId)&&visibleFolders.includes(item.folderId));const connectionLabels=labelsByPersonId.get(person.id)??[];
+          return <Fragment key={node.id}>
+            <button className={`threadspace-node threadspace-node--person ${!person.alive?'deceased':''}`} style={{left:node.x,top:node.y}} onClick={()=>onSelect(person.id)}>
+              <span className="threadspace-person-mark">{person.name[0]}</span><div className="threadspace-person-copy"><strong>{person.name}</strong><small>{rel?.type.replaceAll('_',' ')??'connection'} · age {person.age}{!person.alive?' · deceased':''}</small>{memberships.length>1&&<em>{memberships.length} circles</em>}</div><b>{Math.round(person.relationshipScore)}</b>
+            </button>
+            {showConnectionLabels&&connectionLabels.length>0&&<div className="threadspace-person-label" style={{left:node.x,top:node.y}} aria-hidden="true">{connectionLabels.map(label=><span key={label}>{label}</span>)}</div>}
+          </Fragment>;
         })}
       </div>
       {projection.visibleFolderIds.length===0&&<div className="threadspace-empty">Turn on at least one relationship circle in Filters.</div>}
