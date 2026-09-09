@@ -35,14 +35,37 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:Engin
     <div className="sheet-section"><h3>Memories</h3>{npc.memories.slice(-5).reverse().map(m=><p className="memory" key={m.id}>{m.summary}</p>)}{!npc.memories.length&&<p className="muted">No major memories yet.</p>}</div>
   </>}</BottomSheet>;
 
+  const workspaceControls=<PeopleWorkspaceActions
+    state={state}
+    onResult={onResult}
+    partnerId={partner?.npcId}
+    expecting={expecting}
+    canTryChild={canTryChild}
+    canAdopt={canAdopt}
+    newbornPresent={newbornPresent}
+  />;
+
   return <main className="screen people-workspace-screen">
-    <div className="screen-title"><div><p className="eyebrow">People</p><h1>Relationships</h1></div><button className="secondary-button" disabled={!actionAllowed(state,{policy:'social.meet'})} onClick={()=>onResult(gameEngine.performActivity('meet_date'))}>Meet someone</button></div>
-    <PeopleWorkspace state={state} onSelect={setSelectedNpcId}/>
-    {state.character.age>=18&&<FamilyPlanningCard state={state} onResult={onResult} partnerId={partner?.npcId} expecting={expecting} canTryChild={canTryChild} canAdopt={canAdopt} newbornPresent={newbornPresent}/>} 
+    <PeopleWorkspace state={state} onSelect={setSelectedNpcId} controls={workspaceControls}/>
     {personSheet}
   </main>;
 }
 
-function FamilyPlanningCard({state,onResult,partnerId,expecting,canTryChild,canAdopt,newbornPresent}:{state:GameState;onResult:(r:EngineResult)=>void;partnerId?:string;expecting:GameState['familyPlanning']['pregnancy'];canTryChild:boolean;canAdopt:boolean;newbornPresent:boolean}){
-  return <section className="action-card"><h2>Build your family</h2><p>{expecting?`You are expecting ${expecting.expectedChildren===2?'twins':expecting.expectedChildren===3?'triplets':'a child'} next year.`:'Parenthood is persistent: children age, form relationships, build careers, and can carry the thread into another generation.'}</p><div className="button-row"><button onClick={()=>onResult(gameEngine.haveChild(partnerId,false))} disabled={!partnerId||!!expecting||!canTryChild||newbornPresent}>{expecting?'Expecting':!canTryChild?'Tried this year':'Try for child'}</button><button onClick={()=>onResult(gameEngine.haveChild(undefined,true))} disabled={!!expecting||!canAdopt||newbornPresent}>{!canAdopt?'Adopted this year':'Adopt'}</button></div></section>;
+function PeopleWorkspaceActions({state,onResult,partnerId,expecting,canTryChild,canAdopt,newbornPresent}:{state:GameState;onResult:(r:EngineResult)=>void;partnerId?:string;expecting:GameState['familyPlanning']['pregnancy'];canTryChild:boolean;canAdopt:boolean;newbornPresent:boolean}){
+  return <div className="threadspace-people-actions">
+    <div className="threadspace-filter-section">
+      <div className="threadspace-panel-heading"><strong>People actions</strong><small>Real gameplay actions</small></div>
+      <div className="threadspace-people-action-grid">
+        <button disabled={!actionAllowed(state,{policy:'social.meet'})} onClick={()=>onResult(gameEngine.performActivity('meet_date'))}>Meet someone</button>
+      </div>
+    </div>
+    {state.character.age>=18&&<div className="threadspace-filter-section">
+      <div className="threadspace-panel-heading"><strong>Build your family</strong><small>{expecting?'Expecting':'Persistent family'}</small></div>
+      <p className="threadspace-panel-copy">{expecting?`You are expecting ${expecting.expectedChildren===2?'twins':expecting.expectedChildren===3?'triplets':'a child'} next year.`:'Children age, form relationships, build careers, and can carry the thread into another generation.'}</p>
+      <div className="threadspace-people-action-grid">
+        <button onClick={()=>onResult(gameEngine.haveChild(partnerId,false))} disabled={!partnerId||!!expecting||!canTryChild||newbornPresent}>{expecting?'Expecting':!canTryChild?'Tried this year':'Try for child'}</button>
+        <button onClick={()=>onResult(gameEngine.haveChild(undefined,true))} disabled={!!expecting||!canAdopt||newbornPresent}>{!canAdopt?'Adopted this year':'Adopt'}</button>
+      </div>
+    </div>}
+  </div>;
 }

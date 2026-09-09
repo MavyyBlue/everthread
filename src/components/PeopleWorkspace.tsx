@@ -1,11 +1,10 @@
-import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react';
 import type { GameState } from '../types/game';
 import {
   DEFAULT_PEOPLE_WORKSPACE_EXPANDED_FOLDERS,
   DEFAULT_PEOPLE_WORKSPACE_VISIBLE_FOLDERS,
   buildPeopleWorkspaceModel,
   projectPeopleWorkspace,
-  type PeopleWorkspaceLayoutEdge,
   type PeopleWorkspaceLayoutNode,
 } from '../systems/PeopleWorkspaceSystem';
 import { PEOPLE_FOLDERS, type PeopleFolderId } from '../systems/PeopleGraphSystem';
@@ -28,7 +27,7 @@ function nodeSize(kind:PeopleWorkspaceLayoutNode['kind']){
   return{w:158,h:78};
 }
 
-export function PeopleWorkspace({state,onSelect}:{state:GameState;onSelect:(npcId:string)=>void}){
+export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSelect:(npcId:string)=>void;controls?:ReactNode}){
   const viewportRef=useRef<HTMLDivElement|null>(null);
   const pointersRef=useRef(new Map<number,PointerPoint>());
   const gestureRef=useRef<{lastSingle?:PointerPoint;distance?:number;midpoint?:PointerPoint}>({});
@@ -162,18 +161,24 @@ export function PeopleWorkspace({state,onSelect}:{state:GameState;onSelect:(npcI
   const visibleCount=projection.visiblePersonIds.length;
 
   return <section className="threadspace-card" aria-label="Threadspace relationship workspace">
-    <div className="threadspace-heading">
-      <div><p className="eyebrow">Relationship workspace</p><h2>Threadspace</h2><p>Toggle a circle to unfold its people. Drag the space, pinch to zoom, and tap any person to open their full profile.</p></div>
-      <button className={`threadspace-filter-toggle ${filterOpen?'active':''}`} onClick={()=>setFilterOpen(value=>!value)} aria-expanded={filterOpen}>Filters</button>
-    </div>
-    <div className="threadspace-toolbar" aria-label="Threadspace view controls">
-      <button onClick={focusPlayer}>Focus on You</button><button onClick={fitVisible}>Fit Visible</button>
-      <button aria-label="Zoom out" onClick={()=>setCamera(current=>({...current,scale:clampScale(current.scale*.85)}))}>−</button>
-      <span>{Math.round(camera.scale*100)}%</span>
-      <button aria-label="Zoom in" onClick={()=>setCamera(current=>({...current,scale:clampScale(current.scale*1.15)}))}>＋</button>
-      <small>{visibleCount} visible</small>
-    </div>
-    {filterOpen&&<div className="threadspace-filter-panel">
+    <button
+      className={`threadspace-filter-toggle ${filterOpen?'active':''}`}
+      onClick={()=>setFilterOpen(value=>!value)}
+      aria-expanded={filterOpen}
+      aria-controls="threadspace-filter-panel"
+    >Filters</button>
+
+    {filterOpen&&<aside id="threadspace-filter-panel" className="threadspace-filter-panel" aria-label="Threadspace filters and view controls">
+      <div className="threadspace-filter-section">
+        <div className="threadspace-panel-heading"><strong>View controls</strong><small>{visibleCount} visible</small></div>
+        <div className="threadspace-view-primary"><button onClick={focusPlayer}>Focus on You</button><button onClick={fitVisible}>Fit Visible</button></div>
+        <div className="threadspace-zoom-controls">
+          <button aria-label="Zoom out" onClick={()=>setCamera(current=>({...current,scale:clampScale(current.scale*.85)}))}>−</button>
+          <span>{Math.round(camera.scale*100)}%</span>
+          <button aria-label="Zoom in" onClick={()=>setCamera(current=>({...current,scale:clampScale(current.scale*1.15)}))}>＋</button>
+        </div>
+      </div>
+
       <label className="threadspace-search"><span>Find a person, relationship, role, or world</span><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="Search Threadspace"/></label>
       <div className="threadspace-filter-grid">
         <label><input type="checkbox" checked={includeDeceased} onChange={event=>setIncludeDeceased(event.target.checked)}/>Show deceased</label>
@@ -182,7 +187,9 @@ export function PeopleWorkspace({state,onSelect}:{state:GameState;onSelect:(npcI
       <label className="threadspace-range"><span>Minimum relationship <strong>{minRelationship}</strong></span><input type="range" min="0" max="90" step="5" value={minRelationship} onChange={event=>setMinRelationship(Number(event.target.value))}/></label>
       <div className="threadspace-folder-filter"><strong>Visible circles</strong>{PEOPLE_FOLDERS.map(folder=><label key={folder.id}><input type="checkbox" checked={visibleFolders.includes(folder.id)} onChange={()=>toggleVisible(folder.id)}/><span>{folderGlyph[folder.id]}</span>{folder.title}</label>)}</div>
       <div className="threadspace-filter-actions"><button onClick={()=>setExpandedFolders([...visibleFolders])}>Expand Visible</button><button onClick={()=>setExpandedFolders([])}>Collapse All</button><button onClick={resetFilters}>Reset</button></div>
-    </div>}
+      {controls}
+    </aside>}
+
     <div
       className="threadspace-viewport"
       ref={viewportRef}
@@ -222,4 +229,3 @@ export function PeopleWorkspace({state,onSelect}:{state:GameState;onSelect:(npcI
     </div>
   </section>;
 }
-

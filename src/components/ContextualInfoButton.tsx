@@ -25,8 +25,10 @@ const TAB_INFO:Record<MainInfoTab,InfoEntry>={
   },
   people:{
     title:'How People works',
-    summary:'People is a view over persistent NPCs, family structure, personal relationships, and social affiliations. Those are related systems, but they do not overwrite one another.',
+    summary:'People opens into Threadspace, a shared relationship workspace over persistent NPCs, family structure, personal relationships, and social affiliations. The graph is a view of those systems, not a second relationship database.',
     notes:[
+      'Tap a relationship circle to unfold or collapse its people. The same NPC appears once even when several circles, workplaces, schools, or Career Worlds connect to them.',
+      'Drag blank Threadspace to move around, pinch to zoom, and tap an NPC node to open their full profile. Filters contains Focus on You, Fit Visible, zoom controls, search, and visibility options.',
       'An NPC can remain your coworker, classmate, or Career World colleague even if the personal relationship later becomes a friend, enemy, partner, or ex.',
       'Relationship score is only one input. NPC traits, hidden opinion, memories, age, life history, and current circumstances can all affect later behavior.',
       'Important NPCs continue aging and living offscreen, including careers, family, health, money, public life, moves, and death.',
