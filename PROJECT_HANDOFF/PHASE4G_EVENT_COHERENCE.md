@@ -15,6 +15,7 @@ Phase 4 was deliberately reopened for polish before Phase 5. Phase 5 remains Gen
 - Record meaningful target NPC memories naming the event and chosen decision.
 - Record actual event money / relationship deltas in timeline history and expose important deltas through `EngineResult.stateChanges` for the AI semantic surface.
 - Keep all random-event resolution inside the existing EventSystem / GameEngine authority. No second event engine and no test-only gameplay path.
+- Preserve legacy event-command compatibility without exposing old generic choices: saved pre-4G pending choices keep their original definition, while hidden old choice IDs on newly generated events map by ordinal to the coherent replacement.
 
 ## Regression
 

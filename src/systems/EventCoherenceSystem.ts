@@ -13,7 +13,7 @@ function variant(event:GameEventDefinition){const match=event.id.match(/_(\d+)$/
 
 export const COHERENT_PROCEDURAL_TITLES = new Set<string>([
   'The Missing Toy','The Unfair Rule','The Secret Club','The Broken Thing','The New Kid','The Dare','The Stray Animal','The Last Treat',
-  'The Surprise Quiz','Group Project Gravity','Borrowed Notes','The Presentation',"Teacher's Favorite",'Club Election','Academic Shortcut','The Rumor Desk',
+  'The Surprise Quiz','Group Project Gravity','Borrowed Notes','The Presentation',"Teacher’s Favorite",'Club Election','Academic Shortcut','The Rumor Desk',
   'The Overshare','The Forgotten Plan','The Favor','The New Crowd','The Honest Opinion','The Loan Request','The Bad Joke','The Old Grudge',
   'Family Favor','Old Comparison','Money Between Relatives','The Care Question','Unexpected Guest','Family Secret','Sibling Competition','The Apology Window',
   'Mixed Signals','The Ex Question','Future Plans','The Forgotten Date','Jealous Moment','Unexpected Gift','Phone Face Down','The Big Question',
@@ -40,7 +40,7 @@ export function coherentTargetSelector(event:GameEventDefinition):CoherentTarget
   if(event.category==='family')return'family';
   if(event.category==='romance')return'romantic';
   if(event.category==='school'){
-    if(['Group Project Gravity','Borrowed Notes',"Teacher's Favorite",'Club Election','The Rumor Desk'].includes(event.title))return'school_peer';
+    if(['Group Project Gravity','Borrowed Notes',"Teacher’s Favorite",'Club Election','The Rumor Desk'].includes(event.title))return'school_peer';
     return null;
   }
   if(event.category==='work'){
@@ -126,7 +126,7 @@ export function coherentEventChoices(event:GameEventDefinition):EventChoice[]{
       direct('stick_notes','Stick closely to your notes',{secondary:{academicPerformance:2,discipline:2,stress:1}}),
       risk('improvise','Improvise most of it','The room responds to your energy.',{secondary:{academicPerformance:2,charisma:4,confidence:3}},'The missing preparation becomes visible.',{secondary:{academicPerformance:-4,stress:4,confidence:-2}},48),
     ];
-    case "Teacher's Favorite": return[
+    case "Teacher’s Favorite": return[
       direct('defuse_favorite','Defuse the accusation',{relationship:target(4),secondary:{charisma:3,reputation:2}}),
       direct('acknowledge_help','Acknowledge the help you receive',{relationship:target(2),secondary:{karma:2,confidence:1}}),
       direct('snap_back','Snap back at them',{relationship:target(-7),secondary:{reputation:-3,stress:3},stats:{happiness:1}}),
@@ -149,7 +149,7 @@ export function coherentEventChoices(event:GameEventDefinition):EventChoice[]{
 
     // Friends
     case 'The Overshare': return[
-      direct('keep_confidence','Keep their confidence',{relationship:target(8),secondary:{karma:3,willpower:2}}),
+      direct('keep_confidence','Keep their confidence',{relationship:target(7),secondary:{karma:3,willpower:2}}),
       direct('offer_support','Offer support without prying',{relationship:target(9),secondary:{charisma:2,karma:2},stats:{happiness:1}}),
       direct('repeat_secret','Repeat it to somebody else',{relationship:target(-12),secondary:{karma:-6,reputation:-4},stats:{happiness:1}}),
     ];
