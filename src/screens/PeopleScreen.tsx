@@ -63,10 +63,9 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:Engin
     <div className="sheet-section"><h3>Memories</h3>{npc.memories.slice(-5).reverse().map(m=><p className="memory" key={m.id}>{m.summary}</p>)}{!npc.memories.length&&<p className="muted">No major memories yet.</p>}</div>
   </>}</BottomSheet>;
 
-  const floatingActions=<>
-    <button disabled={!actionAllowed(state,{policy:'social.meet'})} onClick={()=>onResult(gameEngine.performActivity('meet_date'))}>Meet a Person</button>
-    {state.character.age>=18&&!currentPartner&&<button disabled={!!expecting||!canAdopt||newbornPresent} onClick={()=>onResult(gameEngine.haveChild(undefined,true))}>{!canAdopt?'Adopted this year':'Adopt Child'}</button>}
-  </>;
+  const floatingActions=state.character.age>=18&&!currentPartner
+    ?<button disabled={!!expecting||!canAdopt||newbornPresent} onClick={()=>onResult(gameEngine.haveChild(undefined,true))}>{!canAdopt?'Adopted this year':'Adopt Child'}</button>
+    :undefined;
 
   return <main className="screen people-workspace-screen">
     <PeopleWorkspace state={state} revision={gameEngine.getRevision()} onSelect={setSelectedNpcId} floatingActions={floatingActions}/>

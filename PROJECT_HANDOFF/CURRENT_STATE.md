@@ -1,6 +1,6 @@
 # Everthread — Current State
 
-Last handoff preparation: 2026-09-09  
+Last handoff preparation: 2026-09-10  
 Repository: `MavyyBlue/everthread`  
 Default branch: `main`  
 Public build line: `0.12.0 pre-release`  
@@ -8,10 +8,10 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `67d54a4fc103f52c7c5839eb52aee54bc0cb1138`.
+The latest fully green expanded baseline is commit `fbc5c3ae84897a50c21f730ac59d8cab60d3d9ac`.
 
-- GitHub Actions run #70 (`34430142245`) completed successfully on 2026-09-10 UTC.
-- Run #70 expanded upload commit `8f7f015164208fdd8e7350509c8f1bd983d59326` into the build-bot commit above.
+- GitHub Actions run #71 (`34440231888`) completed successfully on 2026-09-10 UTC.
+- Run #71 expanded upload commit `95b754f55f0d763260f243e38d883197d614cf02` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, full regressions, production build, Pages artifact upload, and Pages deployment all passed.
 - Core regression suite: 82/82.
 - Phase 4 closeout: 88/88.
@@ -21,7 +21,7 @@ The latest fully green expanded baseline is commit `67d54a4fc103f52c7c5839eb52ae
 - Phase 5 estate-planning regression: 46/46.
 - Family continuity regression: 18/18.
 - Visual identity regression: 12/12.
-- Family reproduction regression: 13/13.
+- Family reproduction regression: 37/37.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
@@ -53,35 +53,42 @@ Run #70 established system-level biological compatibility and partnered adoption
 - single-parent adoption remains supported;
 - schema 9 remained sufficient for the additive Run-70 compatibility field.
 
-## Current work — NPC identity + Threadspace family-planning UX coherence
+## NPC identity + Threadspace family-planning UX coherence — green
 
-Mavyy's real-device QA after run #70 requested a persistent, visible NPC gender model and a cleaner People/Threadspace interaction layout.
+Run #71 established persistent visible NPC gender, matching reproductive identity, profile-owned Family Planning controls, descendant identity preservation, autonomous reproductive compatibility, and immediate Threadspace graph invalidation through the GameEngine revision.
+
+Green behavior includes:
+
+- procedural NPC gender remains 50% female / 45% male / 5% nonbinary;
+- generated first names correspond to NPC gender;
+- binary NPC reproductive sex matches gender and nonbinary NPCs receive deterministic 50/50 female/male reproductive sex;
+- procedural NPCs never receive the player-only intersex option;
+- active partner/fiance/spouse profiles own Try for a Child and Adopt Child;
+- single-parent adoption remains available from Threadspace;
+- Meet a Person is currently a standalone Threadspace control;
+- closing NPC profiles reflects relationship/new-person changes immediately without tab remounts;
+- descendant continuation preserves established NPC gender/reproductive identity;
+- autonomous couples use the same biological-compatibility authority and can adopt when biological conception is unavailable.
+
+## Current work — People polish + naming variety
+
+Mavyy's real-device QA after run #71 requested three small quality improvements:
+
+- make the standalone single-parent Adopt Child Threadspace button the same dimensions as the Filters toggle;
+- move Meet Someone out of Threadspace and into the Activities screen while preserving the same `social.meet` action-economy/system path;
+- substantially expand procedural names to reduce obvious repeated first names such as multiple Noras/Naomis in one life.
 
 Pending overlay behavior:
 
-- every procedurally created NPC receives one of three NPC genders with default odds of exactly 50% female, 45% male, and 5% nonbinary;
-- the active regional first-name pools encode those same weights and every generated first name maps to the rolled NPC gender;
-- female NPCs use female reproductive sex and male NPCs use male reproductive sex;
-- nonbinary NPCs receive a deterministic 50/50 female/male reproductive-sex assignment;
-- procedurally generated NPCs never use the player-only intersex option;
-- legacy Run-70 NPC reproductive-sex state is normalized into the new `gender` + `reproductiveSex` authority without renaming existing people;
-- every NPC profile adds a Gender stat card beside Relationship, Compatibility, Age, and Marriage;
-- active partner/fiance/spouse profiles own a Family Planning section containing `Try for a Child` and `Adopt Child`;
-- `Try for a Child` stays visible but muted/disabled when the current pairing cannot conceive; adoption remains available;
-- partnered adoption continues recording both adults; the existing single-parent adoption path is preserved outside the Filters panel;
-- `Meet a Person` becomes a floating Threadspace control directly beneath Filters and hides whenever Filters is open;
-- family-planning controls are removed from the Filters panel;
-- descendant continuation preserves the descendant NPC's established gender/reproductive identity instead of rerolling it during protagonist conversion;
-- autonomous NPC couples use the same reproductive compatibility authority, routing biologically incompatible couples toward adoption instead of offscreen biological births;
-- no save-schema bump is required because the new NPC identity fields are additive and legacy state has deterministic normalization.
+- Threadspace Filters and standalone Adopt Child share the same responsive width/minimum-height presentation token;
+- Meet Someone lives in Activities → Social and is no longer rendered as a Threadspace floating action;
+- each of the seven regional name pools expands from 20 to 120 first names and from 20 to 120 surnames;
+- each expanded first-name pool remains exactly 60 female / 54 male / 6 nonbinary so the existing one-draw deterministic generation still produces the authoritative 50/45/5 gender odds without adding RNG consumption;
+- all first and last names are unique within their regional pool and every active first name resolves to an NPC gender;
+- family-reproduction regression coverage locks the expanded pool counts, uniqueness, and gender mapping;
+- save schema remains 9.
 
-### Threadspace stale-projection root cause
-
-`GameEngine` correctly emits a new revision after gameplay actions, but it mutates the authoritative `GameState` in place. `PeopleWorkspace` currently memoizes `buildPeopleWorkspaceModel(state)` only by the stable `state` object identity, so relationship changes and newly created people can remain visually stale until the People screen remounts.
-
-The pending fix passes the engine revision into `PeopleWorkspace` and memoizes the graph on `[state, revision]`. This refreshes graph data after real engine mutations while preserving local camera/filter state and avoiding expensive graph rebuilds during ordinary pan/zoom gestures.
-
-This overlay is not green until both TypeScript gates, every established regression, the expanded family-reproduction regression, production build, Pages artifact upload, and live Pages deployment all pass.
+This overlay is not green until both TypeScript gates, every established regression, production build, Pages artifact upload, and live Pages deployment all pass.
 
 ## Phase 5 next slices after corrective QA
 

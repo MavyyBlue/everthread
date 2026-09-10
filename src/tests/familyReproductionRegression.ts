@@ -33,7 +33,9 @@ export function runFamilyReproductionRegression(){
   for(const countryId of ['us','mx','fr','in','jp','za','eg']){
     const counts=npcFirstNameGenderCounts(countryId);
     const pool=getNamePool(countryId);
-    verify(counts.female===10&&counts.male===9&&counts.nonbinary===1&&pool.first.length===20,`${countryId} name pool should encode exact 50/45/5 default gender odds`);
+    verify(counts.female===60&&counts.male===54&&counts.nonbinary===6&&pool.first.length===120,`${countryId} name pool should preserve exact 50/45/5 default gender odds across 120 first names`);
+    verify(pool.last.length===120,`${countryId} surname pool should provide 120 distinct options`);
+    verify(new Set(pool.first).size===pool.first.length&&new Set(pool.last).size===pool.last.length,`${countryId} expanded name pool should not contain duplicate first or last names`);
     verify(pool.first.every(name=>npcGenderForFirstName(countryId,name)!==undefined),`${countryId} active NPC names should all resolve to a gender`);
   }
 

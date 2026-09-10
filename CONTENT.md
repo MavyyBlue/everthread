@@ -1,6 +1,6 @@
 # Everthread — Content Inventory
 
-Last audited: 2026-09-08  
+Last audited: 2026-09-10  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
 ## Current counts
@@ -26,9 +26,9 @@ Source of truth: executable definitions under `src/data/`; use `npm run content:
 | Business product lines | 80 | 50+ products/industries | Met combined target |
 | Collectible definitions | 40 | — | Needs expansion |
 | Countries | 32 | 30+ | Met |
-| Regional name pools | 7 | hundreds of names per region | **Not met** |
-| First names per regional pool | 20 | hundreds/region | **Not met** |
-| Last names per regional pool | 20 | hundreds/region | **Not met** |
+| Regional name pools | 7 | hundreds of names per region | Expanded; country/subregion depth still useful |
+| First names per regional pool | 120 | hundreds/region | 6× increase; 840 total active first-name entries |
+| Last names per regional pool | 120 | hundreds/region | 6× increase; 840 total surname entries |
 
 ## Action-economy coverage
 
@@ -130,13 +130,13 @@ Counts exceed the initial target. Continue auditing for goals that are genuinely
 
 ## Names
 
-This is the largest obvious content-scale deficit. There are currently seven regional pools with only 20 first names and 20 surnames each. This is enough for development but not enough for long dynasties without noticeable repetition.
+The seven regional pools now contain 120 first names and 120 surnames each: 840 active first-name entries and 840 surnames across the regional data. Each regional first-name pool keeps the authoritative 50/45/5 NPC-gender distribution as 60 female, 54 male, and 6 nonbinary entries.
 
-Before release, expand naming data substantially and consider country/subregion-specific pools while keeping culturally mixed cities possible. This should be data-only work and must not require NPC-system rewrites.
+This is a substantial repetition reduction over the original 20/20 development pools while preserving regional flavor and the existing single-draw seeded generation path. Future naming work should deepen country/subregion-specific pools and can add stronger first-name uniqueness preference for especially large lifetime casts if playtesting still shows distracting repetition.
 
 ## Content still needed most
 
-1. Hundreds of additional names per represented region/subregion.
+1. Country/subregion-specific naming depth beyond the expanded regional base.
 2. Deeper school consequence/alumni/competition content on the new persistent school-world foundation.
 3. Deeper industry-specific workplace drama, management, schedules, and former-coworker consequence chains on the completed persistent workplace foundation.
 4. Delayed consequence chains across relationships, parenting, crime, health and career.
