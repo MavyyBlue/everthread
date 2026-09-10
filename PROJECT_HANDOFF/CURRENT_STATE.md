@@ -8,10 +8,10 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `7e86c3a9d5fa56a03d3b760b4305a92bf92f789b`.
+The latest fully green expanded baseline is commit `2487a0bc79abc16473cb91e74f220071e4b23959`.
 
-- GitHub Actions Run #82 (`34540916777`) completed successfully on 2026-09-10 UTC.
-- Run #82 expanded upload commit `9aa17f3f2e88a46a668fd66b50cec92d7d74b96b` into the build-bot commit above.
+- GitHub Actions Run #84 (`34542840262`) completed successfully on 2026-09-10 UTC.
+- Run #84 expanded upload commit `b90eff328d14b8c29edd9d1faedb77285de3acb3` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, every established regression, production build, Pages artifact upload, and Pages deployment passed.
 - Core regression: 82/82.
 - People Threadspace: 57/57.
@@ -26,6 +26,7 @@ The latest fully green expanded baseline is commit `7e86c3a9d5fa56a03d3b760b4305
 - Age-aware reproduction regression: 21/21.
 - NPC orientation coherence regression: 55/55.
 - Collision-aware naming regression: 32/32.
+- Relationship microcopy regression: 66/66.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
@@ -54,8 +55,8 @@ Current status:
 4. **Age-aware reproduction — CI Green (Run #80).**
 5. **NPC gender / sexual-orientation coherence — CI Green (Run #81).**
 6. **Collision-aware naming — CI Green (Run #82).**
-7. **Relationship/event microcopy polish — Corrective CI candidate prepared after Run #83 TypeScript failure.**
-8. Integrated long-life QA — Queued.
+7. **Relationship/event microcopy polish — CI Green (Run #84).**
+8. **Integrated long-life QA — Implementing; regression-only CI candidate prepared.**
 
 ## Slice 1 implementation — CI Green
 
@@ -185,13 +186,13 @@ Integration covers new-life parents, Meet Someone, player births/adoption, auton
 
 Run #82 (`34540916777`) passed both TypeScript gates, core regression 82/82, NPC orientation coherence 55/55, collision-aware naming **32/32**, every established adjacent regression, production build, Pages artifact upload, and live deployment. The overlay expanded into `7e86c3a9d5fa56a03d3b760b4305a92bf92f789b`. The earlier handoff note that said 33 naming checks was a bookkeeping error; the actual repository suite contains and passed 32 checks. Slice 6 is **CI Green**.
 
-## Slice 7 implementation — CI candidate prepared
+## Slice 7 implementation — CI Green
 
-Run #83 (`34542005844`) imported the Slice 7 overlay and expanded it to `1ec4d6397ee39857d649bb9440cbe92c731e150f`, then failed at the engine TypeScript gate before regressions/build. Root cause: the new `as const` interaction-effect map inferred a union whose entries without `karma` did not expose an optional `karma` property at `spec.karma`. The correction preserves the same 13 action keys and all runtime values, but gives the effect map an explicit shared `{base:number; happiness:number; karma?:number}` value type. No simulation behavior changed. The corrected overlay is based on the failed expanded commit so the new microcopy regression and runner wiring remain intact. Slice 7 is still **not CI Green** until the corrected upload passes every gate.
+Run #83 (`34542005844`) imported the initial Slice 7 overlay and expanded it to `1ec4d6397ee39857d649bb9440cbe92c731e150f`, then failed at the engine TypeScript gate before regressions/build. Root cause: the new `as const` interaction-effect map inferred a union whose entries without `karma` did not expose an optional `karma` property at `spec.karma`. The correction preserved the same 13 action keys and all runtime values while giving the effect map an explicit shared `{base:number; happiness:number; karma?:number}` value type. No simulation behavior changed.
 
 Root cause: `interactWithNpc()` projected internal action IDs directly into two generic English templates for timeline and NPC-memory text. That produced grammatical output such as `You conversation with ...` and `Alex chose to compliment.` even though the underlying interaction outcomes were correct.
 
-The candidate keeps the interaction engine untouched and adds explicit copy projection only:
+The green implementation keeps the interaction engine untouched and adds explicit copy projection only:
 
 - all 13 existing relationship interaction actions now have natural action-specific timeline and NPC-memory wording;
 - examples include `You had a conversation with Nora.`, `You complimented Nora.`, `You spent time with Nora.`, `You apologized to Nora.`, and `You argued with Nora.`;
@@ -200,7 +201,21 @@ The candidate keeps the interaction engine untouched and adds explicit copy proj
 - relationship score changes, happiness/karma effects, money transfer logic, action economy, RNG draws, memory kind/sentiment/permanence, timeline importance/category, and all milestone/romance logic remain unchanged;
 - save schema remains 9 and no persisted field changes.
 
-A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb through both the pure copy projection and the real `interactWithNpc()` path, checking successful execution plus exact timeline and NPC-memory wording. The modified production file, runner, and regression transpile with zero syntax diagnostics. Full repository type-check/regression/build/deploy remains the GitHub CI gate before Slice 7 can be called CI Green.
+A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb through both the pure copy projection and the real `interactWithNpc()` path, checking successful execution plus exact timeline and NPC-memory wording. Run #84 (`34542840262`) passed both TypeScript gates, core 82/82, Relationship Microcopy **66/66**, every established regression including orientation 55/55 and naming 32/32, production build, Pages artifact upload, and deployment. The corrected overlay expanded into `2487a0bc79abc16473cb91e74f220071e4b23959`. Slice 7 is **CI Green**.
+
+## Slice 8 implementation — CI candidate prepared
+
+The final corrective slice is regression-only unless it exposes a production defect. New `integratedLongLifeRegression.ts` combines two stress shapes instead of duplicating the existing 25-life smoke test:
+
+- a six-life family-biased organic simulation batch checks anomaly-free long lives, finite aggregate finance/lifespan output, and bounded NPC growth;
+- a dense synthetic dynasty starts with 49 NPCs, including 24 linked children, a spouse, and 24 friends generated through collision-aware naming;
+- the dense state performs divorce → reconciliation → remarriage, age-aware biological-family eligibility, adoption, and real relationship microcopy before multi-decade annual simulation;
+- a genuine background-tier NPC begins at terminal health to verify terminal cleanup remains coherent inside the integrated annual path;
+- rewind retention is checked continuously against both the 10-snapshot count cap and 6,000,000-character budget;
+- the stressed state is exported/imported, rewound, replayed, interacted with after rehydration, force-completed, and continued as an adult descendant;
+- descendant continuation must preserve a large sibling set and prior protagonist ancestry, clear the prior generation rewind history, start a fresh successor rewind history, and survive a second save round-trip without invariant errors.
+
+The dedicated closeout suite contains **77 assertions**. No production source or save schema changes are part of this candidate. Modified test files transpile with zero syntax diagnostics; GitHub remains the authoritative full TypeScript/runtime/build/deployment gate.
 
 ## Known continuing quality / architecture issues
 
@@ -209,7 +224,8 @@ A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb 
 - NPC zero-health terminal semantics are CI Green in Run #79.
 - Age-aware biological conception is CI Green in Run #80.
 - Collision-aware naming is CI Green in Run #82.
-- Relationship interaction microcopy is implemented in the Slice 7 CI candidate; GitHub verification is pending.
+- Relationship interaction microcopy is CI Green in Run #84.
+- Integrated long-life QA is the active final corrective closeout gate; the candidate adds tests only and is not CI Green yet.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.

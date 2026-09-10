@@ -144,11 +144,11 @@ Run #82 passed both TypeScript checks, core regression 82/82, every established 
 
 ## Slice 7 — Relationship/event microcopy polish
 
-Status: **Implementing — Run #83 TypeScript failure diagnosed; corrective CI candidate prepared.**
+Status: **CI Green — Run #84 (`34542840262`), expanded baseline `2487a0bc79abc16473cb91e74f220071e4b23959`.**
 
 Goal: replace grammatical templates such as `You conversation with ...` / `You compliment with ...` with action-specific natural wording without altering outcomes, memories, action economy, or RNG.
 
-Candidate implementation:
+Green implementation:
 
 - `RelationshipSystem.ts` now defines explicit timeline and NPC-memory copy for all 13 existing interaction actions;
 - internal action IDs are no longer converted to player-facing prose with underscore replacement;
@@ -161,12 +161,25 @@ Focused regression `relationshipMicrocopyRegression.ts` covers every interaction
 
 Run #83 (`34542005844`) imported the candidate successfully and expanded it to `1ec4d6397ee39857d649bb9440cbe92c731e150f`, but `typecheck:engine` failed at `RelationshipSystem.ts` because the `as const` effect table narrowed entries without `karma` into types that do not expose the optional property. Regressions, build, and deployment were correctly skipped. The correction changes only TypeScript typing: the 13-key action union is explicit and `interactionEffects` is `Record<RelationshipInteractionAction,{base:number;happiness:number;karma?:number}>`. Effect values, copy, action economy, RNG, state mutation, and save semantics are unchanged.
 
-Regression gate: both TypeScript checks, all established suites, relationship microcopy regression, production build, Pages artifact upload, and deployment must pass before Slice 7 becomes CI Green or Slice 8 starts.
+Run #84 (`34542840262`) passed both TypeScript checks, core regression 82/82, every established suite, Relationship Microcopy **66/66**, Collision-aware Naming 32/32, NPC Orientation Coherence 55/55, production build, Pages artifact upload, and deployment. The corrected overlay expanded into `2487a0bc79abc16473cb91e74f220071e4b23959`. Slice 7 is **CI Green**.
 
 ## Slice 8 — Integrated long-life QA
 
-Status: **Queued**.
+Status: **Implementing — regression-only CI candidate prepared.**
 
 Goal: synthetic multi-decade/high-NPC/high-child-count validation across save growth, rewind, marriages/divorces/reconciliation, deaths, reproduction, naming, family linkage, and descendant continuation. This is the closeout gate for the corrective pass, not a new endless feature phase.
+
+Candidate regression design:
+
+- preserve production behavior; no runtime/source-system changes are included unless the QA gate exposes a real defect;
+- supplement the existing 25-life mixed smoke test with six family-biased organic lives, requiring zero invariant anomalies and bounded NPC growth;
+- create a deterministic dense 49-NPC starting cast with 24 linked children, a spouse, and 24 friends through the collision-aware naming authority;
+- exercise divorce, reconciliation, remarriage, age-aware reproductive eligibility, adoption, and relationship microcopy in the same dense life;
+- run 15 annual cycles with a genuine background-tier terminal-health NPC and validate invariants after every year;
+- continuously enforce rewind count/payload bounds, then export/import, rewind to a retained snapshot, replay three years, and confirm post-rehydration interaction copy;
+- force the protagonist's death, continue as an adult child, require the prior protagonist parent link and a broad sibling set, verify old rewind history is cleared, age the descendant five more years, and verify new snapshots belong to the descendant;
+- finish with another export/import round-trip and invariant validation.
+
+`integratedLongLifeRegression.ts` contains **77 assertions** and is wired into the standard regression runner. Modified test files transpile with zero syntax diagnostics. GitHub CI must pass both TypeScript gates, all existing suites, the new integrated regression, production build, Pages artifact upload, and deployment before Slice 8 or the corrective program can be called CI Green.
 
 After Slice 8 is CI Green, return to the planned Phase 5 estate/dynasty roadmap unless new playtesting exposes a concrete blocking defect.
