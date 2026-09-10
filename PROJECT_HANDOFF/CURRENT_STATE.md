@@ -8,10 +8,11 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `032e88c6f49bb8808b97c2d8a9e8bc0fe7c50a2a`.
+The latest fully green expanded baseline is commit `1d3eb34ef90dfef5be8b870cc709b17a03d308aa`.
 
-- GitHub Actions Run #74 (`34498329874`) completed successfully on 2026-09-10 UTC.
-- Both TypeScript gates, the full established regression suite, production build, Pages artifact upload, and Pages deployment passed.
+- GitHub Actions Run #75 (`34516468949`) completed successfully on 2026-09-10 UTC.
+- Run #75 expanded upload commit `15832ed7c6326c870ca33be29dc9c5278992ae86` into the build-bot commit above.
+- Source-overlay import, dependency install, both TypeScript gates, the full established regression suite, production build, Pages artifact upload, and Pages deployment passed.
 - Core regression: 82/82.
 - People Threadspace: 57/57.
 - Phase 5 estate planning: 46/46.
@@ -19,6 +20,7 @@ The latest fully green expanded baseline is commit `032e88c6f49bb8808b97c2d8a9e8
 - Visual identity: 12/12.
 - Family reproduction: 51/51.
 - Secret-code regression: 18/18.
+- Rewind scaling regression: 16/16.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
@@ -41,8 +43,8 @@ Do not reorder or combine these slices casually. Each slice should reach CI Gree
 
 Current status:
 
-1. **Save / rewind scaling — Local preflight complete; upload/CI pending.**
-2. Player partner/spouse ↔ NPC household coherence — Queued.
+1. **Save / rewind scaling — CI Green (Run #75).**
+2. **Player partner/spouse ↔ NPC household coherence — Local Green; upload/CI pending.**
 3. NPC health / mortality semantics — Queued.
 4. Age-aware reproduction — Queued.
 5. NPC gender / sexual-orientation coherence — Queued.
@@ -50,7 +52,7 @@ Current status:
 7. Relationship/event microcopy polish — Queued.
 8. Integrated long-life QA — Queued.
 
-## Slice 1 implementation — pending GitHub verification
+## Slice 1 implementation — CI Green
 
 `RewindSystem.ts` now owns bounded rewind retention and capture policy:
 
@@ -73,12 +75,34 @@ Local checks completed before packaging:
 - source-integrity reconstruction for modified `SaveSystem.ts`, `AgingSystem.ts`, and `runRegression.ts` matches the exact Run #74 Git blob hashes after removing only intended edits;
 - applying the new retention algorithm to the supplied diagnostic save projects an approximately 64% export-size reduction while retaining recent rewind points.
 
-This slice is **not green** until GitHub Actions passes both TypeScript gates, every regression including Rewind Scaling, production build, Pages artifact upload, and live Pages deployment.
+Run #75 passed both TypeScript gates, every established regression, Rewind Scaling 16/16, production build, Pages artifact upload, and live deployment. Slice 1 is **CI Green**.
+
+## Slice 2 implementation — Local Green / CI pending
+
+Root cause: `NpcLifeSystem` already knew whether an NPC had an active player romance for autonomous matchmaking, but household state only treated `npc.partnerId` as partnered. Player romance is authoritative in `state.relationships`, while `npc.partnerId` belongs to NPC-to-NPC partnerships, so player spouses could remain `independent` with stale `family` housing.
+
+The pending Slice 2 overlay:
+
+- adds a single `syncNpcHouseholdProjection()` authority in `NpcLifeSystem`;
+- projects a living adult player partner/fiance/spouse as `partnered`, using `shared` housing when they do not own property;
+- never writes the controlled protagonist into `npc.partnerId`, and removes legacy player-character partner IDs if encountered;
+- preserves real NPC-to-NPC `partnerId` relationships;
+- preserves NPC-owned property as `owning` through relationship transitions;
+- gives custody/institutional state and minor/dependent state priority over romance;
+- immediately resynchronizes household state after Ask Out, Proposal, Marriage, Breakup, Divorce, Reconcile, and discovered-infidelity relationship endings;
+- restores `maritalStatus='dating'` on successful reconciliation instead of leaving a stale divorced status;
+- keeps completed-player-death survivors independent rather than allowing an old spouse relationship record to resurrect shared housing on load;
+- works through descendant continuation: when an NPC spouse becomes spouse of the new controlled descendant, the obsolete NPC-to-NPC pointer to the now-player character is removed and household state is rebuilt from player relationship truth;
+- uses no new persisted structure and adds no new main-RNG draw, so save schema remains 9.
+
+A dedicated synthetic `npcHouseholdCoherenceRegression.ts` currently passes **35/35 local runtime checks** across dating, engagement, marriage, divorce, reconciliation, breakup, ownership, stale-save repair, custody/release, NPC-to-NPC couples, player death, teen relationships, and descendant continuation. The supplied real save was used only as diagnosis: under the pending logic its stale spouse household projects as `partnered/shared`; none of its private seed/IDs/history are shipped in fixtures.
+
+This slice is **not green** until GitHub Actions passes both TypeScript gates, every established regression plus NPC Household Coherence, production build, Pages artifact upload, and live Pages deployment.
 
 ## Known continuing quality / architecture issues
 
 - NPC gender/sexual-orientation matchmaking remains intentionally simplified until Slice 5.
-- Player-romance/NPC-household projection mismatch is queued for Slice 2.
+- Player-romance/NPC-household projection correction is implemented locally in Slice 2 and pending CI verification.
 - Living NPCs at zero health are queued for Slice 3.
 - Biological conception lacks an age-aware fertility curve until Slice 4.
 - Name collisions remain possible despite expanded pools until Slice 6.

@@ -102,6 +102,7 @@ export function hookUpWithNpc(state:GameState,npcId:string):EngineResult {
     if(ended){
       commitment.type='ex';
       partner.maritalStatus=oldType==='spouse'?'divorced':'single';
+      ensureNpcLife(state,partner);
       if(oldType==='spouse')state.flags.divorces=Number(state.flags.divorces??0)+1;
       state.character.secondary.stress=clamp(state.character.secondary.stress+4);
     }
@@ -214,9 +215,9 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   }
   if(action==='marry') {success=true;newType='spouse';text=`You married ${npc.firstName} ${npc.lastName}.`;npc.maritalStatus='married';}
   if(action==='break_up'||action==='divorce') { if(!['partner','fiance','spouse'].includes(rel.type)) success=false; else {newType='ex';npc.maritalStatus=action==='divorce'?'divorced':'single';rel.score=clamp(rel.score-18);text=`You ${action==='divorce'?'divorced':'broke up with'} ${npc.firstName}.`;} }
-  if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,chance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`; }
+  if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,chance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`;if(success)npc.maritalStatus='dating'; }
   if(!success && !text) text='That relationship step is not available right now.';
-  if(success){rel.type=newType;if(CURRENT_ROMANTIC_TYPES.has(newType))assignNpcIdentity(state,npc);if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
+  if(success){rel.type=newType;if(CURRENT_ROMANTIC_TYPES.has(newType))assignNpcIdentity(state,npc);ensureNpcLife(state,npc);if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:success?3:1,text,npcIds:[npcId]});
   state.rngCounter=rng.counter(); return {success,messages:[{text}]};
 }

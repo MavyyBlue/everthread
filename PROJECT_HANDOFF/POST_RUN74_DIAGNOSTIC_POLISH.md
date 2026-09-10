@@ -10,7 +10,7 @@ Status vocabulary: `Queued` → `Investigating` → `Implementing` → `Local Gr
 
 ## Slice 1 — Save / rewind scaling
 
-Status: **Local preflight complete — upload/CI pending**.
+Status: **CI Green — Run #75 (`34516468949`), expanded baseline `1d3eb34ef90dfef5be8b870cc709b17a03d308aa`.**
 
 Observed failure shape: a long Sandbox life produced an approximately 23 MB export, with 35 full-state rewind snapshots accounting for roughly 93.5% of the file. The existing importer also rejected files above 15,000,000 characters, which meant a legitimate pre-fix export could become too large to re-import.
 
@@ -34,11 +34,24 @@ Diagnostic projection against the supplied stress save (not shipped as a fixture
 
 ## Slice 2 — Player partner/spouse ↔ NPC household coherence
 
-Status: **Queued**.
+Status: **Local Green — upload/CI pending**.
 
 Goal: player romance remains authoritative in `state.relationships`, while `NpcLifeSystem` correctly projects active partner/fiance/spouse household status and shared-housing semantics. Do not misuse NPC↔NPC `partnerId` as a second player-relationship authority.
 
-Regression targets: dating, engagement, marriage, breakup/divorce, reconciliation, widowhood/death cleanup, NPC↔NPC partnership preservation, save round-trip.
+Implementation:
+
+- `syncNpcHouseholdProjection()` is the reusable NPC-life projection authority for household status/housing;
+- living adult player partner/fiance/spouse relationships project as partnered/shared unless the NPC owns property;
+- custody and minor/dependent state override romance projection;
+- genuine NPC↔NPC `partnerId` links remain intact; obsolete `partnerId` values pointing at the controlled protagonist are removed;
+- household projection is refreshed by `ensureNpcLife()`, yearly NPC finance/release processing, and successful player relationship transitions;
+- successful reconciliation restores dating marital status; discovered-infidelity relationship endings reproject immediately;
+- player death does not leave/recreate shared housing, and descendant continuation converts the surviving NPC spouse cleanly from NPC↔NPC pointer semantics to player relationship truth;
+- no save-schema bump or new main-RNG consumption.
+
+Synthetic regression: **35/35 local runtime checks passed** across dating, engagement, marriage, breakup/divorce, reconciliation, owned property, stale-save repair, legacy player partner IDs, custody/release, NPC↔NPC partnership preservation, player death/reload, teen romance, and descendant continuation.
+
+The real diagnostic save was used only to reproduce/verify the failure shape and is not shipped as a fixture. Under the pending correction its stale player-spouse household projects as `partnered/shared`.
 
 ## Slice 3 — NPC health / mortality semantics
 

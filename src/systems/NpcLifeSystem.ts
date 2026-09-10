@@ -29,7 +29,21 @@ const PROFESSIONAL_CREDENTIALS = ['graduate_school','law_school','medical_school
 
 function directRelationship(state:GameState,npcId:string){return state.relationships.find(rel=>rel.npcId===npcId&&!rel.estranged);}
 function isPlayerFamily(state:GameState,npcId:string){const type=directRelationship(state,npcId)?.type;return Boolean(type&&FAMILY_RELATION_TYPES.has(type));}
-function hasPlayerRomance(state:GameState,npcId:string){const type=directRelationship(state,npcId)?.type;return Boolean(type&&PLAYER_ROMANTIC_TYPES.has(type));}
+function hasPlayerRomance(state:GameState,npcId:string){if(!state.character.alive)return false;const type=directRelationship(state,npcId)?.type;return Boolean(type&&PLAYER_ROMANTIC_TYPES.has(type));}
+
+export function syncNpcHouseholdProjection(state:GameState,npc:Npc){
+  const life=npc.life;if(!life||!npc.alive)return;
+  if(npc.partnerId===state.character.id)npc.partnerId=undefined;
+  life.household.dependents=npc.childIds.filter(id=>state.npcs[id]?.alive&&state.npcs[id]!.age<18).length;
+  if(npc.imprisoned||life.legal.sentenceRemaining>0){life.household.status='institutional';life.finance.housing='institutional';return;}
+  if(npc.age<18){life.household.status='dependent';life.finance.housing='family';return;}
+  const partnered=Boolean(npc.partnerId)||hasPlayerRomance(state,npc.id);
+  life.household.status=partnered?'partnered':'independent';
+  if(life.finance.propertyValue>0){life.finance.housing='owning';return;}
+  if(partnered){life.finance.housing='shared';return;}
+  if(['family','shared','institutional','owning'].includes(life.finance.housing))life.finance.housing='renting';
+}
+
 function relationshipIsMeaningful(state:GameState,npcId:string){
   const rel=directRelationship(state,npcId);
   return Boolean(rel&&(
@@ -103,7 +117,8 @@ export function buildNpcLifeState(state:GameState,npc:Npc):NpcLifeState{
   const debt=propertyValue?Math.round(propertyValue*rng.int(20,65)/100):npc.age>=22&&npc.wealth<12000&&rng.chance(.22)?rng.int(500,12000):0;
   const fame=npc.famous?rng.int(25,55):rng.int(0,8);
   const sentenceRemaining=npc.imprisoned?rng.int(1,3):0;
-  const housing=npc.imprisoned?'institutional':npc.age<18?'family':npc.partnerId?'shared':propertyValue>0?'owning':'renting';
+  const partnered=Boolean(npc.partnerId)||hasPlayerRomance(state,npc.id);
+  const housing=npc.imprisoned?'institutional':npc.age<18?'family':propertyValue>0?'owning':partnered?'shared':'renting';
   return {
     aptitude,
     education:{records,performance:records.at(-1)?.performance??clamp(40+aptitude*.4),credential},
@@ -112,7 +127,7 @@ export function buildNpcLifeState(state:GameState,npc:Npc):NpcLifeState{
     health:{conditions:[],fitness:clamp(35+rng.int(-8,35)-(Math.max(0,npc.age-55)*.35)),wellness:clamp((npc.health+npc.happiness)/2)},
     legal:{incidents:[],sentenceRemaining,recordSeverity:sentenceRemaining?35:0},
     publicLife:{fame,reputation:clamp(48+rng.int(-12,18)),followers:Math.round(fame*fame*35),scandals:0},
-    household:{status:npc.imprisoned?'institutional':npc.age<18?'dependent':npc.partnerId?'partnered':'independent',moves:0,dependents:npc.childIds.filter(id=>state.npcs[id]?.alive&&state.npcs[id]!.age<18).length},
+    household:{status:npc.imprisoned?'institutional':npc.age<18?'dependent':partnered?'partnered':'independent',moves:0,dependents:npc.childIds.filter(id=>state.npcs[id]?.alive&&state.npcs[id]!.age<18).length},
   };
 }
 
@@ -124,6 +139,7 @@ export function ensureNpcLife(state:GameState,npc:Npc):NpcLifeState{
   npc.life.health.conditions??=[];
   npc.life.legal.incidents??=[];
   npc.life.finance.annualIncome=Number.isFinite(npc.life.finance.annualIncome)?npc.life.finance.annualIncome:medianJobIncome(state,npc);
+  syncNpcHouseholdProjection(state,npc);
   return npc.life;
 }
 
@@ -197,10 +213,9 @@ function updateNpcCareer(state:GameState,npc:Npc,rng:SeededRng){
 
 function processNpcFinanceYear(state:GameState,npc:Npc,rng:SeededRng){
   const life=npc.life!;const country=countryById[npc.countryId];const income=medianJobIncome(state,npc);life.finance.annualIncome=income;
-  life.household.dependents=npc.childIds.filter(id=>state.npcs[id]?.alive&&state.npcs[id]!.age<18).length;
-  if(life.legal.sentenceRemaining>0){life.finance.housing='institutional';life.household.status='institutional';return;}
-  if(npc.age<18){life.finance.housing='family';life.household.status='dependent';life.finance.creditStress=0;return;}
-  if(npc.partnerId){life.household.status='partnered';if(life.finance.housing!=='owning')life.finance.housing='shared';}else life.household.status='independent';
+  syncNpcHouseholdProjection(state,npc);
+  if(life.legal.sentenceRemaining>0)return;
+  if(npc.age<18){life.finance.creditStress=0;return;}
 
   let scheduledDebtPayment=0;
   if(life.finance.propertyValue>0){
@@ -253,7 +268,7 @@ function processNpcLegalYear(state:GameState,npc:Npc,rng:SeededRng,coarse=false)
   const life=npc.life!;
   if(life.legal.sentenceRemaining>0){
     life.legal.sentenceRemaining=Math.max(0,life.legal.sentenceRemaining-(coarse?2:1));npc.imprisoned=life.legal.sentenceRemaining>0;npc.happiness=clamp(npc.happiness-(coarse?3:2));
-    if(!npc.imprisoned){life.household.status=npc.partnerId?'partnered':'independent';life.finance.housing=npc.partnerId?'shared':'renting';addNpcMemory(state,npc,'release',2,'Completed a custodial sentence.',true);if(timelineRelevant(state,npc.id))state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'legal',importance:2,text:`${npc.firstName} completed a prison sentence.`,npcIds:[npc.id]});}
+    if(!npc.imprisoned){syncNpcHouseholdProjection(state,npc);addNpcMemory(state,npc,'release',2,'Completed a custodial sentence.',true);if(timelineRelevant(state,npc.id))state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'legal',importance:2,text:`${npc.firstName} completed a prison sentence.`,npcIds:[npc.id]});}
     return;
   }
   if(npc.age<14)return;
