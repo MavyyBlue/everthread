@@ -125,13 +125,13 @@ Run #81 (`34539481495`) passed both TypeScript gates, core regression 82/82, NPC
 
 ## Slice 6 — Collision-aware naming
 
-Status: **Implementing — targeted local preflight green; CI candidate prepared.**
+Status: **CI Green — Run #82 (`34540916777`), expanded baseline `7e86c3a9d5fa56a03d3b760b4305a92bf92f789b`.**
 
 Goal: keep the expanded regional name pools and exact 50/45/5 gender distribution, but preferentially select unused or low-collision names among the relevant cast before graceful fallback. Preserve deterministic RNG behavior.
 
-Candidate implementation:
+Implementation:
 
-- new `NpcNamingSystem.ts` is the single creation-time naming authority;
+- `NpcNamingSystem.ts` is the single creation-time naming authority;
 - the initial random first-name draw still chooses the regional/gender bucket, and collision cleanup can only move within that same bucket;
 - ordinary unused draws stay unchanged; avoidable visible first-name collisions prefer an unused/lower-frequency name, exact full-name collisions break ties, and saturated pools fall back deterministically;
 - collision resolution itself consumes no retry RNG, so ordinary flexible names use only the initial first/last draws and fixed-family-surname names use only the initial first-name draw;
@@ -140,17 +140,26 @@ Candidate implementation:
 - existing NPC names/legacy saves are never rewritten; save schema remains 9;
 - integrated creation sites: new-life parents, Meet Someone, player births/adoption, autonomous partners/children, school, workplace, standard special careers, combat, military, and politics.
 
-Local preflight: compiled naming harness **17/17**; modified/new TS syntax diagnostics **0**; all nine production source baselines hash-match Run #81 before editing. Dedicated repository `collisionAwareNamingRegression.ts` contains **33 checks** covering deterministic output, regional/gender pools, ordinary collision avoidance, saturated fallback, fixed surnames, RNG draw counts, player/parent/child naming, and special-career/social-world factories. Because this handoff is an overlay rather than a full checkout, the complete Everthread regression suite remains the GitHub CI gate.
-
-Regression gate: both TypeScript checks, all established suites, the new naming regression, production build, Pages artifact upload, and deployment must pass before Slice 6 becomes CI Green or Slice 7 starts.
+Run #82 passed both TypeScript checks, core regression 82/82, every established suite, NPC orientation coherence 55/55, collision-aware naming **32/32**, production build, Pages artifact upload, and deployment. The prior handoff's 33-check label was an off-by-one documentation mistake; the actual suite contains 32 checks and all 32 passed. Slice 6 is **CI Green**.
 
 ## Slice 7 — Relationship/event microcopy polish
 
-Status: **Queued**.
+Status: **Implementing — focused preflight green; CI candidate prepared.**
 
 Goal: replace grammatical templates such as `You conversation with ...` / `You compliment with ...` with action-specific natural wording without altering outcomes, memories, action economy, or RNG.
 
-Regression targets: every relationship interaction verb, timeline wording, NPC-memory wording where applicable.
+Candidate implementation:
+
+- `RelationshipSystem.ts` now defines explicit timeline and NPC-memory copy for all 13 existing interaction actions;
+- internal action IDs are no longer converted to player-facing prose with underscore replacement;
+- examples: conversation → `You had a conversation with ...`; compliment → `You complimented ...`; spend time → `You spent time with ...`; apologize → `You apologized to ...`; argue → `You argued with ...`;
+- give/ask money, gift, prank, insult, fight, counseling, and vacation receive equally specific natural phrasing;
+- the copy map is typed against the interaction-effect key union, making missing copy for any future interaction a compile-time error;
+- no effect values, personality modifiers, action policies, costs, relationship deltas, happiness/karma effects, RNG calls, memory semantics, timeline metadata, or save fields change.
+
+Focused regression `relationshipMicrocopyRegression.ts` covers every interaction action's direct copy plus the actual timeline and NPC-memory projection emitted by `interactWithNpc()`. Modified/new TypeScript files transpile with zero syntax diagnostics.
+
+Regression gate: both TypeScript checks, all established suites, relationship microcopy regression, production build, Pages artifact upload, and deployment must pass before Slice 7 becomes CI Green or Slice 8 starts.
 
 ## Slice 8 — Integrated long-life QA
 

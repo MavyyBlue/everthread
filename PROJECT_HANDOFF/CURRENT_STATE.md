@@ -8,10 +8,10 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `f5f09267bf430695ab6bf5478232522c1274e76d`.
+The latest fully green expanded baseline is commit `7e86c3a9d5fa56a03d3b760b4305a92bf92f789b`.
 
-- GitHub Actions Run #81 (`34539481495`) completed successfully on 2026-09-10 UTC.
-- Run #81 expanded upload commit `2cea878573e3882d7b8850a05cee0f4912e3705c` into the build-bot commit above.
+- GitHub Actions Run #82 (`34540916777`) completed successfully on 2026-09-10 UTC.
+- Run #82 expanded upload commit `9aa17f3f2e88a46a668fd66b50cec92d7d74b96b` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, every established regression, production build, Pages artifact upload, and Pages deployment passed.
 - Core regression: 82/82.
 - People Threadspace: 57/57.
@@ -25,6 +25,7 @@ The latest fully green expanded baseline is commit `f5f09267bf430695ab6bf5478232
 - NPC health / mortality regression: 18/18.
 - Age-aware reproduction regression: 21/21.
 - NPC orientation coherence regression: 55/55.
+- Collision-aware naming regression: 32/32.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
@@ -52,8 +53,8 @@ Current status:
 3. **NPC health / mortality semantics — CI Green (Run #79).**
 4. **Age-aware reproduction — CI Green (Run #80).**
 5. **NPC gender / sexual-orientation coherence — CI Green (Run #81).**
-6. **Collision-aware naming — Implementing; targeted local preflight green, CI candidate prepared.**
-7. Relationship/event microcopy polish — Queued.
+6. **Collision-aware naming — CI Green (Run #82).**
+7. **Relationship/event microcopy polish — Implementing; focused preflight green, CI candidate prepared.**
 8. Integrated long-life QA — Queued.
 
 ## Slice 1 implementation — CI Green
@@ -176,19 +177,28 @@ The supplied diagnostic save was used only for validation and is **not included*
 
 Run #81 (`34539481495`) passed both TypeScript gates, core regression 82/82, dedicated NPC orientation coherence 55/55, every adjacent regression, production build, Pages artifact upload, and deployment. The overlay expanded into `f5f09267bf430695ab6bf5478232522c1274e76d`. Slice 5 is **CI Green**.
 
-## Slice 6 implementation — CI candidate prepared
+## Slice 6 implementation — CI Green
 
 Collision-aware naming now has one creation-time authority in `NpcNamingSystem.ts`. It preserves the original regional/gender bucket selected by the first random draw, then resolves avoidable first-name/full-name collisions deterministically without retry RNG. Existing NPC names and legacy saves are never rewritten.
 
-Integration in the candidate overlay covers new-life parents, Meet Someone, player births/adoption, autonomous NPC partners/children, school rosters, workplace rosters, standard special-career worlds, combat, military, and politics. Intentional family surnames remain fixed while the first name is resolved. Save schema remains 9.
+Integration covers new-life parents, Meet Someone, player births/adoption, autonomous NPC partners/children, school rosters, workplace rosters, standard special-career worlds, combat, military, and politics. Intentional family surnames remain fixed while the first name is resolved. Save schema remains 9.
 
-Local preflight completed in this chat:
+Run #82 (`34540916777`) passed both TypeScript gates, core regression 82/82, NPC orientation coherence 55/55, collision-aware naming **32/32**, every established adjacent regression, production build, Pages artifact upload, and live deployment. The overlay expanded into `7e86c3a9d5fa56a03d3b760b4305a92bf92f789b`. The earlier handoff note that said 33 naming checks was a bookkeeping error; the actual repository suite contains and passed 32 checks. Slice 6 is **CI Green**.
 
-- every modified/new TS file transpiles with zero syntax diagnostics;
-- the standalone compiled `NpcNamingSystem` harness passes **17/17** across ordinary unused draws, regional pools, gender-bucket preservation, fixed surnames, normalized matching, deterministic saturated fallback, player-cast collisions, and exact initial RNG draw counts;
-- all nine production source files being modified were hash-verified against CI-green Run #81 baseline `f5f09267bf430695ab6bf5478232522c1274e76d` before editing;
-- dedicated repository `collisionAwareNamingRegression.ts` adds **33 checks** spanning the authority itself plus new-life parents, Meet Someone, player adoption/children, school, workplace, standard special careers, combat, military, and politics;
-- full-repository regression execution is intentionally deferred to GitHub because this chat handoff contains an overlay rather than the complete checkout. Do not label Slice 6 CI Green until the upload passes both TypeScript gates, every established regression, the new naming regression, production build, Pages artifact upload, and deployment.
+## Slice 7 implementation — CI candidate prepared
+
+Root cause: `interactWithNpc()` projected internal action IDs directly into two generic English templates for timeline and NPC-memory text. That produced grammatical output such as `You conversation with ...` and `Alex chose to compliment.` even though the underlying interaction outcomes were correct.
+
+The candidate keeps the interaction engine untouched and adds explicit copy projection only:
+
+- all 13 existing relationship interaction actions now have natural action-specific timeline and NPC-memory wording;
+- examples include `You had a conversation with Nora.`, `You complimented Nora.`, `You spent time with Nora.`, `You apologized to Nora.`, and `You argued with Nora.`;
+- money, gift, fight, counseling, and vacation actions receive equally explicit wording rather than relying on underscore replacement;
+- `RelationshipInteractionAction` is derived from the authoritative interaction-effect table, and the copy table is typed against that union so adding a new effect without copy becomes a TypeScript error;
+- relationship score changes, happiness/karma effects, money transfer logic, action economy, RNG draws, memory kind/sentiment/permanence, timeline importance/category, and all milestone/romance logic remain unchanged;
+- save schema remains 9 and no persisted field changes.
+
+A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb through both the pure copy projection and the real `interactWithNpc()` path, checking successful execution plus exact timeline and NPC-memory wording. The modified production file, runner, and regression transpile with zero syntax diagnostics. Full repository type-check/regression/build/deploy remains the GitHub CI gate before Slice 7 can be called CI Green.
 
 ## Known continuing quality / architecture issues
 
@@ -196,8 +206,8 @@ Local preflight completed in this chat:
 - Player-romance/NPC-household projection correction is CI Green in Run #77.
 - NPC zero-health terminal semantics are CI Green in Run #79.
 - Age-aware biological conception is CI Green in Run #80.
-- Collision-aware naming is implemented in the Slice 6 CI candidate; GitHub verification is pending.
-- Relationship interaction microcopy has known grammatical templates until Slice 7.
+- Collision-aware naming is CI Green in Run #82.
+- Relationship interaction microcopy is implemented in the Slice 7 CI candidate; GitHub verification is pending.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.

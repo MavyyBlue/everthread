@@ -9,11 +9,36 @@ import { assignNpcIdentity } from './NpcIdentitySystem';
 import { assignGeneratedNpcOrientation, characterRomanticGender, pickRomanticTargetGender, playerNpcRomanticallyCompatible, playerNpcSexuallyCompatible } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 
-const interactionEffects: Record<string,{base:number;happiness:number;karma?:number}> = {
+const interactionEffects = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
   give_money:{base:8,happiness:1,karma:2}, gift:{base:6,happiness:3}, ask_money:{base:-2,happiness:0}, argue:{base:-9,happiness:-2},
   apologize:{base:7,happiness:1,karma:1}, prank:{base:1,happiness:2}, fight:{base:-20,happiness:-5,karma:-4}, counseling:{base:8,happiness:2}, vacation:{base:11,happiness:6},
+} as const;
+
+export type RelationshipInteractionAction=keyof typeof interactionEffects;
+
+type RelationshipInteractionCopy={timeline:(npcName:string)=>string;memory:(playerName:string)=>string};
+
+const interactionCopy:Record<RelationshipInteractionAction,RelationshipInteractionCopy>={
+  conversation:{timeline:npcName=>`You had a conversation with ${npcName}.`,memory:playerName=>`${playerName} had a conversation with you.`},
+  compliment:{timeline:npcName=>`You complimented ${npcName}.`,memory:playerName=>`${playerName} complimented you.`},
+  insult:{timeline:npcName=>`You insulted ${npcName}.`,memory:playerName=>`${playerName} insulted you.`},
+  spend_time:{timeline:npcName=>`You spent time with ${npcName}.`,memory:playerName=>`${playerName} spent time with you.`},
+  give_money:{timeline:npcName=>`You gave ${npcName} some money.`,memory:playerName=>`${playerName} gave you some money.`},
+  gift:{timeline:npcName=>`You gave ${npcName} a gift.`,memory:playerName=>`${playerName} gave you a gift.`},
+  ask_money:{timeline:npcName=>`You asked ${npcName} for money.`,memory:playerName=>`${playerName} asked you for money.`},
+  argue:{timeline:npcName=>`You argued with ${npcName}.`,memory:playerName=>`${playerName} argued with you.`},
+  apologize:{timeline:npcName=>`You apologized to ${npcName}.`,memory:playerName=>`${playerName} apologized to you.`},
+  prank:{timeline:npcName=>`You pranked ${npcName}.`,memory:playerName=>`${playerName} pranked you.`},
+  fight:{timeline:npcName=>`You fought with ${npcName}.`,memory:playerName=>`${playerName} fought with you.`},
+  counseling:{timeline:npcName=>`You went to counseling with ${npcName}.`,memory:playerName=>`${playerName} went to counseling with you.`},
+  vacation:{timeline:npcName=>`You went on vacation with ${npcName}.`,memory:playerName=>`${playerName} went on vacation with you.`},
 };
+
+export function relationshipInteractionText(action:RelationshipInteractionAction,playerName:string,npcName:string){
+  const copy=interactionCopy[action];
+  return{timeline:copy.timeline(npcName),memory:copy.memory(playerName)};
+}
 
 const ASK_OUT_RELATIONSHIP_TYPES = new Set<RelationshipType>(['friend','best_friend','classmate','coworker','boss','teacher','principal','coach']);
 const CURRENT_ROMANTIC_TYPES = new Set<RelationshipType>(['partner','fiance','spouse']);
@@ -137,7 +162,8 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   if (!npc || !rel) return {success:false,messages:[{text:'That relationship no longer exists.'}]};
   if (!npc.alive) return {success:false,messages:[{text:`You cannot interact with ${npc.firstName}; they have died.`}]};
   if(action==='hook_up')return hookUpWithNpc(state,npcId);
-  const spec=interactionEffects[action];
+  const interactionAction=action as RelationshipInteractionAction;
+  const spec=interactionEffects[interactionAction];
   if (!spec) return {success:false,messages:[{text:'That interaction is not available.'}]};
   if((action==='give_money'||action==='gift')&&state.finances.cash<(action==='give_money'?500:150))return{success:false,messages:[{text:'You do not have enough cash for that.'}]};
   const gate=consumeAction(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:${action}`}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
@@ -152,10 +178,11 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
     else { const amount=Math.min(npc.wealth,rng.int(100,1200)); npc.wealth-=amount; state.finances.cash+=amount; }
   }
   rel.score=clamp(rel.score+delta); npc.hiddenOpinion=clamp(npc.hiddenOpinion+delta*.35,-100,100);
-  npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:action,sentiment:delta,summary:`${state.character.firstName} chose to ${action.replace('_',' ')}.`,permanent:Math.abs(delta)>=10});
+  const copy=relationshipInteractionText(interactionAction,state.character.firstName,npc.firstName);
+  npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:action,sentiment:delta,summary:copy.memory,permanent:Math.abs(delta)>=10});
   state.character.stats.happiness=clamp(state.character.stats.happiness+spec.happiness);
   state.character.secondary.karma+=spec.karma??0;
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:Math.abs(delta)>10?2:1,text:`You ${action.replace('_',' ')} with ${npc.firstName}.`,npcIds:[npcId],relationshipDelta:delta});
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:Math.abs(delta)>10?2:1,text:copy.timeline,npcIds:[npcId],relationshipDelta:delta});
   state.rngCounter=rng.counter();
   return {success:true,messages:[{text:`${npc.firstName}'s relationship with you ${delta>=0?'improved':'worsened'} (${delta>=0?'+':''}${Math.round(delta)}).`}]};
 }
