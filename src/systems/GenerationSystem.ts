@@ -8,14 +8,16 @@ import { migrateLegacyWorkplaceWorlds } from './WorkplaceSystem';
 import { migrateLegacySchoolWorlds } from './SchoolWorldSystem';
 import { ensureNpcLife, initializeMissingNpcLives } from './NpcLifeSystem';
 import { estateTrustFromSettlement, settleEstate } from './EstateSystem';
+import { characterIdentityFromNpc, npcGenderFromCharacterIdentity } from './NpcIdentitySystem';
 
 export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
 function npcToCharacter(state:GameState,npc:Npc):Character {
   const rng=createRng(`${state.seed}-descendant-${npc.id}`,state.rngCounter);
+  const identity=characterIdentityFromNpc(state,npc);
   return {
     id:npc.id,firstName:npc.firstName,lastName:npc.lastName,
-    sex:rng.pick(['female','male','intersex'] as const),genderIdentity:rng.pick(['woman','man','nonbinary'] as const),orientation:npc.sexuality,
+    sex:identity.sex,genderIdentity:identity.genderIdentity,orientation:npc.sexuality,
     countryId:npc.countryId,city:npc.city,birthYear:state.currentYear-npc.age,age:npc.age,alive:true,
     appearance:{skinTone:rng.pick(['fair','light','medium','olive','tan','brown','deep brown','dark']),hairColor:rng.pick(['black','brown','auburn','blonde','red']),hairStyle:rng.pick(['straight','wavy','curly','coiled','cropped']),eyeColor:rng.pick(['brown','hazel','green','blue','gray']),accessories:[]},
     stats:{health:npc.health,happiness:npc.happiness,intelligence:clamp((npc.life?.aptitude??50)*.72+state.character.stats.intelligence*.18+rng.int(0,12)),appearance:clamp(state.character.stats.appearance*.45+rng.int(20,55))},
@@ -68,7 +70,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
 
   ensureNpcLife(state,child);const originalChild=structuredClone(child);const previousCharacter=structuredClone(state.character);const previousPlayerId=previousCharacter.id;const parentLife=state.completedLives.at(-1);const settlement=settleEstate(state,childId);const livingChildren=state.relationships.filter(r=>r.type==='child'&&state.npcs[r.npcId]?.alive);const survivingSpouseRel=state.relationships.find(r=>r.type==='spouse'&&!r.estranged&&state.npcs[r.npcId]?.alive);const newCharacter=npcToCharacter(state,child);
 
-  const parentNpc:Npc={id:previousPlayerId,firstName:previousCharacter.firstName,lastName:previousCharacter.lastName,age:previousCharacter.age,alive:false,health:0,happiness:previousCharacter.stats.happiness,wealth:0,countryId:previousCharacter.countryId,city:previousCharacter.city,sexuality:previousCharacter.orientation,fertility:previousCharacter.secondary.fertility,maritalStatus:survivingSpouseRel?'married':'single',traits:[...previousCharacter.traits],hiddenOpinion:80,memories:[],parentIds:state.relationships.filter(r=>['parent','stepparent'].includes(r.type)&&state.npcs[r.npcId]).map(r=>r.npcId),childIds:livingChildren.map(r=>r.npcId)};
+  const parentNpc:Npc={id:previousPlayerId,firstName:previousCharacter.firstName,lastName:previousCharacter.lastName,age:previousCharacter.age,alive:false,health:0,happiness:previousCharacter.stats.happiness,wealth:0,countryId:previousCharacter.countryId,city:previousCharacter.city,sexuality:previousCharacter.orientation,fertility:previousCharacter.secondary.fertility,gender:npcGenderFromCharacterIdentity(previousCharacter.genderIdentity),...(previousCharacter.sex==='female'||previousCharacter.sex==='male'?{reproductiveSex:previousCharacter.sex}:{}),maritalStatus:survivingSpouseRel?'married':'single',traits:[...previousCharacter.traits],hiddenOpinion:80,memories:[],parentIds:state.relationships.filter(r=>['parent','stepparent'].includes(r.type)&&state.npcs[r.npcId]).map(r=>r.npcId),childIds:livingChildren.map(r=>r.npcId)};
   state.npcs[parentNpc.id]=parentNpc;delete state.npcs[childId];state.character=newCharacter;state.currentYear=newCharacter.birthYear+newCharacter.age;state.relationships=rebuildDescendantRelationships(state,originalChild,previousPlayerId);state.education=descendantEducation(originalChild);state.socialWorlds=[];state.employment=descendantEmployment(state,originalChild);migrateLegacySchoolWorlds(state);migrateLegacyWorkplaceWorlds(state);
 
   const npcLife=originalChild.life!;const personalDebt=Math.max(0,Math.round(npcLife.finance.debt));const personalDebtLoan=personalDebt>0?{id:makeStateId(state,'loan'),kind:'personal' as const,principal:personalDebt,balance:personalDebt,annualRate:.08,annualPayment:Math.max(500,Math.round(personalDebt/8)),remainingYears:8}:undefined;

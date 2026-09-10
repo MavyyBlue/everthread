@@ -27,7 +27,7 @@ function nodeSize(kind:PeopleWorkspaceLayoutNode['kind']){
   return{w:158,h:78};
 }
 
-export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSelect:(npcId:string)=>void;controls?:ReactNode}){
+export function PeopleWorkspace({state,revision,onSelect,floatingActions}:{state:GameState;revision:number;onSelect:(npcId:string)=>void;floatingActions?:ReactNode}){
   const viewportRef=useRef<HTMLDivElement|null>(null);
   const pointersRef=useRef(new Map<number,PointerPoint>());
   const gestureRef=useRef<{lastSingle?:PointerPoint;distance?:number;midpoint?:PointerPoint}>({});
@@ -42,7 +42,9 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
   const[showConnectionLabels,setShowConnectionLabels]=useState(false);
   const[minRelationship,setMinRelationship]=useState(0);
 
-  const model=useMemo(()=>buildPeopleWorkspaceModel(state),[state]);
+  // GameEngine mutates the authoritative GameState in place. The revision is the
+  // explicit invalidation token for graph data; local pan/zoom/filter state does not rebuild it.
+  const model=useMemo(()=>buildPeopleWorkspaceModel(state),[state,revision]);
   const projection=useMemo(()=>projectPeopleWorkspace(model,{
     visibleFolderIds:visibleFolders,expandedFolderIds:expandedFolders,query,includeDeceased,includeFormer,minRelationship,
   }),[model,visibleFolders,expandedFolders,query,includeDeceased,includeFormer,minRelationship]);
@@ -184,6 +186,8 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
       aria-controls="threadspace-filter-panel"
     >Filters</button>
 
+    {!filterOpen&&floatingActions&&<div className="threadspace-floating-actions">{floatingActions}</div>}
+
     {filterOpen&&<aside id="threadspace-filter-panel" className="threadspace-filter-panel" aria-label="Threadspace filters and view controls">
       <div className="threadspace-filter-section">
         <div className="threadspace-panel-heading"><strong>View controls</strong><small>{visibleCount} visible</small></div>
@@ -204,7 +208,6 @@ export function PeopleWorkspace({state,onSelect,controls}:{state:GameState;onSel
       <label className="threadspace-range"><span>Minimum relationship <strong>{minRelationship}</strong></span><input type="range" min="0" max="90" step="5" value={minRelationship} onChange={event=>setMinRelationship(Number(event.target.value))}/></label>
       <div className="threadspace-folder-filter"><strong>Visible circles</strong>{PEOPLE_FOLDERS.map(folder=><label key={folder.id}><input type="checkbox" checked={visibleFolders.includes(folder.id)} onChange={()=>toggleVisible(folder.id)}/><span>{folderGlyph[folder.id]}</span>{folder.title}</label>)}</div>
       <div className="threadspace-filter-actions"><button onClick={()=>setExpandedFolders([...visibleFolders])}>Expand Visible</button><button onClick={()=>setExpandedFolders([])}>Collapse All</button><button onClick={resetFilters}>Reset</button></div>
-      {controls}
     </aside>}
 
     <div

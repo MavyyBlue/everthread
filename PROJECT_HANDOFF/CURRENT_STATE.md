@@ -8,10 +8,10 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `c371ef4c0805dbbc8c46d6ee68bd9b0c95a0a33d`.
+The latest fully green expanded baseline is commit `67d54a4fc103f52c7c5839eb52aee54bc0cb1138`.
 
-- GitHub Actions run #69 (`34428133164`) completed successfully on 2026-09-10 UTC.
-- Run #69 expanded upload commit `529349d28524533a4bfd156d2397462dc132b779` into the build-bot commit above.
+- GitHub Actions run #70 (`34430142245`) completed successfully on 2026-09-10 UTC.
+- Run #70 expanded upload commit `8f7f015164208fdd8e7350509c8f1bd983d59326` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, full regressions, production build, Pages artifact upload, and Pages deployment all passed.
 - Core regression suite: 82/82.
 - Phase 4 closeout: 88/88.
@@ -21,6 +21,7 @@ The latest fully green expanded baseline is commit `c371ef4c0805dbbc8c46d6ee68bd
 - Phase 5 estate-planning regression: 46/46.
 - Family continuity regression: 18/18.
 - Visual identity regression: 12/12.
+- Family reproduction regression: 13/13.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
@@ -33,52 +34,54 @@ Phase 4 remains closed. Persistent Career World ecosystems, integration/coherenc
 
 `EstateSystem.ts` remains the authority for estate planning, preview, debt settlement, liquidation, spouse/child residuary shares, specific bequests, protected minor inheritance, and settlement consumed by descendant continuation.
 
-Green family continuity includes:
+Green continuity includes widowhood/unmarried-partner death cleanup, protected minor inheritance, spouse/child estate shares, parent/stepparent household friction, and bounded autonomous separation/divorce consequences.
 
-- legal spouse becomes widowed at protagonist death;
-- dating/engaged survivor becomes single and clears stale deceased-partner state;
-- surviving committed partners retain bereavement history without granting unmarried estate-spouse rights;
-- protected inheritance for selected and off-screen minors releases at adulthood;
-- parent/stepparent affinity at 20 or below can create bounded household friction;
-- repeated household friction can contribute to adult separation/divorce without making it player-controlled or guaranteed;
-- loyal/calm couples receive stability protection and tension history is cooldown-bounded.
+## Everthread visual identity — green
 
-## Everthread visual identity pass — green
+Run #69 established the first Everthread-specific teal/gold presentation language while preserving player theme, accent, typeface, text-color, text-scale, contrast, and motion preferences. Supplied woman/man/gender-neutral crest assets remain production inputs and must not be regenerated or restyled without Mavyy's request. Unique save-export filenames are also green.
 
-Run #69 established the first Everthread-specific visual language while preserving player appearance preferences.
+## Family reproduction authority — green
 
-Green behavior includes:
+Run #70 established system-level biological compatibility and partnered adoption coherence:
 
-- supplied woman, man, and gender-neutral teal/gold crests are production assets and are selected from the active `Character.genderIdentity`;
-- creation previews the crest and descendant continuation naturally updates the active crest through the authoritative character;
-- Life Saves use the same crest authority;
-- reusable teal/gold framing, jewel/glow accents, refined cards, navigation, sheets, events, stats, and Age Up styling are deployed;
-- theme mode, arbitrary accent color, text scale, high contrast, and reduced motion remain supported;
-- offline-safe typeface and optional custom text-color controls are available;
-- save exports now use unique character + generation + age + UI-only UTC timestamp filenames;
-- export clock values never enter seeded simulation state.
+- female/male reproductive pairings can use the biological child path;
+- female/female and male/male pairings cannot create biological pregnancy through the current model;
+- nonbinary protagonist identity defers to the protagonist's existing biological sex;
+- intersex protagonist reproductive capability remains unavailable pending a richer model;
+- incompatible attempts fail before consuming the yearly child-attempt action;
+- partnered adoption records both adults as parents;
+- single-parent adoption remains supported;
+- schema 9 remained sufficient for the additive Run-70 compatibility field.
 
-The supplied art assets are production inputs. Do not regenerate or restyle them unless Mavyy explicitly requests an art edit.
+## Current work — NPC identity + Threadspace family-planning UX coherence
 
-## Current corrective work — biological parenting coherence
+Mavyy's real-device QA after run #70 requested a persistent, visible NPC gender model and a cleaner People/Threadspace interaction layout.
 
-Real-device playtesting after run #69 exposed a family-planning authority gap: `haveChild()` currently treats any current partner as biologically compatible because NPCs did not previously carry reproductive-sex information.
+Pending overlay behavior:
 
-The corrective overlay establishes a narrow, deterministic reproductive identity layer without creating another character database:
+- every procedurally created NPC receives one of three NPC genders with default odds of exactly 50% female, 45% male, and 5% nonbinary;
+- the active regional first-name pools encode those same weights and every generated first name maps to the rolled NPC gender;
+- female NPCs use female reproductive sex and male NPCs use male reproductive sex;
+- nonbinary NPCs receive a deterministic 50/50 female/male reproductive-sex assignment;
+- procedurally generated NPCs never use the player-only intersex option;
+- legacy Run-70 NPC reproductive-sex state is normalized into the new `gender` + `reproductiveSex` authority without renaming existing people;
+- every NPC profile adds a Gender stat card beside Relationship, Compatibility, Age, and Marriage;
+- active partner/fiance/spouse profiles own a Family Planning section containing `Try for a Child` and `Adopt Child`;
+- `Try for a Child` stays visible but muted/disabled when the current pairing cannot conceive; adoption remains available;
+- partnered adoption continues recording both adults; the existing single-parent adoption path is preserved outside the Filters panel;
+- `Meet a Person` becomes a floating Threadspace control directly beneath Filters and hides whenever Filters is open;
+- family-planning controls are removed from the Filters panel;
+- descendant continuation preserves the descendant NPC's established gender/reproductive identity instead of rerolling it during protagonist conversion;
+- autonomous NPC couples use the same reproductive compatibility authority, routing biologically incompatible couples toward adoption instead of offscreen biological births;
+- no save-schema bump is required because the new NPC identity fields are additive and legacy state has deterministic normalization.
 
-- NPC reproductive sex is explicit for newly generated romantic prospects and can be deterministically derived for legacy NPCs without consuming simulation RNG;
-- `Try for child` uses biological sex, not gender identity or sexual orientation, to determine current conception compatibility;
-- the current model allows the biological path only for female/male reproductive pairings;
-- female/female and male/male pairings do not expose or execute `Try for child`;
-- a nonbinary protagonist is evaluated from the existing authoritative `Character.sex`, so gender identity itself neither blocks nor enables biological parenting;
-- intersex reproductive capability remains conservative until a richer fertility/reproductive-role model is intentionally designed;
-- incompatible biological attempts fail before consuming the yearly child-attempt action or creating pregnancy state;
-- adoption remains available regardless of biological compatibility;
-- if a current partner participates in adoption, the adopted child records both the protagonist and partner as parents and the partner records the child;
-- single-parent adoption remains available as before;
-- no save-schema bump is required because the additive NPC sex field is optional for legacy saves and has a deterministic fallback.
+### Threadspace stale-projection root cause
 
-This corrective patch is not green until both TypeScript gates, every established regression, the family-continuity and visual-identity suites, the new family-reproduction regression, production build, Pages artifact upload, and live Pages deployment all pass.
+`GameEngine` correctly emits a new revision after gameplay actions, but it mutates the authoritative `GameState` in place. `PeopleWorkspace` currently memoizes `buildPeopleWorkspaceModel(state)` only by the stable `state` object identity, so relationship changes and newly created people can remain visually stale until the People screen remounts.
+
+The pending fix passes the engine revision into `PeopleWorkspace` and memoizes the graph on `[state, revision]`. This refreshes graph data after real engine mutations while preserving local camera/filter state and avoiding expensive graph rebuilds during ordinary pan/zoom gestures.
+
+This overlay is not green until both TypeScript gates, every established regression, the expanded family-reproduction regression, production build, Pages artifact upload, and live Pages deployment all pass.
 
 ## Phase 5 next slices after corrective QA
 
@@ -90,11 +93,11 @@ Continue without replacing the estate/family foundation:
 - broader kin taxonomy only where it improves real family-tree behavior;
 - stronger dynasty wealth/history summaries;
 - large-family/multi-generation performance validation; and
-- further death → estate review → descendant continuation polish only where playtesting proves it useful.
+- further death → estate review → descendant continuation polish where playtesting proves useful.
 
 ## Known quality / architecture issues
 
-- NPC gender/sexual-orientation matchmaking remains intentionally simplified and should be deepened separately rather than folded into the biological-parenting correction.
+- NPC gender/sexual-orientation matchmaking remains intentionally simplified and should be deepened separately rather than mixed into reproductive identity.
 - Exact seeded replay serialization remains mandatory; UI clock values must never enter simulation state or runtime IDs.
 - Every meaningful player action stays under controlled system/GameEngine ownership; appearance settings remain presentation-only.
 - AI observation/projection code remains read-only.

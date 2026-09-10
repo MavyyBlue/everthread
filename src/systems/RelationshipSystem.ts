@@ -5,7 +5,8 @@ import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
 import { consumeAction } from '../core/actionEconomy';
 import { ensureNpcLife } from './NpcLifeSystem';
-import { assignNpcReproductiveSex, biologicalChildGate } from './ReproductionSystem';
+import { biologicalChildGate } from './ReproductionSystem';
+import { assignNpcIdentity } from './NpcIdentitySystem';
 
 const interactionEffects: Record<string,{base:number;happiness:number;karma?:number}> = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
@@ -157,11 +158,11 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
 }
 
 function orientationCompatible(player:GameState['character'],npc:Npc) {
-  // Deliberately simplified compatibility model for simulation; identity is not treated as a stat bonus/penalty.
+  // Orientation matching remains deliberately permissive for now; NPC gender identity and reproductive compatibility are separate authorities.
   if (player.orientation==='asexual') return false;
   if (player.orientation==='bisexual' || player.orientation==='pansexual') return true;
   if (npc.sexuality==='bisexual' || npc.sexuality==='pansexual') return true;
-  return true; // allows emergent dating without inferring NPC gender from name.
+  return true; // A dedicated orientation/gender matchmaking pass will deepen this without changing reproductive identity.
 }
 
 export function meetPotentialPartner(state:GameState):EngineResult {
@@ -178,7 +179,7 @@ export function meetPotentialPartner(state:GameState):EngineResult {
     countryId:state.character.countryId,city:state.character.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian']),fertility:rng.int(20,92),maritalStatus:'single',
     traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:rng.int(0,35),memories:[],parentIds:[],childIds:[]
   };
-  assignNpcReproductiveSex(state,npc);
+  assignNpcIdentity(state,npc);
   state.npcs[id]=npc;ensureNpcLife(state,npc);
   const rel:Relationship={id:makeStateId(state,'rel'),npcId:id,type:'friend',score:rng.int(20,48),attraction:rng.int(35,95),compatibility:rng.int(25,95),yearsKnown:0};
   state.relationships.push(rel); state.rngCounter=rng.counter();
@@ -215,7 +216,7 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   if(action==='break_up'||action==='divorce') { if(!['partner','fiance','spouse'].includes(rel.type)) success=false; else {newType='ex';npc.maritalStatus=action==='divorce'?'divorced':'single';rel.score=clamp(rel.score-18);text=`You ${action==='divorce'?'divorced':'broke up with'} ${npc.firstName}.`;} }
   if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,chance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`; }
   if(!success && !text) text='That relationship step is not available right now.';
-  if(success){rel.type=newType;if(CURRENT_ROMANTIC_TYPES.has(newType))assignNpcReproductiveSex(state,npc);if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
+  if(success){rel.type=newType;if(CURRENT_ROMANTIC_TYPES.has(newType))assignNpcIdentity(state,npc);if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:success?3:1,text,npcIds:[npcId]});
   state.rngCounter=rng.counter(); return {success,messages:[{text}]};
 }

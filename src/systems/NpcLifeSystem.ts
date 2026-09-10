@@ -6,6 +6,8 @@ import { schoolProfileFor } from '../data/schools';
 import { makeStateId } from '../core/ids';
 import { clamp } from '../core/math';
 import { createRng, type SeededRng } from '../core/rng';
+import { assignNpcIdentity, npcReproductiveSex } from './NpcIdentitySystem';
+import { reproductivePairCanConceive } from './ReproductionSystem';
 import type {
   GameState,
   Npc,
@@ -115,6 +117,7 @@ export function buildNpcLifeState(state:GameState,npc:Npc):NpcLifeState{
 }
 
 export function ensureNpcLife(state:GameState,npc:Npc):NpcLifeState{
+  assignNpcIdentity(state,npc);
   npc.life??=buildNpcLifeState(state,npc);
   npc.life.education.records??=[];
   npc.life.career.history??=[];
@@ -348,14 +351,18 @@ function maybeExpandNpcFamily(state:GameState,npc:Npc,processedCouples:Set<strin
   if(npc.age<18||partner.age<18||npc.age>52||partner.age>52)return;
   const existingChildren=new Set([...npc.childIds,...partner.childIds]);const maxChildren=background?2:4;if(existingChildren.size>=maxChildren)return;
   const combinedHealth=(npc.health+partner.health)/200;const fertility=(npc.fertility+partner.fertility)/200;const wealthStability=clamp((npc.wealth+partner.wealth)/120000,.45,1.25);const compatibility=partnershipCompatibility(npc,partner)/100;
+  const canConceive=reproductivePairCanConceive(npcReproductiveSex(state,npc),npcReproductiveSex(state,partner));
   const familyVisibility=(isPlayerFamily(state,npc.id)||isPlayerFamily(state,partner.id))?2.4:1;
   const marriageMemory=[...npc.memories].reverse().find(memory=>memory.kind==='marriage');const yearsMarried=marriageMemory?Math.max(0,state.currentYear-marriageMemory.year):0;
-  // Prevent implausible permanent childlessness caused only by unlucky RNG in stable, highly fertile close-family couples.
-  if(!background&&familyVisibility>1&&existingChildren.size===0&&yearsMarried>=6&&fertility>=.70&&combinedHealth>=.62){createNpcChild(state,npc,partner,rng,false);return;}
+  // Prevent implausible permanent childlessness caused only by unlucky RNG in stable close-family couples.
+  // Couples outside the current biological model can still expand their family through adoption.
+  const familyOriented=[npc,partner].some(person=>person.traits.some(trait=>['romantic','responsible','loyal'].includes(trait)));
+  if(!background&&familyVisibility>1&&existingChildren.size===0&&yearsMarried>=6&&canConceive&&fertility>=.70&&combinedHealth>=.62){createNpcChild(state,npc,partner,rng,false);return;}
+  if(!background&&familyVisibility>1&&existingChildren.size===0&&yearsMarried>=8&&!canConceive&&familyOriented&&combinedHealth>=.55){createNpcChild(state,npc,partner,rng,true);return;}
   if(!background&&familyVisibility>1&&existingChildren.size===0&&yearsMarried>=7&&fertility<.45&&compatibility>=.68&&combinedHealth>=.62){createNpcChild(state,npc,partner,rng,true);return;}
-  const chance=(background?.018:.055)*fertility*combinedHealth*wealthStability*compatibility*familyVisibility*(existingChildren.size===0?1.4:Math.max(.35,1-existingChildren.size*.2));
-  if(rng.chance(chance)){createNpcChild(state,npc,partner,rng,false);return;}
-  const adoptionChance=(background?.002:.006)*(compatibility>.62?1.4:1)*(existingChildren.size===0?1.6:1)*(fertility<.45?2.2:1);
+  const chance=canConceive?(background?.018:.055)*fertility*combinedHealth*wealthStability*compatibility*familyVisibility*(existingChildren.size===0?1.4:Math.max(.35,1-existingChildren.size*.2)):0;
+  if(chance>0&&rng.chance(chance)){createNpcChild(state,npc,partner,rng,false);return;}
+  const adoptionChance=(background?.002:.006)*(compatibility>.62?1.4:1)*(existingChildren.size===0?1.6:1)*((!canConceive||fertility<.45)?2.2:1);
   if(rng.chance(adoptionChance))createNpcChild(state,npc,partner,rng,true);
 }
 
