@@ -8,10 +8,10 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `fbc5c3ae84897a50c21f730ac59d8cab60d3d9ac`.
+The latest fully green expanded baseline is commit `8fa76e03916d2a10559260c07dd718faa4c07bc6`.
 
-- GitHub Actions run #71 (`34440231888`) completed successfully on 2026-09-10 UTC.
-- Run #71 expanded upload commit `95b754f55f0d763260f243e38d883197d614cf02` into the build-bot commit above.
+- GitHub Actions run #72 (`34489240798`) completed successfully on 2026-09-10 UTC.
+- Run #72 expanded upload commit `764b93cc513e93243e1bd57af00d715c3e2d902b` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, full regressions, production build, Pages artifact upload, and Pages deployment all passed.
 - Core regression suite: 82/82.
 - Phase 4 closeout: 88/88.
@@ -21,7 +21,7 @@ The latest fully green expanded baseline is commit `fbc5c3ae84897a50c21f730ac59d
 - Phase 5 estate-planning regression: 46/46.
 - Family continuity regression: 18/18.
 - Visual identity regression: 12/12.
-- Family reproduction regression: 37/37.
+- Family reproduction regression: 51/51.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
@@ -40,22 +40,9 @@ Green continuity includes widowhood/unmarried-partner death cleanup, protected m
 
 Run #69 established the first Everthread-specific teal/gold presentation language while preserving player theme, accent, typeface, text-color, text-scale, contrast, and motion preferences. Supplied woman/man/gender-neutral crest assets remain production inputs and must not be regenerated or restyled without Mavyy's request. Unique save-export filenames are also green.
 
-## Family reproduction authority — green
+## Family reproduction + NPC identity — green
 
-Run #70 established system-level biological compatibility and partnered adoption coherence:
-
-- female/male reproductive pairings can use the biological child path;
-- female/female and male/male pairings cannot create biological pregnancy through the current model;
-- nonbinary protagonist identity defers to the protagonist's existing biological sex;
-- intersex protagonist reproductive capability remains unavailable pending a richer model;
-- incompatible attempts fail before consuming the yearly child-attempt action;
-- partnered adoption records both adults as parents;
-- single-parent adoption remains supported;
-- schema 9 remained sufficient for the additive Run-70 compatibility field.
-
-## NPC identity + Threadspace family-planning UX coherence — green
-
-Run #71 established persistent visible NPC gender, matching reproductive identity, profile-owned Family Planning controls, descendant identity preservation, autonomous reproductive compatibility, and immediate Threadspace graph invalidation through the GameEngine revision.
+Runs #70–#71 established biological compatibility, partnered adoption coherence, persistent visible NPC gender, matching reproductive identity, profile-owned Family Planning controls, descendant identity preservation, autonomous reproductive compatibility, and immediate Threadspace graph invalidation through the GameEngine revision.
 
 Green behavior includes:
 
@@ -64,31 +51,38 @@ Green behavior includes:
 - binary NPC reproductive sex matches gender and nonbinary NPCs receive deterministic 50/50 female/male reproductive sex;
 - procedural NPCs never receive the player-only intersex option;
 - active partner/fiance/spouse profiles own Try for a Child and Adopt Child;
-- single-parent adoption remains available from Threadspace;
-- Meet a Person is currently a standalone Threadspace control;
+- biological incompatibility mutes Try for a Child at both UI and system layers;
+- partnered adoption records both adults; single-parent adoption remains supported;
 - closing NPC profiles reflects relationship/new-person changes immediately without tab remounts;
 - descendant continuation preserves established NPC gender/reproductive identity;
 - autonomous couples use the same biological-compatibility authority and can adopt when biological conception is unavailable.
 
-## Current work — People polish + naming variety
+## People polish + naming variety — green
 
-Mavyy's real-device QA after run #71 requested three small quality improvements:
+Run #72 moved Meet Someone to Activities → Social, made the standalone Threadspace Adopt Child control match Filters dimensions, and expanded each of the seven regional pools from 20 to 120 first names and from 20 to 120 surnames.
 
-- make the standalone single-parent Adopt Child Threadspace button the same dimensions as the Filters toggle;
-- move Meet Someone out of Threadspace and into the Activities screen while preserving the same `social.meet` action-economy/system path;
-- substantially expand procedural names to reduce obvious repeated first names such as multiple Noras/Naomis in one life.
+Each first-name pool contains exactly 60 female / 54 male / 6 nonbinary names, preserving the authoritative 50/45/5 distribution without changing the existing single-draw deterministic NPC generation path. All first and last names are unique inside each regional pool and every active first name resolves to an NPC gender.
+
+## Current work — Sandbox secret-code legacy feature
+
+Mavyy requested the first Sandbox-only secret code as a project-start easter egg. Code `9426` represents 09/04/2026, the date Everthread development began.
 
 Pending overlay behavior:
 
-- Threadspace Filters and standalone Adopt Child share the same responsive width/minimum-height presentation token;
-- Meet Someone lives in Activities → Social and is no longer rendered as a Threadspace floating action;
-- each of the seven regional name pools expands from 20 to 120 first names and from 20 to 120 surnames;
-- each expanded first-name pool remains exactly 60 female / 54 male / 6 nonbinary so the existing one-draw deterministic generation still produces the authoritative 50/45/5 gender odds without adding RNG consumption;
-- all first and last names are unique within their regional pool and every active first name resolves to an NPC gender;
-- family-reproduction regression coverage locks the expanded pool counts, uniqueness, and gender mapping;
-- save schema remains 9.
+- Sandbox contains an `Enter Secret Code` control that opens a compact touch-friendly number pad;
+- secret-code redemption is system-owned through `SecretCodeSystem` and `GameEngine`, not direct UI state mutation;
+- code `9426` creates one persistent `Yuki Aster` NPC as a normal Friend in Friends & Social;
+- Yuki is age-matched to the protagonist when redeemed, uses female gender/reproductive sex, pansexual orientation, strong initial friendship/compatibility, and ordinary persistent NPC-life state;
+- normal Ask Out → Partner → Proposal → Marriage behavior is preserved rather than bypassed;
+- biological family planning follows the existing reproductive-compatibility authority, so compatible protagonists can Try for a Child while incompatible pairings retain the muted option/adoption path;
+- childhood redemption creates an age-matched friend and retains normal dating-age restrictions;
+- the code is idempotent: one Yuki per life, even after repeated entry;
+- invalid codes and non-Sandbox redemption attempts do not mutate state;
+- the fixed secret-code effect does not consume the simulation RNG stream;
+- the redemption marker uses the existing generic `flags` map, so save schema remains 9;
+- a dedicated secret-code regression covers sandbox gating, invalid-code safety, Friends & Social membership, identity, romance progression, family-planning coherence, age gating, RNG preservation, and duplicate prevention.
 
-This overlay is not green until both TypeScript gates, every established regression, production build, Pages artifact upload, and live Pages deployment all pass.
+This overlay is not green until both TypeScript gates, every established regression, the new secret-code regression, production build, Pages artifact upload, and live Pages deployment all pass.
 
 ## Phase 5 next slices after corrective QA
 

@@ -3,6 +3,7 @@ import type { GameState } from '../types/game';
 import { BottomSheet } from './BottomSheet';
 import { SearchField } from './SearchField';
 import { Avatar } from './Avatar';
+import { SecretCodePad } from './SecretCodePad';
 import { achievements, challenges } from '../data/achievements';
 import { gameEngine } from '../stores/gameStore';
 import { allocateSaveSlotId, deleteSave, exportSave, importSave, loadAllGames, loadGame, loadSettings, saveGame, setActiveSaveSlotId } from '../services/SaveSystem';
@@ -80,6 +81,15 @@ function Settings({state,download,upload,onNewLife}:{state:GameState;download:()
 }
 
 function Debug({state}:{state:GameState}){
-  const[age,setAge]=useState(state.character.age);const[money,setMoney]=useState(state.finances.cash);
-  return <div className="form-stack"><p className="warning-card">Sandbox tools deliberately mark this save as nonstandard. They are useful for testing systems and content.</p><label className="form-field"><span>Age</span><input type="number" value={age} onChange={e=>setAge(Number(e.target.value))}/></label><label className="form-field"><span>Cash</span><input type="number" value={money} onChange={e=>setMoney(Number(e.target.value))}/></label><button onClick={()=>gameEngine.debugPatch({age,money})}>Apply values</button><button onClick={()=>gameEngine.forceDeath()}>Force death</button><div className="code-card"><small>RNG seed</small><code>{state.seed}</code><small>RNG counter</small><code>{state.rngCounter}</code></div>{state.flags.rewindEnabled&&<><h3>Yearly snapshots</h3><div className="action-grid">{state.yearlySnapshots.slice(-10).reverse().map(s=><button key={s.age} onClick={()=>gameEngine.rewind(s.age)}>Age {s.age}</button>)}</div></>}</div>;
+  const[age,setAge]=useState(state.character.age);const[money,setMoney]=useState(state.finances.cash);const[codesOpen,setCodesOpen]=useState(false);
+  return <div className="form-stack">
+    <p className="warning-card">Sandbox tools deliberately mark this save as nonstandard. They are useful for testing systems and content.</p>
+    <label className="form-field"><span>Age</span><input type="number" value={age} onChange={e=>setAge(Number(e.target.value))}/></label>
+    <label className="form-field"><span>Cash</span><input type="number" value={money} onChange={e=>setMoney(Number(e.target.value))}/></label>
+    <button onClick={()=>gameEngine.debugPatch({age,money})}>Apply values</button>
+    <button onClick={()=>gameEngine.forceDeath()}>Force death</button>
+    {state.flags.sandbox&&<section className="sheet-section"><h3>Secret Codes</h3><p className="muted">Some threads only appear when you know where to look.</p><button className="full-button" onClick={()=>setCodesOpen(open=>!open)} aria-expanded={codesOpen}>{codesOpen?'Close Number Pad':'Enter Secret Code'}</button>{codesOpen&&<SecretCodePad/>}</section>}
+    <div className="code-card"><small>RNG seed</small><code>{state.seed}</code><small>RNG counter</small><code>{state.rngCounter}</code></div>
+    {state.flags.rewindEnabled&&<><h3>Yearly snapshots</h3><div className="action-grid">{state.yearlySnapshots.slice(-10).reverse().map(s=><button key={s.age} onClick={()=>gameEngine.rewind(s.age)}>Age {s.age}</button>)}</div></>}
+  </div>;
 }

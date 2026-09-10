@@ -26,6 +26,7 @@ import { sportsContractDecision } from '../systems/SportsCareerCycleSystem';
 import { leaveSpecialCareer, reactivateSpecialCareerPath, specialCareerExitGate } from '../systems/SpecialCareerExitSystem';
 import { retireSpecialCareer as retireDeepCareer, type DeepCareerPath } from '../systems/SpecialCareerLifecycleSystem';
 import { relationshipStressRecovery, therapySession } from '../systems/StressConsequenceSystem';
+import { redeemSecretCode as applySecretCode } from '../systems/SecretCodeSystem';
 import { enforceStateInvariants } from '../core/invariants';
 import { fullTimeJobGate, partTimeJobGate, schoolEnrollmentGate, specialCareerStartGate, type CommitmentGate, type SpecialCareerPathKey } from '../systems/CommitmentSystem';
 import { saveGame, saveSettings } from '../services/SaveSystem';
@@ -71,6 +72,7 @@ export class GameEngine {
   setWill(beneficiaries:Array<{npcId:string;percentage:number}>){return this.run(()=>setWill(this.state,beneficiaries));}
   setEstateAssetBequest(kind:'property'|'business'|'collectible',assetId:string,beneficiaryNpcId?:string){return this.run(()=>setEstateAssetBequest(this.state,kind,assetId,beneficiaryNpcId));}
   setEstateRetentionPreferences(preferences:Partial<Pick<GameState['inheritance'],'inheritBusinesses'|'inheritProperties'>>){return this.run(()=>setEstateRetentionPreferences(this.state,preferences));}
+  redeemSecretCode(code:string){return this.run(()=>applySecretCode(this.state,code),true);}
   rewind(age:number){return this.run(()=>rewindToAge(this.state,age),true);}forceEvent(id:string){return this.run(()=>forceEvent(this.state,id),false);}forceDeath(){return this.run(()=>({success:checkDeath(this.state,true),messages:[{text:'Forced death check executed.'}]}),true);}
   debugPatch(patch:Partial<{age:number;money:number;health:number;happiness:number;intelligence:number;appearance:number}>){if(!this.state.flags.sandbox&&!this.state.flags.debugEnabled)return{success:false,messages:[{text:'Debug changes require sandbox or development mode.'}]};if(patch.age!==undefined)this.state.character.age=Math.max(0,Math.floor(patch.age));if(patch.money!==undefined)this.state.finances.cash=patch.money;for(const key of ['health','happiness','intelligence','appearance'] as const)if(patch[key]!==undefined)this.state.character.stats[key]=Math.max(0,Math.min(100,patch[key]!));this.emit(true);return{success:true,messages:[{text:'Debug state updated.'}]};}
   updateSettings(patch:Partial<GameState['settings']>){Object.assign(this.state.settings,patch);saveSettings(this.state.settings);this.emit(true);}
