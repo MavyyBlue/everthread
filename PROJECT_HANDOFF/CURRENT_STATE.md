@@ -8,17 +8,17 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `2a9258b7516ff02ea877555ae666290f25404bbe`.
+The latest fully green expanded baseline is commit `e3ffe021f29af0284cd346034b35b9d5c1476f9e`.
 
-- GitHub Actions run #66 (`34318688088`) completed successfully on 2026-09-09.
-- Run #66 expanded upload commit `5b891e8a4663a868f7b04191f812dfd17870f7e9` into the build-bot commit above.
+- GitHub Actions run #67 (`34323865611`) completed successfully on 2026-09-09.
+- Run #67 expanded upload commit `de3a213a8b289fb478fa5963c637c276d1b75876` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, the full regression suite, production build, Pages artifact upload, and Pages deployment all passed.
 - Core regression suite: 82/82.
 - Phase 4 closeout: 88/88.
 - Random-event coherence: 72/72.
 - People Threadspace: 57/57.
 - AI Interaction Testbench: 41/41.
-- Phase 5 estate-planning regression: 28/28.
+- Phase 5 estate-planning regression: 46/46.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
@@ -27,15 +27,15 @@ Real player saves remain diagnostic evidence only. Personal save JSON, seeds, sl
 
 Phase 4 is closed after run #65. Persistent Career World ecosystems, integration/coherence closeout, random-event consequence behavior, AI Interaction Testbench coverage, and unified People Threadspace are green. Threadspace connection labels remain presentation-only and OFF by default.
 
-## Current work — Phase 5A Estate Planning & Asset Bequests — green foundation, playtest corrective patch pending
+## Phase 5A — Estate Planning & Asset Bequests — green, family-continuity playtest correction pending
 
-Run #66 established the Phase 5A green baseline. Mavyy then successfully playtested death → estate review → Generation 2 continuation and confirmed assets were distributed and visible in the descendant life. That playtest exposed three estate/family coherence defects which must be corrected before Phase 5A is called complete.
+Run #67 established the corrected Phase 5A estate baseline after successful real-device playtesting through descendant continuation.
 
-### Existing Phase 5A authority
+### Green estate authority
 
-`EstateSystem.ts` owns estate planning, read-only estate preview, debt settlement, asset liquidation priority, residuary shares, specific bequests, and settlement consumed by descendant continuation.
+`EstateSystem.ts` remains the single authority for estate planning, read-only preview, debt settlement, liquidation priority, residuary shares, specific bequests, protected minor inheritance, and final settlement consumed by descendant continuation.
 
-The established green behavior remains authoritative:
+Established green behavior:
 
 - percentage wills control the residuary estate;
 - specific properties, operating businesses, and collectibles can be bequeathed;
@@ -43,75 +43,69 @@ The established green behavior remains authoritative:
 - unassigned assets are liquidated before named bequests where possible;
 - investments can satisfy estate obligations;
 - stale/deceased-beneficiary bequests fall back to normal handling;
-- unassigned property/business retention preferences remain available;
 - preview and actual settlement use the same allocator;
 - estate plans reset on protagonist handoff;
-- schema 9 remains sufficient for additive estate state.
+- spouse + children default to a fictional 50% spouse / 50% children residuary split;
+- spouse-only and children-only estates resolve coherently;
+- explicit modern wills can include spouse and children;
+- old child-only Phase 5A wills remain backward-compatible and do not silently disinherit a spouse;
+- specific asset bequests can target a spouse or child;
+- a surviving legal spouse becomes widowed at player death and keeps bereavement history;
+- a selected child under 18 receives the exact settlement into a protected trust rather than spendable player systems;
+- trust cash, property, businesses, collectibles, investments, and inherited mortgages release into the authoritative systems at age 18;
+- pending/received inheritance counters transition at release rather than at childhood continuation;
+- off-screen minor child beneficiaries hold protected inheritance value until adulthood;
+- schema 9 remains sufficient for the additive estate/trust state.
 
-### Playtest correction 1 — surviving spouse state
+Trust assets intentionally remain protected/frozen until adulthood rather than being simulated as a second independently managed property/business portfolio. Richer NPC/trust-owned asset simulation belongs to the later Phase 5 NPC-wealth slice and must not create a parallel ownership authority.
 
-Root cause: `DeathSystem` captured the spouse in the completed-life record but did not transition the surviving spouse NPC from `married` to `widowed`. After descendant continuation, the new protagonist therefore saw a living parent whose profile still claimed they were married to the deceased prior protagonist.
+## Current corrective work — generational relationship continuity
 
-Corrective behavior in the pending bundle:
+A three-generation real-device playtest after run #67 confirmed widowhood and protected trusts, then exposed two additional relationship-coherence gaps.
 
-- player death immediately transitions the living spouse NPC to `widowed`;
-- a bereavement memory is retained on that exact spouse;
-- a stale player-partner pointer is cleared if present;
-- the spouse relationship remains available to estate settlement while the death screen is active;
-- descendant family reconstruction therefore observes the survivor as widowed rather than inventing a still-living marriage.
+### Unmarried partner death boundary
 
-### Playtest correction 2 — spouse inheritance
+Root cause: `DeathSystem` cleaned up only a legal `spouse`. If the deceased protagonist had a living `partner` or `fiance`, the survivor could remain `dating` or `engaged` after descendant continuation even though the protagonist had died.
 
-The run #66 allocator considered only living children as heirs. The pending correction expands estate eligibility to the living, non-estranged spouse plus living children.
+Pending corrective behavior:
 
-Everthread's fictional default family-share rule is:
+- resolve the one living active romantic survivor across `partner`, `fiance`, or `spouse` at player death;
+- spouse remains `widowed`;
+- dating/engaged survivor becomes `single`;
+- clear any stale pointer to the deceased protagonist;
+- retain a permanent bereavement memory for every surviving committed partner;
+- reset stale partnered/shared NPC household state where applicable;
+- do not turn an unmarried partner into an estate spouse heir;
+- completed-life `spouse` remains reserved for the legal spouse.
 
-- spouse + children: spouse receives 50% of the residuary estate; children divide the remaining 50%;
-- spouse only: spouse receives 100%;
-- children only: children divide the residuary estate equally;
-- a new explicit will may set custom percentages across the living spouse and children;
-- specific properties, businesses, and collectibles may be left to either a spouse or child.
+### Parent / stepparent household friction
 
-Backward compatibility: a child-only will authored by the run #66 UI is interpreted as relative percentages inside the children's 50% pool while the surviving spouse receives the default 50%. This prevents the previous UI limitation from silently disinheriting an existing spouse. Once the user saves a new plan containing the spouse, those explicit percentages become authoritative.
+Real playtesting also demonstrated that the player's relationship with a parent/stepparent could be driven extremely low through repeated conflict while the NPC couple's partnership remained almost completely isolated from that household hostility.
 
-### Playtest correction 3 — protected inheritance for minors
+The pending `FamilyConflictSystem` is a cross-system consequence bridge, not a second relationship database:
 
-A controlled descendant below age 18 must not instantly receive a massive spendable fortune, property, business, investment portfolio, or attached mortgage.
+- only current player `parent` / `stepparent` NPC couples are eligible;
+- a player relationship score of 20 or lower activates household pressure;
+- hostility toward both adults creates stronger pressure than hostility toward one;
+- a bounded household-tension consequence is recorded in both NPC memories and the family timeline;
+- tension has a two-year cooldown to prevent timeline/memory spam;
+- repeated tension can contribute to separation/divorce rather than guaranteeing it;
+- dating/engaged couples can separate after sustained tension;
+- married couples can divorce after sustained tension;
+- loyal/calm couples receive stability protection;
+- separation clears both NPC partnership pointers and repairs immediate household status;
+- the historical parent/stepparent relationship to the player is preserved rather than deleting a person from the family graph;
+- no new save schema field is required.
 
-The pending correction adds an additive schema-9 protected estate trust:
+The corrective regression adds explicit coverage for dating/fiance death cleanup, preserved legal-spouse widowhood, the <=20 friction threshold, escalating dual-parent hostility, cooldown behavior, visible tension history, and a deterministic sustained-conflict divorce path.
 
-- death-sheet preview marks child inheritances that will be held until age 18;
-- choosing a minor descendant stores their exact selected settlement in `inheritance.trust` rather than player cash/assets;
-- the Assets → Estate tab shows the protected trust but ordinary money/property/business/investment controls cannot spend or manage it;
-- normal Age Up to 18 releases trust cash, properties, businesses, collectibles, investments, and inherited property mortgages into the authoritative player systems;
-- inheritance counters move from pending to received only at release;
-- the continuation timeline states that the inheritance is protected until adulthood instead of claiming immediate receipt;
-- off-screen minor child beneficiaries receive a lightweight protected inheritance value on the NPC and it joins NPC wealth at adulthood instead of immediately becoming spendable wealth.
+This correction is not green until GitHub Actions passes both TypeScript gates, every established regression, the new family-continuity regression, production build, Pages artifact upload, and live Pages deployment.
 
-Trust assets intentionally remain protected/frozen until adulthood in this correction rather than being simulated as a second independently managed property/business portfolio. Richer NPC/trust-owned asset simulation belongs to the later Phase 5 NPC-wealth slice and must not create a parallel ownership authority now.
-
-### Phase 5A corrective regression gate
-
-`estatePlanningRegression.ts` retains the existing Phase 5A coverage and adds checks for:
-
-- legacy child-only will spouse protection;
-- explicit spouse percentage shares;
-- specific spouse asset bequests;
-- surviving spouse `widowed` state and bereavement memory at death;
-- widowed spouse estate eligibility;
-- minor descendant continuation with no immediate inherited cash/property control;
-- exact protected-trust creation;
-- Age Up release at 18;
-- inherited property release from trust;
-- pending/received inheritance counter transition; and
-- off-screen minor sibling inheritance protection.
-
-The correction is not green until GitHub Actions passes both TypeScript gates, every established regression, the expanded estate-planning regression, production build, Pages artifact upload, and live Pages deployment.
-
-## Phase 5 next slices after Phase 5A correction is green
+## Phase 5 next slices after the family-continuity correction is green
 
 Continue the roadmap without replacing the estate foundation:
 
+- fix unique, identifiable save-export filenames;
 - fictionalized estate administration / settlement consequences;
 - richer NPC-owned assets and businesses so family wealth exists outside the controlled protagonist;
 - broader kin taxonomy only where it improves real family-tree behavior;
@@ -121,7 +115,7 @@ Continue the roadmap without replacing the estate foundation:
 
 ## Known quality / architecture issues to keep visible
 
-- Save export downloads currently reuse character/age-based filenames and can collide when multiple exports are made from the same life state. Mavyy explicitly requested a unique, identifiable export filename after the inheritance-coherence corrections are green.
+- Save export downloads currently reuse character/age-based filenames and can collide when multiple exports are made from the same life state. Mavyy explicitly requested a unique, identifiable export filename after the inheritance/family-continuity corrections are green.
 - Exact seeded replay serialization remains mandatory; do not introduce wall-clock values into simulation state or runtime IDs.
 - Every meaningful player action stays under controlled system/GameEngine ownership.
 - AI observation/projection code remains read-only.

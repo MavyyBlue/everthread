@@ -26,6 +26,7 @@ import { triggerRandomEvent } from './EventSystem';
 import { evaluateAchievements, evaluateChallenges } from './AchievementSystem';
 import { checkDeath } from './DeathSystem';
 import { processNpcInheritanceTrusts, releaseMatureInheritanceTrust } from './EstateSystem';
+import { processFamilyConflictYear } from './FamilyConflictSystem';
 
 function snapshotForRewind(state:GameState){if(!state.flags.rewindEnabled)return;const clone=structuredClone(state);clone.yearlySnapshots=[];const encoded=JSON.stringify(clone);state.yearlySnapshots.push({age:state.character.age,state:encoded});state.yearlySnapshots=state.yearlySnapshots.slice(-35);}
 
@@ -40,6 +41,7 @@ export function ageUp(state:GameState):EngineResult {
     releaseMatureInheritanceTrust(state);
     processHealthYear(state);
     processNpcLives(state);
+    processFamilyConflictYear(state);
     processNpcInheritanceTrusts(state);
     processFamilyPlanningYear(state);
     processEducationYear(state);
