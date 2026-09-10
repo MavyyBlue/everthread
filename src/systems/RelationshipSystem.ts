@@ -5,6 +5,7 @@ import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
 import { consumeAction } from '../core/actionEconomy';
 import { ensureNpcLife } from './NpcLifeSystem';
+import { assignNpcReproductiveSex, biologicalChildGate } from './ReproductionSystem';
 
 const interactionEffects: Record<string,{base:number;happiness:number;karma?:number}> = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
@@ -177,6 +178,7 @@ export function meetPotentialPartner(state:GameState):EngineResult {
     countryId:state.character.countryId,city:state.character.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian']),fertility:rng.int(20,92),maritalStatus:'single',
     traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:rng.int(0,35),memories:[],parentIds:[],childIds:[]
   };
+  assignNpcReproductiveSex(state,npc);
   state.npcs[id]=npc;ensureNpcLife(state,npc);
   const rel:Relationship={id:makeStateId(state,'rel'),npcId:id,type:'friend',score:rng.int(20,48),attraction:rng.int(35,95),compatibility:rng.int(25,95),yearsKnown:0};
   state.relationships.push(rel); state.rngCounter=rng.counter();
@@ -213,7 +215,7 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   if(action==='break_up'||action==='divorce') { if(!['partner','fiance','spouse'].includes(rel.type)) success=false; else {newType='ex';npc.maritalStatus=action==='divorce'?'divorced':'single';rel.score=clamp(rel.score-18);text=`You ${action==='divorce'?'divorced':'broke up with'} ${npc.firstName}.`;} }
   if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,chance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`; }
   if(!success && !text) text='That relationship step is not available right now.';
-  if(success){rel.type=newType;if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
+  if(success){rel.type=newType;if(CURRENT_ROMANTIC_TYPES.has(newType))assignNpcReproductiveSex(state,npc);if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:success?3:1,text,npcIds:[npcId]});
   state.rngCounter=rng.counter(); return {success,messages:[{text}]};
 }
@@ -263,7 +265,12 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
   const partner=partnerId?state.npcs[partnerId]:undefined;
   const rel=partnerId?state.relationships.find(r=>r.npcId===partnerId):undefined;
   if(!adopt && (!partner||!rel||!['partner','fiance','spouse'].includes(rel.type))) return {success:false,messages:[{text:'A current partner is required for this path.'}]};
+  if(adopt && partnerId && (!partner||!rel||!['partner','fiance','spouse'].includes(rel.type))) return {success:false,messages:[{text:'Only a current partner can be recorded as a co-parent for this adoption.'}]};
   if(!adopt && partner && partner.age<16) return {success:false,messages:[{text:"Both parents must meet the game's minimum parenting age."}]};
+  if(!adopt){
+    const biologicalGate=biologicalChildGate(state,partnerId);
+    if(!biologicalGate.allowed)return{success:false,messages:[{text:biologicalGate.reason??'This pairing cannot try for a biological child.'}]};
+  }
   const rng=createRng(state.seed,state.rngCounter);
   const fertility=adopt?1:clamp((state.character.secondary.fertility+(partner?.fertility??50))/200,.08,.92);
   if(!adopt){
@@ -285,9 +292,9 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
     const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
       sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
     state.npcs[id]=child;ensureNpcLife(state,child); state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
-    partner?.childIds.push(id); state.legacy.familyTreeNpcIds.push(id);
+    if(partner&&!partner.childIds.includes(id))partner.childIds.push(id); state.legacy.familyTreeNpcIds.push(id);
   }
   const text=adopt?`You adopted ${count>1?`${count} children`:names[0]}.`:`${count===1?`${names[0]} was born.`:`You welcomed ${count===2?'twins':'triplets'}: ${names.join(', ')}.`}`;
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text}); state.rngCounter=rng.counter();
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text,npcIds:partner?[partner.id]:undefined}); state.rngCounter=rng.counter();
   return {success:true,messages:[{text}]};
 }
