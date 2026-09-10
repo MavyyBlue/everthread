@@ -8,10 +8,10 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `c57dfc3440a51f299867a3330ec8f2278dd66e67`.
+The latest fully green expanded baseline is commit `25330555f2f9b826791eccd0d5e3be85e957bf77`.
 
-- GitHub Actions Run #77 (`34519148544`) completed successfully on 2026-09-10 UTC.
-- Run #77 expanded corrective upload commit `7f95eaa22cd53657ae10f3aadb97d22bc5a372b0` into the build-bot commit above.
+- GitHub Actions Run #79 (`34520653552`) completed successfully on 2026-09-10 UTC.
+- Run #79 expanded upload commit `fbbc3c133a44922df35453cec4a41e814f1e14c9` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, the full established regression suite, production build, Pages artifact upload, and Pages deployment passed.
 - Core regression: 82/82.
 - People Threadspace: 57/57.
@@ -22,6 +22,7 @@ The latest fully green expanded baseline is commit `c57dfc3440a51f299867a3330ec8
 - Secret-code regression: 18/18.
 - Rewind scaling regression: 16/16.
 - NPC household coherence regression: 35/35.
+- NPC health / mortality regression: 18/18.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
@@ -46,8 +47,8 @@ Current status:
 
 1. **Save / rewind scaling — CI Green (Run #75).**
 2. **Player partner/spouse ↔ NPC household coherence — CI Green (Run #77).**
-3. **NPC health / mortality semantics — Local Green; upload/CI pending.**
-4. Age-aware reproduction — Queued.
+3. **NPC health / mortality semantics — CI Green (Run #79).**
+4. **Age-aware reproduction — Local Green; upload/CI pending.**
 5. NPC gender / sexual-orientation coherence — Queued.
 6. Collision-aware naming — Queued.
 7. Relationship/event microcopy polish — Queued.
@@ -101,11 +102,11 @@ A dedicated synthetic `npcHouseholdCoherenceRegression.ts` passes **35/35** in R
 Run #76 failed only because the new regression held TypeScript-narrowed object references across mutations. The corrective Run #77 test re-reads authoritative state after each mutation; production Slice 2 logic was unchanged. Run #77 passed both TypeScript gates, all regressions, production build, Pages artifact upload, and live deployment. Slice 2 is **CI Green**.
 
 
-## Slice 3 implementation — Local Green / CI pending
+## Slice 3 implementation — CI Green
 
 Root cause: NPC health can clamp to `0` during ordinary aging/condition drain, but the existing death path remained probabilistic (maximum 55%) and background odd-year simulation returned before any mortality resolution. This allowed living NPCs at zero health to persist.
 
-The pending Slice 3 overlay:
+The green Slice 3 implementation:
 
 - defines health `<= 0` as terminal during NPC simulation while keeping any positive health probabilistic/survivable;
 - routes terminal health through the existing centralized NPC death cleanup rather than an invariant-side kill;
@@ -118,16 +119,27 @@ The pending Slice 3 overlay:
 - adds validator coverage for any future living terminal-health contradiction;
 - keeps save schema at 9 and introduces no persisted field.
 
-Dedicated `npcHealthMortalityRegression.ts`: **18/18 isolated local runtime checks passed**. Combined local source also retains **NPC Household Coherence 35/35**. The real diagnostic save was used only as diagnosis: its 7 living zero-health NPCs normalize to living health-1 critical NPCs on import, with no remaining living terminal-health records and 7 rewind snapshots retained.
+Dedicated `npcHealthMortalityRegression.ts`: **18/18 checks passed in Run #79**. NPC Household Coherence remained **35/35**, every established regression stayed green, and the production build, Pages artifact, and live deployment passed. The real diagnostic save was used only as diagnosis: its 7 living zero-health NPCs normalize to living health-1 critical NPCs on import, with no remaining living terminal-health records and 7 rewind snapshots retained. Slice 3 is **CI Green**.
 
-This slice is **not green** until GitHub Actions passes both TypeScript gates, every established regression plus NPC Health / Mortality, production build, Pages artifact upload, and live Pages deployment.
+
+## Slice 4 implementation — Local Green / CI pending
+
+`ReproductionSystem` now owns one shared reproductive-age factor for player and NPC biological family planning. The existing stored fertility stat and young-adult annual chance remain the baseline; age multiplies the chance rather than mutating fertility. Female reproductive-age pressure increases materially through later adulthood and reaches zero at 53, while male decline is slower and extends beyond the old autonomous-NPC age-52 cutoff.
+
+`biologicalChildGate()` now exposes `ageFactor` and `conceptionChance`. When the age factor reaches zero the biological path is disabled with adoption still available; this rejection happens before the child-attempt action or RNG stream is consumed. Viable attempts retain the same one chance draw and pregnancy timing/multiples flow as before.
+
+`NpcLifeSystem` removes the blunt `npc.age>52||partner.age>52` family cutoff and multiplies autonomous biological family pressure by the same pair age factor. Its bounded long-marriage biological fallback now requires meaningful age-adjusted fertility, preventing the fallback from overriding age viability. Existing autonomous adoption rules are otherwise unchanged.
+
+People → Family Planning gives qualitative feedback when reproductive age materially reduces conception odds; it does not expose the simulation weight as medical advice. No new persisted state, no schema bump, and no additional main-RNG draw.
+
+Dedicated `ageAwareReproductionRegression.ts`: **21/21 local runtime checks passed**, covering the shared curve, baseline preservation, player gates/chance, blocked-attempt economy/RNG safety, adoption, older-male viability, nonbinary reproductive-sex authority, pregnancy timing, and autonomous NPC family behavior. Slice 4 remains **Local Green / CI pending** until GitHub passes every gate.
 
 ## Known continuing quality / architecture issues
 
 - NPC gender/sexual-orientation matchmaking remains intentionally simplified until Slice 5.
 - Player-romance/NPC-household projection correction is CI Green in Run #77.
-- NPC zero-health terminal semantics are implemented locally in Slice 3 and pending CI verification.
-- Biological conception lacks an age-aware fertility curve until Slice 4.
+- NPC zero-health terminal semantics are CI Green in Run #79.
+- Age-aware biological conception is implemented locally in Slice 4 and pending CI verification.
 - Name collisions remain possible despite expanded pools until Slice 6.
 - Relationship interaction microcopy has known grammatical templates until Slice 7.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.

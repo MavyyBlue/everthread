@@ -49,7 +49,11 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:Engin
         :expecting?.partnerId===npc.id
           ?`You and ${npc.firstName} are expecting ${expecting.expectedChildren===2?'twins':expecting.expectedChildren===3?'triplets':'a child'} next year.`
           :selectedFamilyGate?.allowed
-            ?'You can try for a biological child together or grow your family through adoption.'
+            ?selectedFamilyGate.ageFactor!==undefined&&selectedFamilyGate.ageFactor<.15
+              ?'Biological conception is still possible, but reproductive age now makes it very unlikely. Adoption remains available.'
+              :selectedFamilyGate.ageFactor!==undefined&&selectedFamilyGate.ageFactor<.55
+                ?'Biological conception is still possible, but reproductive age is reducing the odds. Adoption remains available.'
+                :'You can try for a biological child together or grow your family through adoption.'
             :selectedFamilyGate?.reason??'Adoption remains available for this relationship.'}</p>
       <div className="action-grid">
         <button className={!selectedFamilyGate?.allowed?'muted-action':''} onClick={()=>onResult(gameEngine.haveChild(npc.id,false))} disabled={state.character.age<18||npc.age<18||!selectedFamilyGate?.allowed||!!expecting||!canTryChild||newbornPresent}>{expecting?.partnerId===npc.id?'Expecting':!canTryChild?'Tried this year':'Try for a Child'}</button>

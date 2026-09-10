@@ -55,7 +55,7 @@ The real diagnostic save was used only to reproduce/verify the failure shape and
 
 ## Slice 3 — NPC health / mortality semantics
 
-Status: **Local Green — upload/CI pending**.
+Status: **CI Green — Run #79 (`34520653552`), expanded baseline `25330555f2f9b826791eccd0d5e3be85e957bf77`.**
 
 Goal: eliminate contradictory living NPCs at zero health without turning save migration or generic invariants into a mass-death shortcut. Zero is terminal during NPC simulation; positive health, including critically low positive values, remains survivable and uses the existing probabilistic mortality model.
 
@@ -72,17 +72,29 @@ Implementation:
 - state validation now explicitly reports any living NPC that somehow remains at terminal health;
 - no save-schema bump and no new persisted field.
 
-Synthetic regression: **18/18 isolated local runtime checks passed** across terminal threshold semantics, validator detection, legacy/direct repair, schema-9 import repair, dead-NPC preservation, deterministic terminal death, ordinary inheritance cleanup, duplicate-death prevention, background-cadence terminal death, critically low positive survival, age/illness mortality pressure, spouse/widowhood cleanup, and same-year illness-drain death. Existing Slice 2 household regression remains **35/35** against the combined local source.
+Synthetic regression: **18/18 checks passed in Run #79** across terminal threshold semantics, validator detection, legacy/direct repair, schema-9 import repair, dead-NPC preservation, deterministic terminal death, ordinary inheritance cleanup, duplicate-death prevention, background-cadence terminal death, critically low positive survival, age/illness mortality pressure, spouse/widowhood cleanup, and same-year illness-drain death. Existing Slice 2 household regression remained **35/35** and every established suite stayed green.
 
-Diagnostic verification against the supplied stress save (not shipped): all **7** previously living zero-health NPCs import as living health-1 critical NPCs; zero living terminal-health contradictions remain, save schema stays 9, and Slice 1 rewind normalization still retains 7 snapshots.
+Diagnostic verification against the supplied stress save (not shipped): all **7** previously living zero-health NPCs import as living health-1 critical NPCs; zero living terminal-health contradictions remain, save schema stays 9, and Slice 1 rewind normalization still retains 7 snapshots. Run #79 passed both TypeScript gates, all regressions, production build, Pages artifact upload, and live deployment.
 
 ## Slice 4 — Age-aware reproduction
 
-Status: **Queued**.
+Status: **Local Green — upload/CI pending**.
 
 Goal: preserve fertility stats, reproductive compatibility, pregnancy timing, adoption, family graph linkage, and action economy while adding biologically age-sensitive conception pressure. No magical age exception and no change to the player-only intersex limitation until separately designed.
 
-Regression targets: young-adult baseline, advancing age curve, incompatible pairings, nonbinary reproductive-sex authority, adoption unaffected, pregnancy/action consumption unchanged.
+Implementation:
+
+- `ReproductionSystem` owns one shared, smooth gameplay reproductive-age curve instead of separate player/NPC age rules;
+- young-adult fertility keeps the pre-Slice-4 baseline, including the existing 92% high-fertility annual ceiling, then age multiplies that chance rather than rewriting stored fertility;
+- female reproductive-age pressure rises substantially through the late thirties/forties, becomes exceptionally low around 50, and reaches zero at 53; male reproductive-age decline is slower and no longer inherits the old NPC-only age-52 cutoff;
+- player `biologicalChildGate()` returns the age factor and age-adjusted conception chance, and blocks only when the shared curve reaches zero or an existing compatibility rule already blocks the pairing;
+- age-ineligible biological attempts fail before action/RNG consumption, while viable attempts use the same single RNG chance draw as before;
+- People → Family Planning gives qualitative age-pressure feedback without presenting the gameplay curve as a clinical percentage;
+- autonomous NPC biological family expansion uses the same pair age factor and can no longer force a child through the long-marriage fallback when age-adjusted fertility is too low;
+- autonomous adoption probability/eligibility is otherwise unchanged, as are player adoption, pregnancy timing, multiples, family linkage, nonbinary reproductive-sex authority, and the current player-intersex limitation;
+- no save-schema bump, persisted field, or additional main-RNG draw.
+
+Dedicated synthetic `ageAwareReproductionRegression.ts`: **21/21 local runtime checks passed** covering young-adult baseline preservation, progressive age pressure, late-age floor/zero behavior, slower male decline, reproductive-sex compatibility, player gate/chance integration, no RNG/action consumption for age-blocked attempts, adoption independence, older-male/younger-female viability, nonbinary reproductive-sex authority, pregnancy timing/action economy, and autonomous-family age behavior.
 
 ## Slice 5 — NPC gender / sexual-orientation coherence
 

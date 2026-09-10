@@ -269,12 +269,10 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
   if(!adopt && (!partner||!rel||!['partner','fiance','spouse'].includes(rel.type))) return {success:false,messages:[{text:'A current partner is required for this path.'}]};
   if(adopt && partnerId && (!partner||!rel||!['partner','fiance','spouse'].includes(rel.type))) return {success:false,messages:[{text:'Only a current partner can be recorded as a co-parent for this adoption.'}]};
   if(!adopt && partner && partner.age<16) return {success:false,messages:[{text:"Both parents must meet the game's minimum parenting age."}]};
-  if(!adopt){
-    const biologicalGate=biologicalChildGate(state,partnerId);
-    if(!biologicalGate.allowed)return{success:false,messages:[{text:biologicalGate.reason??'This pairing cannot try for a biological child.'}]};
-  }
+  const biologicalGate=!adopt?biologicalChildGate(state,partnerId):undefined;
+  if(biologicalGate&&!biologicalGate.allowed)return{success:false,messages:[{text:biologicalGate.reason??'This pairing cannot try for a biological child.'}]};
   const rng=createRng(state.seed,state.rngCounter);
-  const fertility=adopt?1:clamp((state.character.secondary.fertility+(partner?.fertility??50))/200,.08,.92);
+  const fertility=adopt?1:biologicalGate?.conceptionChance??0;
   if(!adopt){
     const gate=consumeAction(state,{policy:'family.child_attempt'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
     if(!rng.chance(fertility)){state.rngCounter=rng.counter();return{success:false,messages:[{text:'You tried for a child, but there was no pregnancy this year.'}]};}
