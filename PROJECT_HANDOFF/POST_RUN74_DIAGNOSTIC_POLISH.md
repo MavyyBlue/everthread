@@ -144,7 +144,7 @@ Run #82 passed both TypeScript checks, core regression 82/82, every established 
 
 ## Slice 7 — Relationship/event microcopy polish
 
-Status: **Implementing — focused preflight green; CI candidate prepared.**
+Status: **Implementing — Run #83 TypeScript failure diagnosed; corrective CI candidate prepared.**
 
 Goal: replace grammatical templates such as `You conversation with ...` / `You compliment with ...` with action-specific natural wording without altering outcomes, memories, action economy, or RNG.
 
@@ -158,6 +158,8 @@ Candidate implementation:
 - no effect values, personality modifiers, action policies, costs, relationship deltas, happiness/karma effects, RNG calls, memory semantics, timeline metadata, or save fields change.
 
 Focused regression `relationshipMicrocopyRegression.ts` covers every interaction action's direct copy plus the actual timeline and NPC-memory projection emitted by `interactWithNpc()`. Modified/new TypeScript files transpile with zero syntax diagnostics.
+
+Run #83 (`34542005844`) imported the candidate successfully and expanded it to `1ec4d6397ee39857d649bb9440cbe92c731e150f`, but `typecheck:engine` failed at `RelationshipSystem.ts` because the `as const` effect table narrowed entries without `karma` into types that do not expose the optional property. Regressions, build, and deployment were correctly skipped. The correction changes only TypeScript typing: the 13-key action union is explicit and `interactionEffects` is `Record<RelationshipInteractionAction,{base:number;happiness:number;karma?:number}>`. Effect values, copy, action economy, RNG, state mutation, and save semantics are unchanged.
 
 Regression gate: both TypeScript checks, all established suites, relationship microcopy regression, production build, Pages artifact upload, and deployment must pass before Slice 7 becomes CI Green or Slice 8 starts.
 

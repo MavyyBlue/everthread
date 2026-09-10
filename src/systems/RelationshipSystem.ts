@@ -9,13 +9,15 @@ import { assignNpcIdentity } from './NpcIdentitySystem';
 import { assignGeneratedNpcOrientation, characterRomanticGender, pickRomanticTargetGender, playerNpcRomanticallyCompatible, playerNpcSexuallyCompatible } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 
-const interactionEffects = {
+export type RelationshipInteractionAction='conversation'|'compliment'|'insult'|'spend_time'|'give_money'|'gift'|'ask_money'|'argue'|'apologize'|'prank'|'fight'|'counseling'|'vacation';
+
+type RelationshipInteractionEffect={base:number;happiness:number;karma?:number};
+
+const interactionEffects:Record<RelationshipInteractionAction,RelationshipInteractionEffect> = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
   give_money:{base:8,happiness:1,karma:2}, gift:{base:6,happiness:3}, ask_money:{base:-2,happiness:0}, argue:{base:-9,happiness:-2},
   apologize:{base:7,happiness:1,karma:1}, prank:{base:1,happiness:2}, fight:{base:-20,happiness:-5,karma:-4}, counseling:{base:8,happiness:2}, vacation:{base:11,happiness:6},
-} as const;
-
-export type RelationshipInteractionAction=keyof typeof interactionEffects;
+};
 
 type RelationshipInteractionCopy={timeline:(npcName:string)=>string;memory:(playerName:string)=>string};
 

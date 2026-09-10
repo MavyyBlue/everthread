@@ -54,7 +54,7 @@ Current status:
 4. **Age-aware reproduction — CI Green (Run #80).**
 5. **NPC gender / sexual-orientation coherence — CI Green (Run #81).**
 6. **Collision-aware naming — CI Green (Run #82).**
-7. **Relationship/event microcopy polish — Implementing; focused preflight green, CI candidate prepared.**
+7. **Relationship/event microcopy polish — Corrective CI candidate prepared after Run #83 TypeScript failure.**
 8. Integrated long-life QA — Queued.
 
 ## Slice 1 implementation — CI Green
@@ -186,6 +186,8 @@ Integration covers new-life parents, Meet Someone, player births/adoption, auton
 Run #82 (`34540916777`) passed both TypeScript gates, core regression 82/82, NPC orientation coherence 55/55, collision-aware naming **32/32**, every established adjacent regression, production build, Pages artifact upload, and live deployment. The overlay expanded into `7e86c3a9d5fa56a03d3b760b4305a92bf92f789b`. The earlier handoff note that said 33 naming checks was a bookkeeping error; the actual repository suite contains and passed 32 checks. Slice 6 is **CI Green**.
 
 ## Slice 7 implementation — CI candidate prepared
+
+Run #83 (`34542005844`) imported the Slice 7 overlay and expanded it to `1ec4d6397ee39857d649bb9440cbe92c731e150f`, then failed at the engine TypeScript gate before regressions/build. Root cause: the new `as const` interaction-effect map inferred a union whose entries without `karma` did not expose an optional `karma` property at `spec.karma`. The correction preserves the same 13 action keys and all runtime values, but gives the effect map an explicit shared `{base:number; happiness:number; karma?:number}` value type. No simulation behavior changed. The corrected overlay is based on the failed expanded commit so the new microcopy regression and runner wiring remain intact. Slice 7 is still **not CI Green** until the corrected upload passes every gate.
 
 Root cause: `interactWithNpc()` projected internal action IDs directly into two generic English templates for timeline and NPC-memory text. That produced grammatical output such as `You conversation with ...` and `Alex chose to compliment.` even though the underlying interaction outcomes were correct.
 
