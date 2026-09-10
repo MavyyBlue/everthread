@@ -31,6 +31,16 @@ function directRelationship(state:GameState,npcId:string){return state.relations
 function isPlayerFamily(state:GameState,npcId:string){const type=directRelationship(state,npcId)?.type;return Boolean(type&&FAMILY_RELATION_TYPES.has(type));}
 function hasPlayerRomance(state:GameState,npcId:string){if(!state.character.alive)return false;const type=directRelationship(state,npcId)?.type;return Boolean(type&&PLAYER_ROMANTIC_TYPES.has(type));}
 
+export function npcHealthIsTerminal(npc:Pick<Npc,'health'>){return npc.health<=0;}
+
+export function repairLegacyLivingNpcHealth(state:GameState){
+  let repaired=0;
+  for(const npc of Object.values(state.npcs??{})){
+    if(npc.alive&&Number.isFinite(npc.health)&&npcHealthIsTerminal(npc)){npc.health=1;repaired+=1;}
+  }
+  return repaired;
+}
+
 export function syncNpcHouseholdProjection(state:GameState,npc:Npc){
   const life=npc.life;if(!life||!npc.alive)return;
   if(npc.partnerId===state.character.id)npc.partnerId=undefined;
@@ -252,8 +262,10 @@ function processNpcHealthYear(state:GameState,npc:Npc,rng:SeededRng,coarse=false
   life.health.fitness=clamp(life.health.fitness+rng.int(-2,2)-(npc.age>55?1:0)+(npc.traits.includes('responsible')?.5:0));
   life.health.wellness=clamp((life.health.wellness*.8)+(npc.happiness*.2)+rng.int(-2,2));
   npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.08*cycles)+rng.int(-2,1));
+  if(npcHealthIsTerminal(npc))return;
   for(const condition of [...life.health.conditions]){
     condition.years+=cycles;const def=illnesses.find(item=>item.id===condition.illnessId);if(def){npc.health=clamp(npc.health-def.healthDrain*.35*cycles);condition.severity=clamp(condition.severity+rng.int(-3,4));}
+    if(npcHealthIsTerminal(npc))return;
     const careChance=clamp(.28+(npc.wealth>10000?.18:0)+(life.finance.creditStress<45?.08:0),.12,.68);
     if(!condition.treated&&rng.chance(careChance))condition.treated=true;
     if(!condition.chronic&&condition.years>=1&&rng.chance(condition.treated?.58:.28)){life.health.conditions=life.health.conditions.filter(item=>item!==condition);addNpcMemory(state,npc,'recovery',3,`Recovered from ${condition.name}.`);}
@@ -418,12 +430,13 @@ function processHouseholdMoves(state:GameState,npc:Npc,rng:SeededRng,coarse=fals
   if(moved.length&&moved.some(id=>timelineRelevant(state,id)))state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:1,text:`${npc.firstName}'s household moved from ${old} to ${destination}.`,npcIds:moved});
 }
 
-function mortalityChance(npc:Npc){
+export function npcMortalityChance(npc:Npc){
   const life=npc.life!;const conditionRisk=life.health.conditions.reduce((sum,condition)=>{const def=illnesses.find(item=>item.id===condition.illnessId);return sum+(def?.mortalityFactor??0)*(condition.severity/50);},0);
   return clamp(Math.max(.001,(npc.age-70)*.0055+(18-npc.health)*.002)+conditionRisk,0,.55);
 }
 
 function handleNpcDeath(state:GameState,npc:Npc){
+  if(!npc.alive)return false;
   const life=npc.life!;npc.alive=false;npc.imprisoned=false;life.legal.sentenceRemaining=0;life.household.status='institutional';
   if(npc.partnerId){const partner=state.npcs[npc.partnerId];if(partner?.alive){if(partner.maritalStatus==='married')partner.maritalStatus='widowed';else partner.maritalStatus='single';partner.partnerId=undefined;addNpcMemory(state,partner,'bereavement',-12,`${npc.firstName} ${npc.lastName} died.`,true);}npc.partnerId=undefined;}
   const playerIsChild=npc.childIds.includes(state.character.id)&&state.character.alive;const livingChildren=npc.childIds.map(id=>state.npcs[id]).filter((child):child is Npc=>Boolean(child?.alive));const heirCount=livingChildren.length+(playerIsChild?1:0);
@@ -431,6 +444,7 @@ function handleNpcDeath(state:GameState,npc:Npc){
   if(heirCount&&estate>0){const inheritance=Math.round(estate*.55/heirCount);for(const child of livingChildren)child.wealth+=inheritance;if(playerIsChild&&inheritance>0){state.finances.cash+=inheritance;state.flags.inheritanceReceived=Number(state.flags.inheritanceReceived??0)+inheritance;state.flags.lifetimeInheritance=Number(state.flags.lifetimeInheritance??0)+inheritance;state.flags.inheritances=Number(state.flags.inheritances??0)+1;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You inherited ${inheritance.toLocaleString()} from ${npc.firstName} ${npc.lastName}.`,moneyDelta:inheritance,npcIds:[npc.id]});}}
   npc.wealth=0;life.finance.propertyValue=0;life.finance.debt=0;for(const rel of state.relationships.filter(r=>r.npcId===npc.id))rel.score=clamp(rel.score-10);
   if(timelineRelevant(state,npc.id)||isPlayerFamily(state,npc.id))state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text:`${npc.firstName} ${npc.lastName} died at age ${npc.age}.`,npcIds:[npc.id]});
+  return true;
 }
 
 function processRelationshipDrift(state:GameState,rng:SeededRng){
@@ -447,10 +461,11 @@ export function processNpcLives(state:GameState,rng=createRng(state.seed,state.r
   const startingNpcs=Object.values(state.npcs);const processedCouples=new Set<string>();
   for(const npc of startingNpcs){
     if(!npc.alive)continue;ensureNpcLife(state,npc);npc.age+=1;const meaningful=relationshipIsMeaningful(state,npc.id);if(meaningful)npc.simulationTier='full';const background=npc.simulationTier==='background'&&!meaningful;
+    if(npcHealthIsTerminal(npc)){handleNpcDeath(state,npc);continue;}
     processNpcEducationYear(state,npc,rng);
     const coarse=background;
-    if(background&&npc.age%2!==0){npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.07));continue;}
-    processNpcHealthYear(state,npc,rng,coarse);processNpcLegalYear(state,npc,rng,coarse);updateNpcCareer(state,npc,rng);processNpcFinanceYear(state,npc,rng);processNpcPublicLifeYear(state,npc,rng,coarse);processHouseholdMoves(state,npc,rng,coarse);
+    if(background&&npc.age%2!==0){npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.07));if(npcHealthIsTerminal(npc))handleNpcDeath(state,npc);continue;}
+    processNpcHealthYear(state,npc,rng,coarse);if(npcHealthIsTerminal(npc)){handleNpcDeath(state,npc);continue;}processNpcLegalYear(state,npc,rng,coarse);updateNpcCareer(state,npc,rng);processNpcFinanceYear(state,npc,rng);processNpcPublicLifeYear(state,npc,rng,coarse);processHouseholdMoves(state,npc,rng,coarse);
     if(npc.life!.legal.sentenceRemaining<=0){
       const partnerChance=(background?.014:.025)+(npc.traits.includes('romantic')?.018:0)+(npc.happiness>70?.006:0)+(recentMemoryMood(npc)>5?.004:0);
       const cadenceOk=!background||npc.age%4===0;
@@ -460,7 +475,7 @@ export function processNpcLives(state:GameState,rng=createRng(state.seed,state.r
       advanceNpcPartnership(state,npc,rng);maybeExpandNpcFamily(state,npc,processedCouples,rng,background);
     }
     npc.life!.lastFullSimulationAge=npc.age;
-    if((npc.age>72||npc.health<18)&&rng.chance(mortalityChance(npc)))handleNpcDeath(state,npc);
+    if((npc.age>72||npc.health<18)&&rng.chance(npcMortalityChance(npc)))handleNpcDeath(state,npc);
   }
   processRelationshipDrift(state,rng);state.rngCounter=rng.counter();
 }

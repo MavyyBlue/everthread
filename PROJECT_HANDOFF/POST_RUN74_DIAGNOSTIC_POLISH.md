@@ -34,7 +34,7 @@ Diagnostic projection against the supplied stress save (not shipped as a fixture
 
 ## Slice 2 — Player partner/spouse ↔ NPC household coherence
 
-Status: **Local Green — upload/CI pending**.
+Status: **CI Green — Run #77 (`34519148544`), expanded baseline `c57dfc3440a51f299867a3330ec8f2278dd66e67`.**
 
 Goal: player romance remains authoritative in `state.relationships`, while `NpcLifeSystem` correctly projects active partner/fiance/spouse household status and shared-housing semantics. Do not misuse NPC↔NPC `partnerId` as a second player-relationship authority.
 
@@ -49,17 +49,32 @@ Implementation:
 - player death does not leave/recreate shared housing, and descendant continuation converts the surviving NPC spouse cleanly from NPC↔NPC pointer semantics to player relationship truth;
 - no save-schema bump or new main-RNG consumption.
 
-Synthetic regression: **35/35 local runtime checks passed** across dating, engagement, marriage, breakup/divorce, reconciliation, owned property, stale-save repair, legacy player partner IDs, custody/release, NPC↔NPC partnership preservation, player death/reload, teen romance, and descendant continuation.
+Synthetic regression: **35/35 checks passed in Run #77** across dating, engagement, marriage, breakup/divorce, reconciliation, owned property, stale-save repair, legacy player partner IDs, custody/release, NPC↔NPC partnership preservation, player death/reload, teen romance, and descendant continuation. Run #76 exposed a test-only TypeScript narrowing defect; the corrected test re-reads authoritative state after mutations and Run #77 passed without changing production Slice 2 behavior.
 
-The real diagnostic save was used only to reproduce/verify the failure shape and is not shipped as a fixture. Under the pending correction its stale player-spouse household projects as `partnered/shared`.
+The real diagnostic save was used only to reproduce/verify the failure shape and is not shipped as a fixture. Under the green correction its stale player-spouse household projects as `partnered/shared`.
 
 ## Slice 3 — NPC health / mortality semantics
 
-Status: **Queued**.
+Status: **Local Green — upload/CI pending**.
 
-Goal: eliminate contradictory living NPCs at zero health without turning invariants into a mass-death shortcut. Trace health depletion first, define a clear terminal/critical-health contract, then keep death cleanup centralized.
+Goal: eliminate contradictory living NPCs at zero health without turning save migration or generic invariants into a mass-death shortcut. Zero is terminal during NPC simulation; positive health, including critically low positive values, remains survivable and uses the existing probabilistic mortality model.
 
-Regression targets: health reaches zero, severe-but-positive survival, elderly mortality, illness mortality, partner/family cleanup, no duplicate death processing.
+Implementation:
+
+- `npcHealthIsTerminal()` defines the terminal threshold as health `<= 0`;
+- `processNpcLives()` resolves terminal health through the existing centralized `handleNpcDeath()` path before unrelated annual systems continue, and checks again immediately after health degradation;
+- the coarse background odd-year path now resolves a health drop to zero instead of `continue`-skipping mortality;
+- `processNpcHealthYear()` stops additional condition/recovery/onset work once health reaches zero;
+- `handleNpcDeath()` is idempotent so already-dead NPCs cannot duplicate inheritance, widowhood, or death-history effects if called defensively;
+- `npcMortalityChance()` remains probabilistic for positive-health NPCs and is exported for focused regression coverage; advanced age and serious conditions still increase risk;
+- existing saves with living zero-health NPCs are repaired on load to health `1`, preserving those established lives rather than killing several NPCs merely because the build changed; future simulation can then resolve their critical state normally;
+- dead zero-health NPCs are left untouched;
+- state validation now explicitly reports any living NPC that somehow remains at terminal health;
+- no save-schema bump and no new persisted field.
+
+Synthetic regression: **18/18 isolated local runtime checks passed** across terminal threshold semantics, validator detection, legacy/direct repair, schema-9 import repair, dead-NPC preservation, deterministic terminal death, ordinary inheritance cleanup, duplicate-death prevention, background-cadence terminal death, critically low positive survival, age/illness mortality pressure, spouse/widowhood cleanup, and same-year illness-drain death. Existing Slice 2 household regression remains **35/35** against the combined local source.
+
+Diagnostic verification against the supplied stress save (not shipped): all **7** previously living zero-health NPCs import as living health-1 critical NPCs; zero living terminal-health contradictions remain, save schema stays 9, and Slice 1 rewind normalization still retains 7 snapshots.
 
 ## Slice 4 — Age-aware reproduction
 

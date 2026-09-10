@@ -220,6 +220,7 @@ export function validateState(state: GameState): string[] {
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
   for (const npc of Object.values(state.npcs)) {
+    if (npc.alive && npc.health <= 0) errors.push(`NPC ${npc.id} is alive with terminal health`);
     if (!npc.life) errors.push(`NPC ${npc.id} is missing life state`);
     else {
       if (npc.life.finance.debt < 0 || npc.life.finance.propertyValue < 0 || npc.life.finance.annualIncome < 0) errors.push(`NPC ${npc.id} has invalid finances`);

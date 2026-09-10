@@ -5,7 +5,7 @@ import { jobById, jobs } from '../data/jobs';
 import { countryById } from '../data/countries';
 import { migrateLegacySchoolWorlds } from '../systems/SchoolWorldSystem';
 import { migrateLegacyWorkplaceWorlds } from '../systems/WorkplaceSystem';
-import { initializeMissingNpcLives } from '../systems/NpcLifeSystem';
+import { initializeMissingNpcLives, repairLegacyLivingNpcHealth } from '../systems/NpcLifeSystem';
 
 const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';const ACTIVE_SLOT_KEY='everthread-active-save-slot';export const SAVE_VERSION=9;
 
@@ -24,7 +24,7 @@ function normalizeAssetBequests(state:GameState){
 }
 
 export function migrateSave(raw:unknown):GameState {
-  if(!raw||typeof raw!=='object')throw new Error('Save is not an object');const source=raw as Record<string,unknown>;const state=structuredClone({...source,yearlySnapshots:normalizeRewindSnapshots(source.yearlySnapshots)}) as unknown as GameState;let version=Number(state.saveVersion??1);
+  if(!raw||typeof raw!=='object')throw new Error('Save is not an object');const source=raw as Record<string,unknown>;const state=structuredClone({...source,yearlySnapshots:normalizeRewindSnapshots(source.yearlySnapshots)}) as unknown as GameState;repairLegacyLivingNpcHealth(state);let version=Number(state.saveVersion??1);
   if(version<2){state.travel=state.travel??{visitedCountries:[state.character.countryId],visitedCities:[state.character.city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}};version=2;}
   if(version<3){state.inheritance=state.inheritance??{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]};state.yearlySnapshots=state.yearlySnapshots??[];version=3;}
   if(version<4){const entityCount=Object.keys(state.npcs??{}).length+(state.relationships?.length??0)+(state.timeline?.length??0)+(state.delayedEvents?.length??0)+(state.businesses?.length??0)+(state.pets?.length??0)+(state.finances?.liabilities?.length??0)+(state.health?.conditions?.length??0);state.idCounter=10000+entityCount;version=4;}

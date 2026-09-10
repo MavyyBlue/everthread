@@ -28,6 +28,7 @@ import { runFamilyReproductionRegression } from './familyReproductionRegression'
 import { runSecretCodeRegression } from './secretCodeRegression';
 import { runRewindScalingRegression } from './rewindScalingRegression';
 import { runNpcHouseholdCoherenceRegression } from './npcHouseholdCoherenceRegression';
+import { runNpcHealthMortalityRegression } from './npcHealthMortalityRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -61,4 +62,5 @@ try{const checks=runFamilyReproductionRegression();console.log(`Family reproduct
 try{const checks=runSecretCodeRegression();console.log(`Secret-code regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runRewindScalingRegression();console.log(`Rewind scaling regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runNpcHouseholdCoherenceRegression();console.log(`NPC household coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runNpcHealthMortalityRegression();console.log(`NPC health / mortality regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
