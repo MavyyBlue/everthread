@@ -8,6 +8,7 @@ import { makeStateId } from '../core/ids';
 import { actionAllowed, consumeAction } from '../core/actionEconomy';
 import type { CareerRecord, EngineResult, GameState, Npc, Orientation, PartTimeCareerRecord, Relationship, RelationshipType, SocialWorld, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
+import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 
 const WORK_RELATIONSHIP_TYPES = new Set<RelationshipType>(['coworker','boss']);
 const NPC_TRAITS = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
@@ -70,7 +71,7 @@ function createWorkNpc(state:GameState,role:SocialWorldMemberRole,worldKey:strin
     sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(18,88),maritalStatus:'single',
     traits:rng.shuffle(NPC_TRAITS).slice(0,3),hiddenOpinion:rng.int(-6,34),memories:[],parentIds:[],childIds:[],simulationTier:'background',
   };
-  state.npcs[id]=npc;ensureNpcLife(state,npc);addWorkRelationship(state,npc,role,Math.max(0,elapsed),rng);return npc;
+  assignGeneratedNpcOrientation(state,npc);state.npcs[id]=npc;ensureNpcLife(state,npc);addWorkRelationship(state,npc,role,Math.max(0,elapsed),rng);return npc;
 }
 
 function createTeamGroups(state:GameState,department:string,peers:Npc[],boss:Npc,worldKey:string,teamCount:number,rng:ReturnType<typeof createRng>){

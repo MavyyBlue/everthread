@@ -33,7 +33,7 @@ export function runCareerRelationshipCoherenceRegression(){
   npcState.socialWorlds[0]!.active=false;
   verify(npcCareerProjection(npcState,nora).career==='Barista','archived special-career affiliation must stop overriding a current ordinary career');
 
-  const romance=createNewGame({seed:'hookup-fallout-1'});romance.character.age=28;romance.rngCounter=0;
+  const romance=createNewGame({seed:'hookup-fallout-1'});romance.character.age=28;romance.character.orientation='pansexual';romance.rngCounter=0;
   const spouse=makeNpc(romance,'spouse-npc','Morgan',29,['jealous','loyal']);spouse.maritalStatus='married';spouse.hiddenOpinion=90;
   const target=makeNpc(romance,'hookup-target','Riley',28,['romantic']);target.hiddenOpinion=100;
   const ex=makeNpc(romance,'ex-npc','Avery',30,['calm']);

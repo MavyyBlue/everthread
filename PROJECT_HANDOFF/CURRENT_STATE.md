@@ -8,10 +8,10 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `25330555f2f9b826791eccd0d5e3be85e957bf77`.
+The latest fully green expanded baseline is commit `d62cdfb6ea9a09f1b217e5a96fb20722052bc007`.
 
-- GitHub Actions Run #79 (`34520653552`) completed successfully on 2026-09-10 UTC.
-- Run #79 expanded upload commit `fbbc3c133a44922df35453cec4a41e814f1e14c9` into the build-bot commit above.
+- GitHub Actions Run #80 (`34523963246`) completed successfully on 2026-09-10 UTC.
+- Run #80 expanded upload commit `13d4918e40174fef4eaaf84a94382475b8090cae` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, the full established regression suite, production build, Pages artifact upload, and Pages deployment passed.
 - Core regression: 82/82.
 - People Threadspace: 57/57.
@@ -23,6 +23,7 @@ The latest fully green expanded baseline is commit `25330555f2f9b826791eccd0d5e3
 - Rewind scaling regression: 16/16.
 - NPC household coherence regression: 35/35.
 - NPC health / mortality regression: 18/18.
+- Age-aware reproduction regression: 21/21.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
@@ -48,8 +49,8 @@ Current status:
 1. **Save / rewind scaling — CI Green (Run #75).**
 2. **Player partner/spouse ↔ NPC household coherence — CI Green (Run #77).**
 3. **NPC health / mortality semantics — CI Green (Run #79).**
-4. **Age-aware reproduction — Local Green; upload/CI pending.**
-5. NPC gender / sexual-orientation coherence — Queued.
+4. **Age-aware reproduction — CI Green (Run #80).**
+5. **NPC gender / sexual-orientation coherence — Local Green; overlay integrity verified and mobile package prepared; GitHub CI pending.**
 6. Collision-aware naming — Queued.
 7. Relationship/event microcopy polish — Queued.
 8. Integrated long-life QA — Queued.
@@ -122,7 +123,7 @@ The green Slice 3 implementation:
 Dedicated `npcHealthMortalityRegression.ts`: **18/18 checks passed in Run #79**. NPC Household Coherence remained **35/35**, every established regression stayed green, and the production build, Pages artifact, and live deployment passed. The real diagnostic save was used only as diagnosis: its 7 living zero-health NPCs normalize to living health-1 critical NPCs on import, with no remaining living terminal-health records and 7 rewind snapshots retained. Slice 3 is **CI Green**.
 
 
-## Slice 4 implementation — Local Green / CI pending
+## Slice 4 implementation — CI Green
 
 `ReproductionSystem` now owns one shared reproductive-age factor for player and NPC biological family planning. The existing stored fertility stat and young-adult annual chance remain the baseline; age multiplies the chance rather than mutating fertility. Female reproductive-age pressure increases materially through later adulthood and reaches zero at 53, while male decline is slower and extends beyond the old autonomous-NPC age-52 cutoff.
 
@@ -132,14 +133,54 @@ Dedicated `npcHealthMortalityRegression.ts`: **18/18 checks passed in Run #79**.
 
 People → Family Planning gives qualitative feedback when reproductive age materially reduces conception odds; it does not expose the simulation weight as medical advice. No new persisted state, no schema bump, and no additional main-RNG draw.
 
-Dedicated `ageAwareReproductionRegression.ts`: **21/21 local runtime checks passed**, covering the shared curve, baseline preservation, player gates/chance, blocked-attempt economy/RNG safety, adoption, older-male viability, nonbinary reproductive-sex authority, pregnancy timing, and autonomous NPC family behavior. Slice 4 remains **Local Green / CI pending** until GitHub passes every gate.
+Dedicated `ageAwareReproductionRegression.ts`: **21/21 checks passed in Run #80**, covering the shared curve, baseline preservation, player gates/chance, blocked-attempt economy/RNG safety, adoption, older-male viability, nonbinary reproductive-sex authority, pregnancy timing, and autonomous NPC family behavior. Every established regression stayed green; production build, Pages artifact upload, and deployment also passed. Slice 4 is **CI Green**.
+
+## Slice 5 implementation — Local Green / package verified / GitHub CI pending
+
+Root cause: procedural NPC factories chose `sexuality` independently from the gender identity later established by `NpcIdentitySystem`, while player romance still used a deliberately permissive compatibility placeholder. This allowed contradictory generated labels (for example, a male NPC generated as lesbian) and let player/autonomous romance ignore persisted orientation.
+
+The local Slice 5 work introduces `NpcOrientationSystem.ts` as one shared authority:
+
+- generated orientation is coherent with the NPC's already-established gender identity, not reproductive sex;
+- generator normalization is **creation-only**. Existing/authored NPC sexualities are not rewritten by `ensureNpcLife()` or save migration, preserving established save history;
+- generated orientation uses an NPC-scoped deterministic RNG substream, so assigning orientation does not consume the main simulation RNG stream;
+- `straight`, `gay`, `lesbian`, `bisexual`, and `pansexual` attraction semantics are modeled against gender identity;
+- asexuality is treated as sexual orientation, not automatically aromantic: asexual characters may still form romantic relationships because Everthread does not yet persist a separate romantic-orientation field, while sexual compatibility remains false;
+- nonbinary generation uses coherent bisexual/pansexual/asexual labels rather than forcing binary-only labels;
+- `playerNpcRomanticallyCompatible()`, `playerNpcSexuallyCompatible()`, and `npcNpcRomanticallyCompatible()` centralize mutual compatibility;
+- `pickRomanticTargetGender()` selects a target gender the initiating orientation can actually be attracted to.
+
+Integration completed locally:
+
+- new-life parent creation;
+- Meet Someone and newly created children;
+- autonomous NPC partners and children;
+- school-world NPCs;
+- workplace NPCs;
+- standard special-career world NPCs;
+- combat-career world NPCs;
+- military-career world NPCs;
+- politics-career world NPCs;
+- player Ask Out availability/engine validation;
+- player Hook Up availability/engine validation;
+- People profile Orientation display.
+
+Existing romances are not retroactively dissolved. Reconciliation remains available to established exes so legacy relationship history is not invalidated merely because the newer compatibility authority exists.
+
+`9426` receives no special bypass: Yuki Aster keeps her authored female + pansexual identity and passes the same ordinary romance compatibility authority as every other NPC.
+
+Dedicated local `npcOrientationCoherenceRegression.ts`: **37/37 checks passed** before this handoff packaging checkpoint. Adjacent local suites also remained green: Family Reproduction 51/51, NPC Household Coherence 35/35, NPC Health / Mortality 18/18, and Age-Aware Reproduction 21/21. A 200-seed deterministic new-life audit produced 0 incoherent generated orientation labels and 0 incompatible generated parent couples while retaining main-RNG parity.
+
+The supplied diagnostic save was used only for validation and is **not included** in this handoff bundle. Its 9 existing gender/orientation oddities remained 9 after the local Slice 5 logic (no historical rewrite); Yuki remained female + pansexual and ordinarily romance-compatible; rewind normalization remained at 7 snapshots.
+
+**Important:** Slice 5 is not CI Green. The exact Run #80 baseline comparison against `d62cdfb6ea9a09f1b217e5a96fb20722052bc007` is complete: 13 carried source/test files are intentional modifications, `NpcOrientationSystem.ts` and `npcOrientationCoherenceRegression.ts` are new, and the two Run-80-identical carry-overs (`ReproductionSystem.ts` and `ageAwareReproductionRegression.ts`) are excluded from the repository overlay. A fresh transpile syntax preflight checked all 17 TS/TSX files carried through the handoff workspace with zero error diagnostics. The normal mobile `everthread-source.zip` is prepared from the verified overlay plus these handoff records. The next proof is GitHub CI; do not begin Slice 6 until Slice 5 has passed both TypeScript gates, every regression, production build, Pages artifact upload, and deployment.
 
 ## Known continuing quality / architecture issues
 
-- NPC gender/sexual-orientation matchmaking remains intentionally simplified until Slice 5.
+- NPC gender/sexual-orientation coherence is implemented locally in Slice 5; the Run #80 baseline integrity/package verification is complete, but GitHub CI verification is still pending.
 - Player-romance/NPC-household projection correction is CI Green in Run #77.
 - NPC zero-health terminal semantics are CI Green in Run #79.
-- Age-aware biological conception is implemented locally in Slice 4 and pending CI verification.
+- Age-aware biological conception is CI Green in Run #80.
 - Name collisions remain possible despite expanded pools until Slice 6.
 - Relationship interaction microcopy has known grammatical templates until Slice 7.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.

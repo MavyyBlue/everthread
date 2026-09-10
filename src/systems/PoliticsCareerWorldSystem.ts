@@ -4,6 +4,7 @@ import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import type { GameState, Npc, Orientation, RelationshipType, SocialWorld, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
+import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 
 type Track = Record<string, number | string | boolean>;
 type GroupKey = 'staff' | 'coalition' | 'opposition';
@@ -60,7 +61,7 @@ function createPoliticsNpc(state:GameState,key:GroupKey,definition:PoliticsGroup
     id,firstName,lastName,age,alive:true,health:rng.int(55,96),happiness:rng.int(40,90),wealth:rng.int(8000,320000),countryId:state.character.countryId,city:state.character.city,
     sexuality:rng.pick<Orientation>(['straight','straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(18,88),maritalStatus:'single',traits:rng.shuffle(NPC_TRAITS).slice(0,3),hiddenOpinion:key==='opposition'?rng.int(-35,4):rng.int(-5,34),memories:[],parentIds:[],childIds:[],simulationTier:'background',
   };
-  state.npcs[id]=npc;ensureNpcLife(state,npc);return npc;
+  assignGeneratedNpcOrientation(state,npc);state.npcs[id]=npc;ensureNpcLife(state,npc);return npc;
 }
 function relationshipType(key:GroupKey):RelationshipType{return key==='opposition'?'enemy':'coworker';}
 function ensurePoliticsRelationship(state:GameState,world:SocialWorld,npc:Npc,key:GroupKey,rng:Rng){

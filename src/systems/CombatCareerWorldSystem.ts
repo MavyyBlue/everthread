@@ -5,6 +5,7 @@ import { makeStateId } from '../core/ids';
 import { consumeAction } from '../core/actionEconomy';
 import type { EngineResult, GameState, Npc, Orientation, RelationshipType, SocialWorld, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
+import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 
 type Track = Record<string, number | string | boolean>;
 type GroupKey = 'coaches' | 'training' | 'rivals';
@@ -56,7 +57,7 @@ function createCombatNpc(state:GameState,key:GroupKey,definition:CombatGroupDefi
     id,firstName,lastName,age,alive:true,health:rng.int(key==='coaches'?55:64,98),happiness:rng.int(43,91),wealth:rng.int(3000,180000),countryId:state.character.countryId,city:state.character.city,
     sexuality:rng.pick<Orientation>(['straight','straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(18,88),maritalStatus:'single',traits:rng.shuffle(NPC_TRAITS).slice(0,3),hiddenOpinion:key==='rivals'?rng.int(-28,8):rng.int(-4,34),memories:[],parentIds:[],childIds:[],simulationTier:'background',
   };
-  state.npcs[id]=npc;ensureNpcLife(state,npc);return npc;
+  assignGeneratedNpcOrientation(state,npc);state.npcs[id]=npc;ensureNpcLife(state,npc);return npc;
 }
 function relationshipType(key:GroupKey,role:SocialWorldMemberRole):RelationshipType{
   if(key==='rivals')return'enemy';if(key==='coaches'&&role==='leader')return'coach';return'coworker';

@@ -6,6 +6,7 @@ import { makeStateId } from '../core/ids';
 import { actionAllowed, consumeAction } from '../core/actionEconomy';
 import type { EducationRecord, EngineResult, GameState, Npc, Orientation, RelationshipType, SchoolGroupKind, SocialWorld, SocialWorldGroup, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
+import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 
 const SCHOOL_RELATIONSHIP_TYPES = new Set<RelationshipType>(['classmate','teacher','principal','coach']);
 const NPC_TRAITS = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
@@ -81,7 +82,7 @@ function createSchoolNpc(state: GameState, role: SocialWorldMemberRole, worldKey
     maritalStatus:'single',
     traits:rng.shuffle(NPC_TRAITS).slice(0,3), hiddenOpinion:rng.int(-8,35), memories:[], parentIds:[], childIds:[], simulationTier:'background',
   };
-  state.npcs[id] = npc;ensureNpcLife(state,npc);
+  assignGeneratedNpcOrientation(state,npc);state.npcs[id] = npc;ensureNpcLife(state,npc);
   addSchoolRelationship(state,npc,role,yearsKnown,rng);
   return npc;
 }

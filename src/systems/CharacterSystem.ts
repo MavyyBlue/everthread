@@ -6,6 +6,8 @@ import { clamp } from '../core/math';
 import { createRng, randomSeed } from '../core/rng';
 import { EVERTHREAD_DEFAULT_ACCENT } from '../core/visualIdentity';
 import { initializeMissingNpcLives } from './NpcLifeSystem';
+import { npcGender } from './NpcIdentitySystem';
+import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 
 const traits = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
 const skinTones = ['porcelain','fair','light','medium','olive','tan','brown','deep brown','dark'];
@@ -101,6 +103,8 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
   };
   if(country.royalFamily && familyWealthTier==='wealthy' && rng.chance(.015)){ state.flags.royalBirth=true; state.flags.royalRank=1; state.timeline.push({id:'royal-birth',year:2026,age:0,category:'family',importance:3,text:'You were born into a minor branch of the royal household.'}); }
   state.rngCounter=rng.counter();
+  assignGeneratedNpcOrientation(state,p1,npcGender(state,p2));
+  assignGeneratedNpcOrientation(state,p2,npcGender(state,p1));
   initializeMissingNpcLives(state);
   return state;
 }

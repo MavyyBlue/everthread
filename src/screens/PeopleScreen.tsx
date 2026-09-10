@@ -9,6 +9,7 @@ import { npcLifeSummary } from '../systems/NpcLifeSystem';
 import { canAskOutNpc, canHookUpWithNpc, canReconcileWithNpc } from '../systems/RelationshipSystem';
 import { biologicalChildGate, npcReproductiveSex } from '../systems/ReproductionSystem';
 import { npcGender, npcGenderLabel, npcReproductiveSexLabel } from '../systems/NpcIdentitySystem';
+import { orientationLabel } from '../systems/NpcOrientationSystem';
 import { npcCareerProjection } from '../systems/CareerIdentitySystem';
 import { formatMoney } from '../core/format';
 
@@ -38,6 +39,7 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:(r:Engin
       <div><small>Age</small><strong>{npc.age}</strong></div>
       <div><small>Marriage</small><strong>{npc.maritalStatus.charAt(0).toUpperCase()+npc.maritalStatus.slice(1)}</strong></div>
       <div><small>Gender</small><strong>{selectedGender?npcGenderLabel(selectedGender):'Unknown'}</strong></div>
+      {npc.age>=14&&<div><small>Orientation</small><strong>{orientationLabel(npc.sexuality)}</strong></div>}
     </div>
     <div className="action-grid">{['conversation','compliment','spend_time','gift','apologize','prank','argue','insult'].map(a=><button key={a} disabled={!npc.alive||!actionAllowed(state,[{policy:'social.npc.total',target:npc.id},{policy:'social.npc.action',target:`${npc.id}:${a}`}])} onClick={()=>onResult(gameEngine.interactWithCharacter(npc.id,a))}>{a.replace('_',' ')}</button>)}</div>
     {npc.alive&&<div className="sheet-section"><h3>Relationship</h3><div className="action-grid">{canAskOutNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'ask_out'))}>Ask out</button>}{canHookUpWithNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.interactWithCharacter(npc.id,'hook_up'))}>Hook Up</button>}{selected.type==='partner'&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'propose'))}>Propose</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'marry'))}>Marry</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'break_up'))}>Break up</button>}{selected.type==='spouse'&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'divorce'))}>Divorce</button>}{canReconcileWithNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>onResult(gameEngine.relationshipAction(npc.id,'reconcile'))}>Reconcile</button>}</div></div>}

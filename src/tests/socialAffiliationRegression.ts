@@ -11,10 +11,11 @@ export function runSocialAffiliationRegression(){
   function verify(condition:unknown,message:string):asserts condition {checks+=1;if(!condition)throw new Error(`Social-affiliation regression failed: ${message}`);}
 
   const state=createNewGame({seed:'social-affiliation-regression'});
-  state.character.age=26;state.currentYear=2076;
+  state.character.age=26;state.currentYear=2076;state.character.orientation='pansexual';
   state.specialCareers.music={active:true,instrument:'vocals',skill:82,reputation:72,fanbase:12000,songsReleased:1};
   const careerWorld=ensureSpecialCareerWorld(state,'music','vocals',{announce:false});
   ensureSpecialCareerRelationships(state,careerWorld);
+  for(const member of careerWorld.members){const npc=state.npcs[member.npcId];if(npc)npc.sexuality='pansexual';}
   const careerIds=new Set(careerWorld.members.map(member=>member.npcId));
   const leader=careerWorld.members.find(member=>member.role==='leader');
   const peer=careerWorld.members.find(member=>member.role!=='leader'&&state.relationships.find(rel=>rel.npcId===member.npcId)?.type==='coworker');

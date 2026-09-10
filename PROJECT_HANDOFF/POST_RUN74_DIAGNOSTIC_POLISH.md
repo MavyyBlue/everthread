@@ -78,7 +78,7 @@ Diagnostic verification against the supplied stress save (not shipped): all **7*
 
 ## Slice 4 — Age-aware reproduction
 
-Status: **Local Green — upload/CI pending**.
+Status: **CI Green — Run #80 (`34523963246`), expanded baseline `d62cdfb6ea9a09f1b217e5a96fb20722052bc007`.**
 
 Goal: preserve fertility stats, reproductive compatibility, pregnancy timing, adoption, family graph linkage, and action economy while adding biologically age-sensitive conception pressure. No magical age exception and no change to the player-only intersex limitation until separately designed.
 
@@ -94,15 +94,34 @@ Implementation:
 - autonomous adoption probability/eligibility is otherwise unchanged, as are player adoption, pregnancy timing, multiples, family linkage, nonbinary reproductive-sex authority, and the current player-intersex limitation;
 - no save-schema bump, persisted field, or additional main-RNG draw.
 
-Dedicated synthetic `ageAwareReproductionRegression.ts`: **21/21 local runtime checks passed** covering young-adult baseline preservation, progressive age pressure, late-age floor/zero behavior, slower male decline, reproductive-sex compatibility, player gate/chance integration, no RNG/action consumption for age-blocked attempts, adoption independence, older-male/younger-female viability, nonbinary reproductive-sex authority, pregnancy timing/action economy, and autonomous-family age behavior.
+Dedicated synthetic `ageAwareReproductionRegression.ts`: **21/21 checks passed in Run #80** covering young-adult baseline preservation, progressive age pressure, late-age floor/zero behavior, slower male decline, reproductive-sex compatibility, player gate/chance integration, no RNG/action consumption for age-blocked attempts, adoption independence, older-male/younger-female viability, nonbinary reproductive-sex authority, pregnancy timing/action economy, and autonomous-family age behavior. Both TypeScript gates, every established regression, production build, Pages artifact upload, and live deployment passed.
 
 ## Slice 5 — NPC gender / sexual-orientation coherence
 
-Status: **Queued**.
+Status: **Local Green — overlay integrity/package verified; GitHub CI pending.**
 
-Goal: make generated gender, orientation, romantic compatibility, and autonomous matchmaking coherent while preserving established identity and history on old saves wherever possible. Identity must not be inferred from first-name semantics once persisted.
+Goal: make generated gender, orientation, romantic compatibility, and autonomous matchmaking coherent while preserving established identity and history on old saves. Persisted identity remains authoritative; creation-time generation must not rewrite old saves.
 
-Regression targets: generation distribution, orientation-compatible matching, legacy odd combinations, nonbinary handling, autonomous couples, player romance gates, no reproductive-identity regression.
+Implementation currently present in the handoff workspace:
+
+- new `NpcOrientationSystem.ts` owns generated orientation weights, attraction semantics, player↔NPC mutual romantic/sexual compatibility, NPC↔NPC romantic compatibility, and orientation-aware target-gender selection;
+- generated orientation is assigned only at known NPC creation sites after/with NPC identity assignment, never as a generic `ensureNpcLife()` normalization;
+- generated orientation uses NPC-scoped deterministic RNG and does not advance `state.rngCounter`;
+- asexuality blocks sexual compatibility but does not imply aromanticism because Everthread has no separate persisted romantic-orientation field yet;
+- nonbinary generated NPCs use bisexual/pansexual/asexual labels rather than incoherent binary-exclusive labels;
+- Meet Someone selects a gender compatible with the player's orientation and creates an NPC whose orientation reciprocates;
+- autonomous partner creation selects a compatible target gender and creates a mutually compatible partner;
+- Ask Out and Hook Up now reject mutual incompatibility before action or RNG consumption;
+- existing romances and reconciliation history are not retroactively invalidated;
+- new parents, children, school/workplace/special-career/combat/military/politics NPC factories all use creation-time orientation assignment;
+- People profile shows Orientation for teen/adult NPCs;
+- Yuki Aster remains authored female + pansexual and passes the ordinary compatibility authority without a special-case bypass.
+
+Dedicated `npcOrientationCoherenceRegression.ts`: **37/37 local checks passed**. Adjacent local suites remained green: Family Reproduction 51/51, NPC Household Coherence 35/35, NPC Health / Mortality 18/18, and Age-Aware Reproduction 21/21. A 200-seed new-life audit found 0 incoherent generated labels and 0 incompatible generated parent couples with main-RNG parity.
+
+Diagnostic-save preservation check (save not shipped): 9 legacy odd combinations remained 9 after the local logic; no historical sexuality rewrite occurred. Yuki remained female + pansexual and ordinarily compatible.
+
+Final local packaging check: the exact diff/integrity comparison against Run #80 baseline `d62cdfb6ea9a09f1b217e5a96fb20722052bc007` found 13 intentional modified source/test files plus 2 new Slice-5 files. `ReproductionSystem.ts` and `ageAwareReproductionRegression.ts` are byte-identical to Run #80 and are excluded from the overlay. A fresh transpile syntax preflight checked all 17 TS/TSX files carried through the handoff workspace with zero error diagnostics. The normal mobile `everthread-source.zip` is prepared with the verified overlay and no transient diagnostic/handoff-only payloads. Next action: upload that ZIP to the repository root and inspect the resulting GitHub Actions run. Slice 5 remains **not CI Green** until GitHub passes every gate.
 
 ## Slice 6 — Collision-aware naming
 

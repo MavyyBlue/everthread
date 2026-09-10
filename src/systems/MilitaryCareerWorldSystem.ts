@@ -4,6 +4,7 @@ import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import type { GameState, Npc, Orientation, RelationshipType, SocialWorld, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
+import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 
 type Track = Record<string, number | string | boolean>;
 type GroupKey = 'command' | 'peers' | 'support';
@@ -53,7 +54,7 @@ function createMilitaryNpc(state:GameState,key:GroupKey,definition:MilitaryGroup
     id,firstName,lastName,age,alive:true,health:rng.int(62,98),happiness:rng.int(42,90),wealth:rng.int(5000,170000),countryId:state.character.countryId,city:state.character.city,
     sexuality:rng.pick<Orientation>(['straight','straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(18,88),maritalStatus:'single',traits:rng.shuffle(NPC_TRAITS).slice(0,3),hiddenOpinion:rng.int(-8,28),memories:[],parentIds:[],childIds:[],simulationTier:'background',
   };
-  state.npcs[id]=npc;ensureNpcLife(state,npc);return npc;
+  assignGeneratedNpcOrientation(state,npc);state.npcs[id]=npc;ensureNpcLife(state,npc);return npc;
 }
 function relationshipType(key:GroupKey,role:SocialWorldMemberRole):RelationshipType{return key==='command'&&role==='leader'?'boss':'coworker';}
 function ensureMilitaryRelationship(state:GameState,world:SocialWorld,npc:Npc,key:GroupKey,role:SocialWorldMemberRole,rng:Rng){

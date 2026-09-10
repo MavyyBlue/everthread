@@ -1,4 +1,4 @@
-import { getNamePool } from '../data/names';
+import { getNamePool, getNpcFirstNames } from '../data/names';
 import type { EngineResult, GameState, Npc, Orientation, Relationship, RelationshipType } from '../types/game';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
@@ -7,6 +7,7 @@ import { consumeAction } from '../core/actionEconomy';
 import { ensureNpcLife } from './NpcLifeSystem';
 import { biologicalChildGate } from './ReproductionSystem';
 import { assignNpcIdentity } from './NpcIdentitySystem';
+import { assignGeneratedNpcOrientation, characterRomanticGender, pickRomanticTargetGender, playerNpcRomanticallyCompatible, playerNpcSexuallyCompatible } from './NpcOrientationSystem';
 
 const interactionEffects: Record<string,{base:number;happiness:number;karma?:number}> = {
   conversation:{base:3,happiness:1}, compliment:{base:5,happiness:2}, insult:{base:-12,happiness:-1,karma:-2}, spend_time:{base:7,happiness:4},
@@ -32,7 +33,7 @@ export function hasCurrentRomanticCommitment(state:GameState,excludeNpcId?:strin
 export function canAskOutNpc(state:GameState,npcId:string){
   const npc=state.npcs[npcId];
   const rel=state.relationships.find(item=>item.npcId===npcId);
-  return Boolean(npc?.alive&&rel&&ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&datingAgesCompatible(state.character.age,npc.age)&&!hasCurrentRomanticCommitment(state,npcId));
+  return Boolean(npc?.alive&&rel&&ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&datingAgesCompatible(state.character.age,npc.age)&&!hasCurrentRomanticCommitment(state,npcId)&&playerNpcRomanticallyCompatible(state,npc));
 }
 
 export function canHookUpWithNpc(state:GameState,npcId:string){
@@ -40,7 +41,7 @@ export function canHookUpWithNpc(state:GameState,npcId:string){
   const rel=state.relationships.find(item=>item.npcId===npcId);
   return Boolean(
     npc?.alive&&rel&&state.character.age>=18&&npc.age>=18&&
-    ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&currentRomanticCommitments(state,npcId).length>0
+    ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&currentRomanticCommitments(state,npcId).length>0&&playerNpcSexuallyCompatible(state,npc)
   );
 }
 
@@ -63,6 +64,7 @@ export function hookUpWithNpc(state:GameState,npcId:string):EngineResult {
   if(!npc||!rel||!npc.alive)return{success:false,messages:[{text:'That relationship is unavailable.'}]};
   if(state.character.age<18||npc.age<18)return{success:false,messages:[{text:'Hookups are only available between adults.'}]};
   if(!ASK_OUT_RELATIONSHIP_TYPES.has(rel.type))return{success:false,messages:[{text:'A hookup is not available from this relationship.'}]};
+  if(!playerNpcSexuallyCompatible(state,npc))return{success:false,messages:[{text:`You and ${npc.firstName} are not mutually compatible for a hookup.`}]};
   const commitments=currentRomanticCommitments(state,npcId);
   if(!commitments.length)return{success:false,messages:[{text:'You are not currently in another relationship. Ask this person out instead.'}]};
   const gate=consumeAction(state,{policy:'relationship.milestone',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
@@ -158,14 +160,6 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   return {success:true,messages:[{text:`${npc.firstName}'s relationship with you ${delta>=0?'improved':'worsened'} (${delta>=0?'+':''}${Math.round(delta)}).`}]};
 }
 
-function orientationCompatible(player:GameState['character'],npc:Npc) {
-  // Orientation matching remains deliberately permissive for now; NPC gender identity and reproductive compatibility are separate authorities.
-  if (player.orientation==='asexual') return false;
-  if (player.orientation==='bisexual' || player.orientation==='pansexual') return true;
-  if (npc.sexuality==='bisexual' || npc.sexuality==='pansexual') return true;
-  return true; // A dedicated orientation/gender matchmaking pass will deepen this without changing reproductive identity.
-}
-
 export function meetPotentialPartner(state:GameState):EngineResult {
   if (state.character.age<14) return {success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
   const gate=consumeAction(state,{policy:'social.meet'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
@@ -175,17 +169,18 @@ export function meetPotentialPartner(state:GameState):EngineResult {
   const maxPartnerAge=state.character.age>=18?Math.max(18,state.character.age+4):17;
   const age=Math.max(minPartnerAge,Math.min(maxPartnerAge,state.character.age+rng.int(-4,4)));
   const id=makeStateId(state,'npc');
+  const playerGender=characterRomanticGender(state.character.genderIdentity);
+  const targetGender=pickRomanticTargetGender(state,state.character.orientation,playerGender,id);
   const npc:Npc={
-    id,firstName:rng.pick(pool.first),lastName:rng.pick(pool.last),age,alive:true,health:rng.int(55,98),happiness:rng.int(40,92),wealth:rng.int(0,180000),
+    id,firstName:rng.pick(getNpcFirstNames(state.character.countryId,targetGender)),lastName:rng.pick(pool.last),age,alive:true,health:rng.int(55,98),happiness:rng.int(40,92),wealth:rng.int(0,180000),
     countryId:state.character.countryId,city:state.character.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian']),fertility:rng.int(20,92),maritalStatus:'single',
     traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:rng.int(0,35),memories:[],parentIds:[],childIds:[]
   };
-  assignNpcIdentity(state,npc);
+  assignGeneratedNpcOrientation(state,npc,playerGender);
   state.npcs[id]=npc;ensureNpcLife(state,npc);
   const rel:Relationship={id:makeStateId(state,'rel'),npcId:id,type:'friend',score:rng.int(20,48),attraction:rng.int(35,95),compatibility:rng.int(25,95),yearsKnown:0};
   state.relationships.push(rel); state.rngCounter=rng.counter();
-  const compatible=orientationCompatible(state.character,npc);
-  return {success:true,messages:[{text:`You met ${npc.firstName} ${npc.lastName}, age ${age}. Compatibility: ${rel.compatibility}%.${compatible?'':' The spark feels uncertain.'}`}]};
+  return {success:true,messages:[{text:`You met ${npc.firstName} ${npc.lastName}, age ${age}. Compatibility: ${rel.compatibility}%.`}]};
 }
 
 export function changeRelationshipType(state:GameState,npcId:string,action:'ask_out'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'):EngineResult {
@@ -200,6 +195,7 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   if((action==='ask_out'||action==='reconcile')&&hasCurrentRomanticCommitment(state,npcId))return{success:false,messages:[{text:'You are already in a relationship with someone else.'}]};
   if((action==='propose'||action==='marry')&&hasCurrentRomanticCommitment(state,npcId))return{success:false,messages:[{text:'You already have another current romantic commitment.'}]};
   if(action==='ask_out'&&!ASK_OUT_RELATIONSHIP_TYPES.has(rel.type))return{success:false,messages:[{text:'Dating is not available from this relationship.'}]};
+  if(action==='ask_out'&&!playerNpcRomanticallyCompatible(state,npc))return{success:false,messages:[{text:`You and ${npc.firstName} are not mutually compatible for dating.`}]};
   if(action==='propose'&&rel.type!=='partner')return{success:false,messages:[{text:'You need to be dating before proposing.'}]};
   if(action==='marry'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'Marriage is not available in this relationship yet.'}]};
   if(action==='break_up'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'There is no dating relationship to end.'}]};
@@ -247,7 +243,7 @@ export function processFamilyPlanningYear(state:GameState):void {
     const firstName=pickChildName(state,pool,rng,reserved);names.push(firstName);
     const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
       sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
-    state.npcs[id]=child;ensureNpcLife(state,child);state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
+    assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;ensureNpcLife(state,child);state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
     if(partner&&!partner.childIds.includes(id))partner.childIds.push(id);
     state.legacy.familyTreeNpcIds.push(id);
   }
@@ -291,7 +287,7 @@ export function haveChild(state:GameState,partnerId?:string,adopt=false):EngineR
     const id=makeStateId(state,'child'); const firstName=pickChildName(state,pool,rng,reserved); names.push(firstName);
     const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
       sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
-    state.npcs[id]=child;ensureNpcLife(state,child); state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
+    assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;ensureNpcLife(state,child); state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
     if(partner&&!partner.childIds.includes(id))partner.childIds.push(id); state.legacy.familyTreeNpcIds.push(id);
   }
   const text=adopt?`You adopted ${count>1?`${count} children`:names[0]}.`:`${count===1?`${names[0]} was born.`:`You welcomed ${count===2?'twins':'triplets'}: ${names.join(', ')}.`}`;
