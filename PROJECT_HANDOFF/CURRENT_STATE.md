@@ -8,102 +8,82 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `8fa76e03916d2a10559260c07dd718faa4c07bc6`.
+The latest fully green expanded baseline is commit `032e88c6f49bb8808b97c2d8a9e8bc0fe7c50a2a`.
 
-- GitHub Actions run #72 (`34489240798`) completed successfully on 2026-09-10 UTC.
-- Run #72 expanded upload commit `764b93cc513e93243e1bd57af00d715c3e2d902b` into the build-bot commit above.
-- Source-overlay import, dependency install, both TypeScript gates, full regressions, production build, Pages artifact upload, and Pages deployment all passed.
-- Core regression suite: 82/82.
-- Phase 4 closeout: 88/88.
-- Random-event coherence: 72/72.
+- GitHub Actions Run #74 (`34498329874`) completed successfully on 2026-09-10 UTC.
+- Both TypeScript gates, the full established regression suite, production build, Pages artifact upload, and Pages deployment passed.
+- Core regression: 82/82.
 - People Threadspace: 57/57.
-- AI Interaction Testbench: 41/41.
-- Phase 5 estate-planning regression: 46/46.
-- Family continuity regression: 18/18.
-- Visual identity regression: 12/12.
-- Family reproduction regression: 51/51.
+- Phase 5 estate planning: 46/46.
+- Family continuity: 18/18.
+- Visual identity: 12/12.
+- Family reproduction: 51/51.
+- Secret-code regression: 18/18.
 - Save schema remains 9.
 
-Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and histories must never be copied into production/default fixtures.
+Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
 
-## Phase 4 — closed
+## Green systems immediately relevant to current work
 
-Phase 4 remains closed. Persistent Career World ecosystems, integration/coherence closeout, random-event consequences, AI Interaction Testbench coverage, and unified People Threadspace are green. Threadspace connection labels remain presentation-only and OFF by default.
+- Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
+- Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
+- Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
+- Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
+- Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.
 
-## Phase 5A — estate and family-continuity foundation — green
+## Current corrective program
 
-`EstateSystem.ts` remains the authority for estate planning, preview, debt settlement, liquidation, spouse/child residuary shares, specific bequests, protected minor inheritance, and settlement consumed by descendant continuation.
+Long-form playtesting exposed several real scale/coherence issues. Their authoritative sequence and status live in:
 
-Green continuity includes widowhood/unmarried-partner death cleanup, protected minor inheritance, spouse/child estate shares, parent/stepparent household friction, and bounded autonomous separation/divorce consequences.
+`PROJECT_HANDOFF/POST_RUN74_DIAGNOSTIC_POLISH.md`
 
-## Everthread visual identity — green
+Do not reorder or combine these slices casually. Each slice should reach CI Green before the next one is promoted unless a discovered dependency makes the ordering unsafe.
 
-Run #69 established the first Everthread-specific teal/gold presentation language while preserving player theme, accent, typeface, text-color, text-scale, contrast, and motion preferences. Supplied woman/man/gender-neutral crest assets remain production inputs and must not be regenerated or restyled without Mavyy's request. Unique save-export filenames are also green.
+Current status:
 
-## Family reproduction + NPC identity — green
+1. **Save / rewind scaling — Local preflight complete; upload/CI pending.**
+2. Player partner/spouse ↔ NPC household coherence — Queued.
+3. NPC health / mortality semantics — Queued.
+4. Age-aware reproduction — Queued.
+5. NPC gender / sexual-orientation coherence — Queued.
+6. Collision-aware naming — Queued.
+7. Relationship/event microcopy polish — Queued.
+8. Integrated long-life QA — Queued.
 
-Runs #70–#71 established biological compatibility, partnered adoption coherence, persistent visible NPC gender, matching reproductive identity, profile-owned Family Planning controls, descendant identity preservation, autonomous reproductive compatibility, and immediate Threadspace graph invalidation through the GameEngine revision.
+## Slice 1 implementation — pending GitHub verification
 
-Green behavior includes:
+`RewindSystem.ts` now owns bounded rewind retention and capture policy:
 
-- procedural NPC gender remains 50% female / 45% male / 5% nonbinary;
-- generated first names correspond to NPC gender;
-- binary NPC reproductive sex matches gender and nonbinary NPCs receive deterministic 50/50 female/male reproductive sex;
-- procedural NPCs never receive the player-only intersex option;
-- active partner/fiance/spouse profiles own Try for a Child and Adopt Child;
-- biological incompatibility mutes Try for a Child at both UI and system layers;
-- partnered adoption records both adults; single-parent adoption remains supported;
-- closing NPC profiles reflects relationship/new-person changes immediately without tab remounts;
-- descendant continuation preserves established NPC gender/reproductive identity;
-- autonomous couples use the same biological-compatibility authority and can adopt when biological conception is unavailable.
+- maximum 10 recent yearly rewind points;
+- maximum 6,000,000 combined snapshot characters while retaining at least the newest point;
+- duplicate ages keep the newest captured version;
+- malformed entries are discarded;
+- snapshots remain self-contained JSON with `yearlySnapshots` and the transient `ageUpLocked` runtime guard removed before encoding, preserving exact restore semantics without recursive history.
 
-## People polish + naming variety — green
+`SaveSystem.migrateSave()` normalizes rewind arrays for old and current schema-9 saves before cloning the rest of the loaded state, avoiding unnecessary duplication of legacy oversized snapshot arrays. Save schema remains 9.
 
-Run #72 moved Meet Someone to Activities → Social, made the standalone Threadspace Adopt Child control match Filters dimensions, and expanded each of the seven regional pools from 20 to 120 first names and from 20 to 120 surnames.
+`importSave()` temporarily accepts legitimate pre-fix exports up to 40,000,000 characters so they can be loaded and immediately normalized; this is a recovery ceiling, not the new desired steady-state save size.
 
-Each first-name pool contains exactly 60 female / 54 male / 6 nonbinary names, preserving the authoritative 50/45/5 distribution without changing the existing single-draw deterministic NPC generation path. All first and last names are unique inside each regional pool and every active first name resolves to an NPC gender.
+A dedicated `rewindScalingRegression.ts` covers count/budget retention, duplicate-age handling, malformed records, live capture, Age Up + rewind restoration, oversized legacy import recovery, and current-schema normalization.
 
-## Current work — Sandbox secret-code legacy feature
+Local checks completed before packaging:
 
-Mavyy requested the first Sandbox-only secret code as a project-start easter egg. Code `9426` represents 09/04/2026, the date Everthread development began.
+- changed TS files transpile with zero syntax diagnostics;
+- `RewindSystem.ts` passes standalone strict TypeScript checking;
+- source-integrity reconstruction for modified `SaveSystem.ts`, `AgingSystem.ts`, and `runRegression.ts` matches the exact Run #74 Git blob hashes after removing only intended edits;
+- applying the new retention algorithm to the supplied diagnostic save projects an approximately 64% export-size reduction while retaining recent rewind points.
 
-Pending overlay behavior:
+This slice is **not green** until GitHub Actions passes both TypeScript gates, every regression including Rewind Scaling, production build, Pages artifact upload, and live Pages deployment.
 
-- Sandbox contains an `Enter Secret Code` control that opens a compact touch-friendly number pad;
-- secret-code redemption is system-owned through `SecretCodeSystem` and `GameEngine`, not direct UI state mutation;
-- code `9426` creates one persistent `Yuki Aster` NPC as a normal Friend in Friends & Social;
-- Yuki is age-matched to the protagonist when redeemed, uses female gender/reproductive sex, pansexual orientation, strong initial friendship/compatibility, and ordinary persistent NPC-life state;
-- normal Ask Out → Partner → Proposal → Marriage behavior is preserved rather than bypassed;
-- biological family planning follows the existing reproductive-compatibility authority, so compatible protagonists can Try for a Child while incompatible pairings retain the muted option/adoption path;
-- childhood redemption creates an age-matched friend and retains normal dating-age restrictions;
-- the code is idempotent: one Yuki per life, even after repeated entry;
-- invalid codes and non-Sandbox redemption attempts do not mutate state;
-- the fixed secret-code effect does not consume the simulation RNG stream;
-- the redemption marker uses the existing generic `flags` map, so save schema remains 9;
-- a dedicated secret-code regression covers sandbox gating, invalid-code safety, Friends & Social membership, identity, romance progression, family-planning coherence, age gating, RNG preservation, and duplicate prevention.
+## Known continuing quality / architecture issues
 
-This overlay is not green until both TypeScript gates, every established regression, the new secret-code regression, production build, Pages artifact upload, and live Pages deployment all pass.
-
-## Phase 5 next slices after corrective QA
-
-Continue without replacing the estate/family foundation:
-
-- fictionalized estate administration / settlement consequences;
-- richer NPC-owned assets and businesses so family wealth exists outside the controlled protagonist;
-- audit whether NPC-parent death inheritance during an active minor life should use the same protected-inheritance authority;
-- broader kin taxonomy only where it improves real family-tree behavior;
-- stronger dynasty wealth/history summaries;
-- large-family/multi-generation performance validation; and
-- further death → estate review → descendant continuation polish where playtesting proves useful.
-
-## Known quality / architecture issues
-
-- NPC gender/sexual-orientation matchmaking remains intentionally simplified and should be deepened separately rather than mixed into reproductive identity.
-- Exact seeded replay serialization remains mandatory; UI clock values must never enter simulation state or runtime IDs.
-- Every meaningful player action stays under controlled system/GameEngine ownership; appearance settings remain presentation-only.
-- AI observation/projection code remains read-only.
+- NPC gender/sexual-orientation matchmaking remains intentionally simplified until Slice 5.
+- Player-romance/NPC-household projection mismatch is queued for Slice 2.
+- Living NPCs at zero health are queued for Slice 3.
+- Biological conception lacks an age-aware fertility curve until Slice 4.
+- Name collisions remain possible despite expanded pools until Slice 6.
+- Relationship interaction microcopy has known grammatical templates until Slice 7.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
-- Persistent world, People graph, estate, and dynasty population/performance profiling remains important across long generations.
-- The production application chunk remains above the preferred size threshold; broader code-splitting remains future work.
-- GitHub Actions currently warns that several Node-20-targeted actions are being forced onto Node 24; this is nonblocking but should remain visible.
+- The production application chunk remains above the preferred size threshold; broader code splitting remains future work.
+- GitHub Actions Node-20-targeted action warnings remain nonblocking technical debt.

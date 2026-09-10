@@ -1,5 +1,6 @@
 import type { GameState, SettingsState } from '../types/game';
 import { enforceStateInvariants, validateState } from '../core/invariants';
+import { LEGACY_IMPORT_MAX_CHARS, normalizeRewindSnapshots } from '../systems/RewindSystem';
 import { jobById, jobs } from '../data/jobs';
 import { countryById } from '../data/countries';
 import { migrateLegacySchoolWorlds } from '../systems/SchoolWorldSystem';
@@ -23,7 +24,7 @@ function normalizeAssetBequests(state:GameState){
 }
 
 export function migrateSave(raw:unknown):GameState {
-  if(!raw||typeof raw!=='object')throw new Error('Save is not an object');const state=structuredClone(raw) as GameState;let version=Number(state.saveVersion??1);
+  if(!raw||typeof raw!=='object')throw new Error('Save is not an object');const source=raw as Record<string,unknown>;const state=structuredClone({...source,yearlySnapshots:normalizeRewindSnapshots(source.yearlySnapshots)}) as unknown as GameState;let version=Number(state.saveVersion??1);
   if(version<2){state.travel=state.travel??{visitedCountries:[state.character.countryId],visitedCities:[state.character.city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}};version=2;}
   if(version<3){state.inheritance=state.inheritance??{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]};state.yearlySnapshots=state.yearlySnapshots??[];version=3;}
   if(version<4){const entityCount=Object.keys(state.npcs??{}).length+(state.relationships?.length??0)+(state.timeline?.length??0)+(state.delayedEvents?.length??0)+(state.businesses?.length??0)+(state.pets?.length??0)+(state.finances?.liabilities?.length??0)+(state.health?.conditions?.length??0);state.idCounter=10000+entityCount;version=4;}
@@ -105,7 +106,7 @@ export function migrateSave(raw:unknown):GameState {
   state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;
   state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.socialWorlds=state.socialWorlds??[];
   state.inheritance=state.inheritance??{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]};state.inheritance.assetBequests??=[];normalizeAssetBequests(state);
-  state.employment.partTimeJobs=state.employment.partTimeJobs??[];state.employment.partTimeHistory=state.employment.partTimeHistory??[];state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};initializeMissingNpcLives(state);return enforceStateInvariants(state);
+  state.employment.partTimeJobs=state.employment.partTimeJobs??[];state.employment.partTimeHistory=state.employment.partTimeHistory??[];state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};delete state.flags.ageUpLocked;state.yearlySnapshots=normalizeRewindSnapshots(state.yearlySnapshots);initializeMissingNpcLives(state);return enforceStateInvariants(state);
 }
 
 export async function saveGame(state:GameState):Promise<void>{state.lastSavedAt=new Date().toISOString();const clean=stripRuntime(state);if(!canUseIndexedDb()){localStorage.setItem(`everthread-save-${state.slotId}`,JSON.stringify(clean));return;}const db=await openDb();await new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(clean);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();}
@@ -135,7 +136,7 @@ export function setActiveSaveSlotId(slotId:string|undefined){if(typeof localStor
 export async function deleteSave(slotId:string):Promise<void>{if(!canUseIndexedDb()){localStorage.removeItem(`everthread-save-${slotId}`);return;}const db=await openDb();await new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(slotId);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();}
 
 export function exportSave(state:GameState):string{return JSON.stringify(stripRuntime(state),null,2);}
-export function importSave(json:string):GameState{if(json.length>15_000_000)throw new Error('Save file is too large.');const raw=JSON.parse(json) as unknown;const migrated=migrateSave(raw);const errors=validateState(migrated);if(errors.length)throw new Error(`Save validation failed: ${errors.join('; ')}`);return migrated;}
+export function importSave(json:string):GameState{if(json.length>LEGACY_IMPORT_MAX_CHARS)throw new Error('Save file is too large.');const raw=JSON.parse(json) as unknown;const migrated=migrateSave(raw);const errors=validateState(migrated);if(errors.length)throw new Error(`Save validation failed: ${errors.join('; ')}`);return migrated;}
 
 const SETTINGS_KEY='everthread-settings';
 export function saveSettings(settings:SettingsState){if(typeof localStorage!=='undefined')localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}

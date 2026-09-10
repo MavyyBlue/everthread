@@ -26,6 +26,7 @@ import { runFamilyContinuityRegression } from './familyContinuityRegression';
 import { runVisualIdentityRegression } from './visualIdentityRegression';
 import { runFamilyReproductionRegression } from './familyReproductionRegression';
 import { runSecretCodeRegression } from './secretCodeRegression';
+import { runRewindScalingRegression } from './rewindScalingRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -57,4 +58,5 @@ try{const checks=runFamilyContinuityRegression();console.log(`Family continuity 
 try{const checks=runVisualIdentityRegression();console.log(`Visual identity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runFamilyReproductionRegression();console.log(`Family reproduction regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runSecretCodeRegression();console.log(`Secret-code regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runRewindScalingRegression();console.log(`Rewind scaling regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
