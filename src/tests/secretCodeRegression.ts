@@ -30,21 +30,21 @@ export function runSecretCodeRegression(){
   verify(yuki.gender==='female'&&yuki.reproductiveSex==='female'&&yuki.sexuality==='pansexual','Yuki should have stable romance/reproduction identity');
   verify(yuki.memories.some(memory=>memory.kind==='secret_yuki_9426'&&memory.permanent),'Yuki should retain permanent secret-code origin history');
 
-  const rel=state.relationships.find(item=>item.npcId===yuki.id);
-  verify(rel?.type==='friend','Yuki should begin as a normal friend rather than bypassing relationship progression');
+  const relationship=()=>state.relationships.find(item=>item.npcId===yuki.id);
+  verify(relationship()?.type==='friend','Yuki should begin as a normal friend rather than bypassing relationship progression');
   verify(relationshipsForFolder(state,'friends').some(item=>item.npcId===yuki.id),'Yuki should appear in Friends & Social');
   verify(canAskOutNpc(state,yuki.id),'adult Yuki friendship should expose the normal Ask Out path');
 
   const ask=changeRelationshipType(state,yuki.id,'ask_out');
-  verify(ask.success&&rel?.type==='partner','Yuki should use the normal successful dating transition');
+  verify(ask.success&&relationship()?.type==='partner','Yuki should use the normal successful dating transition');
   verify(biologicalChildGate(state,yuki.id).allowed,'male protagonist + female Yuki should expose normal biological family planning');
 
   state.character.age+=1;yuki.age+=1;
   const propose=changeRelationshipType(state,yuki.id,'propose');
-  verify(propose.success&&rel?.type==='fiance','Yuki should use the normal proposal path');
+  verify(propose.success&&relationship()?.type==='fiance','Yuki should use the normal proposal path');
   state.character.age+=1;yuki.age+=1;
   const marry=changeRelationshipType(state,yuki.id,'marry');
-  verify(marry.success&&rel?.type==='spouse'&&yuki.maritalStatus==='married','Yuki should use the normal marriage path');
+  verify(marry.success&&relationship()?.type==='spouse'&&yuki.maritalStatus==='married','Yuki should use the normal marriage path');
   verify(actionUsesThisAge(state,'relationship.milestone',yuki.id)>=1,'secret NPC relationship milestones should use ordinary action-economy tracking');
 
   const second=redeemSecretCode(state,YUKI_SECRET_CODE);
