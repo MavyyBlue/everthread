@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import './styles.css';
 import './brand.css';
+import './everthread-theme.css';
 import { useGameState, gameEngine } from './stores/gameStore';
 import { LifeScreen } from './screens/LifeScreen';
 import { ActivitiesScreen } from './screens/ActivitiesScreen';
@@ -14,6 +15,7 @@ import { NewLifeForm } from './components/NewLifeForm';
 import { Toast } from './components/Toast';
 import { ContextualInfoButton } from './components/ContextualInfoButton';
 import { allocateSaveSlotId, getActiveSaveSlotId, listSaveSlots, loadGame, loadSettings, saveGame, setActiveSaveSlotId } from './services/SaveSystem';
+import { normalizeEverthreadFont } from './core/visualIdentity';
 import type { EngineResult } from './types/game';
 
 const PeopleScreen=lazy(()=>import('./screens/PeopleScreen').then(module=>({default:module.PeopleScreen})));
@@ -23,7 +25,7 @@ type Tab=typeof tabs[number][0];
 
 export default function App(){const state=useGameState(s=>s);const[tab,setTab]=useState<Tab>('life');const[meta,setMeta]=useState(false);const[newLife,setNewLife]=useState(false);const[toast,setToast]=useState('');const[booted,setBooted]=useState(false);
  useEffect(()=>{void(async()=>{try{let slotId=getActiveSaveSlotId();let saved=slotId?await loadGame(slotId):undefined;if(!saved){const slots=await listSaveSlots();slotId=slots[0]?.slotId;saved=slotId?await loadGame(slotId):undefined;}if(saved){Object.assign(saved.settings,loadSettings());setActiveSaveSlotId(saved.slotId);gameEngine.replaceState(saved);}else{const initial=gameEngine.getState();setActiveSaveSlotId(initial.slotId);await saveGame(initial);}}finally{setBooted(true);}})();},[]);
- useEffect(()=>{const root=document.documentElement;root.dataset.theme=state.settings.theme;root.style.setProperty('--accent',state.settings.accent);root.style.setProperty('--text-scale',String(state.settings.textScale));root.classList.toggle('high-contrast',state.settings.highContrast);root.classList.toggle('reduced-motion',state.settings.reducedMotion);},[state.settings]);
+ useEffect(()=>{const root=document.documentElement;root.dataset.theme=state.settings.theme;root.dataset.font=normalizeEverthreadFont(state.settings.fontFamily);root.style.setProperty('--accent',state.settings.accent);root.style.setProperty('--text-scale',String(state.settings.textScale));if(state.settings.textColor){root.style.setProperty('--text',state.settings.textColor);root.dataset.customText='true';}else{root.style.removeProperty('--text');delete root.dataset.customText;}root.classList.toggle('high-contrast',state.settings.highContrast);root.classList.toggle('reduced-motion',state.settings.reducedMotion);},[state.settings]);
  useEffect(()=>{const handler=()=>{if(document.visibilityState==='hidden')void saveGame(gameEngine.getState());};document.addEventListener('visibilitychange',handler);return()=>document.removeEventListener('visibilitychange',handler);},[]);
  const createRandomLife=async()=>{await gameEngine.flushSaves();await saveGame(gameEngine.getState());const slotId=await allocateSaveSlotId();setActiveSaveSlotId(slotId);gameEngine.newLife({slotId});setTab('life');};
  const onResult=(result:EngineResult)=>{const message=result.messages.at(-1)?.text??(result.success?'Done.':'That did not work.');setToast(message);window.setTimeout(()=>setToast(''),2600);if(state.settings.haptics&&navigator.vibrate)navigator.vibrate(result.success?8:[20,30,20]);if(state.settings.sound)playResultTone(result.success);};

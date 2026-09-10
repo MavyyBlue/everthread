@@ -4,6 +4,7 @@ import { achievements } from '../data/achievements';
 import type { Character, GameState, Npc, Relationship, Sex, GenderIdentity, Orientation } from '../types/game';
 import { clamp } from '../core/math';
 import { createRng, randomSeed } from '../core/rng';
+import { EVERTHREAD_DEFAULT_ACCENT } from '../core/visualIdentity';
 import { initializeMissingNpcLives } from './NpcLifeSystem';
 
 const traits = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
@@ -95,7 +96,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]},familyPlanning:{},actionLedger:{age:character.age,uses:{},lastUsedAge:{},revision:0},
     economy:{inflationIndex:1,housingIndex:1,salaryIndex:1,businessDemandIndex:1,year:2026},
     flags:{sandbox:options.sandbox ?? false,rewindEnabled:options.rewindEnabled ?? false,debugEnabled:false},
-    settings:{theme:'system',accent:'#7357ff',sound:true,haptics:true,animations:true,textScale:1,notifications:false,minigames:true,profanityFilter:false,autoSave:true,highContrast:false,reducedMotion:false},
+    settings:{theme:'system',accent:EVERTHREAD_DEFAULT_ACCENT,fontFamily:'sans',textColor:null,sound:true,haptics:true,animations:true,textScale:1,notifications:false,minigames:true,profanityFilter:false,autoSave:true,highContrast:false,reducedMotion:false},
     yearlySnapshots:[],
   };
   if(country.royalFamily && familyWealthTier==='wealthy' && rng.chance(.015)){ state.flags.royalBirth=true; state.flags.royalRank=1; state.timeline.push({id:'royal-birth',year:2026,age:0,category:'family',importance:3,text:'You were born into a minor branch of the royal household.'}); }

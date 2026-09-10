@@ -1,0 +1,266 @@
+/* Everthread visual identity layer.
+   Simulation colors remain user-configurable through --accent/--text; these tokens provide
+   the persistent teal-and-gold framing that makes every theme recognizably Everthread. */
+:root{
+  --everthread-teal:#0baaa5;
+  --everthread-teal-deep:#075f62;
+  --everthread-gold:#d7a84c;
+  --everthread-gold-bright:#f4dda0;
+  --everthread-gold-deep:#8f6423;
+  --everthread-font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --everthread-frame:color-mix(in srgb,var(--everthread-gold) 42%,var(--line));
+  --everthread-glow:color-mix(in srgb,var(--everthread-teal) 16%,transparent);
+  font-family:var(--everthread-font);
+}
+:root[data-font="serif"]{--everthread-font:Georgia,"Times New Roman",ui-serif,serif}
+:root[data-font="rounded"]{--everthread-font:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold",Inter,system-ui,sans-serif}
+:root[data-font="mono"]{--everthread-font:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+:root[data-custom-text="true"]{--muted:color-mix(in srgb,var(--text) 62%,var(--bg))}
+
+body{
+  background:
+    radial-gradient(ellipse at 50% -8%,color-mix(in srgb,var(--everthread-teal) 13%,transparent) 0,transparent 42%),
+    radial-gradient(ellipse at 105% 34%,color-mix(in srgb,var(--everthread-gold) 7%,transparent) 0,transparent 30%),
+    var(--bg);
+  background-attachment:fixed;
+}
+
+.app-bar{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 93%,var(--everthread-teal) 7%),color-mix(in srgb,var(--bg) 91%,transparent));
+  border-bottom-color:color-mix(in srgb,var(--everthread-gold) 38%,var(--line));
+  box-shadow:0 7px 24px color-mix(in srgb,var(--everthread-teal) 8%,transparent);
+}
+.brand-button strong{letter-spacing:.025em}
+.brand-button small{letter-spacing:.08em;text-transform:uppercase}
+.brand-icon{
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 72%,transparent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--everthread-gold-bright) 16%,transparent),0 9px 25px color-mix(in srgb,var(--everthread-teal) 18%,transparent);
+}
+.icon-button{
+  background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 94%,var(--everthread-teal) 6%),var(--surface));
+  border-color:var(--everthread-frame);
+  box-shadow:inset 0 1px color-mix(in srgb,var(--everthread-gold-bright) 14%,transparent);
+}
+
+.screen-title h1,.identity-card h1,.sheet-header h2,.death-card>h1{
+  letter-spacing:-.02em;
+  text-wrap:balance;
+}
+.eyebrow{
+  color:color-mix(in srgb,var(--everthread-gold) 74%,var(--text));
+  letter-spacing:.13em;
+}
+
+.identity-card,.stats-card,.timeline-card,.hero-card,.action-card,.business-card,.legacy-card,.path-card,
+.empty-card,.condition-card,.owned-card,.market-card,.past-life,.code-card,.progress-card,.person-card,.search-field{
+  border-color:var(--everthread-frame);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 96%,var(--everthread-teal) 4%),color-mix(in srgb,var(--surface) 98%,var(--everthread-gold) 2%));
+  box-shadow:inset 0 1px color-mix(in srgb,var(--everthread-gold-bright) 9%,transparent),0 8px 28px color-mix(in srgb,var(--everthread-teal-deep) 7%,transparent);
+}
+.identity-card{
+  position:relative;
+  overflow:hidden;
+  border-color:color-mix(in srgb,var(--everthread-gold) 58%,var(--line));
+  background:
+    radial-gradient(circle at 11% 50%,color-mix(in srgb,var(--everthread-teal) 13%,transparent),transparent 32%),
+    linear-gradient(135deg,color-mix(in srgb,var(--surface) 93%,var(--everthread-teal) 7%),color-mix(in srgb,var(--surface) 96%,var(--everthread-gold) 4%));
+}
+.identity-card::after{
+  content:"";
+  position:absolute;
+  right:-30px;top:-70px;
+  width:150px;height:150px;
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 14%,transparent);
+  border-radius:50%;
+  box-shadow:0 0 0 18px color-mix(in srgb,var(--everthread-gold) 3%,transparent),0 0 0 38px color-mix(in srgb,var(--everthread-teal) 3%,transparent);
+  pointer-events:none;
+}
+.identity-card>*{position:relative;z-index:1}
+.money-chip{
+  padding:7px 9px;
+  border-radius:13px;
+  background:color-mix(in srgb,var(--surface-2) 86%,var(--everthread-gold) 14%);
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 30%,var(--line));
+}
+
+.avatar.avatar--crest{
+  position:relative;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  flex:0 0 auto;
+  border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--everthread-gold-bright) 82%,var(--everthread-gold));
+  background:#020809;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb,var(--everthread-gold) 22%,transparent),
+    0 0 20px color-mix(in srgb,var(--everthread-teal) 28%,transparent),
+    0 8px 20px rgba(0,0,0,.16);
+}
+.avatar--crest::after{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--everthread-gold-bright) 18%,transparent);
+  pointer-events:none;
+}
+.avatar--crest img{
+  width:100%;height:100%;display:block;object-fit:cover;
+  transform:scale(1.04);
+  user-select:none;
+}
+
+.creation-identity-preview{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  min-height:118px;
+  padding:13px 14px;
+  border-radius:22px;
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 55%,var(--line));
+  background:
+    radial-gradient(circle at 15% 50%,color-mix(in srgb,var(--everthread-teal) 17%,transparent),transparent 42%),
+    linear-gradient(135deg,color-mix(in srgb,var(--surface) 94%,var(--everthread-teal) 6%),color-mix(in srgb,var(--surface) 96%,var(--everthread-gold) 4%));
+  box-shadow:inset 0 1px color-mix(in srgb,var(--everthread-gold-bright) 12%,transparent);
+}
+.creation-identity-preview h3{margin:0 0 4px}
+.creation-identity-preview p{margin-bottom:4px}
+.creation-identity-preview small{line-height:1.35;display:block}
+
+.stat-track,.mini-meter{
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 12%,var(--line));
+  background:color-mix(in srgb,var(--surface-2) 94%,var(--everthread-teal) 6%);
+}
+.stat-fill,.mini-meter span{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 86%,var(--everthread-teal)),var(--accent),color-mix(in srgb,var(--accent) 80%,var(--everthread-gold-bright)));
+  box-shadow:0 0 8px color-mix(in srgb,var(--accent) 24%,transparent);
+}
+.timeline-entry:not(:last-child)::before{background:linear-gradient(var(--everthread-frame),var(--line))}
+.timeline-symbol{
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 25%,var(--line));
+  background:color-mix(in srgb,var(--surface-2) 88%,var(--everthread-teal) 12%);
+}
+.importance-3 .timeline-symbol{
+  border-color:color-mix(in srgb,var(--everthread-gold) 52%,var(--line));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--everthread-gold-bright) 10%,transparent),0 0 13px color-mix(in srgb,var(--accent) 15%,transparent);
+}
+
+.quick-facts>div,.finance-grid>div,.sheet-stat-grid>div{
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 16%,var(--line));
+  background:linear-gradient(145deg,color-mix(in srgb,var(--surface-2) 95%,var(--everthread-teal) 5%),var(--surface-2));
+}
+
+.age-up{
+  border:1px solid color-mix(in srgb,var(--everthread-gold-bright) 52%,var(--accent));
+  background:
+    linear-gradient(135deg,color-mix(in srgb,var(--accent) 82%,var(--everthread-teal)),var(--accent) 57%,color-mix(in srgb,var(--accent) 82%,var(--everthread-gold)));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--everthread-gold) 18%,transparent),0 16px 34px color-mix(in srgb,var(--accent) 30%,transparent);
+}
+.age-up-plus{
+  border:1px solid color-mix(in srgb,var(--everthread-gold-bright) 36%,transparent);
+  background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.08));
+}
+
+.bottom-nav{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 94%,var(--everthread-teal) 6%),color-mix(in srgb,var(--surface) 98%,transparent));
+  border-top-color:color-mix(in srgb,var(--everthread-gold) 42%,var(--line));
+  box-shadow:0 -10px 30px color-mix(in srgb,var(--everthread-teal-deep) 8%,transparent);
+}
+.bottom-nav button.active{
+  color:var(--accent);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 12%,transparent),color-mix(in srgb,var(--everthread-gold) 7%,transparent));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--everthread-gold) 22%,transparent);
+}
+.bottom-nav button.active span{text-shadow:0 0 12px color-mix(in srgb,var(--accent) 40%,transparent)}
+
+.secondary-button,.full-button,.button-row button,.action-grid button,.condition-card button,.owned-card>button,.progress-card button,.quiz-result button,
+.activity-grid button,.menu-list>button,.list-compact>button,.event-choices button{
+  border-color:color-mix(in srgb,var(--everthread-gold) 22%,var(--line));
+  box-shadow:inset 0 1px color-mix(in srgb,var(--everthread-gold-bright) 8%,transparent);
+}
+.full-button{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 90%,var(--everthread-teal)),var(--accent));
+  border-color:color-mix(in srgb,var(--everthread-gold) 35%,var(--accent));
+}
+
+.form-field input,.form-field select{
+  border-color:color-mix(in srgb,var(--everthread-gold) 20%,var(--line));
+  background:color-mix(in srgb,var(--surface-2) 96%,var(--everthread-teal) 4%);
+}
+.form-field input:focus,.form-field select:focus{
+  border-color:color-mix(in srgb,var(--accent) 58%,var(--everthread-gold));
+}
+.toggle-row{border-bottom-color:color-mix(in srgb,var(--everthread-gold) 14%,var(--line))}
+.segmented{
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 18%,var(--line));
+  background:color-mix(in srgb,var(--surface-2) 94%,var(--everthread-teal) 6%);
+}
+.segmented button.active{
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 25%,var(--line));
+  background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 94%,var(--everthread-teal) 6%),var(--surface));
+}
+
+.sheet-backdrop{background:color-mix(in srgb,#03090b 72%,transparent);backdrop-filter:blur(3px)}
+.bottom-sheet{
+  border-color:color-mix(in srgb,var(--everthread-gold) 44%,var(--line));
+  background:
+    radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--everthread-teal) 11%,transparent),transparent 32%),
+    var(--bg);
+  box-shadow:0 -1px color-mix(in srgb,var(--everthread-gold-bright) 18%,transparent),0 -22px 80px rgba(0,0,0,.28);
+}
+.sheet-header{border-bottom-color:color-mix(in srgb,var(--everthread-gold) 30%,var(--line))}
+.sheet-handle{background:linear-gradient(90deg,var(--everthread-gold-deep),var(--everthread-gold-bright),var(--everthread-gold-deep))}
+.event-sheet,.death-card{
+  border-color:color-mix(in srgb,var(--everthread-gold) 48%,var(--line));
+  background:
+    radial-gradient(circle at 50% 0,color-mix(in srgb,var(--everthread-teal) 9%,transparent),transparent 36%),
+    var(--surface);
+}
+.event-mark{
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 28%,var(--line));
+  background:color-mix(in srgb,var(--accent) 10%,var(--surface));
+}
+
+.visual-settings-card{
+  padding:13px 14px;
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 48%,var(--line));
+  border-radius:18px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--surface) 93%,var(--everthread-teal) 7%),color-mix(in srgb,var(--surface) 96%,var(--everthread-gold) 4%));
+}
+.visual-settings-card h3{margin:0 0 5px}
+.visual-settings-card p{margin-bottom:4px}
+.visual-settings-card small{display:block;line-height:1.4}
+.color-setting-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.color-setting-row input[type="color"]{min-width:0;width:100%;height:46px}
+.color-setting-row button{
+  min-height:46px;
+  padding:0 12px;
+  border-radius:13px;
+  border:1px solid color-mix(in srgb,var(--everthread-gold) 25%,var(--line));
+  background:color-mix(in srgb,var(--surface) 94%,var(--everthread-teal) 6%);
+  font-weight:750;
+  white-space:nowrap;
+}
+.color-setting-row button.active{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 32%,transparent)}
+
+.life-save-card.current{
+  border-color:color-mix(in srgb,var(--everthread-gold) 55%,var(--accent));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--everthread-gold) 12%,transparent),0 9px 28px color-mix(in srgb,var(--accent) 8%,transparent);
+}
+
+/* User-selected text should remain legible even when the brand framing is ornate. */
+:root.high-contrast{
+  --everthread-frame:color-mix(in srgb,var(--text) 62%,var(--everthread-gold));
+}
+:root.high-contrast .identity-card,
+:root.high-contrast .bottom-sheet,
+:root.high-contrast .event-sheet,
+:root.high-contrast .death-card{border-width:2px}
+
+@media(max-width:390px){
+  .creation-identity-preview{gap:12px;padding:11px}
+  .creation-identity-preview .avatar--crest{width:78px!important;height:78px!important}
+  .color-setting-row{grid-template-columns:1fr}
+  .color-setting-row button{width:100%}
+}
