@@ -1,4 +1,3 @@
-import { getNamePool } from '../data/names';
 import { countryById } from '../data/countries';
 import { jobById } from '../data/jobs';
 import { departmentsForIndustry, partTimeJobById, partTimeJobs, workplaceRosterSize } from '../data/workplaces';
@@ -9,6 +8,7 @@ import { actionAllowed, consumeAction } from '../core/actionEconomy';
 import type { CareerRecord, EngineResult, GameState, Npc, Orientation, PartTimeCareerRecord, Relationship, RelationshipType, SocialWorld, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
 import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
+import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 
 const WORK_RELATIONSHIP_TYPES = new Set<RelationshipType>(['coworker','boss']);
 const NPC_TRAITS = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
@@ -55,9 +55,7 @@ function addWorkRelationship(state:GameState,npc:Npc,role:SocialWorldMemberRole,
 }
 
 function uniqueNpcName(state:GameState,rng:ReturnType<typeof createRng>,used:Set<string>){
-  const pool=getNamePool(state.character.countryId);let firstName=rng.pick(pool.first);let lastName=rng.pick(pool.last);
-  for(let tries=0;tries<14&&used.has(`${firstName}|${lastName}`);tries+=1){firstName=rng.pick(pool.first);lastName=rng.pick(pool.last);}
-  used.add(`${firstName}|${lastName}`);return{firstName,lastName};
+  const {firstName,lastName}=pickCollisionAwareNpcName(state,rng);used.add(`${firstName}|${lastName}`);return{firstName,lastName};
 }
 
 function createWorkNpc(state:GameState,role:SocialWorldMemberRole,worldKey:string,ordinal:number,record:CareerRecord,industry:string,rng:ReturnType<typeof createRng>,used:Set<string>):Npc{

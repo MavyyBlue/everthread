@@ -1,4 +1,3 @@
-import { getNamePool } from '../data/names';
 import { groupTemplatesForAge, schoolProfileFor } from '../data/schools';
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
@@ -7,6 +6,7 @@ import { actionAllowed, consumeAction } from '../core/actionEconomy';
 import type { EducationRecord, EngineResult, GameState, Npc, Orientation, RelationshipType, SchoolGroupKind, SocialWorld, SocialWorldGroup, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
 import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
+import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 
 const SCHOOL_RELATIONSHIP_TYPES = new Set<RelationshipType>(['classmate','teacher','principal','coach']);
 const NPC_TRAITS = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
@@ -61,12 +61,7 @@ function addSchoolRelationship(state: GameState, npc: Npc, role: SocialWorldMemb
 }
 
 function createSchoolNpc(state: GameState, role: SocialWorldMemberRole, worldKey: string, ordinal: number, yearsKnown: number, rng: ReturnType<typeof createRng>, usedNames: Set<string>): Npc {
-  const pool = getNamePool(state.character.countryId);
-  let firstName = rng.pick(pool.first);
-  let lastName = rng.pick(pool.last);
-  for (let tries = 0; tries < 12 && usedNames.has(`${firstName}|${lastName}`); tries += 1) {
-    firstName = rng.pick(pool.first); lastName = rng.pick(pool.last);
-  }
+  const {firstName,lastName}=pickCollisionAwareNpcName(state,rng);
   usedNames.add(`${firstName}|${lastName}`);
   const age = role === 'classmate'
     ? Math.max(4, state.character.age + rng.int(-1,1))

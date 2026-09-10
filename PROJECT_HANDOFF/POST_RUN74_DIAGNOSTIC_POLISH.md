@@ -98,7 +98,7 @@ Dedicated synthetic `ageAwareReproductionRegression.ts`: **21/21 checks passed i
 
 ## Slice 5 — NPC gender / sexual-orientation coherence
 
-Status: **Local Green — overlay integrity/package verified; GitHub CI pending.**
+Status: **CI Green — Run #81 (`34539481495`), expanded baseline `f5f09267bf430695ab6bf5478232522c1274e76d`.**
 
 Goal: make generated gender, orientation, romantic compatibility, and autonomous matchmaking coherent while preserving established identity and history on old saves. Persisted identity remains authoritative; creation-time generation must not rewrite old saves.
 
@@ -121,15 +121,28 @@ Dedicated `npcOrientationCoherenceRegression.ts`: **37/37 local checks passed**.
 
 Diagnostic-save preservation check (save not shipped): 9 legacy odd combinations remained 9 after the local logic; no historical sexuality rewrite occurred. Yuki remained female + pansexual and ordinarily compatible.
 
-Final local packaging check: the exact diff/integrity comparison against Run #80 baseline `d62cdfb6ea9a09f1b217e5a96fb20722052bc007` found 13 intentional modified source/test files plus 2 new Slice-5 files. `ReproductionSystem.ts` and `ageAwareReproductionRegression.ts` are byte-identical to Run #80 and are excluded from the overlay. A fresh transpile syntax preflight checked all 17 TS/TSX files carried through the handoff workspace with zero error diagnostics. The normal mobile `everthread-source.zip` is prepared with the verified overlay and no transient diagnostic/handoff-only payloads. Next action: upload that ZIP to the repository root and inspect the resulting GitHub Actions run. Slice 5 remains **not CI Green** until GitHub passes every gate.
+Run #81 (`34539481495`) passed both TypeScript gates, core regression 82/82, NPC orientation coherence 55/55, every established adjacent regression, production build, Pages artifact upload, and live deployment. The verified Slice-5 overlay expanded into `f5f09267bf430695ab6bf5478232522c1274e76d`. Slice 5 is **CI Green**.
 
 ## Slice 6 — Collision-aware naming
 
-Status: **Queued**.
+Status: **Implementing — targeted local preflight green; CI candidate prepared.**
 
 Goal: keep the expanded regional name pools and exact 50/45/5 gender distribution, but preferentially select unused or low-collision names among the relevant cast before graceful fallback. Preserve deterministic RNG behavior.
 
-Regression targets: deterministic output, regional/gender pools, no avoidable collision in ordinary casts, fallback under saturated pools, descendants/special-career NPC creation.
+Candidate implementation:
+
+- new `NpcNamingSystem.ts` is the single creation-time naming authority;
+- the initial random first-name draw still chooses the regional/gender bucket, and collision cleanup can only move within that same bucket;
+- ordinary unused draws stay unchanged; avoidable visible first-name collisions prefer an unused/lower-frequency name, exact full-name collisions break ties, and saturated pools fall back deterministically;
+- collision resolution itself consumes no retry RNG, so ordinary flexible names use only the initial first/last draws and fixed-family-surname names use only the initial first-name draw;
+- Unicode-normalized, locale-independent comparison catches cosmetic case/normalization duplicates;
+- family surnames can be locked for player children and NPC descendants;
+- existing NPC names/legacy saves are never rewritten; save schema remains 9;
+- integrated creation sites: new-life parents, Meet Someone, player births/adoption, autonomous partners/children, school, workplace, standard special careers, combat, military, and politics.
+
+Local preflight: compiled naming harness **17/17**; modified/new TS syntax diagnostics **0**; all nine production source baselines hash-match Run #81 before editing. Dedicated repository `collisionAwareNamingRegression.ts` contains **33 checks** covering deterministic output, regional/gender pools, ordinary collision avoidance, saturated fallback, fixed surnames, RNG draw counts, player/parent/child naming, and special-career/social-world factories. Because this handoff is an overlay rather than a full checkout, the complete Everthread regression suite remains the GitHub CI gate.
+
+Regression gate: both TypeScript checks, all established suites, the new naming regression, production build, Pages artifact upload, and deployment must pass before Slice 6 becomes CI Green or Slice 7 starts.
 
 ## Slice 7 — Relationship/event microcopy polish
 

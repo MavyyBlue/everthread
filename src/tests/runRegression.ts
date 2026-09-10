@@ -31,6 +31,7 @@ import { runNpcHouseholdCoherenceRegression } from './npcHouseholdCoherenceRegre
 import { runNpcHealthMortalityRegression } from './npcHealthMortalityRegression';
 import { runAgeAwareReproductionRegression } from './ageAwareReproductionRegression';
 import { runNpcOrientationCoherenceRegression } from './npcOrientationCoherenceRegression';
+import { runCollisionAwareNamingRegression } from './collisionAwareNamingRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -67,4 +68,5 @@ try{const checks=runNpcHouseholdCoherenceRegression();console.log(`NPC household
 try{const checks=runNpcHealthMortalityRegression();console.log(`NPC health / mortality regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runAgeAwareReproductionRegression();console.log(`Age-aware reproduction regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runNpcOrientationCoherenceRegression();console.log(`NPC orientation coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runCollisionAwareNamingRegression();console.log(`Collision-aware naming regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

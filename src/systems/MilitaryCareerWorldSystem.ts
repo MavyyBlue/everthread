@@ -1,10 +1,10 @@
-import { getNamePool } from '../data/names';
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import type { GameState, Npc, Orientation, RelationshipType, SocialWorld, SocialWorldMemberRole } from '../types/game';
 import { ensureNpcLife } from './NpcLifeSystem';
 import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
+import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 
 type Track = Record<string, number | string | boolean>;
 type GroupKey = 'command' | 'peers' | 'support';
@@ -44,9 +44,7 @@ function relationshipAverage(state:GameState,ids:string[],fallback=50){return av
 
 function usedNames(state:GameState){return new Set(Object.values(state.npcs).map(npc=>`${npc.firstName}|${npc.lastName}`));}
 function uniqueName(state:GameState,rng:Rng,used:Set<string>){
-  const pool=getNamePool(state.character.countryId);let firstName=rng.pick(pool.first);let lastName=rng.pick(pool.last);
-  for(let tries=0;tries<16&&used.has(`${firstName}|${lastName}`);tries+=1){firstName=rng.pick(pool.first);lastName=rng.pick(pool.last);}
-  used.add(`${firstName}|${lastName}`);return{firstName,lastName};
+  const {firstName,lastName}=pickCollisionAwareNpcName(state,rng);used.add(`${firstName}|${lastName}`);return{firstName,lastName};
 }
 function createMilitaryNpc(state:GameState,key:GroupKey,definition:MilitaryGroupDefinition,rng:Rng,used:Set<string>):Npc{
   const {firstName,lastName}=uniqueName(state,rng,used);const minimumAge=key==='command'?24:18;const age=Math.max(minimumAge,state.character.age+rng.int(definition.ageOffset[0],definition.ageOffset[1]));

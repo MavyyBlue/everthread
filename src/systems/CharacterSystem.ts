@@ -8,6 +8,7 @@ import { EVERTHREAD_DEFAULT_ACCENT } from '../core/visualIdentity';
 import { initializeMissingNpcLives } from './NpcLifeSystem';
 import { npcGender } from './NpcIdentitySystem';
 import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
+import { resolveCollisionAwareName, type CastName } from './NpcNamingSystem';
 
 const traits = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
 const skinTones = ['porcelain','fair','light','medium','olive','tan','brown','deep brown','dark'];
@@ -35,13 +36,17 @@ export interface CharacterCreationOptions {
   rewindEnabled?: boolean;
 }
 
-function npcFromParent(index:number, playerLastName:string, countryId:string, city:string, seed:string): Npc {
+function npcFromParent(index:number, playerLastName:string, countryId:string, city:string, seed:string, existingNames:readonly CastName[]): Npc {
   const rng = createRng(`${seed}-parent-${index}`);
   const pool = getNamePool(countryId);
   const age = rng.int(20,44);
+  const initialFirstName=rng.pick(pool.first);
+  const sharesPlayerSurname=index===0&&rng.chance(.65);
+  const initialLastName=sharesPlayerSurname?playerLastName:rng.pick(pool.last);
+  const {firstName,lastName}=resolveCollisionAwareName(countryId,initialFirstName,initialLastName,existingNames,sharesPlayerSurname?{fixedLastName:playerLastName}:{});
   return {
     id:`parent-${index}-${seed.slice(-6)}`,
-    firstName:rng.pick(pool.first), lastName: index === 0 && rng.chance(.65) ? playerLastName : rng.pick(pool.last), age, alive:true,
+    firstName, lastName, age, alive:true,
     health:rng.int(62,98), happiness:rng.int(45,90), wealth:rng.int(1000,120000), countryId, city,
     sexuality:rng.pick<Orientation>(['straight','straight','straight','bisexual','gay','lesbian']), fertility:rng.int(35,88),
     maritalStatus:'married', traits:rng.shuffle(traits).slice(0,3), hiddenOpinion:rng.int(35,90), memories:[], parentIds:[], childIds:[],
@@ -77,8 +82,9 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     talents:{music:stat(adv.music,10,95),acting:stat(adv.acting,10,95),athletics:stat(adv.athleticism,10,95),business:stat(adv.business,10,95),crime:stat(adv.crime,10,95),social:stat(adv.social,10,95),combat:rng.int(10,95)},
     birthCircumstance:rng.pick(birthCircumstances),familyWealthTier,traits:rng.shuffle(traits).slice(0,3),specialTalents:[],
   };
-  const p1 = npcFromParent(1,lastName,country.id,city,seed);
-  const p2 = npcFromParent(2,lastName,country.id,city,seed);
+  const playerName={firstName,lastName};
+  const p1 = npcFromParent(1,lastName,country.id,city,seed,[playerName]);
+  const p2 = npcFromParent(2,lastName,country.id,city,seed,[playerName,p1]);
   p1.partnerId=p2.id; p2.partnerId=p1.id; p1.childIds=[character.id]; p2.childIds=[character.id];
   const relationships: Relationship[] = [
     {id:`rel-${p1.id}`,npcId:p1.id,type:'parent',score:rng.int(58,92),attraction:0,compatibility:rng.int(45,88),yearsKnown:0},
