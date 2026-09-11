@@ -56,7 +56,7 @@ Current status:
 5. **NPC gender / sexual-orientation coherence — CI Green (Run #81).**
 6. **Collision-aware naming — CI Green (Run #82).**
 7. **Relationship/event microcopy polish — CI Green (Run #84).**
-8. **Integrated long-life QA — Implementing; regression-only CI candidate prepared.**
+8. **Integrated long-life QA — Implementing; Run #85 test-only TypeScript failure diagnosed, corrective CI candidate prepared.**
 
 ## Slice 1 implementation — CI Green
 
@@ -203,7 +203,7 @@ The green implementation keeps the interaction engine untouched and adds explici
 
 A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb through both the pure copy projection and the real `interactWithNpc()` path, checking successful execution plus exact timeline and NPC-memory wording. Run #84 (`34542840262`) passed both TypeScript gates, core 82/82, Relationship Microcopy **66/66**, every established regression including orientation 55/55 and naming 32/32, production build, Pages artifact upload, and deployment. The corrected overlay expanded into `2487a0bc79abc16473cb91e74f220071e4b23959`. Slice 7 is **CI Green**.
 
-## Slice 8 implementation — CI candidate prepared
+## Slice 8 implementation — corrective CI candidate prepared
 
 The final corrective slice is regression-only unless it exposes a production defect. New `integratedLongLifeRegression.ts` combines two stress shapes instead of duplicating the existing 25-life smoke test:
 
@@ -215,7 +215,7 @@ The final corrective slice is regression-only unless it exposes a production def
 - the stressed state is exported/imported, rewound, replayed, interacted with after rehydration, force-completed, and continued as an adult descendant;
 - descendant continuation must preserve a large sibling set and prior protagonist ancestry, clear the prior generation rewind history, start a fresh successor rewind history, and survive a second save round-trip without invariant errors.
 
-The dedicated closeout suite contains **77 assertions**. No production source or save schema changes are part of this candidate. Modified test files transpile with zero syntax diagnostics; GitHub remains the authoritative full TypeScript/runtime/build/deployment gate.
+The dedicated closeout suite contains **77 assertions**. No production source or save schema changes are part of this candidate. Run #85 (`34544430607`) imported the regression-only overlay and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`; `typecheck:engine` passed, but `typecheck:tests` correctly rejected five test-only narrowing assumptions. The fixture had retained pre-mutation literal types across divorce/reconcile/remarriage calls and compared optional reproduction diagnostics without first narrowing them. The corrective candidate re-reads authoritative relationship/NPC state after each mutation and explicitly narrows the optional reproduction diagnostics. All 77 assertions remain intact; no production behavior, save schema, or runner wiring changes. The repaired narrowing pattern passes standalone strict TypeScript checking and the packaged test files transpile with zero syntax diagnostics; GitHub remains the authoritative full TypeScript/runtime/build/deployment gate.
 
 ## Known continuing quality / architecture issues
 
@@ -225,7 +225,7 @@ The dedicated closeout suite contains **77 assertions**. No production source or
 - Age-aware biological conception is CI Green in Run #80.
 - Collision-aware naming is CI Green in Run #82.
 - Relationship interaction microcopy is CI Green in Run #84.
-- Integrated long-life QA is the active final corrective closeout gate; the candidate adds tests only and is not CI Green yet.
+- Integrated long-life QA is the active final corrective closeout gate; Run #85 exposed a test-only TypeScript narrowing defect, now corrected without production changes. Slice 8 is not CI Green yet.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.

@@ -132,20 +132,27 @@ export function runIntegratedLongLifeRegression(){
 
   const spouseRel=state.relationships.find(item=>item.npcId===spouse.id)!;
   verify(changeRelationshipType(state,spouse.id,'divorce').success,'dense fixture divorce transition failed');
-  verify(spouseRel.type==='ex'&&spouse.maritalStatus==='divorced','divorce did not synchronize relationship and NPC marital state');
-  verify(spouse.life?.household.status==='independent','divorce did not release the player spouse household projection');
+  const divorcedRel=state.relationships.find(item=>item.npcId===spouse.id)!;
+  const divorcedSpouse=state.npcs[spouse.id]!;
+  verify(divorcedRel.type==='ex'&&divorcedSpouse.maritalStatus==='divorced','divorce did not synchronize relationship and NPC marital state');
+  verify(divorcedSpouse.life?.household.status==='independent','divorce did not release the player spouse household projection');
 
-  resetFixtureClock(state);spouseRel.score=100;spouseRel.attraction=100;spouseRel.compatibility=100;spouse.hiddenOpinion=100;state.rngCounter=0;
+  resetFixtureClock(state);divorcedRel.score=100;divorcedRel.attraction=100;divorcedRel.compatibility=100;divorcedSpouse.hiddenOpinion=100;state.rngCounter=0;
   verify(changeRelationshipType(state,spouse.id,'reconcile').success,'dense fixture reconciliation transition failed');
-  verify(spouseRel.type==='partner'&&spouse.maritalStatus==='dating','reconciliation did not restore dating state');
-  verify(spouse.life?.household.status==='partnered','reconciliation did not restore partnered household projection');
+  const reconciledRel=state.relationships.find(item=>item.npcId===spouse.id)!;
+  const reconciledSpouse=state.npcs[spouse.id]!;
+  verify(reconciledRel.type==='partner'&&reconciledSpouse.maritalStatus==='dating','reconciliation did not restore dating state');
+  verify(reconciledSpouse.life?.household.status==='partnered','reconciliation did not restore partnered household projection');
 
   resetFixtureClock(state);
   verify(changeRelationshipType(state,spouse.id,'marry').success,'dense fixture remarriage transition failed');
-  verify(spouseRel.type==='spouse'&&spouse.maritalStatus==='married','remarriage did not synchronize spouse state');
+  const remarriedRel=state.relationships.find(item=>item.npcId===spouse.id)!;
+  const remarriedSpouse=state.npcs[spouse.id]!;
+  verify(remarriedRel.type==='spouse'&&remarriedSpouse.maritalStatus==='married','remarriage did not synchronize spouse state');
 
   const bioGate=biologicalChildGate(state,spouse.id);
-  verify(bioGate.allowed&&bioGate.ageFactor>0&&bioGate.conceptionChance>0,'age-aware biological family gate was not viable for the young-adult dense couple');
+  const ageFactor=bioGate.ageFactor;const conceptionChance=bioGate.conceptionChance;
+  verify(bioGate.allowed&&typeof ageFactor==='number'&&ageFactor>0&&typeof conceptionChance==='number'&&conceptionChance>0,'age-aware biological family gate was not viable for the young-adult dense couple');
   const beforeAdoption=state.relationships.filter(item=>item.type==='child').length;
   verify(haveChild(state,spouse.id,true).success,'dense fixture adoption failed');
   verify(state.relationships.filter(item=>item.type==='child').length===beforeAdoption+1,'adoption did not add exactly one child relationship');

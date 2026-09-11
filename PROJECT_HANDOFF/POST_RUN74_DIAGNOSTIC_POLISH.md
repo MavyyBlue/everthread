@@ -165,7 +165,7 @@ Run #84 (`34542840262`) passed both TypeScript checks, core regression 82/82, ev
 
 ## Slice 8 — Integrated long-life QA
 
-Status: **Implementing — regression-only CI candidate prepared.**
+Status: **Implementing — Run #85 test-only TypeScript failure diagnosed; corrective CI candidate prepared.**
 
 Goal: synthetic multi-decade/high-NPC/high-child-count validation across save growth, rewind, marriages/divorces/reconciliation, deaths, reproduction, naming, family linkage, and descendant continuation. This is the closeout gate for the corrective pass, not a new endless feature phase.
 
@@ -180,6 +180,6 @@ Candidate regression design:
 - force the protagonist's death, continue as an adult child, require the prior protagonist parent link and a broad sibling set, verify old rewind history is cleared, age the descendant five more years, and verify new snapshots belong to the descendant;
 - finish with another export/import round-trip and invariant validation.
 
-`integratedLongLifeRegression.ts` contains **77 assertions** and is wired into the standard regression runner. Modified test files transpile with zero syntax diagnostics. GitHub CI must pass both TypeScript gates, all existing suites, the new integrated regression, production build, Pages artifact upload, and deployment before Slice 8 or the corrective program can be called CI Green.
+`integratedLongLifeRegression.ts` contains **77 assertions** and is wired into the standard regression runner. Run #85 (`34544430607`) imported the initial Slice 8 overlay and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`. `typecheck:engine` passed, while `typecheck:tests` failed on five fixture-only narrowing errors: stale pre-mutation literal types across divorce/reconcile/remarriage assertions plus optional `ageFactor` / `conceptionChance` diagnostics used without explicit narrowing. Regressions, build, and deployment were correctly skipped. The correction re-reads relationship/NPC state from the authoritative `GameState` after each mutation and narrows the optional reproduction values before comparing them; it leaves all 77 assertions, production systems, runner wiring, RNG behavior, and save schema unchanged. The repaired narrowing pattern passes standalone strict TypeScript checking and the packaged test files transpile with zero syntax diagnostics. GitHub CI must pass both TypeScript gates, all existing suites, the integrated regression, production build, Pages artifact upload, and deployment before Slice 8 or the corrective program can be called CI Green.
 
 After Slice 8 is CI Green, return to the planned Phase 5 estate/dynasty roadmap unless new playtesting exposes a concrete blocking defect.
