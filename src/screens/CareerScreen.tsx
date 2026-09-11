@@ -24,11 +24,12 @@ import {
 import { specialCareerExitGate } from '../systems/SpecialCareerExitSystem';
 import { specialCareerLifecycleView, specialCareerLifecycleViews, specialCareerRetirementGate, type DeepCareerPath } from '../systems/SpecialCareerLifecycleSystem';
 import { sportsContractOffer } from '../systems/SportsCareerCycleSystem';
+import { careerActionVfx, type ActionResultHandler, type ActionVfxKind } from '../core/actionVfx';
 
 const DEEP_CAREER_KEYS=new Set<SpecialCareerPathKey>(['acting','music','sports','modeling','racing','directing']);
 function isDeepCareerKey(key:SpecialCareerPathKey):key is DeepCareerPath{return DEEP_CAREER_KEYS.has(key);}
 
-export function CareerScreen({state,onResult}:{state:GameState;onResult:(r:EngineResult)=>void}){
+export function CareerScreen({state,onResult}:{state:GameState;onResult:ActionResultHandler}){
   const[tab,setTab]=useState<'work'|'education'|'special'>('work');
   const[q,setQ]=useState('');
   const fullTimeAvailability=fullTimeJobGate(state);
@@ -83,9 +84,9 @@ export function CareerScreen({state,onResult}:{state:GameState;onResult:(r:Engin
   </main>;
 }
 
-function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult)=>void}){
-  const[challenge,setChallenge]=useState<{kind:MiniGameKind;run:(score:number)=>EngineResult}>();
-  const launchChallenge=(kind:MiniGameKind,run:(score:number)=>EngineResult):EngineResult|void=>{if(!state.settings.minigames){const resolved=skipMiniGame(state,kind,relatedMiniGameSkill(state,kind));return run(resolved.score);}setChallenge({kind,run});};
+function SpecialPaths({state,onResult}:{state:GameState;onResult:ActionResultHandler}){
+  const[challenge,setChallenge]=useState<{kind:MiniGameKind;run:(score:number)=>EngineResult;vfx?:ActionVfxKind}>();
+  const launchChallenge=(kind:MiniGameKind,run:(score:number)=>EngineResult,vfx?:ActionVfxKind):EngineResult|void=>{if(!state.settings.minigames){const resolved=skipMiniGame(state,kind,relatedMiniGameSkill(state,kind));return run(resolved.score);}setChallenge({kind,run,vfx});};
   const capacity=specialCareerCapacity(state);
   const lifecycle=specialCareerLifecycleViews(state);const inactiveLifecycle=lifecycle.filter(view=>!view.activeCommitment&&(view.leftPath||view.retired));
   const actingLife=specialCareerLifecycleView(state,'acting');const musicLife=specialCareerLifecycleView(state,'music');const sportsLife=specialCareerLifecycleView(state,'sports');const modelingLife=specialCareerLifecycleView(state,'modeling');const racingLife=specialCareerLifecycleView(state,'racing');const directingLife=specialCareerLifecycleView(state,'directing');
@@ -99,19 +100,19 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
   const sportsSeasons=Number(sportsTrack?.seasonsPlayed??0);const sportsRetired=sportsTrack?.retired===true;const sportsActive=pathActive('sports');const racingActive=pathActive('racing');
   return <>
     <section className="action-card"><div className="section-heading"><div><p className="eyebrow">Major commitments</p><h2>Special-career capacity</h2></div><span>{capacity.active.length}/{capacity.limit} active</span></div><p>{capacity.inSchool?'School leaves room for one active special-career path. Regular and part-time jobs are unavailable while you balance both.':'Outside school, you can pursue up to two active special-career paths at once.'}</p>{capacity.active.length>0&&<div className="stack">{capacity.active.map(key=>{const exit=specialCareerExitGate(state,key);const deep=isDeepCareerKey(key);const life=deep?specialCareerLifecycleView(state,key):undefined;const retirement=deep&&life?.established?specialCareerRetirementGate(state,key as DeepCareerPath):undefined;const retire=deep?()=>gameEngine.retireSpecialCareer(key as DeepCareerPath):undefined;return <article className="school-group-card joined" key={`active-${key}`}><div><strong>{specialCareerPathLabel(key)}</strong><small>{life?`${life.status} · `:''}{exit.allowed?'You may step away now. Completed history will remain.':exit.message}</small></div><div className="school-group-actions"><button className="secondary-button" disabled={!exit.allowed} onClick={()=>onResult(gameEngine.leaveSpecialCareer(key))}>Leave Path</button>{retirement&&retire&&<button className="danger-soft" disabled={!retirement.allowed} onClick={()=>onResult(retire())}>Retire</button>}</div></article>})}</div>}{inactiveLifecycle.length>0&&<div className="stack">{inactiveLifecycle.map(view=>{const gate=specialCareerStartGate(state,view.key);const detail=view.retirementFinal?'Final retirement. Career history remains available.':gate.allowed?`${view.retired?'Comeback':'Return'} available through your next successful professional action below.`:gate.message;return <article className="school-group-card" key={`inactive-${view.key}`}><div><strong>{view.label}</strong><small>{view.status} · {detail}</small></div></article>})}</div>}{capacity.overLimit&&<p className="muted">This older save is above the new limit. Existing paths are preserved and remain playable, but no additional special career can begin until you are back within capacity.</p>}</section>
-    {renewal&&<section className="action-card"><div className="section-heading"><div><p className="eyebrow">Sports contract decision</p><h2>{renewal.team}</h2></div><span>expires after age {renewal.expiresAge}</span></div><p>{renewal.years} year{renewal.years===1?'':'s'} · {formatMoney(renewal.salary)}/year. Your previous term is complete, so you may accept, decline into free agency, or leave Professional sports above.</p><div className="button-row"><button disabled={!actionAllowed(state,{policy:'special.pro_contract'})} onClick={()=>onResult(gameEngine.sportsContract('accept'))}>Accept renewal</button><button className="secondary-button" disabled={!actionAllowed(state,{policy:'special.pro_contract'})} onClick={()=>onResult(gameEngine.sportsContract('decline'))}>Decline</button></div></section>}
+    {renewal&&<section className="action-card"><div className="section-heading"><div><p className="eyebrow">Sports contract decision</p><h2>{renewal.team}</h2></div><span>expires after age {renewal.expiresAge}</span></div><p>{renewal.years} year{renewal.years===1?'':'s'} · {formatMoney(renewal.salary)}/year. Your previous term is complete, so you may accept, decline into free agency, or leave Professional sports above.</p><div className="button-row"><button disabled={!actionAllowed(state,{policy:'special.pro_contract'})} onClick={()=>onResult(gameEngine.sportsContract('accept'),{primary:careerActionVfx('sports'),derive:true})}>Accept renewal</button><button className="secondary-button" disabled={!actionAllowed(state,{policy:'special.pro_contract'})} onClick={()=>onResult(gameEngine.sportsContract('decline'))}>Decline</button></div></section>}
     <div className="special-paths">
       <Path title="Acting" stat={`${actingLife.status} · Skill ${Math.round(Number(state.specialCareers.acting?.skill??0))}`} actions={[
         ['Lesson',()=>gameEngine.actingLesson(),training('acting')||(state.character.age>=18&&state.finances.cash<120)],
         ['Find agent',()=>gameEngine.actingAgent(),startBlocked('acting')||Number(state.specialCareers.acting?.agent??0)>=1],
-        ['Audition',()=>launchChallenge('acting',score=>gameEngine.actingAudition(score)),startBlocked('acting')||state.character.age<14||!actionAllowed(state,{policy:'special.audition'})],
-      ]} onResult={onResult}/>
+        ['Audition',()=>launchChallenge('acting',score=>gameEngine.actingAudition(score),careerActionVfx('acting')),startBlocked('acting')||state.character.age<14||!actionAllowed(state,{policy:'special.audition'})],
+      ]} vfx={careerActionVfx('acting')} onResult={onResult}/>
       <Path title="Music" stat={`${musicLife.status} · Skill ${Math.round(Number(state.specialCareers.music?.skill??0))}`} actions={[
         ['Practice vocals',()=>gameEngine.musicPractice('vocals'),training('music')],
         ['Release song',()=>gameEngine.musicRelease('song'),startBlocked('music')||!actionAllowed(state,{policy:'special.music_release'})],
         ['Release album',()=>gameEngine.musicRelease('album'),startBlocked('music')||!actionAllowed(state,{policy:'special.music_release'})],
         ['Tour',()=>gameEngine.musicTour(),startBlocked('music')||!actionAllowed(state,{policy:'special.tour',target:'music'})],
-      ]} onResult={onResult}/>
+      ]} vfx={careerActionVfx('music')} onResult={onResult}/>
       <Path title="Professional sports" stat={`${String(sportsTrack?.sport??'Choose a sport')} · ${sportsLife.status}${sportsSeasons?` · ${sportsSeasons} season${sportsSeasons===1?'':'s'}`:''}`} actions={[
         ['Basketball',()=>gameEngine.sportsJoin('Basketball'),sportsActive||sportsRetired||startBlocked('sports')],
         ['American football',()=>gameEngine.sportsJoin('American football'),sportsActive||sportsRetired||startBlocked('sports')],
@@ -122,12 +123,12 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
         ['Golf',()=>gameEngine.sportsJoin('Golf'),sportsActive||sportsRetired||startBlocked('sports')],
         ['Volleyball',()=>gameEngine.sportsJoin('Volleyball'),sportsActive||sportsRetired||startBlocked('sports')],
         ['Train',()=>gameEngine.sportsTrain(),sportsRetired||!sportsActive||training('sports')],
-        ['Seek pro contract',()=>launchChallenge('sports',score=>gameEngine.sportsPro(score)),sportsRetired||!sportsActive||Boolean(renewal)||state.character.age<18||Number(sportsTrack?.skill??0)<58||sportsTrack?.pro===true||!actionAllowed(state,{policy:'special.pro_contract'})],
-      ]} onResult={onResult}/>
+        ['Seek pro contract',()=>launchChallenge('sports',score=>gameEngine.sportsPro(score),careerActionVfx('sports')),sportsRetired||!sportsActive||Boolean(renewal)||state.character.age<18||Number(sportsTrack?.skill??0)<58||sportsTrack?.pro===true||!actionAllowed(state,{policy:'special.pro_contract'})],
+      ]} vfx={careerActionVfx('sports')} onResult={onResult}/>
       <Path title="Combat sports" stat={`Wins ${Number(state.specialCareers.combat?.wins??0)} · titles ${Number(state.specialCareers.combat?.titles??0)}`} actions={[
         ['Train',()=>gameEngine.combatTrain(),startBlocked('combat')||training('combat')],
-        ['Take fight',()=>launchChallenge('combat',score=>gameEngine.combatFight(score)),!pathActive('combat')||!actionAllowed(state,{policy:'special.fight'})],
-      ]} onResult={onResult}/>
+        ['Take fight',()=>launchChallenge('combat',score=>gameEngine.combatFight(score),careerActionVfx('combat')),!pathActive('combat')||!actionAllowed(state,{policy:'special.fight'})],
+      ]} vfx={careerActionVfx('combat')} onResult={onResult}/>
       <Path title="Politics" stat={`Office level ${Number(state.specialCareers.politics?.office??0)} · approval ${Math.round(Number(state.specialCareers.politics?.approval??0))}`} actions={[
         ['Run local',()=>gameEngine.campaign(1),startBlocked('politics')||!actionAllowed(state,{policy:'special.campaign'})],
         ['Run regional',()=>gameEngine.campaign(3),startBlocked('politics')||!actionAllowed(state,{policy:'special.campaign'})],
@@ -147,12 +148,12 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
         ['Audition',()=>gameEngine.model('audition'),startBlocked('modeling')||modelMove('audition')],
         ['Photoshoot',()=>gameEngine.model('photoshoot'),startBlocked('modeling')||modelMove('photoshoot')],
         ['Runway',()=>gameEngine.model('runway'),startBlocked('modeling')||modelMove('runway')],
-      ]} onResult={onResult}/>
+      ]} vfx={careerActionVfx('modeling')} onResult={onResult}/>
       <Path title="Motorsport" stat={`${racingLife.status} · Skill ${Math.round(Number(state.specialCareers.racing?.skill??0))}`} actions={[
         ['Join',()=>gameEngine.race('join'),racingActive||startBlocked('racing')],
         ['Train',()=>gameEngine.race('train'),!racingActive||training('racing')],
-        ['Race',()=>launchChallenge('racing',score=>gameEngine.race('race',score)),!racingActive||!actionAllowed(state,{policy:'special.race'})],
-      ]} onResult={onResult}/>
+        ['Race',()=>launchChallenge('racing',score=>gameEngine.race('race',score),careerActionVfx('racing')),!racingActive||!actionAllowed(state,{policy:'special.race'})],
+      ]} vfx={careerActionVfx('racing')} onResult={onResult}/>
       <Path title="Film directing" stat={`${directingLife.status} · Films ${Number(state.specialCareers.directing?.filmsDirected??0)}`} actions={[
         ['Direct indie film',()=>gameEngine.directFilm(1500000),startBlocked('directing')||!actionAllowed(state,{policy:'special.direct_film'})],
         ['Direct major film',()=>gameEngine.directFilm(25000000),startBlocked('directing')||!actionAllowed(state,{policy:'special.direct_film'})],
@@ -162,11 +163,11 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:(r:EngineResult
         ['Abstract earning job',()=>gameEngine.crimeOrgAction('earn'),!pathActive('crimeOrg')||crimeOrgMove('earn')],
         ['Contribute',()=>gameEngine.crimeOrgAction('contribute'),!pathActive('crimeOrg')||crimeOrgMove('contribute')],
         ['Become informant',()=>gameEngine.crimeOrgAction('informant'),!pathActive('crimeOrg')||crimeOrgMove('informant')],
-      ]} onResult={onResult}/>
+      ]} vfx={careerActionVfx('crimeOrg')} onResult={onResult}/>
     </div>
-    {challenge&&<MiniGameOverlay kind={challenge.kind} reducedMotion={state.settings.reducedMotion} seedKey={`${state.seed}-${state.character.age}-${state.actionLedger.revision}`} onCancel={()=>setChallenge(undefined)} onResolveFromSkill={()=>skipMiniGame(state,challenge.kind,relatedMiniGameSkill(state,challenge.kind))} onComplete={result=>{const action=challenge.run;setChallenge(undefined);onResult(action(result.score));}}/>}
+    {challenge&&<MiniGameOverlay kind={challenge.kind} reducedMotion={state.settings.reducedMotion} seedKey={`${state.seed}-${state.character.age}-${state.actionLedger.revision}`} onCancel={()=>setChallenge(undefined)} onResolveFromSkill={()=>skipMiniGame(state,challenge.kind,relatedMiniGameSkill(state,challenge.kind))} onComplete={result=>{const action=challenge.run;const vfx=challenge.vfx;setChallenge(undefined);onResult(action(result.score),{primary:vfx,derive:true});}}/>}
   </>;
 }
 
 type PathAction=[label:string,run:()=>EngineResult|void,disabled?:boolean];
-function Path({title,stat,actions,onResult}:{title:string;stat:string;actions:PathAction[];onResult:(r:EngineResult)=>void}){return <section className="path-card"><div><h2>{title}</h2><p>{stat}</p></div><div className="action-grid">{actions.map(([label,fn,disabled])=><button key={label} disabled={disabled} onClick={()=>{const result=fn();if(result)onResult(result);}}>{label}</button>)}</div></section>}
+function Path({title,stat,actions,onResult,vfx}:{title:string;stat:string;actions:PathAction[];onResult:ActionResultHandler;vfx?:ActionVfxKind}){return <section className="path-card"><div><h2>{title}</h2><p>{stat}</p></div><div className="action-grid">{actions.map(([label,fn,disabled])=><button key={label} disabled={disabled} onClick={()=>{const result=fn();if(result)onResult(result,{primary:vfx,derive:Boolean(vfx)});}}>{label}</button>)}</div></section>}

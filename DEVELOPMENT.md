@@ -1,6 +1,6 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-05  
+Last updated: 2026-09-10  
 Current build line: 0.12.0 pre-release  
 Save schema: 9
 
@@ -233,13 +233,19 @@ The market-calibration conclusion from 0.9.4 still holds: inheritance is not the
 - Wider kin taxonomy (aunts/uncles/cousins) and more complex multi-household custody/guardianship where later generation work justifies it.
 - Continued very-large-dynasty profiling as special careers, organizations, and world systems add more persistent NPC affiliations.
 
+### Supplied action/static feedback assets — predeployment candidate
+
+Mavyy supplied an original Everthread icon set for press-origin action feedback plus static Cash and DECEASED UI markers. The current candidate adds one reusable, presentation-only VFX authority instead of per-screen animation code: successful career/domain actions may request a primary icon while real post-action deltas derive stress, money, follower, and relationship feedback. Disabled actions do not execute and therefore do not emit; failed-but-executed actions may still show real adverse deltas. Touch origin is captured globally, keyboard activation uses the control center, reduced-motion avoids travel animation, and the effect never consumes game RNG or mutates saves.
+
+The supplied artwork is technically processed only for transparency/cropping/downscaling; it is not regenerated or restyled. Static Cash appears on Life and DECEASED overlays dead Threadspace nodes. Action VFX regression is 38/38 locally; all established regression suites and production build remain green. GitHub CI reproduction is required before this interlude becomes CI Green, after which Phase 5C resumes from its new certified baseline.
+
 ### Generations and inheritance
 
 The green Phase 5A foundation performs multi-heir estate settlement, proportional investment division, deterministic indivisible-asset allocation/sale, offscreen sibling inheritance, asset-specific property/business/collectible bequests, spouse/child residuary shares, protected minor trusts, and preservation of established adult descendant careers/spouses/children plus deeper family derivation.
 
-The Phase 5B predeployment candidate adds fictional country-sensitive estate settlement rules without new persisted state: protected administration allowances, capped administration costs, levy allowances/rates, debt-before-levy calculation, and a single obligation path that can liquidate unassigned assets/investments before sacrificing a named bequest. Preview UI exposes the breakdown and explicitly labels the values as fictional gameplay rules. Dedicated estate-administration regression includes five-generation no-income anti-duplication stress. Save schema remains 9.
+Phase 5B is CI Green in Run #92 and adds fictional country-sensitive estate settlement rules without new persisted state: protected administration allowances, capped administration costs, levy allowances/rates, debt-before-levy calculation, and a single obligation path that can liquidate unassigned assets/investments before sacrificing a named bequest. Preview UI exposes the breakdown and explicitly labels the values as fictional gameplay rules. Dedicated estate-administration regression includes five-generation no-income anti-duplication stress. Save schema remains 9.
 
-Still needed after Phase 5B:
+Next Phase 5 work after the visual-feedback integration reaches CI Green:
 
 - NPC-owned businesses and individually addressable properties/assets rather than the current aggregate NPC property-value model.
 - Aunt/uncle/cousin relationship types if the relationship model is expanded beyond the current supported taxonomy.
@@ -354,11 +360,10 @@ Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration d
 
 ## Next development sequence
 
-1. Continue Phase 5 from the certified Run #91 baseline; preserve the completed post-Run-74 corrective behavior and canonical preflight gates.
-2. Promote Phase 5B fictional estate administration only after GitHub CI reproduces the local predeployment result.
-3. Continue Phase 5 with richer NPC-owned assets/businesses, then broader kin topology/performance and the stronger death → estate review → descendant-continuation loop.
-4. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
-5. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
-6. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
-7. Expand regional names substantially and verify long-dynasty repetition rates.
-8. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.
+1. Certify the supplied action/static feedback asset integration against the current Run #92 Phase 5B baseline; this is a presentation interlude and does not replace or renumber Phase 5C.
+2. Continue Phase 5C with richer NPC-owned assets/businesses, then broader kin topology/performance and the stronger death → estate review → descendant-continuation loop.
+3. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
+4. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
+5. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
+6. Expand regional names substantially and verify long-dynasty repetition rates.
+7. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

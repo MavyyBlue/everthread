@@ -1,10 +1,11 @@
-const CACHE = 'everthread-shell-v7';
+const CACHE = 'everthread-shell-v8';
 const BASE = new URL('./', self.registration.scope).pathname;
 const SHELL = [
   BASE,
   `${BASE}manifest.json`,
   `${BASE}icons/everthread-icon-192.png`,
   `${BASE}icons/everthread-icon-512.png`,
+  `${BASE}icons/cash.png`,
 ];
 
 self.addEventListener('install', event => {

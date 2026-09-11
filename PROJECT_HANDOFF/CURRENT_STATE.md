@@ -8,22 +8,22 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green repository baseline is commit `abae9345519b016e35d401fcb622bb68b80ff264` from GitHub Actions Run #91 (`34549505120`).
+The latest fully green repository baseline is commit `926da2fa3c74bac021776d9f1b4825a7a3e39797` from GitHub Actions Run #92 (`34554453482`).
 
+- Phase 5B Estate Administration & Settlement is CI Green.
 - Canonical `npm run preflight` passed 4/4 stages on Node 22.23.2/Linux x64.
 - Core regression: 82/82.
 - AI Interaction Testbench: 41/41.
 - Phase 5 estate planning: 46/46.
+- Phase 5 estate administration: 63/63.
 - Family continuity: 18/18.
 - Integrated long-life regression: 105/105.
 - Every established dedicated regression remained green.
 - Production build and Pages deployment passed.
-- `package-lock.json` is now committed; CI installs through `npm ci`.
-- Certified preflight artifact: `10180269565`, artifact SHA-256 `e397071a814aa58fd144ecc42408fe98cde451412e8bf50029667818453e216e`.
-- Certified source SHA-256: `c219ed5c15c66225517e7c416369339498d1a54afd4eebc8859dee23dcb63c30`.
-- Certified dependency SHA-256: `9effb29f4362026559ac7652d39877bfb96e76090361eda5b876477fb4577d1e`.
+- Certified preflight artifact: `10182021697`, artifact SHA-256 `7b580ee479f57f8d81c9e5fe31dcad256206d45eeccf0e152bd56d3c3cff434a`.
+- Certified source SHA-256: `2754cb6e6099cdd8c0d084b91e9f03dd10f222bf292c691f0b101fa11cb2b24d`.
+- Certified dependency SHA-256: `b9ecdf6402cd32367f6991b62d90e56a026d1adc725a7a3231bf2cd627dd6e1e`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- The certified source/dependency payload was independently restored and exercised offline in the development sandbox; every regression passed and the production build succeeded. Local Node was 22.16.0 versus CI 22.23.2, so GitHub remains final release authority.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
@@ -32,7 +32,8 @@ Real player saves remain diagnostic evidence only. Personal save JSON, seeds, sl
 
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
-- Phase 5B estate administration is the current predeployment candidate: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress. CI Green is pending.
+- Phase 5B estate administration is CI Green in Run #92: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress are now baseline behavior.
+- The current predeployment candidate is a supplied visual-feedback asset integration interlude before Phase 5C: press-origin positive/adverse action VFX, Life cash icon, and Threadspace DECEASED stamp. It is presentation-only, keeps save schema 9, and adds Action VFX regression 38/38. Phase 5C has not started yet.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.
@@ -218,11 +219,11 @@ The final production correction in `NpcLifeSystem`:
 
 Run #88 (`34546954038`) expanded to `9ed003f97cf16c1df22ac44506d62766681dfc38`. Both TypeScript gates passed, every established regression remained green, and Integrated Long-Life completed **105/105 runtime checks** with the original `<500` family-population guard unchanged. Production build, Pages artifact upload, and deployment all passed. Slice 8 and the complete post-Run-74 corrective program are **CI Green**.
 
-## Canonical pre-deployment QA — infrastructure bootstrap
+## Canonical pre-deployment QA — active infrastructure
 
-A new infrastructure pass is being introduced after the corrective closeout. It does not replace any existing QA asset. `scripts/everthread-preflight.mjs` orchestrates the existing engine typecheck, test typecheck, complete regression wall, and production build through `npm run preflight`; `npm run preflight:deep` adds the existing content audit and 1,000-life bulk simulation. The runner emits `.everthread/preflight-report.json` on pass or failure.
+The QA bootstrap is complete and active. `scripts/everthread-preflight.mjs` orchestrates the engine typecheck, test typecheck, complete regression wall, and production build through `npm run preflight`; `npm run preflight:deep` adds the content audit and bulk simulation. The runner emits `.everthread/preflight-report.json` on pass or failure.
 
-The intended GitHub workflow will call the same canonical preflight, move dependency installation to `package-lock.json` + `npm ci`, bootstrap the currently missing lockfile exactly once, and create a certified source artifact from the exact verified commit so future development sessions can run the same preflight before packaging an overlay. CI Green remains authoritative even after local Preflight Green. See `PROJECT_HANDOFF/PREFLIGHT_QA.md`.
+GitHub installs the committed lock with `npm ci`, calls the same canonical preflight, and publishes a 90-day certified preflight artifact containing the exact tracked source plus the locked Linux-x64/Node-22 dependency tree and separate source/dependency/lock hashes. The combined artifact was proven restorable for offline sandbox verification during Run #91 bootstrap and is now refreshed after every green candidate. Predeployment Green reduces bad uploads; CI Green remains the release authority. See `PROJECT_HANDOFF/PREFLIGHT_QA.md`.
 
 ## Known continuing quality / architecture issues
 

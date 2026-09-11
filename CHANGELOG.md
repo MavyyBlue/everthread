@@ -1,6 +1,30 @@
 # Everthread Changelog
 
-## Phase 5B candidate — 2026-09-10 — Estate Administration & Settlement
+## Visual feedback asset integration candidate — 2026-09-10
+
+### Added
+
+- Mavyy-supplied Everthread action-feedback artwork is now integrated as a reusable mobile VFX system. Successful acting, music, professional sports, combat sports, modeling, motorsport, organized-crime, chemistry, follower, relationship, and stress-reduction outcomes can emit their matching icon from the actual press location.
+- Adverse outcomes can emit supplied stress-increase, money-loss, and relationship-loss artwork from the same press-origin particle layer. Multiple real side effects may share one bounded burst.
+- A supplied cash icon now sits beside Current Cash on the Life screen, and the supplied DECEASED stamp overlays dead NPC nodes in People Threadspace without blocking node interaction.
+- Dedicated Action VFX regression coverage verifies career-to-icon mapping, supplied asset paths, static icon paths, state-delta derivation, failed-but-executed adverse feedback, success-only primary feedback, deduplication, and chemistry-specific suppression of a redundant relationship-gain icon.
+
+### Changed
+
+- `App` now owns one presentation-only action-feedback controller. Pointer presses capture their viewport origin before engine execution; keyboard activation falls back to the button center. The layer never mutates game state, save data, action economy, or simulation RNG.
+- Reduced-motion users receive a short stationary fade/scale rather than the upward confetti motion. Particle counts and lifetime are bounded for mobile performance.
+- Supplied artwork is stored as transparent, cropped, mobile-sized runtime derivatives; the heavier action VFX set is lazy/runtime cached while only the small Life cash icon joins the PWA shell precache. Service-worker cache generation advances to `everthread-shell-v8`.
+- Build Chemistry uses the supplied person-plus artwork as its explicit primary feedback and suppresses a duplicate heart-plus burst; follower gains reuse the same person-plus artwork.
+
+### Predeployment validation
+
+- Engine TypeScript and test TypeScript gates pass.
+- Action VFX regression: 38/38.
+- Core: 82/82; every established dedicated regression remains green, including Estate Planning 46/46, Estate Administration 63/63, AI Interaction Testbench 41/41, and Integrated Long-Life 105/105.
+- Production build passes with 138 transformed modules; the only build warning remains the known oversized main application chunk.
+- The monolithic local preflight wrapper exceeded the hosted sandbox command ceiling during the long regression stage, so its exact four stage contents were executed and verified separately rather than weakening/skipping tests. GitHub CI reproduction is still required before this visual-feedback slice is promoted to CI Green.
+
+## Phase 5B — 2026-09-10 — Estate Administration & Settlement
 
 ### Added
 
@@ -22,7 +46,7 @@
 - Core: 82/82; AI Interaction Testbench: 41/41; Integrated Long-Life: 105/105; all established dedicated suites passed locally.
 - Mixed 100-life bulk sanity: zero anomalies / zero forced terminal deaths, max NPC peak 480.
 - Family-biased 100-life bulk sanity: zero anomalies / zero forced terminal deaths, max NPC peak 474.
-- Production build passes locally. GitHub CI reproduction is still required before Phase 5B is promoted to CI Green.
+- GitHub Actions Run #92 reproduced canonical preflight 4/4, all estate and legacy suites, production build, certified preflight artifact creation, and Pages deployment. Phase 5B is CI Green at `926da2fa3c74bac021776d9f1b4825a7a3e39797`.
 
 ## 0.12.0 — 2026-09-05 — Full NPC Life Simulation
 

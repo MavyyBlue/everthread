@@ -91,3 +91,6 @@ button.threadspace-node{cursor:pointer}
   .threadspace-filter-toggle,.threadspace-floating-actions button{padding:8px 12px}
   .threadspace-floating-actions{width:var(--threadspace-standalone-control-width)}
 }
+
+.threadspace-deceased-stamp{position:absolute;z-index:4;right:-10px;top:-17px;width:88px;height:auto;pointer-events:none;user-select:none;filter:drop-shadow(0 3px 7px rgba(0,0,0,.28));opacity:.94}
+@media(max-width:370px){.threadspace-deceased-stamp{right:-8px;top:-15px;width:80px}}

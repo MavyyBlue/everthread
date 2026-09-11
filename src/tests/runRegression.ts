@@ -35,6 +35,7 @@ import { runNpcOrientationCoherenceRegression } from './npcOrientationCoherenceR
 import { runCollisionAwareNamingRegression } from './collisionAwareNamingRegression';
 import { runRelationshipMicrocopyRegression } from './relationshipMicrocopyRegression';
 import { runIntegratedLongLifeRegression } from './integratedLongLifeRegression';
+import { runActionVfxRegression } from './actionVfxRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -74,5 +75,6 @@ try{const checks=runAgeAwareReproductionRegression();console.log(`Age-aware repr
 try{const checks=runNpcOrientationCoherenceRegression();console.log(`NPC orientation coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runCollisionAwareNamingRegression();console.log(`Collision-aware naming regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runRelationshipMicrocopyRegression();console.log(`Relationship microcopy regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runActionVfxRegression();console.log(`Action VFX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runIntegratedLongLifeRegression();console.log(`Integrated long-life regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
