@@ -114,23 +114,85 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
+      - name: Bootstrap dependency lock once
         if: steps.source.outputs.ready == 'true'
-        run: npm install --no-audit --no-fund
-
-      - name: Type-check engine and tests
-        if: steps.source.outputs.ready == 'true'
+        shell: bash
         run: |
-          npm run typecheck:engine
-          npm run typecheck:tests
+          set -euo pipefail
+          if [ ! -f package-lock.json ]; then
+            echo "package-lock.json is missing; creating the initial deterministic dependency lock."
+            npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+            git config user.name "everthread-build-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "Lock Everthread dependencies [skip ci]"
+            git push
+          fi
 
-      - name: Run regression suite
+      - name: Install locked dependencies
         if: steps.source.outputs.ready == 'true'
-        run: npm test
+        run: npm ci --no-audit --no-fund
 
-      - name: Build Everthread
+      - name: Run canonical Everthread preflight
         if: steps.source.outputs.ready == 'true'
-        run: npm run build
+        run: npm run preflight
+
+      - name: Upload failed preflight evidence
+        if: failure() && steps.source.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: everthread-preflight-failure-${{ github.run_id }}
+          path: .everthread/preflight-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Prepare certified source baseline
+        if: steps.source.outputs.ready == 'true'
+        id: certified
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERIFIED_COMMIT="$(git rev-parse HEAD)"
+          CERT_DIR="$RUNNER_TEMP/everthread-certified-source"
+          rm -rf "$CERT_DIR"
+          mkdir -p "$CERT_DIR"
+
+          ARCHIVE="$CERT_DIR/everthread-certified-source.tar.gz"
+          git archive --format=tar.gz --output="$ARCHIVE" "$VERIFIED_COMMIT"
+          cp .everthread/preflight-report.json "$CERT_DIR/preflight-report.json"
+          ARCHIVE_SHA="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
+
+          python3 - "$CERT_DIR/certified-source.json" "$VERIFIED_COMMIT" "$ARCHIVE_SHA" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" <<'PY'
+          import json, pathlib, sys
+          output, commit, archive_sha, repository, run_id = sys.argv[1:]
+          payload = {
+              "format": 1,
+              "product": "Everthread",
+              "repository": repository,
+              "verifiedCommit": commit,
+              "archive": "everthread-certified-source.tar.gz",
+              "archiveSha256": archive_sha,
+              "preflightReport": "preflight-report.json",
+              "nodeMajor": 22,
+              "workflowRunId": int(run_id),
+          }
+          pathlib.Path(output).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+          PY
+
+          echo "commit=$VERIFIED_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "dir=$CERT_DIR" >> "$GITHUB_OUTPUT"
+          echo "archive_sha=$ARCHIVE_SHA" >> "$GITHUB_OUTPUT"
+          echo "Certified source commit: $VERIFIED_COMMIT"
+          echo "Certified source archive SHA-256: $ARCHIVE_SHA"
+
+      - name: Upload certified source baseline
+        if: steps.source.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: everthread-certified-source-${{ steps.certified.outputs.commit }}
+          path: ${{ steps.certified.outputs.dir }}
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Configure GitHub Pages
         if: steps.source.outputs.ready == 'true'
