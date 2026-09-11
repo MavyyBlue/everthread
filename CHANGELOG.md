@@ -1,5 +1,29 @@
 # Everthread Changelog
 
+## Phase 5B candidate — 2026-09-10 — Estate Administration & Settlement
+
+### Added
+
+- Fictional country-sensitive estate administration profiles derived from Everthread's simplified gameplay fiscal context, with protected administration allowances, capped administration costs, levy allowances, and modest settlement-levy rates. These values are explicitly game balance rules, not real-world tax/legal guidance.
+- Estate preview breakdown for gross estate, debts, administration, settlement levy, eligible heirs, forced-sale pressure, and the active fictional rule profile.
+- Dedicated Phase 5 estate-administration regression with country-rule coverage, read-only/RNG-neutral preview checks, debt-before-levy math, named-bequest protection, investment-before-protected-bequest liquidation, trusts, descendant continuation, and five-generation no-income anti-duplication stress.
+
+### Changed
+
+- Estate obligations now flow through one settlement authority: unsecured debt, administration, and levy are paid before heir allocation. Unassigned indivisible assets may be sold first; liquid investments are used before a specifically named bequest must be sacrificed.
+- Smaller estates receive a protected administration allowance so modest specific bequests are not sold solely to fund trivial settlement overhead.
+- Descendant-continuation history records settlement administration/levy costs when present. Save schema remains 9 because the new rules are computed rather than persisted.
+
+### Predeployment validation
+
+- Existing Estate Planning: 46/46.
+- New Estate Administration: 63/63.
+- Family Continuity: 18/18.
+- Core: 82/82; AI Interaction Testbench: 41/41; Integrated Long-Life: 105/105; all established dedicated suites passed locally.
+- Mixed 100-life bulk sanity: zero anomalies / zero forced terminal deaths, max NPC peak 480.
+- Family-biased 100-life bulk sanity: zero anomalies / zero forced terminal deaths, max NPC peak 474.
+- Production build passes locally. GitHub CI reproduction is still required before Phase 5B is promoted to CI Green.
+
 ## 0.12.0 — 2026-09-05 — Full NPC Life Simulation
 
 ### Added

@@ -235,13 +235,16 @@ The market-calibration conclusion from 0.9.4 still holds: inheritance is not the
 
 ### Generations and inheritance
 
-The latest pass now performs multi-heir estate settlement, proportional investment division, deterministic indivisible-asset allocation/sale, offscreen sibling inheritance, and preservation of established adult descendant careers/spouses/children plus deeper family derivation. Still needed:
+The green Phase 5A foundation performs multi-heir estate settlement, proportional investment division, deterministic indivisible-asset allocation/sale, offscreen sibling inheritance, asset-specific property/business/collectible bequests, spouse/child residuary shares, protected minor trusts, and preservation of established adult descendant careers/spouses/children plus deeper family derivation.
 
-- Asset-specific wills rather than percentage-only child beneficiaries.
-- Estate taxes/administration costs using fictionalized country rules.
+The Phase 5B predeployment candidate adds fictional country-sensitive estate settlement rules without new persisted state: protected administration allowances, capped administration costs, levy allowances/rates, debt-before-levy calculation, and a single obligation path that can liquidate unassigned assets/investments before sacrificing a named bequest. Preview UI exposes the breakdown and explicitly labels the values as fictional gameplay rules. Dedicated estate-administration regression includes five-generation no-income anti-duplication stress. Save schema remains 9.
+
+Still needed after Phase 5B:
+
 - NPC-owned businesses and individually addressable properties/assets rather than the current aggregate NPC property-value model.
 - Aunt/uncle/cousin relationship types if the relationship model is expanded beyond the current supported taxonomy.
-- Large-family performance validation across many sequential generations.
+- Broader large-family performance validation across many sequential generations.
+- Stronger death → estate review → descendant-selection presentation and consequences.
 
 ### Finance/debt
 
@@ -351,9 +354,9 @@ Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration d
 
 ## Next development sequence
 
-1. Complete the 0.12.0 phone/browser playtest and repair any NPC biography, household, migration, population, or descendant-handoff issue before the next deepening phase.
-2. Phase 4: deepen special-career ecosystems with persistent teams/casts/rivals/staff, contracts, seasons, scandals, awards, retirement, and path-specific events.
-3. Phase 5: deepen generations/estates with asset-specific wills, fictionalized estate administration, richer NPC ownership, and broader kin taxonomy/performance validation.
+1. Continue Phase 5 from the certified Run #91 baseline; preserve the completed post-Run-74 corrective behavior and canonical preflight gates.
+2. Promote Phase 5B fictional estate administration only after GitHub CI reproduces the local predeployment result.
+3. Continue Phase 5 with richer NPC-owned assets/businesses, then broader kin topology/performance and the stronger death → estate review → descendant-continuation loop.
 4. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
 5. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
 6. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.

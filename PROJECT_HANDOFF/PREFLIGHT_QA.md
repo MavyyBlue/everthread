@@ -43,22 +43,23 @@ The workflow uses `package-lock.json` + `npm ci` once the lock exists. The first
 
 ## Certified source baseline
 
-After a successful canonical GitHub preflight, CI creates an `everthread-certified-source-<verified commit>` artifact. It contains:
+After a successful canonical GitHub preflight, CI creates an `everthread-certified-preflight-<verified commit>` artifact. It contains:
 
 - `everthread-certified-source.tar.gz` — `git archive` of the exact verified tracked source commit;
+- `everthread-certified-node-modules-linux-x64-node22.tar.gz` — the exact locked dependency tree used by the successful Node 22/Linux x64 run;
 - `preflight-report.json` — the successful verifier evidence;
-- `certified-source.json` — commit, archive SHA-256, repository, Node major, and artifact metadata.
+- `certified-preflight.json` — commit, source/dependency/package-lock SHA-256 values, repository, Node/npm/platform metadata, and workflow run ID.
 
-The artifact is retained for 90 days. It is intended to give future development sessions a byte-exact green source baseline even when ordinary sandbox GitHub cloning is unavailable.
+CI performs a restore smoke test before publishing the artifact. The artifact is retained for 90 days. Future development sessions verify all hashes before restoring it, so the exact green source and toolchain can be used even when ordinary GitHub cloning or npm registry access is unavailable. Run #91 proved this loop end-to-end; the certified dependency payload also ran the complete regression wall and production build offline in the development sandbox.
 
 ## Candidate development flow
 
 For future feature/fix work:
 
-1. Start from the latest CI-Green certified source artifact.
-2. Apply only the candidate changes.
+1. Start from the latest CI-Green certified preflight artifact and verify its source/dependency/lock hashes.
+2. Restore the exact certified source + dependency tree and apply only the candidate changes.
 3. Run targeted QA for affected systems.
-4. Run `npm ci` and `npm run preflight` against the exact candidate.
+4. Run `npm run preflight` against the exact candidate; use `npm ci` only when dependencies changed or registry access is intentionally available.
 5. Package `everthread-source.zip` only after Preflight Green.
 6. GitHub imports the overlay, runs the same `npm run preflight`, creates a new certified source artifact, and deploys Pages.
 7. Promote the change only after CI Green.

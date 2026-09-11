@@ -78,7 +78,7 @@ export function runEstatePlanningRegression(){
   verify(severePreview.distributableValue===0,'insolvent estates do not pass unsecured debt away while preserving heir value');
 
   const investmentDebt=fixture('estate-investment-debt');investmentDebt.state.finances.cash=0;investmentDebt.state.assets={properties:[],vehicles:[],collectibles:[]};investmentDebt.state.businesses=[];investmentDebt.state.investments.positions=[{securityId:'aurora_index',units:1000,averageCost:100}];investmentDebt.state.investments.prices.aurora_index=100;investmentDebt.state.finances.liabilities=[{id:'investment-debt',kind:'personal',principal:60000,balance:60000,annualRate:.08,annualPayment:8000,remainingYears:8}];
-  const investmentPreview=previewEstate(investmentDebt.state);approx(investmentPreview.distributableValue,40000,1,'estate debt is settled from investments before remaining units pass to heirs');
+  const investmentPreview=previewEstate(investmentDebt.state);approx(investmentPreview.distributableValue,100000-investmentPreview.estateObligations,1,'estate debt and settlement costs are paid from investments before remaining units pass to heirs');
 
   const zeroShare=fixture('estate-zero-share');zeroShare.state.finances.cash=0;const zeroHome=property(zeroShare.state,'zero-home','Named Home',180000);setWill(zeroShare.state,[{npcId:zeroShare.a.id,percentage:100}]);setEstateAssetBequest(zeroShare.state,'property',zeroHome.id,zeroShare.b.id);
   const zeroPreview=previewEstate(zeroShare.state);const zeroB=zeroPreview.heirs.find(heir=>heir.npcId===zeroShare.b.id)!;

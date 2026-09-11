@@ -2,9 +2,9 @@
 
 This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
 
-## Current macro phase — Phase 4: Special-Career Ecosystems + final polish
+## Current macro phase — Phase 5: Generations / Estates
 
-Phase 4 was previously closed after 4F, then intentionally reopened before Phase 5 so established mechanics receive targeted coherence/UI polish. This does not broaden or redefine Phase 5.
+Phase 4 is closed. People Threadspace and the post-Run-74 corrective closeout are green, and Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure. Phase 5 now extends the existing estate/descendant foundation without replacing its anti-duplication, trust, or family-continuity rules.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -60,7 +60,7 @@ Status: green; verified by run #62 (`34305181164`) on expanded baseline `b7cd8d7
 - maintain compatibility for old pending procedural events and old semantic choice callers without showing obsolete choices to new players.
 
 ### Phase 4H — People Threadspace
-Status: **current / deployment pending**.
+Status: **green**.
 
 Goal: preserve all existing People simulation truth while replacing the one-folder-at-a-time presentation with one unified, original, mobile-first node workspace.
 
@@ -113,19 +113,15 @@ After 4H is green, Phase 4 closes again. Do not add another planned Phase 4 poli
 
 ## Phase 5 — Generations / Estates
 
-**Begins after Phase 4H is green. Its original scope remains unchanged.**
+**Current. Build on the green descendant/estate foundation; do not replace it.**
 
-Planned direction:
+1. **Phase 5A — Estate planning + family continuity foundation:** green. Asset-specific property/business/collectible bequests, spouse/child residuary shares, debt-first settlement, protected minor trusts, widowhood cleanup, and descendant handoff are already implemented. Estate Planning remains 46/46 and Family Continuity 18/18 on the Run #91 certified baseline.
+2. **Phase 5B — Fictional estate administration + settlement levy:** predeployment candidate. Country-sensitive fictional settlement profiles add protected administration allowances, capped administration costs, levy allowances/rates, one-authority obligation settlement, preview UI, specific-bequest protection, and multi-generation anti-duplication stress coverage. Save schema remains 9. CI Green is still required before promotion.
+3. **Phase 5C — Richer NPC-owned assets/businesses:** planned. Move important family wealth beyond aggregate NPC property value into individually addressable assets where that depth materially improves inheritance and dynasty play.
+4. **Phase 5D — Broader family topology:** planned only where aunt/uncle/cousin or multi-household custody/guardianship materially improves real family-tree behavior and UI clarity.
+5. **Phase 5E — Dynasty-scale validation + death/estate continuation flow:** planned. Expand large-family/multi-generation performance validation and strengthen death → estate review → descendant continuation without creating a second estate truth.
 
-- asset-specific wills rather than only broad inherit-business/property toggles;
-- fictionalized estate administration and tax/settlement handling;
-- richer NPC-owned assets and businesses so family wealth exists beyond a single controlled character;
-- broader kin taxonomy only where it improves real family-tree behavior and UI clarity;
-- inheritance consequences that preserve one authoritative asset/debt truth without duplication exploits;
-- large-family and multi-generation performance validation; and
-- stronger death → estate review → descendant continuation flow so dynasty play becomes a defining Everthread loop.
-
-Phase 5 should build on the current descendant/estate foundation rather than replacing it. Existing three-/eight-generation regression behavior and estate anti-duplication rules remain compatibility requirements.
+Existing three-/eight-generation regression behavior, specific-bequest guarantees, protected minor inheritance, and estate anti-duplication rules are compatibility requirements for every later Phase 5 slice.
 
 ## Phase 6 — Credit / debt
 

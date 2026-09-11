@@ -22,6 +22,7 @@ import { runEventCoherenceRegression } from './eventCoherenceRegression';
 import { runPeopleWorkspaceRegression } from './peopleWorkspaceRegression';
 import { runAiInteractionRegression } from './aiInteractionRegression';
 import { runEstatePlanningRegression } from './estatePlanningRegression';
+import { runEstateAdministrationRegression } from './estateAdministrationRegression';
 import { runFamilyContinuityRegression } from './familyContinuityRegression';
 import { runVisualIdentityRegression } from './visualIdentityRegression';
 import { runFamilyReproductionRegression } from './familyReproductionRegression';
@@ -61,6 +62,7 @@ try{const checks=await runEventCoherenceRegression();console.log(`Random-event c
 try{const checks=await runPeopleWorkspaceRegression();console.log(`People Threadspace regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=await runAiInteractionRegression();console.log(`AI interaction testbench regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runEstatePlanningRegression();console.log(`Phase 5 estate-planning regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runEstateAdministrationRegression();console.log(`Phase 5 estate-administration regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runFamilyContinuityRegression();console.log(`Family continuity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runVisualIdentityRegression();console.log(`Visual identity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runFamilyReproductionRegression();console.log(`Family reproduction regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}

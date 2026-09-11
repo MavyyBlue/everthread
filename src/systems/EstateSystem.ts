@@ -1,6 +1,7 @@
 import type { Business, CollectibleAsset, EngineResult, GameState, InvestmentPosition, Loan, Npc, PropertyAsset } from '../types/game';
 import type { EstateAssetBequest, EstateAssetKind, EstateHeirRole, EstateTrustState } from '../types/estate';
 import { makeStateId } from '../core/ids';
+import { quoteEstateAdministration } from '../data/estateRules';
 
 type HeirShare={npc:Npc;ratio:number;role:EstateHeirRole};
 type EstateItem=
@@ -9,7 +10,7 @@ type EstateItem=
   | {kind:'collectible';id:string;name:string;value:number;collectible:CollectibleAsset;requestedBeneficiaryId?:string};
 
 type EstateAllocation={heir:HeirShare;items:EstateItem[];cash:number;investmentValue:number;total:number};
-type EstatePlan={heirs:HeirShare[];allocations:Map<string,EstateAllocation>;remainingInvestmentRatio:number;estateValue:number;estateObligations:number;forcedSaleIds:string[]};
+type EstatePlan={heirs:HeirShare[];allocations:Map<string,EstateAllocation>;remainingInvestmentRatio:number;grossEstateValue:number;estateValue:number;debtObligations:number;administrationCosts:number;administrationAllowance:number;estateLevy:number;levyAllowance:number;levyRate:number;ruleLabel:string;countryName:string;estateObligations:number;forcedSaleIds:string[]};
 
 export interface EstateHeirPreview {
   npcId:string;
@@ -25,7 +26,7 @@ export interface EstateHeirPreview {
   collectibles:Array<{id:string;name:string;value:number}>;
 }
 
-export interface EstatePreview {estateValue:number;estateObligations:number;distributableValue:number;forcedSaleIds:string[];heirs:EstateHeirPreview[];}
+export interface EstatePreview {grossEstateValue:number;estateValue:number;debtObligations:number;administrationCosts:number;administrationAllowance:number;estateLevy:number;levyAllowance:number;levyRate:number;ruleLabel:string;countryName:string;estateObligations:number;distributableValue:number;forcedSaleIds:string[];heirs:EstateHeirPreview[];}
 export interface EstateSettlement {
   cash:number;
   properties:PropertyAsset[];
@@ -36,6 +37,11 @@ export interface EstateSettlement {
   inheritanceValue:number;
   siblingValue:number;
   forcedSales:number;
+  debtObligations:number;
+  administrationCosts:number;
+  administrationAllowance:number;
+  estateLevy:number;
+  estateObligations:number;
 }
 
 export function livingEstateHeirs(state:GameState):Array<{npc:Npc;role:EstateHeirRole}>{
@@ -106,18 +112,26 @@ function makeCandidateItems(state:GameState,bequests:Map<string,string>){
 
 function buildEstatePlan(state:GameState):EstatePlan{
   const heirs=heirShares(state);const allocations=new Map<string,EstateAllocation>();
-  if(!heirs.length)return{heirs,allocations,remainingInvestmentRatio:0,estateValue:0,estateObligations:0,forcedSaleIds:[]};
+  if(!heirs.length)return{heirs,allocations,remainingInvestmentRatio:0,grossEstateValue:0,estateValue:0,debtObligations:0,administrationCosts:0,administrationAllowance:0,estateLevy:0,levyAllowance:0,levyRate:0,ruleLabel:'',countryName:'',estateObligations:0,forcedSaleIds:[]};
   const bequests=validBequestMap(state,heirs);let{liquid,items}=makeCandidateItems(state,bequests);const forcedSaleIds:string[]=[];
-  const estateObligations=state.finances.liabilities.filter(loan=>loan.kind!=='mortgage').reduce((sum,loan)=>sum+Math.max(0,loan.balance),0);
+  const debtObligations=state.finances.liabilities.filter(loan=>loan.kind!=='mortgage').reduce((sum,loan)=>sum+Math.max(0,loan.balance),0);
   const originalInvestmentValue=state.investments.positions.reduce((sum,position)=>sum+position.units*(state.investments.prices[position.securityId]??0),0);
-  const grossBeforeDebt=liquid+originalInvestmentValue+items.reduce((sum,item)=>sum+item.value,0);let debtRemaining=estateObligations;
-  const fromLiquid=Math.min(liquid,debtRemaining);liquid-=fromLiquid;debtRemaining-=fromLiquid;
-  if(debtRemaining>0){
-    const saleOrder=[...items].sort((a,b)=>{const requestedOrder=Number(Boolean(a.requestedBeneficiaryId))-Number(Boolean(b.requestedBeneficiaryId));if(requestedOrder)return requestedOrder;return(itemSaleValue(state,b)/Math.max(1,b.value))-(itemSaleValue(state,a)/Math.max(1,a.value));});
-    const sold=new Set<string>();for(const item of saleOrder){if(debtRemaining<=0)break;const proceeds=itemSaleValue(state,item);sold.add(`${item.kind}:${item.id}`);forcedSaleIds.push(`${item.kind}:${item.id}`);const paid=Math.min(proceeds,debtRemaining);debtRemaining-=paid;liquid+=Math.max(0,proceeds-paid);}if(sold.size)items=items.filter(item=>!sold.has(`${item.kind}:${item.id}`));
-  }
-  let remainingInvestmentValue=originalInvestmentValue;if(debtRemaining>0&&remainingInvestmentValue>0){const paid=Math.min(remainingInvestmentValue,debtRemaining);remainingInvestmentValue-=paid;debtRemaining-=paid;}
-  if(debtRemaining>0){remainingInvestmentValue=0;liquid=0;items=[];}
+  const grossBeforeDebt=liquid+originalInvestmentValue+items.reduce((sum,item)=>sum+item.value,0);
+  const administration=quoteEstateAdministration(state.character.countryId,grossBeforeDebt,debtObligations);
+  const estateObligations=administration.totalObligations;
+  let obligationRemaining=estateObligations;
+  let remainingInvestmentValue=originalInvestmentValue;
+  const fromLiquid=Math.min(liquid,obligationRemaining);liquid-=fromLiquid;obligationRemaining-=fromLiquid;
+  const sellItemsForObligations=(candidates:EstateItem[])=>{
+    const saleOrder=[...candidates].sort((a,b)=>(itemSaleValue(state,b)/Math.max(1,b.value))-(itemSaleValue(state,a)/Math.max(1,a.value)));
+    const sold=new Set<string>();
+    for(const item of saleOrder){if(obligationRemaining<=0)break;const proceeds=itemSaleValue(state,item);sold.add(`${item.kind}:${item.id}`);forcedSaleIds.push(`${item.kind}:${item.id}`);const paid=Math.min(proceeds,obligationRemaining);obligationRemaining-=paid;liquid+=Math.max(0,proceeds-paid);}
+    if(sold.size)items=items.filter(item=>!sold.has(`${item.kind}:${item.id}`));
+  };
+  if(obligationRemaining>0)sellItemsForObligations(items.filter(item=>!item.requestedBeneficiaryId));
+  if(obligationRemaining>0&&remainingInvestmentValue>0){const paid=Math.min(remainingInvestmentValue,obligationRemaining);remainingInvestmentValue-=paid;obligationRemaining-=paid;}
+  if(obligationRemaining>0)sellItemsForObligations(items.filter(item=>Boolean(item.requestedBeneficiaryId)));
+  if(obligationRemaining>0){remainingInvestmentValue=0;liquid=0;items=[];}
   const remainingInvestmentRatio=originalInvestmentValue>0?remainingInvestmentValue/originalInvestmentValue:0;
   const initialTotal=liquid+remainingInvestmentValue+items.reduce((sum,item)=>sum+item.value,0);
   const targetById=new Map(heirs.map(heir=>[heir.npc.id,initialTotal*heir.ratio]));
@@ -129,15 +143,15 @@ function buildEstatePlan(state:GameState):EstatePlan{
   const retainedTotal=[...assignedItems.values()].flat().reduce((sum,item)=>sum+item.value,0);const distributable=liquid+remainingInvestmentValue+retainedTotal;
   const finalTargets=new Map(heirs.map(heir=>[heir.npc.id,distributable*heir.ratio]));const needs=heirs.map(heir=>({heir,need:Math.max(0,(finalTargets.get(heir.npc.id)??0)-(assignedValue.get(heir.npc.id)??0))}));const totalNeed=needs.reduce((sum,entry)=>sum+entry.need,0);
   for(const{heir,need}of needs){const cash=totalNeed>0?liquid*(need/totalNeed):liquid*heir.ratio;const investmentValue=remainingInvestmentValue*heir.ratio;const itemValue=(assignedItems.get(heir.npc.id)??[]).reduce((sum,item)=>sum+item.value,0);allocations.set(heir.npc.id,{heir,items:assignedItems.get(heir.npc.id)??[],cash,investmentValue,total:itemValue+investmentValue+cash});}
-  return{heirs,allocations,remainingInvestmentRatio,estateValue:Math.max(0,grossBeforeDebt-estateObligations),estateObligations,forcedSaleIds};
+  return{heirs,allocations,remainingInvestmentRatio,grossEstateValue:grossBeforeDebt,estateValue:administration.netEstateValue,debtObligations,administrationCosts:administration.administrationCosts,administrationAllowance:administration.administrationAllowance,estateLevy:administration.estateLevy,levyAllowance:administration.levyAllowance,levyRate:administration.rule.levyRate,ruleLabel:administration.rule.label,countryName:administration.countryName,estateObligations,forcedSaleIds};
 }
 
 export function previewEstate(state:GameState):EstatePreview{
-  const plan=buildEstatePlan(state);return{estateValue:plan.estateValue,estateObligations:plan.estateObligations,distributableValue:[...plan.allocations.values()].reduce((sum,allocation)=>sum+allocation.total,0),forcedSaleIds:[...plan.forcedSaleIds],heirs:plan.heirs.map(heir=>{const allocation=plan.allocations.get(heir.npc.id);const items=allocation?.items??[];return{npcId:heir.npc.id,name:`${heir.npc.firstName} ${heir.npc.lastName}`,role:heir.role,percentage:heir.ratio*100,cash:allocation?.cash??0,investmentValue:allocation?.investmentValue??0,inheritanceValue:allocation?.total??0,...(heir.role==='child'&&heir.npc.age<18?{heldUntilAge:18}:{}),properties:items.filter((item):item is Extract<EstateItem,{kind:'property'}>=>item.kind==='property').map(item=>({id:item.id,name:item.name,value:item.value})),businesses:items.filter((item):item is Extract<EstateItem,{kind:'business'}>=>item.kind==='business').map(item=>({id:item.id,name:item.name,value:item.value})),collectibles:items.filter((item):item is Extract<EstateItem,{kind:'collectible'}>=>item.kind==='collectible').map(item=>({id:item.id,name:item.name,value:item.value}))};})};
+  const plan=buildEstatePlan(state);return{grossEstateValue:plan.grossEstateValue,estateValue:plan.estateValue,debtObligations:plan.debtObligations,administrationCosts:plan.administrationCosts,administrationAllowance:plan.administrationAllowance,estateLevy:plan.estateLevy,levyAllowance:plan.levyAllowance,levyRate:plan.levyRate,ruleLabel:plan.ruleLabel,countryName:plan.countryName,estateObligations:plan.estateObligations,distributableValue:[...plan.allocations.values()].reduce((sum,allocation)=>sum+allocation.total,0),forcedSaleIds:[...plan.forcedSaleIds],heirs:plan.heirs.map(heir=>{const allocation=plan.allocations.get(heir.npc.id);const items=allocation?.items??[];return{npcId:heir.npc.id,name:`${heir.npc.firstName} ${heir.npc.lastName}`,role:heir.role,percentage:heir.ratio*100,cash:allocation?.cash??0,investmentValue:allocation?.investmentValue??0,inheritanceValue:allocation?.total??0,...(heir.role==='child'&&heir.npc.age<18?{heldUntilAge:18}:{}),properties:items.filter((item):item is Extract<EstateItem,{kind:'property'}>=>item.kind==='property').map(item=>({id:item.id,name:item.name,value:item.value})),businesses:items.filter((item):item is Extract<EstateItem,{kind:'business'}>=>item.kind==='business').map(item=>({id:item.id,name:item.name,value:item.value})),collectibles:items.filter((item):item is Extract<EstateItem,{kind:'collectible'}>=>item.kind==='collectible').map(item=>({id:item.id,name:item.name,value:item.value}))};})};
 }
 
 export function settleEstate(state:GameState,selectedChildId:string):EstateSettlement{
-  const plan=buildEstatePlan(state);const selected=plan.allocations.get(selectedChildId);if(!selected||selected.heir.role!=='child')return{cash:0,properties:[],businesses:[],collectibles:[],investments:[],liabilities:[],inheritanceValue:0,siblingValue:0,forcedSales:plan.forcedSaleIds.length};
+  const plan=buildEstatePlan(state);const selected=plan.allocations.get(selectedChildId);if(!selected||selected.heir.role!=='child')return{cash:0,properties:[],businesses:[],collectibles:[],investments:[],liabilities:[],inheritanceValue:0,siblingValue:0,forcedSales:plan.forcedSaleIds.length,debtObligations:plan.debtObligations,administrationCosts:plan.administrationCosts,administrationAllowance:plan.administrationAllowance,estateLevy:plan.estateLevy,estateObligations:plan.estateObligations};
   let siblingValue=0;
   for(const allocation of plan.allocations.values()){
     if(allocation.heir.npc.id===selectedChildId)continue;
@@ -152,7 +166,7 @@ export function settleEstate(state:GameState,selectedChildId:string):EstateSettl
   const propertyIds=new Set(properties.map(property=>property.id));
   const liabilities=state.finances.liabilities.filter(loan=>loan.kind==='mortgage'&&loan.assetId&&propertyIds.has(loan.assetId)).map(loan=>structuredClone(loan));
   const investments=state.investments.positions.map(position=>({...position,units:position.units*plan.remainingInvestmentRatio*selected.heir.ratio})).filter(position=>position.units>0.000001);
-  return{cash:selected.cash,properties,businesses,collectibles,investments,liabilities,inheritanceValue:selected.total,siblingValue,forcedSales:plan.forcedSaleIds.length};
+  return{cash:selected.cash,properties,businesses,collectibles,investments,liabilities,inheritanceValue:selected.total,siblingValue,forcedSales:plan.forcedSaleIds.length,debtObligations:plan.debtObligations,administrationCosts:plan.administrationCosts,administrationAllowance:plan.administrationAllowance,estateLevy:plan.estateLevy,estateObligations:plan.estateObligations};
 }
 
 export function estateTrustFromSettlement(settlement:EstateSettlement,createdAge:number):EstateTrustState{

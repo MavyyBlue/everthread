@@ -8,27 +8,22 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `9ed003f97cf16c1df22ac44506d62766681dfc38`.
+The latest fully green repository baseline is commit `abae9345519b016e35d401fcb622bb68b80ff264` from GitHub Actions Run #91 (`34549505120`).
 
-- GitHub Actions Run #88 (`34546954038`) completed successfully on 2026-09-11 UTC.
-- Run #88 expanded upload commit `1946bed3739da73bae8c682f09bd7730c4d9b160` into the build-bot commit above.
-- Source-overlay import, dependency install, both TypeScript gates, every established regression, production build, Pages artifact upload, and Pages deployment passed.
-- Integrated long-life regression: 105/105.
-- Pages artifact: `10179381674`, 7,001,236 bytes, SHA-256 `42e7d14426ccb3b6802ca10085779892dc9147725a5b91f659632d10c9e7bc6e`.
+- Canonical `npm run preflight` passed 4/4 stages on Node 22.23.2/Linux x64.
 - Core regression: 82/82.
-- People Threadspace: 57/57.
+- AI Interaction Testbench: 41/41.
 - Phase 5 estate planning: 46/46.
 - Family continuity: 18/18.
-- Visual identity: 12/12.
-- Family reproduction: 51/51.
-- Secret-code regression: 18/18.
-- Rewind scaling regression: 16/16.
-- NPC household coherence regression: 35/35.
-- NPC health / mortality regression: 18/18.
-- Age-aware reproduction regression: 21/21.
-- NPC orientation coherence regression: 55/55.
-- Collision-aware naming regression: 32/32.
-- Relationship microcopy regression: 66/66.
+- Integrated long-life regression: 105/105.
+- Every established dedicated regression remained green.
+- Production build and Pages deployment passed.
+- `package-lock.json` is now committed; CI installs through `npm ci`.
+- Certified preflight artifact: `10180269565`, artifact SHA-256 `e397071a814aa58fd144ecc42408fe98cde451412e8bf50029667818453e216e`.
+- Certified source SHA-256: `c219ed5c15c66225517e7c416369339498d1a54afd4eebc8859dee23dcb63c30`.
+- Certified dependency SHA-256: `9effb29f4362026559ac7652d39877bfb96e76090361eda5b876477fb4577d1e`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- The certified source/dependency payload was independently restored and exercised offline in the development sandbox; every regression passed and the production build succeeded. Local Node was 22.16.0 versus CI 22.23.2, so GitHub remains final release authority.
 - Save schema remains 9.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
@@ -37,6 +32,7 @@ Real player saves remain diagnostic evidence only. Personal save JSON, seeds, sl
 
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
+- Phase 5B estate administration is the current predeployment candidate: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress. CI Green is pending.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.
