@@ -18,7 +18,7 @@ import {
   rewindSnapshotChars,
 } from '../systems/RewindSystem';
 import { exportSave, importSave, SAVE_VERSION } from '../services/SaveSystem';
-import { runSimulation } from './simulationHarness';
+import { runSimulation, simulateLife } from './simulationHarness';
 
 interface DenseNpcOptions {
   age:number;
@@ -109,6 +109,28 @@ export function runIntegratedLongLifeRegression(){
   verify(distantDescendant.simulationTier==='background','unrepresented distant descendant inherited full simulation from a close-family parent');
   verify(stateErrors(tierState).length===0,`family-tier boundary fixture violated invariants: ${stateErrors(tierState).join('; ')}`);
 
+  // Pre-fix saves can already contain an unrepresented descendant incorrectly persisted as full-tier.
+  // The annual pass must repair that tier without deleting the NPC, and the repaired background branch
+  // may form a partner but must not seed another hidden generation through partner history or childbirth.
+  const legacyBranchState=createNewGame({seed:'slice8-legacy-distant-branch'});
+  legacyBranchState.character.age=60;legacyBranchState.currentYear=legacyBranchState.character.birthYear+60;
+  legacyBranchState.npcs={};legacyBranchState.relationships=[];legacyBranchState.socialWorlds=[];legacyBranchState.legacy.familyTreeNpcIds=[];
+  const legacyNameRng=createRng('slice8-legacy-distant-branch-names');
+  const legacyAncestor=addDenseNpc(legacyBranchState,legacyNameRng,'slice8-legacy-ancestor',90,{age:60,gender:'female',simulationTier:'background'});
+  legacyAncestor.alive=false;legacyAncestor.partnerId=undefined;
+  const legacyDescendant=addDenseNpc(legacyBranchState,legacyNameRng,'slice8-legacy-descendant',91,{age:31,gender:'female',parentIds:[legacyAncestor.id],simulationTier:'full'});
+  legacyDescendant.reproductiveSex='female';legacyDescendant.fertility=100;legacyDescendant.health=100;legacyDescendant.happiness=90;legacyDescendant.wealth=100_000;
+  const legacyStartingCount=Object.keys(legacyBranchState.npcs).length;
+  const legacyBranchRng=createRng('slice8-legacy-distant-branch-process');
+  legacyBranchRng.chance=(probability)=>probability>=.01; // Force ordinary partner formation while keeping tiny legal/divorce rolls off.
+  processNpcLives(legacyBranchState,legacyBranchRng);
+  const legacyPartner=legacyDescendant.partnerId?legacyBranchState.npcs[legacyDescendant.partnerId]:undefined;
+  verify(legacyDescendant.simulationTier==='background','legacy full-tier distant descendant was not repaired to background cadence');
+  verify(Boolean(legacyPartner),'repaired distant descendant could no longer form an ordinary background partnership');
+  verify(Object.keys(legacyBranchState.npcs).length===legacyStartingCount+1,'background descendant partnership seeded an extra hidden generation');
+  verify((legacyPartner?.childIds.length??0)===0&&legacyDescendant.childIds.length===0,'repaired background descendant branch created a child despite the terminal branch rule');
+  verify(stateErrors(legacyBranchState).length===0,`legacy distant-branch repair violated invariants: ${stateErrors(legacyBranchState).join('; ')}`);
+
   // Existing CI already runs the 25-life mixed smoke test. This adds a family-biased batch
   // so the closeout specifically leans on romance, children, and autonomous family growth.
   const familyBatch=runSimulation({lives:6,seedPrefix:'slice8-family-stress',maxAge:105,mode:'bulk',policy:'family'});
@@ -117,7 +139,10 @@ export function runIntegratedLongLifeRegression(){
   verify(Object.values(familyBatch.policyDistribution).reduce((sum,value)=>sum+value,0)===6,'family-biased simulation policy accounting diverged');
   verify(familyBatch.policyDistribution.family===6,'family-biased simulation did not retain the requested policy');
   verify(Number.isFinite(familyBatch.averageNetWorth)&&Number.isFinite(familyBatch.averageLifespan),'family-biased simulation produced non-finite aggregate output');
-  verify(familyBatch.maxPeakNpcCount<500,`family-biased simulation allowed runaway NPC growth (max peak ${familyBatch.maxPeakNpcCount})`);
+  const familyPeakDiagnostics=familyBatch.maxPeakNpcCount>=500
+    ?Array.from({length:6},(_,index)=>simulateLife(`slice8-family-stress-${index+1}`,105,'bulk','family')).map(result=>`${result.seed}:${result.profile}:peak=${result.peakNpcCount}:end=${result.endNpcCount}:age=${result.lifespan}`).join(', ')
+    :'';
+  verify(familyBatch.maxPeakNpcCount<500,`family-biased simulation allowed runaway NPC growth (max peak ${familyBatch.maxPeakNpcCount}; avg peak ${familyBatch.averagePeakNpcCount.toFixed(1)}; avg end ${familyBatch.averageEndNpcCount.toFixed(1)}; profiles ${JSON.stringify(familyBatch.profileDistribution)}${familyPeakDiagnostics?`; lives ${familyPeakDiagnostics}`:''})`);
   verify(familyBatch.averagePeakNpcCount>=familyBatch.averageEndNpcCount,'reported end NPC population exceeded average peak population');
 
   const state=createNewGame({seed:'slice8-dense-dynasty',rewindEnabled:true});

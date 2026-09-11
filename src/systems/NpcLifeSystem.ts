@@ -325,7 +325,11 @@ function createAutonomousPartner(state:GameState,npc:Npc,rng:SeededRng){
   const npcRomanticGender=npcGender(state,npc);const targetGender=pickRomanticTargetGender(state,npc.sexuality,npcRomanticGender,id);
   const {firstName,lastName}=pickCollisionAwareNpcName(state,rng,{countryId:npc.countryId,gender:targetGender});
   const partner:Npc={id,firstName,lastName,age,alive:true,health:rng.int(55,98),happiness:rng.int(42,94),wealth:rng.int(0,120000),countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(20,92),maritalStatus:'dating',traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:0,memories:[],parentIds:[],childIds:[],partnerId:npc.id,simulationTier:npc.simulationTier};
-  assignGeneratedNpcOrientation(state,partner,npcRomanticGender);npc.partnerId=id;npc.maritalStatus='dating';state.npcs[id]=partner;ensureNpcLife(state,partner);createPartnerChild(state,partner,rng);
+  assignGeneratedNpcOrientation(state,partner,npcRomanticGender);npc.partnerId=id;npc.maritalStatus='dating';state.npcs[id]=partner;ensureNpcLife(state,partner);
+  // A distant background descendant may still form a relationship, but seeding a pre-existing
+  // partner child would restart an invisible dynasty branch. Direct/meaningful relatives are
+  // promoted to full simulation before this path and retain the richer family behavior.
+  if(!(npc.simulationTier==='background'&&unrepresentedNpcDescendant(state,npc)))createPartnerChild(state,partner,rng);
   addNpcMemory(state,npc,'partner',5,`Began dating ${partner.firstName} ${partner.lastName}.`);addNpcMemory(state,partner,'partner',5,`Began dating ${npc.firstName} ${npc.lastName}.`);
   const relation=directRelationship(state,npc.id);
   if(relation?.type==='parent'){
@@ -335,6 +339,8 @@ function createAutonomousPartner(state:GameState,npc:Npc,rng:SeededRng){
 }
 
 function recentMemoryMood(npc:Npc){const recent=npc.memories.slice(-8);return recent.length?recent.reduce((sum,memory)=>sum+memory.sentiment,0)/recent.length:0;}
+
+function unrepresentedNpcDescendant(state:GameState,npc:Npc){return npc.parentIds.length>0&&!directRelationship(state,npc.id);}
 
 function yearsSinceRelationshipBoundary(state:GameState,npc:Npc){
   const latest=[...npc.memories].reverse().find(memory=>['divorce','bereavement'].includes(memory.kind));
@@ -385,6 +391,10 @@ function maybeExpandNpcFamily(state:GameState,npc:Npc,processedCouples:Set<strin
   if(!npc.partnerId||npc.maritalStatus!=='married')return;const partner=state.npcs[npc.partnerId];if(!partner?.alive||partner.maritalStatus!=='married')return;
   const coupleKey=[npc.id,partner.id].sort().join('|');if(processedCouples.has(coupleKey))return;processedCouples.add(coupleKey);
   if(npc.age<18||partner.age<18)return;
+  // Background roots can still build one bounded offscreen family. Once either partner is
+  // already an unrepresented descendant, stop the branch here so distant family trees do not
+  // recurse indefinitely behind the player-facing relationship model.
+  if(background&&(unrepresentedNpcDescendant(state,npc)||unrepresentedNpcDescendant(state,partner)))return;
   const existingChildren=new Set([...npc.childIds,...partner.childIds]);const maxChildren=background?2:4;if(existingChildren.size>=maxChildren)return;
   const combinedHealth=(npc.health+partner.health)/200;const fertility=(npc.fertility+partner.fertility)/200;const wealthStability=clamp((npc.wealth+partner.wealth)/120000,.45,1.25);const compatibility=partnershipCompatibility(npc,partner)/100;
   const npcSex=npcReproductiveSex(state,npc);const partnerSex=npcReproductiveSex(state,partner);
@@ -472,7 +482,10 @@ function processRelationshipDrift(state:GameState,rng:SeededRng){
 export function processNpcLives(state:GameState,rng=createRng(state.seed,state.rngCounter)){
   const startingNpcs=Object.values(state.npcs);const processedCouples=new Set<string>();
   for(const npc of startingNpcs){
-    if(!npc.alive)continue;ensureNpcLife(state,npc);npc.age+=1;const meaningful=relationshipIsMeaningful(state,npc.id);if(meaningful)npc.simulationTier='full';const background=npc.simulationTier==='background'&&!meaningful;
+    if(!npc.alive)continue;ensureNpcLife(state,npc);npc.age+=1;const meaningful=relationshipIsMeaningful(state,npc.id);
+    if(meaningful)npc.simulationTier='full';
+    else if(unrepresentedNpcDescendant(state,npc))npc.simulationTier='background'; // Repair pre-fix full-tier distant descendants as they age.
+    const background=npc.simulationTier==='background'&&!meaningful;
     if(npcHealthIsTerminal(npc)){handleNpcDeath(state,npc);continue;}
     processNpcEducationYear(state,npc,rng);
     const coarse=background;

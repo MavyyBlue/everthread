@@ -56,7 +56,7 @@ Current status:
 5. **NPC gender / sexual-orientation coherence — CI Green (Run #81).**
 6. **Collision-aware naming — CI Green (Run #82).**
 7. **Relationship/event microcopy polish — CI Green (Run #84).**
-8. **Integrated long-life QA — Implementing; Run #86 exposed full-tier distant-family branching, production correction + strengthened CI candidate prepared.**
+8. **Integrated long-life QA — Implementing; Run #87 confirmed residual recursive background-family growth, second production correction + strengthened CI candidate prepared.**
 
 ## Slice 1 implementation — CI Green
 
@@ -203,32 +203,33 @@ The green implementation keeps the interaction engine untouched and adds explici
 
 A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb through both the pure copy projection and the real `interactWithNpc()` path, checking successful execution plus exact timeline and NPC-memory wording. Run #84 (`34542840262`) passed both TypeScript gates, core 82/82, Relationship Microcopy **66/66**, every established regression including orientation 55/55 and naming 32/32, production build, Pages artifact upload, and deployment. The corrected overlay expanded into `2487a0bc79abc16473cb91e74f220071e4b23959`. Slice 7 is **CI Green**.
 
-## Slice 8 implementation — production correction + strengthened CI candidate prepared
+## Slice 8 implementation — second production correction + strengthened CI candidate prepared
 
-The final corrective slice began as regression-only, but the integrated gate exposed a real population-growth defect after its fixture-only compile issue was repaired.
+The final corrective slice began as regression-only, then correctly exposed two layers of long-life family-population growth plus one fixture-only TypeScript issue.
 
-Run #85 (`34544430607`) imported the initial Slice 8 regression and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`. `typecheck:engine` passed and `typecheck:tests` rejected five fixture-only narrowing assumptions: stale pre-mutation literal types across divorce/reconcile/remarriage plus optional reproduction diagnostics used without explicit narrowing. The corrected test re-read authoritative state and narrowed those optional values without changing production behavior.
+Run #85 (`34544430607`) imported the initial Slice 8 regression and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`. `typecheck:engine` passed and `typecheck:tests` rejected five fixture-only narrowing assumptions. The correction re-read authoritative relationship/NPC state after mutations and explicitly narrowed optional reproduction diagnostics without changing production behavior.
 
-Run #86 (`34544985042`) imported that correction and expanded it to `786663fdc3f46c8d850c368527a9bdae8929498f`. Both TypeScript gates passed. Core 82/82 and every established dedicated suite through Relationship Microcopy 66/66 passed. The new integrated runtime gate then failed its family-biased organic simulation because one life exceeded the `<500` lifetime-cast guard, so build/deployment were correctly skipped.
+Run #86 (`34544985042`) imported that fixture correction and expanded it to `786663fdc3f46c8d850c368527a9bdae8929498f`. Both TypeScript gates and every established regression through Relationship Microcopy 66/66 passed. The integrated runtime gate then exceeded its unchanged `<500` lifetime-cast guard. Root-cause analysis found that `createNpcChild()` assigned a newborn `full` simulation whenever either parent was close player family even when the newborn had no representable direct player relationship. The first production correction made the newborn's own `childRelationshipType()` authoritative: representable relatives stay full while more-distant descendants remain linked in the NPC family graph but start background-tier.
 
-Root-cause audit found a production mismatch in `NpcLifeSystem.createNpcChild()`:
+Run #87 (`34545986347`) imported that production correction and expanded it to `60661d01efbd66aa12e55edbddf02bdbae2d76b7`. Both TypeScript gates again passed. Core 82/82 and every established dedicated suite passed, including NPC Orientation 55/55, Collision-aware Naming 32/32, and Relationship Microcopy 66/66. Slice 8 then failed the same organic family-population guard with a concrete maximum peak of **513 NPC records**; build, artifact upload, and deployment were correctly skipped.
 
-- Everthread's established cadence policy is that meaningful/player-facing relatives use full simulation while unimportant/offscreen NPCs use background cadence until promoted by a meaningful relationship.
-- Autonomous newborns were instead inheriting `full` simulation whenever either **parent** was close player family, even when `childRelationshipType()` could not represent the newborn as a direct player relation.
-- This particularly affects descendants beyond the current direct kin taxonomy (for example, a grandchild's child). They remain correctly linked through NPC `parentIds` / `childIds`, but had no player relationship and still retained full simulation indefinitely.
-- Those unrepresented full-tier descendants could form full-tier partnerships and families, allowing branching cast growth that the background cadence/max-child limits were specifically designed to avoid.
+The Run #87 result showed the first fix was correct but incomplete. `peakNpcCount` measures every retained NPC record, not only living/active relatives. Audit of `NpcLifeSystem` found two remaining recursive paths for unrepresented descendants:
 
-Corrective production candidate:
+- a pre-fix save can already contain a distant descendant persisted as `full`, and the annual life pass only promoted meaningful NPCs; it never demoted this legacy-invalid tier;
+- a background distant descendant could still form a partner and then continue an offscreen dynasty through `maybeExpandNpcFamily()`, while `createAutonomousPartner()` could also seed a pre-existing partner child. Those descendants are not player-facing relationships, so repeated generations add retained NPC history without adding meaningful player-visible simulation depth.
 
-- compute `childRelationshipType()` before constructing the autonomous child;
-- assign `simulationTier:'full'` only when the newborn has a representable player-facing relationship (`grandchild`, `niece_nephew`, `half_sibling`, etc.); otherwise assign `background` while preserving the NPC family graph;
-- directly represented family remains full-tier and can still be promoted/kept full by ordinary meaningful-relationship authority;
-- existing saves are not mass-rewritten. Already-created NPCs keep their established tier, but future distant descendants no longer extend the erroneous full-tier branch;
-- no NPC is deleted, no family link/name/orientation/reproduction outcome is removed, no RNG draw/order changes, and save schema remains 9.
+Second corrective production candidate:
 
-The integrated regression is strengthened with a deterministic long-married grandchild fixture that forces one next-generation family expansion. It now verifies that the distant child is created exactly once, retains both NPC parent links, receives no invented direct player relationship, uses background simulation, and leaves state invariants clean. The family-biased `<500` guard is unchanged and now reports the observed peak if it fails again.
+- centralize `unrepresentedNpcDescendant()` as an NPC with stored parentage but no active direct player relationship;
+- during `processNpcLives()`, meaningful NPCs still promote to `full`, while an unrepresented descendant is repaired to `background` cadence. This repairs the old persisted full-tier state during ordinary annual simulation without deleting the NPC or rewriting genealogy;
+- an unrepresented **background** descendant may still form an ordinary partner, preserving offscreen adult-life continuity, but `createAutonomousPartner()` no longer seeds an extra pre-existing partner child for that terminal background branch;
+- `maybeExpandNpcFamily()` stops additional child generation when a background couple contains an unrepresented descendant. Root background acquaintances can still form their first bounded offscreen family, and directly represented/meaningful relatives retain full family simulation;
+- if a descendant later becomes player-facing/meaningful (including through generational continuation), the existing meaningful-relationship authority promotes it back to `full`, restoring normal family behavior;
+- no NPC records are deleted, no parent/child IDs are removed, no names/orientations are rewritten, and save schema remains 9. RNG behavior is unchanged for ordinary player-facing/full paths; only the previously runaway background-descendant branches stop consuming the child-generation draws/outcomes they are no longer allowed to create.
 
-The file contains **82 assertion sites**. Because annual invariant assertions execute inside 15-year and 5-year loops, a fully completed run should report **100 runtime checks**. The candidate still includes the original six family-biased organic lives plus the dense 49-NPC / 24-child save-rewind-death-descendant stress path.
+The closeout regression retains the original deterministic grandchild-boundary fixture and adds a legacy-like full-tier distant-descendant fixture. That fixture must prove that the invalid full tier repairs to background, the descendant can still form a partner, partnership creates exactly one new NPC rather than an extra hidden generation, no child is seeded on that terminal branch, and invariants remain clean. The organic six-life `<500` guard is **not raised**; if it fails, its message now includes max peak, average peak, average end population, profile distribution, and (only on failure) per-life seed/profile/peak/end/lifespan diagnostics for further diagnosis.
+
+The test now contains **87 assertion sites**. Because annual invariant assertions execute inside 15-year and 5-year loops, a fully completed run should report **105 runtime checks**. The candidate still includes the six family-biased organic lives plus the dense 49-NPC / 24-child save-rewind-death-descendant stress path.
 
 ## Known continuing quality / architecture issues
 
@@ -238,7 +239,7 @@ The file contains **82 assertion sites**. Because annual invariant assertions ex
 - Age-aware biological conception is CI Green in Run #80.
 - Collision-aware naming is CI Green in Run #82.
 - Relationship interaction microcopy is CI Green in Run #84.
-- Integrated long-life QA is the active final corrective closeout gate; Run #86 exposed a real distant-family full-tier branching defect after all prior suites passed. The candidate now corrects child tier ownership and strengthens the regression. Slice 8 is not CI Green yet.
+- Integrated long-life QA is the active final corrective closeout gate; Run #87 proved the first family-tier correction was incomplete and exposed residual recursive background-family growth. The second candidate repairs legacy-invalid distant tiers and terminally bounds unrepresented background descendant branches. Slice 8 is not CI Green yet.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.
