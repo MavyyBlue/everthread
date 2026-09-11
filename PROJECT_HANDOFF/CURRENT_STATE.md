@@ -56,7 +56,7 @@ Current status:
 5. **NPC gender / sexual-orientation coherence — CI Green (Run #81).**
 6. **Collision-aware naming — CI Green (Run #82).**
 7. **Relationship/event microcopy polish — CI Green (Run #84).**
-8. **Integrated long-life QA — Implementing; Run #85 test-only TypeScript failure diagnosed, corrective CI candidate prepared.**
+8. **Integrated long-life QA — Implementing; Run #86 exposed full-tier distant-family branching, production correction + strengthened CI candidate prepared.**
 
 ## Slice 1 implementation — CI Green
 
@@ -203,19 +203,32 @@ The green implementation keeps the interaction engine untouched and adds explici
 
 A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb through both the pure copy projection and the real `interactWithNpc()` path, checking successful execution plus exact timeline and NPC-memory wording. Run #84 (`34542840262`) passed both TypeScript gates, core 82/82, Relationship Microcopy **66/66**, every established regression including orientation 55/55 and naming 32/32, production build, Pages artifact upload, and deployment. The corrected overlay expanded into `2487a0bc79abc16473cb91e74f220071e4b23959`. Slice 7 is **CI Green**.
 
-## Slice 8 implementation — corrective CI candidate prepared
+## Slice 8 implementation — production correction + strengthened CI candidate prepared
 
-The final corrective slice is regression-only unless it exposes a production defect. New `integratedLongLifeRegression.ts` combines two stress shapes instead of duplicating the existing 25-life smoke test:
+The final corrective slice began as regression-only, but the integrated gate exposed a real population-growth defect after its fixture-only compile issue was repaired.
 
-- a six-life family-biased organic simulation batch checks anomaly-free long lives, finite aggregate finance/lifespan output, and bounded NPC growth;
-- a dense synthetic dynasty starts with 49 NPCs, including 24 linked children, a spouse, and 24 friends generated through collision-aware naming;
-- the dense state performs divorce → reconciliation → remarriage, age-aware biological-family eligibility, adoption, and real relationship microcopy before multi-decade annual simulation;
-- a genuine background-tier NPC begins at terminal health to verify terminal cleanup remains coherent inside the integrated annual path;
-- rewind retention is checked continuously against both the 10-snapshot count cap and 6,000,000-character budget;
-- the stressed state is exported/imported, rewound, replayed, interacted with after rehydration, force-completed, and continued as an adult descendant;
-- descendant continuation must preserve a large sibling set and prior protagonist ancestry, clear the prior generation rewind history, start a fresh successor rewind history, and survive a second save round-trip without invariant errors.
+Run #85 (`34544430607`) imported the initial Slice 8 regression and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`. `typecheck:engine` passed and `typecheck:tests` rejected five fixture-only narrowing assumptions: stale pre-mutation literal types across divorce/reconcile/remarriage plus optional reproduction diagnostics used without explicit narrowing. The corrected test re-read authoritative state and narrowed those optional values without changing production behavior.
 
-The dedicated closeout suite contains **77 assertions**. No production source or save schema changes are part of this candidate. Run #85 (`34544430607`) imported the regression-only overlay and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`; `typecheck:engine` passed, but `typecheck:tests` correctly rejected five test-only narrowing assumptions. The fixture had retained pre-mutation literal types across divorce/reconcile/remarriage calls and compared optional reproduction diagnostics without first narrowing them. The corrective candidate re-reads authoritative relationship/NPC state after each mutation and explicitly narrows the optional reproduction diagnostics. All 77 assertions remain intact; no production behavior, save schema, or runner wiring changes. The repaired narrowing pattern passes standalone strict TypeScript checking and the packaged test files transpile with zero syntax diagnostics; GitHub remains the authoritative full TypeScript/runtime/build/deployment gate.
+Run #86 (`34544985042`) imported that correction and expanded it to `786663fdc3f46c8d850c368527a9bdae8929498f`. Both TypeScript gates passed. Core 82/82 and every established dedicated suite through Relationship Microcopy 66/66 passed. The new integrated runtime gate then failed its family-biased organic simulation because one life exceeded the `<500` lifetime-cast guard, so build/deployment were correctly skipped.
+
+Root-cause audit found a production mismatch in `NpcLifeSystem.createNpcChild()`:
+
+- Everthread's established cadence policy is that meaningful/player-facing relatives use full simulation while unimportant/offscreen NPCs use background cadence until promoted by a meaningful relationship.
+- Autonomous newborns were instead inheriting `full` simulation whenever either **parent** was close player family, even when `childRelationshipType()` could not represent the newborn as a direct player relation.
+- This particularly affects descendants beyond the current direct kin taxonomy (for example, a grandchild's child). They remain correctly linked through NPC `parentIds` / `childIds`, but had no player relationship and still retained full simulation indefinitely.
+- Those unrepresented full-tier descendants could form full-tier partnerships and families, allowing branching cast growth that the background cadence/max-child limits were specifically designed to avoid.
+
+Corrective production candidate:
+
+- compute `childRelationshipType()` before constructing the autonomous child;
+- assign `simulationTier:'full'` only when the newborn has a representable player-facing relationship (`grandchild`, `niece_nephew`, `half_sibling`, etc.); otherwise assign `background` while preserving the NPC family graph;
+- directly represented family remains full-tier and can still be promoted/kept full by ordinary meaningful-relationship authority;
+- existing saves are not mass-rewritten. Already-created NPCs keep their established tier, but future distant descendants no longer extend the erroneous full-tier branch;
+- no NPC is deleted, no family link/name/orientation/reproduction outcome is removed, no RNG draw/order changes, and save schema remains 9.
+
+The integrated regression is strengthened with a deterministic long-married grandchild fixture that forces one next-generation family expansion. It now verifies that the distant child is created exactly once, retains both NPC parent links, receives no invented direct player relationship, uses background simulation, and leaves state invariants clean. The family-biased `<500` guard is unchanged and now reports the observed peak if it fails again.
+
+The file contains **82 assertion sites**. Because annual invariant assertions execute inside 15-year and 5-year loops, a fully completed run should report **100 runtime checks**. The candidate still includes the original six family-biased organic lives plus the dense 49-NPC / 24-child save-rewind-death-descendant stress path.
 
 ## Known continuing quality / architecture issues
 
@@ -225,7 +238,7 @@ The dedicated closeout suite contains **77 assertions**. No production source or
 - Age-aware biological conception is CI Green in Run #80.
 - Collision-aware naming is CI Green in Run #82.
 - Relationship interaction microcopy is CI Green in Run #84.
-- Integrated long-life QA is the active final corrective closeout gate; Run #85 exposed a test-only TypeScript narrowing defect, now corrected without production changes. Slice 8 is not CI Green yet.
+- Integrated long-life QA is the active final corrective closeout gate; Run #86 exposed a real distant-family full-tier branching defect after all prior suites passed. The candidate now corrects child tier ownership and strengthens the regression. Slice 8 is not CI Green yet.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.

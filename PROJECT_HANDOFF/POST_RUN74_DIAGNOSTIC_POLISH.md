@@ -165,14 +165,13 @@ Run #84 (`34542840262`) passed both TypeScript checks, core regression 82/82, ev
 
 ## Slice 8 — Integrated long-life QA
 
-Status: **Implementing — Run #85 test-only TypeScript failure diagnosed; corrective CI candidate prepared.**
+Status: **Implementing — Run #86 runtime population-growth failure diagnosed; production correction + strengthened CI candidate prepared.**
 
 Goal: synthetic multi-decade/high-NPC/high-child-count validation across save growth, rewind, marriages/divorces/reconciliation, deaths, reproduction, naming, family linkage, and descendant continuation. This is the closeout gate for the corrective pass, not a new endless feature phase.
 
 Candidate regression design:
 
-- preserve production behavior; no runtime/source-system changes are included unless the QA gate exposes a real defect;
-- supplement the existing 25-life mixed smoke test with six family-biased organic lives, requiring zero invariant anomalies and bounded NPC growth;
+- supplement the existing 25-life mixed smoke test with six family-biased organic lives, requiring zero invariant anomalies and a `<500` lifetime-cast peak per life;
 - create a deterministic dense 49-NPC starting cast with 24 linked children, a spouse, and 24 friends through the collision-aware naming authority;
 - exercise divorce, reconciliation, remarriage, age-aware reproductive eligibility, adoption, and relationship microcopy in the same dense life;
 - run 15 annual cycles with a genuine background-tier terminal-health NPC and validate invariants after every year;
@@ -180,6 +179,21 @@ Candidate regression design:
 - force the protagonist's death, continue as an adult child, require the prior protagonist parent link and a broad sibling set, verify old rewind history is cleared, age the descendant five more years, and verify new snapshots belong to the descendant;
 - finish with another export/import round-trip and invariant validation.
 
-`integratedLongLifeRegression.ts` contains **77 assertions** and is wired into the standard regression runner. Run #85 (`34544430607`) imported the initial Slice 8 overlay and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`. `typecheck:engine` passed, while `typecheck:tests` failed on five fixture-only narrowing errors: stale pre-mutation literal types across divorce/reconcile/remarriage assertions plus optional `ageFactor` / `conceptionChance` diagnostics used without explicit narrowing. Regressions, build, and deployment were correctly skipped. The correction re-reads relationship/NPC state from the authoritative `GameState` after each mutation and narrows the optional reproduction values before comparing them; it leaves all 77 assertions, production systems, runner wiring, RNG behavior, and save schema unchanged. The repaired narrowing pattern passes standalone strict TypeScript checking and the packaged test files transpile with zero syntax diagnostics. GitHub CI must pass both TypeScript gates, all existing suites, the integrated regression, production build, Pages artifact upload, and deployment before Slice 8 or the corrective program can be called CI Green.
+Run #85 (`34544430607`) imported the initial Slice 8 overlay and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`. `typecheck:engine` passed, while `typecheck:tests` failed on five fixture-only narrowing errors. The correction re-read relationship/NPC state from authoritative `GameState` after mutations and explicitly narrowed optional reproduction diagnostics.
+
+Run #86 (`34544985042`) imported the corrected fixture and expanded it to `786663fdc3f46c8d850c368527a9bdae8929498f`. Both TypeScript gates passed. Core regression 82/82 and every established dedicated suite passed, including NPC Orientation 55/55, Collision-aware Naming 32/32, and Relationship Microcopy 66/66. The integrated runtime suite then stopped at `family-biased simulation allowed runaway NPC growth`; build, artifact upload, and deployment were correctly skipped.
+
+Production root cause: `NpcLifeSystem.createNpcChild()` assigned an autonomous newborn to full simulation when either parent was player family, even when `childRelationshipType()` returned no direct player relationship for that newborn. Descendants beyond the currently supported kin taxonomy therefore remained full-tier despite being offscreen/unrepresented, and could recursively form full-tier partnerships/families. This contradicted the established cadence rule that meaningful/player-facing NPCs are full while ordinary offscreen NPCs use background cadence.
+
+Corrective implementation:
+
+- derive the newborn's `relationType` before construction;
+- `simulationTier` now follows the newborn's own representable player relationship: direct/representable family stays `full`, while unrepresented distant descendants stay family-linked through NPC parent/child IDs but use `background` cadence;
+- existing NPC records are not rewritten, and the correction naturally stops future erroneous branching from older affected saves;
+- no names, orientation, reproductive compatibility, child links, relationship records, RNG calls/order, or save fields are removed or changed; save schema remains 9.
+
+The closeout regression adds five targeted assertions using a deterministic long-married grandchild couple whose family expansion is forced through the existing stable-family fallback. It verifies exactly one distant descendant is created, both parent links survive, no unsupported direct player relationship is invented, the newborn is background-tier, and invariants remain clean. The family-batch `<500` guard is deliberately retained rather than raised.
+
+The test now has **82 assertion sites** and should execute **100 runtime checks** when it reaches completion because invariant checks repeat across the 15-year and 5-year loops. GitHub CI must pass both TypeScript gates, every established suite, all integrated runtime checks, production build, Pages artifact upload, and deployment before Slice 8 or the corrective program can be called CI Green.
 
 After Slice 8 is CI Green, return to the planned Phase 5 estate/dynasty roadmap unless new playtesting exposes a concrete blocking defect.

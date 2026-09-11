@@ -9,7 +9,7 @@ import { checkDeath } from '../systems/DeathSystem';
 import { continueAsChild } from '../systems/GenerationSystem';
 import { biologicalChildGate } from '../systems/ReproductionSystem';
 import { changeRelationshipType, haveChild, interactWithNpc } from '../systems/RelationshipSystem';
-import { ensureNpcLife } from '../systems/NpcLifeSystem';
+import { ensureNpcLife, processNpcLives } from '../systems/NpcLifeSystem';
 import { pickCollisionAwareNpcName } from '../systems/NpcNamingSystem';
 import {
   LEGACY_IMPORT_MAX_CHARS,
@@ -83,6 +83,32 @@ export function runIntegratedLongLifeRegression(){
   let checks=0;
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Integrated long-life regression failed: ${message}`);}
 
+  // A direct grandchild is meaningful to the player, but that grandchild's child is beyond
+  // Everthread's current direct kin taxonomy. The distant descendant must stay linked in the
+  // NPC family graph without inheriting expensive full-tier simulation from the parent.
+  const tierState=createNewGame({seed:'slice8-distant-family-tier'});
+  tierState.character.age=44;tierState.currentYear=tierState.character.birthYear+44;
+  tierState.npcs={};tierState.relationships=[];tierState.socialWorlds=[];tierState.legacy.familyTreeNpcIds=[];
+  const tierNameRng=createRng('slice8-distant-family-tier-names');
+  const grandchildParent=addDenseNpc(tierState,tierNameRng,'slice8-tier-grandchild',80,{age:28,gender:'female',relationshipType:'grandchild',maritalStatus:'married',score:86,simulationTier:'full'});
+  const grandchildPartner=addDenseNpc(tierState,tierNameRng,'slice8-tier-partner',81,{age:29,gender:'male',maritalStatus:'married',simulationTier:'full'});
+  grandchildParent.reproductiveSex='female';grandchildPartner.reproductiveSex='male';grandchildParent.fertility=92;grandchildPartner.fertility=92;
+  grandchildParent.partnerId=grandchildPartner.id;grandchildPartner.partnerId=grandchildParent.id;
+  const marriageYear=tierState.currentYear-8;
+  grandchildParent.memories.push({id:'slice8-tier-marriage-a',year:marriageYear,age:20,kind:'marriage',sentiment:9,summary:`Married ${grandchildPartner.firstName} ${grandchildPartner.lastName}.`,permanent:true});
+  grandchildPartner.memories.push({id:'slice8-tier-marriage-b',year:marriageYear,age:21,kind:'marriage',sentiment:9,summary:`Married ${grandchildParent.firstName} ${grandchildParent.lastName}.`,permanent:true});
+  const tierStartingIds=new Set(Object.keys(tierState.npcs));
+  const tierProcessRng=createRng('slice8-distant-family-tier-process');
+  tierProcessRng.chance=()=>false; // Keep the fixture on the deterministic long-marriage family fallback; avoid unrelated divorce/illness branches.
+  processNpcLives(tierState,tierProcessRng);
+  const distantDescendants=Object.values(tierState.npcs).filter(npc=>!tierStartingIds.has(npc.id));
+  verify(distantDescendants.length===1,'forced grandchild-family expansion did not create exactly one distant descendant');
+  const distantDescendant=distantDescendants[0]!;
+  verify(distantDescendant.parentIds.includes(grandchildParent.id)&&distantDescendant.parentIds.includes(grandchildPartner.id),'distant descendant lost its NPC parent links');
+  verify(!tierState.relationships.some(item=>item.npcId===distantDescendant.id),'unrepresented distant descendant incorrectly received a direct player relationship');
+  verify(distantDescendant.simulationTier==='background','unrepresented distant descendant inherited full simulation from a close-family parent');
+  verify(stateErrors(tierState).length===0,`family-tier boundary fixture violated invariants: ${stateErrors(tierState).join('; ')}`);
+
   // Existing CI already runs the 25-life mixed smoke test. This adds a family-biased batch
   // so the closeout specifically leans on romance, children, and autonomous family growth.
   const familyBatch=runSimulation({lives:6,seedPrefix:'slice8-family-stress',maxAge:105,mode:'bulk',policy:'family'});
@@ -91,7 +117,7 @@ export function runIntegratedLongLifeRegression(){
   verify(Object.values(familyBatch.policyDistribution).reduce((sum,value)=>sum+value,0)===6,'family-biased simulation policy accounting diverged');
   verify(familyBatch.policyDistribution.family===6,'family-biased simulation did not retain the requested policy');
   verify(Number.isFinite(familyBatch.averageNetWorth)&&Number.isFinite(familyBatch.averageLifespan),'family-biased simulation produced non-finite aggregate output');
-  verify(familyBatch.maxPeakNpcCount<500,'family-biased simulation allowed runaway NPC growth');
+  verify(familyBatch.maxPeakNpcCount<500,`family-biased simulation allowed runaway NPC growth (max peak ${familyBatch.maxPeakNpcCount})`);
   verify(familyBatch.averagePeakNpcCount>=familyBatch.averageEndNpcCount,'reported end NPC population exceeded average peak population');
 
   const state=createNewGame({seed:'slice8-dense-dynasty',rewindEnabled:true});
