@@ -1,6 +1,13 @@
 # Everthread Changelog
 
-## Phase 5C candidate — Persistent NPC Asset Ownership — 2026-09-10
+## Post-Run95 playtest hotfix candidate — Life timeline reactivity + relationship VFX — 2026-09-11
+
+- Fixed Life → Your Story failing to show Age Up timeline entries until navigation/refresh. Root cause was `Timeline` memoizing a bounded window by an array reference that Everthread intentionally mutates in place; the bounded window now recomputes on each render.
+- Fixed Threadspace NPC interaction VFX disappearing at relationship score caps. Action VFX snapshots now record timeline length and derive semantic relationship gain/loss from only the new `relationshipDelta` entries created by the current action when before/after stored scores cannot move past 0/100.
+- Added real capped positive/adverse `interactWithNpc()` regression coverage and same-reference timeline append coverage. Action VFX is now 46/46; Timeline Scaling is 11/11 locally.
+- Full local regression wall remains green, both TypeScript gates pass, and production build passes at 142 transformed modules. Run #95 / `62e28aafb190f8b46d10b73fb6dd00985beb724d` remains the certified baseline until GitHub reproduces this hotfix.
+
+## Phase 5C — Persistent NPC Asset Ownership — CI Green Run #95 — 2026-09-10
 
 ### Added
 
@@ -32,7 +39,7 @@
 - Scale fixture: 600 starting background NPCs + 3,000 timeline entries advanced 12 years with full history preserved, portfolio caps respected, zero organic explicit background holdings, and clean state validation.
 - Ad-hoc hosted-sandbox benchmark: 1,000 starting background NPCs + 5,000 timeline entries advanced 20 years in ~1.1 s; world grew to ~1,200 NPCs through ordinary autonomy with zero organic explicit background holdings and zero validation errors.
 - Production build passes with 142 transformed modules; main chunk ~981.03 kB minified / 278.92 kB gzip. Existing chunk-size warning remains nonblocking.
-- GitHub CI/Pages deployment is still required before Phase 5C is promoted to CI Green.
+- GitHub Actions Run #95 reproduced canonical preflight, certified artifact creation, and Pages deployment on expanded source `62e28aafb190f8b46d10b73fb6dd00985beb724d`; Phase 5C is CI Green.
 
 ## Universal derived action VFX candidate — 2026-09-10
 

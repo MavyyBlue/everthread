@@ -8,6 +8,7 @@ import {
   type ActionVfxKind,
 } from '../core/actionVfx';
 import { createNewGame } from '../systems/CharacterSystem';
+import { interactWithNpc } from '../systems/RelationshipSystem';
 
 export function runActionVfxRegression(){
   let checks=0;
@@ -80,6 +81,22 @@ export function runActionVfxRegression(){
   const tenth=captureActionVfxSnapshot(state);state.finances.cash-=50;
   resolved=resolvedActionVfxKinds(true,{derive:false},tenth,state);
   verify(!resolved.includes('moneyLoss'),'derive:false should remain an explicit opt-out for exceptional UI actions');
+
+  const cappedGain=createNewGame({seed:'action-vfx-capped-gain'});cappedGain.character.age=30;
+  const cappedGainRel=cappedGain.relationships[0]!;const cappedGainNpc=cappedGain.npcs[cappedGainRel.npcId]!;
+  cappedGainNpc.age=50;cappedGainNpc.alive=true;cappedGainNpc.hiddenOpinion=80;cappedGainRel.score=100;
+  const cappedGainBefore=captureActionVfxSnapshot(cappedGain);const cappedGainResult=interactWithNpc(cappedGain,cappedGainNpc.id,'compliment');
+  const cappedGainKinds=resolvedActionVfxKinds(cappedGainResult.success,undefined,cappedGainBefore,cappedGain);
+  verify(cappedGainResult.success&&cappedGainRel.score===100,'capped positive NPC interaction should resolve while the stored relationship remains at 100');
+  verify((cappedGain.timeline.at(-1)?.relationshipDelta??0)>0&&cappedGainKinds.includes('relationshipGain'),'capped positive NPC interaction should still emit positive relationship VFX from its semantic action delta');
+
+  const cappedLoss=createNewGame({seed:'action-vfx-capped-loss'});cappedLoss.character.age=30;
+  const cappedLossRel=cappedLoss.relationships[0]!;const cappedLossNpc=cappedLoss.npcs[cappedLossRel.npcId]!;
+  cappedLossNpc.age=50;cappedLossNpc.alive=true;cappedLossNpc.hiddenOpinion=-80;cappedLossRel.score=0;
+  const cappedLossBefore=captureActionVfxSnapshot(cappedLoss);const cappedLossResult=interactWithNpc(cappedLoss,cappedLossNpc.id,'insult');
+  const cappedLossKinds=resolvedActionVfxKinds(cappedLossResult.success,undefined,cappedLossBefore,cappedLoss);
+  verify(cappedLossResult.success&&cappedLossRel.score===0,'capped adverse NPC interaction should resolve while the stored relationship remains at 0');
+  verify((cappedLoss.timeline.at(-1)?.relationshipDelta??0)<0&&cappedLossKinds.includes('relationshipLoss'),'capped adverse NPC interaction should still emit relationship-loss VFX from its semantic action delta');
 
   return checks;
 }

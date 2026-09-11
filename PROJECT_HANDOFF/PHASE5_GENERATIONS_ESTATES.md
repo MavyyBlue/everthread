@@ -35,7 +35,7 @@ Implementation rules:
 
 Dedicated `estateAdministrationRegression.ts` passes 63/63, including five sequential no-income generation handoffs that require inherited wealth to decline rather than duplicate and validate state invariants after each continuation. GitHub Actions Run #92 reproduced canonical preflight and deployment; Phase 5B is CI Green.
 
-## Phase 5C — NPC-owned assets/businesses candidate
+## Phase 5C — NPC-owned assets/businesses — CI Green
 
 Purpose: let important family wealth exist outside the controlled protagonist as real, persistent ownership without turning every background NPC into a player-sized finance simulation.
 
@@ -53,7 +53,9 @@ Implementation rules:
 - Adult portfolios and minor inheritance trusts are both bounded to 6 properties / 4 businesses. Overflow liquidates to represented equity/value rather than silently deleting value or permitting unbounded save growth.
 - People detail sheets expose liquid wealth, named property/business holdings, debt, and reconciled estimated net worth.
 
-Dedicated `npcAssetOwnershipRegression.ts` passes 82/82 locally across migration, RNG neutrality, portfolio projection/accounting, creation/background-tier bounds, stable ownership IDs, adult/minor player and NPC inheritance, protected-trust caps and overflow reconciliation, mortgage transfer, idempotent death settlement, descendant continuation, cap liquidation, preview read-only behavior, a 600-background-NPC + 3,000-entry 12-year scale fixture, and state validation. `timelineScalingRegression.ts` passes 10/10: authoritative history remains complete while the Life page renders the newest 120 entries initially and reveals older entries in 120-entry increments; a 5,000-entry history never requires thousands of timeline DOM nodes at once. All established regressions remain green in local bounded batches; production build passes with 142 modules. An ad-hoc 1,000-starting-NPC + 5,000-entry / 20-year benchmark completed in ~1.1 s in the hosted sandbox with zero organic explicit background holdings and zero validation errors. CI Green remains required before Phase 5C is promoted.
+Dedicated `npcAssetOwnershipRegression.ts` passes 82/82 across migration, RNG neutrality, portfolio projection/accounting, creation/background-tier bounds, stable ownership IDs, adult/minor player and NPC inheritance, protected-trust caps and overflow reconciliation, mortgage transfer, idempotent death settlement, descendant continuation, cap liquidation, preview read-only behavior, a 600-background-NPC + 3,000-entry 12-year scale fixture, and state validation. `timelineScalingRegression.ts` passed 10/10 on the Phase 5C deployment: authoritative history remains complete while the Life page renders the newest 120 entries initially and reveals older entries in 120-entry increments. GitHub Actions Run #95 reproduced both TypeScript gates, the complete regression wall, 142-module production build, certified artifact creation, and Pages deployment on expanded commit `62e28aafb190f8b46d10b73fb6dd00985beb724d`. Phase 5C is CI Green.
+
+Post-Run95 leisure testing found two presentation-only defects: the timeline component memoized by an in-place-mutated array reference, and capped 0/100 relationship interactions could lose VFX despite semantic deltas. The narrow hotfix candidate removes the unsafe memoization and lets action VFX consume only newly appended timeline relationship deltas as a fallback. Local candidate counts are Action VFX 46/46 and Timeline Scaling 11/11; GitHub verification is required before Phase 5D begins.
 
 ## Next after Phase 5C
 

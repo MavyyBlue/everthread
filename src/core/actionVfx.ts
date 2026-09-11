@@ -29,6 +29,7 @@ export interface ActionVfxSnapshot {
   stress: number;
   followers: number;
   relationshipScores: Record<string, number>;
+  timelineLength: number;
 }
 
 export const ACTION_VFX_ASSETS: Record<ActionVfxKind, string> = {
@@ -75,6 +76,7 @@ export function captureActionVfxSnapshot(state: GameState): ActionVfxSnapshot {
     stress: state.character.secondary.stress,
     followers: state.fame.followers,
     relationshipScores,
+    timelineLength: state.timeline.length,
   };
 }
 
@@ -92,6 +94,16 @@ export function deriveActionVfxKinds(before: ActionVfxSnapshot, after: GameState
     if (prior === undefined) continue;
     if (relationship.score > prior + 0.001) relationshipGain = true;
     if (relationship.score < prior - 0.001) relationshipLoss = true;
+  }
+
+  // Relationship scores are bounded to 0..100. A valid interaction at a bound can
+  // still have a real semantic delta (and the engine records that delta in the new
+  // timeline entry) even though the stored score remains 100 -> 100 or 0 -> 0.
+  // Fold only entries created by this action into feedback so capped interactions
+  // still get the correct heart VFX without replaying historical timeline effects.
+  for (const entry of after.timeline.slice(Math.max(0, before.timelineLength))) {
+    if ((entry.relationshipDelta ?? 0) > 0.001) relationshipGain = true;
+    if ((entry.relationshipDelta ?? 0) < -0.001) relationshipLoss = true;
   }
   if (relationshipGain) kinds.push('relationshipGain');
   if (relationshipLoss) kinds.push('relationshipLoss');

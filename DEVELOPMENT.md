@@ -1,6 +1,6 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-10  
+Last updated: 2026-09-11  
 Current build line: 0.12.0 pre-release  
 Save schema: 10
 
@@ -24,7 +24,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Implemented foundations
 
-### Phase 5C — Persistent NPC asset ownership (predeployment candidate)
+### Phase 5C — Persistent NPC asset ownership (CI Green, Run #95)
 
 Phase 5C moves meaningful family wealth beyond aggregate NPC property numbers while preserving the bounded simulation-tier architecture.
 
@@ -36,8 +36,15 @@ Phase 5C moves meaningful family wealth beyond aggregate NPC property numbers wh
 - Descendant continuation now preserves the selected NPC's own property/businesses, reconstructs mortgages once, separates unsecured personal debt, and merges personal holdings with the deceased protagonist's estate by stable asset ID.
 - People detail sheets expose liquid wealth, property/business value, debt, estimated net worth, and individually named holdings.
 - Life timeline presentation now keeps the full authoritative history while rendering the newest 120 entries first and revealing older history in 120-entry increments, preventing multi-thousand-entry lives from creating multi-thousand-node timeline DOMs.
-- Dedicated NPC Asset Ownership regression: 82/82. Timeline Scaling: 10/10. Core 82/82, Estate Planning 46/46, Estate Administration 63/63, Action VFX 42/42, Integrated Long-Life 105/105, and every established dedicated suite remain green locally. Both TypeScript gates and the production build pass; build transforms 142 modules. The earlier 50-life family-policy bulk sanity produced zero anomalies/forced terminal deaths; scale hardening additionally validates 600 starting background NPCs + 3,000 timeline entries over 12 years, while an ad-hoc 1,000-NPC + 5,000-entry / 20-year benchmark completed in ~1.1 s with zero organic explicit background holdings and zero validation errors.
-- CI Green is still required before Phase 5C is promoted. Run #94 / `10d74b7ed78c8cff08ee6b4fc9a9fe3d6d44a3ef` is the certified source baseline for this candidate.
+- Dedicated NPC Asset Ownership regression: 82/82. Deployed Timeline Scaling: 10/10. Core 82/82, Estate Planning 46/46, Estate Administration 63/63, Action VFX 42/42, Integrated Long-Life 105/105, and every established dedicated suite remained green in GitHub Run #95. Both TypeScript gates and the 142-module production build passed; Pages deployed successfully. The earlier 50-life family-policy bulk sanity produced zero anomalies/forced terminal deaths; scale hardening additionally validates 600 starting background NPCs + 3,000 timeline entries over 12 years, while an ad-hoc 1,000-NPC + 5,000-entry / 20-year benchmark completed in ~1.1 s with zero organic explicit background holdings and zero validation errors.
+- Run #95 expanded to certified source `62e28aafb190f8b46d10b73fb6dd00985beb724d`; Phase 5C is CI Green.
+
+### Post-Run95 playtest hotfix candidate — immediate timeline + capped relationship VFX
+
+- Life → Your Story no longer memoizes its bounded timeline window by array identity. Because authoritative `GameState` is mutated in place and revisioned externally, Age Up can append entries to the same array reference; recomputing the 120-entry window per render makes the new year visible immediately without navigation or refresh.
+- Action VFX snapshots now record the timeline length at press time. Newly appended `relationshipDelta` values act as a semantic fallback when relationship scores clamp at 0 or 100, so valid NPC interactions still emit relationship gain/loss VFX even when the stored score cannot move farther. Historical entries are excluded.
+- Local verification: Action VFX 46/46, Timeline Scaling 11/11, Core 82/82, NPC Asset Ownership 82/82, Integrated Long-Life 105/105, every established suite green, both TypeScript gates green, production build green at 142 modules.
+- Run #95 remains authoritative until GitHub reproduces this narrow hotfix. Phase 5D is paused until then.
 
 These are functioning systems rather than navigation placeholders, though some still need additional depth.
 

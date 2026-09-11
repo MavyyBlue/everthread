@@ -17,5 +17,10 @@ export function runTimelineScalingRegression(){
   const short=timelineWindow(entries.slice(0,80));verify(short.visibleCount===80&&short.hiddenCount===0,'short lives render in full without unnecessary pagination');
   const invalid=timelineWindow(entries,Number.NaN);verify(invalid.visibleCount===TIMELINE_INITIAL_RENDER,'invalid requested window falls back to the bounded default');
   const minimum=timelineWindow(entries,0);verify(minimum.visibleCount===1&&minimum.hiddenCount===4999,'window helper never returns an empty view for a non-empty timeline');
+
+  const mutable=entries.slice(0,130);const firstMutableWindow=timelineWindow(mutable);
+  const appended={...entries[130]!,id:'timeline-live-append'};mutable.push(appended);
+  const secondMutableWindow=timelineWindow(mutable);
+  verify(firstMutableWindow.entries.at(-1)?.id!==appended.id&&secondMutableWindow.entries.at(-1)?.id===appended.id,'same-reference timeline appends must be visible on the next render calculation');
   return checks;
 }

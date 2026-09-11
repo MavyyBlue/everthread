@@ -4,7 +4,7 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 ## Current macro phase — Phase 5: Generations / Estates
 
-Phase 4 is closed. People Threadspace and the post-Run-74 corrective closeout are green, Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #94 is the latest certified source baseline. Phase 5 extends the existing estate/descendant foundation without replacing its anti-duplication, trust, or family-continuity rules.
+Phase 4 is closed. People Threadspace and the post-Run-74 corrective closeout are green, Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #95 is the latest certified source baseline. Phase 5 extends the existing estate/descendant foundation without replacing its anti-duplication, trust, or family-continuity rules.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -117,7 +117,7 @@ After 4H is green, Phase 4 closes again. Do not add another planned Phase 4 poli
 
 1. **Phase 5A — Estate planning + family continuity foundation:** green. Asset-specific property/business/collectible bequests, spouse/child residuary shares, debt-first settlement, protected minor trusts, widowhood cleanup, and descendant handoff are implemented. Estate Planning remains 46/46 and Family Continuity 18/18.
 2. **Phase 5B — Fictional estate administration + settlement levy:** green; verified by Run #92. Country-sensitive fictional settlement profiles add protected administration allowances, capped administration costs, levy allowances/rates, one-authority obligation settlement, preview UI, specific-bequest protection, and multi-generation anti-duplication stress coverage.
-3. **Phase 5C — Richer NPC-owned assets/businesses:** predeployment candidate. Meaningful NPCs now carry bounded, individually addressable property/business portfolios; player↔NPC and NPC↔NPC estate transfer preserves retained assets and mortgages exactly once; descendant continuation carries the selected NPC's own holdings into playable state. Save schema advances to 10 with deterministic v9 migration. Dedicated NPC Asset Ownership regression is 82/82 locally and Timeline Scaling is 10/10; background creation/growth and minor-trust portfolios are hard bounded, while the Life timeline progressively renders 120-entry windows without deleting history. CI Green is still required before promotion.
+3. **Phase 5C — Richer NPC-owned assets/businesses:** green; verified by Run #95 on expanded baseline `62e28aafb190f8b46d10b73fb6dd00985beb724d`. Meaningful NPCs carry bounded, individually addressable property/business portfolios; player↔NPC and NPC↔NPC estate transfer preserves retained assets and mortgages exactly once; descendant continuation carries the selected NPC's own holdings into playable state. Save schema is 10 with deterministic v9 migration. NPC Asset Ownership is 82/82 and deployed Timeline Scaling is 10/10. A narrow post-Run95 playtest hotfix for immediate timeline reactivity and capped relationship-VFX feedback is locally green and must reach CI Green before Phase 5D begins.
 4. **Phase 5D — Broader family topology:** planned only where aunt/uncle/cousin or multi-household custody/guardianship materially improves real family-tree behavior and UI clarity.
 5. **Phase 5E — Dynasty-scale validation + death/estate continuation flow:** planned. Expand large-family/multi-generation performance validation and strengthen death → estate review → descendant continuation without creating a second estate truth.
 
