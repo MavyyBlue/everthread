@@ -8,11 +8,13 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green expanded baseline is commit `2487a0bc79abc16473cb91e74f220071e4b23959`.
+The latest fully green expanded baseline is commit `9ed003f97cf16c1df22ac44506d62766681dfc38`.
 
-- GitHub Actions Run #84 (`34542840262`) completed successfully on 2026-09-10 UTC.
-- Run #84 expanded upload commit `b90eff328d14b8c29edd9d1faedb77285de3acb3` into the build-bot commit above.
+- GitHub Actions Run #88 (`34546954038`) completed successfully on 2026-09-11 UTC.
+- Run #88 expanded upload commit `1946bed3739da73bae8c682f09bd7730c4d9b160` into the build-bot commit above.
 - Source-overlay import, dependency install, both TypeScript gates, every established regression, production build, Pages artifact upload, and Pages deployment passed.
+- Integrated long-life regression: 105/105.
+- Pages artifact: `10179381674`, 7,001,236 bytes, SHA-256 `42e7d14426ccb3b6802ca10085779892dc9147725a5b91f659632d10c9e7bc6e`.
 - Core regression: 82/82.
 - People Threadspace: 57/57.
 - Phase 5 estate planning: 46/46.
@@ -56,7 +58,7 @@ Current status:
 5. **NPC gender / sexual-orientation coherence — CI Green (Run #81).**
 6. **Collision-aware naming — CI Green (Run #82).**
 7. **Relationship/event microcopy polish — CI Green (Run #84).**
-8. **Integrated long-life QA — Implementing; Run #87 confirmed residual recursive background-family growth, second production correction + strengthened CI candidate prepared.**
+8. **Integrated long-life QA — CI Green (Run #88).**
 
 ## Slice 1 implementation — CI Green
 
@@ -203,33 +205,28 @@ The green implementation keeps the interaction engine untouched and adds explici
 
 A focused `relationshipMicrocopyRegression.ts` exercises every interaction verb through both the pure copy projection and the real `interactWithNpc()` path, checking successful execution plus exact timeline and NPC-memory wording. Run #84 (`34542840262`) passed both TypeScript gates, core 82/82, Relationship Microcopy **66/66**, every established regression including orientation 55/55 and naming 32/32, production build, Pages artifact upload, and deployment. The corrected overlay expanded into `2487a0bc79abc16473cb91e74f220071e4b23959`. Slice 7 is **CI Green**.
 
-## Slice 8 implementation — second production correction + strengthened CI candidate prepared
+## Slice 8 implementation — CI Green
 
-The final corrective slice began as regression-only, then correctly exposed two layers of long-life family-population growth plus one fixture-only TypeScript issue.
+The final corrective slice began as regression-only, then correctly exposed one fixture-only TypeScript issue plus two layers of long-life family-population growth.
 
-Run #85 (`34544430607`) imported the initial Slice 8 regression and expanded it to `a3ad5c60a831d5ccb058ef64f5e94d3175ad08c3`. `typecheck:engine` passed and `typecheck:tests` rejected five fixture-only narrowing assumptions. The correction re-read authoritative relationship/NPC state after mutations and explicitly narrowed optional reproduction diagnostics without changing production behavior.
+Run #85 (`34544430607`) exposed only fixture TypeScript narrowing. Run #86 (`34544985042`) reached runtime and exposed erroneous full-tier ownership for unrepresented distant descendants. Run #87 (`34545986347`) proved that first production fix was incomplete, with the unchanged `<500` retained-cast guard reporting a concrete maximum peak of 513 NPC records.
 
-Run #86 (`34544985042`) imported that fixture correction and expanded it to `786663fdc3f46c8d850c368527a9bdae8929498f`. Both TypeScript gates and every established regression through Relationship Microcopy 66/66 passed. The integrated runtime gate then exceeded its unchanged `<500` lifetime-cast guard. Root-cause analysis found that `createNpcChild()` assigned a newborn `full` simulation whenever either parent was close player family even when the newborn had no representable direct player relationship. The first production correction made the newborn's own `childRelationshipType()` authoritative: representable relatives stay full while more-distant descendants remain linked in the NPC family graph but start background-tier.
+The final production correction in `NpcLifeSystem`:
 
-Run #87 (`34545986347`) imported that production correction and expanded it to `60661d01efbd66aa12e55edbddf02bdbae2d76b7`. Both TypeScript gates again passed. Core 82/82 and every established dedicated suite passed, including NPC Orientation 55/55, Collision-aware Naming 32/32, and Relationship Microcopy 66/66. Slice 8 then failed the same organic family-population guard with a concrete maximum peak of **513 NPC records**; build, artifact upload, and deployment were correctly skipped.
+- makes a newborn's own representable player relationship authoritative for full/background simulation tier;
+- repairs legacy unrepresented descendants that were persisted as full-tier back to background cadence during ordinary annual simulation;
+- allows those background descendants to keep aging, working, partnering, and retaining genealogy;
+- prevents unrepresented background descendant branches from recursively producing further invisible generations unless they later become meaningful/player-facing and are promoted back to full simulation;
+- preserves existing NPC records and parent/child links;
+- keeps save schema 9 and does not alter ordinary player-facing/full-tier RNG behavior.
 
-The Run #87 result showed the first fix was correct but incomplete. `peakNpcCount` measures every retained NPC record, not only living/active relatives. Audit of `NpcLifeSystem` found two remaining recursive paths for unrepresented descendants:
+Run #88 (`34546954038`) expanded to `9ed003f97cf16c1df22ac44506d62766681dfc38`. Both TypeScript gates passed, every established regression remained green, and Integrated Long-Life completed **105/105 runtime checks** with the original `<500` family-population guard unchanged. Production build, Pages artifact upload, and deployment all passed. Slice 8 and the complete post-Run-74 corrective program are **CI Green**.
 
-- a pre-fix save can already contain a distant descendant persisted as `full`, and the annual life pass only promoted meaningful NPCs; it never demoted this legacy-invalid tier;
-- a background distant descendant could still form a partner and then continue an offscreen dynasty through `maybeExpandNpcFamily()`, while `createAutonomousPartner()` could also seed a pre-existing partner child. Those descendants are not player-facing relationships, so repeated generations add retained NPC history without adding meaningful player-visible simulation depth.
+## Canonical pre-deployment QA — infrastructure bootstrap
 
-Second corrective production candidate:
+A new infrastructure pass is being introduced after the corrective closeout. It does not replace any existing QA asset. `scripts/everthread-preflight.mjs` orchestrates the existing engine typecheck, test typecheck, complete regression wall, and production build through `npm run preflight`; `npm run preflight:deep` adds the existing content audit and 1,000-life bulk simulation. The runner emits `.everthread/preflight-report.json` on pass or failure.
 
-- centralize `unrepresentedNpcDescendant()` as an NPC with stored parentage but no active direct player relationship;
-- during `processNpcLives()`, meaningful NPCs still promote to `full`, while an unrepresented descendant is repaired to `background` cadence. This repairs the old persisted full-tier state during ordinary annual simulation without deleting the NPC or rewriting genealogy;
-- an unrepresented **background** descendant may still form an ordinary partner, preserving offscreen adult-life continuity, but `createAutonomousPartner()` no longer seeds an extra pre-existing partner child for that terminal background branch;
-- `maybeExpandNpcFamily()` stops additional child generation when a background couple contains an unrepresented descendant. Root background acquaintances can still form their first bounded offscreen family, and directly represented/meaningful relatives retain full family simulation;
-- if a descendant later becomes player-facing/meaningful (including through generational continuation), the existing meaningful-relationship authority promotes it back to `full`, restoring normal family behavior;
-- no NPC records are deleted, no parent/child IDs are removed, no names/orientations are rewritten, and save schema remains 9. RNG behavior is unchanged for ordinary player-facing/full paths; only the previously runaway background-descendant branches stop consuming the child-generation draws/outcomes they are no longer allowed to create.
-
-The closeout regression retains the original deterministic grandchild-boundary fixture and adds a legacy-like full-tier distant-descendant fixture. That fixture must prove that the invalid full tier repairs to background, the descendant can still form a partner, partnership creates exactly one new NPC rather than an extra hidden generation, no child is seeded on that terminal branch, and invariants remain clean. The organic six-life `<500` guard is **not raised**; if it fails, its message now includes max peak, average peak, average end population, profile distribution, and (only on failure) per-life seed/profile/peak/end/lifespan diagnostics for further diagnosis.
-
-The test now contains **87 assertion sites**. Because annual invariant assertions execute inside 15-year and 5-year loops, a fully completed run should report **105 runtime checks**. The candidate still includes the six family-biased organic lives plus the dense 49-NPC / 24-child save-rewind-death-descendant stress path.
+The intended GitHub workflow will call the same canonical preflight, move dependency installation to `package-lock.json` + `npm ci`, bootstrap the currently missing lockfile exactly once, and create a certified source artifact from the exact verified commit so future development sessions can run the same preflight before packaging an overlay. CI Green remains authoritative even after local Preflight Green. See `PROJECT_HANDOFF/PREFLIGHT_QA.md`.
 
 ## Known continuing quality / architecture issues
 
@@ -239,7 +236,7 @@ The test now contains **87 assertion sites**. Because annual invariant assertion
 - Age-aware biological conception is CI Green in Run #80.
 - Collision-aware naming is CI Green in Run #82.
 - Relationship interaction microcopy is CI Green in Run #84.
-- Integrated long-life QA is the active final corrective closeout gate; Run #87 proved the first family-tier correction was incomplete and exposed residual recursive background-family growth. The second candidate repairs legacy-invalid distant tiers and terminally bounds unrepresented background descendant branches. Slice 8 is not CI Green yet.
+- Integrated long-life QA is CI Green in Run #88 at 105/105 runtime checks; the post-Run-74 corrective program is closed.
 - No universal runtime error boundary / last-known-good transaction recovery exists yet.
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.

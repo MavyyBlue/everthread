@@ -18,7 +18,9 @@
     "sim:full": "tsx src/tests/runSimulation.ts 1000 full",
     "content:audit": "tsx src/tests/runContentAudit.ts",
     "sim:neutral": "tsx src/tests/runSimulation.ts 1000 bulk neutral",
-    "sim:policies": "tsx src/tests/runSimulation.ts 1000 bulk mixed"
+    "sim:policies": "tsx src/tests/runSimulation.ts 1000 bulk mixed",
+    "preflight": "node scripts/everthread-preflight.mjs",
+    "preflight:deep": "node scripts/everthread-preflight.mjs --deep"
   },
   "dependencies": {
     "react": "^19.1.1",

@@ -165,7 +165,7 @@ Run #84 (`34542840262`) passed both TypeScript checks, core regression 82/82, ev
 
 ## Slice 8 — Integrated long-life QA
 
-Status: **Implementing — Run #87 residual background-family recursion diagnosed; second production correction + strengthened CI candidate prepared.**
+Status: **CI Green — Run #88.**
 
 Goal: synthetic multi-decade/high-NPC/high-child-count validation across save growth, rewind, marriages/divorces/reconciliation, deaths, reproduction, naming, family linkage, and descendant continuation. This is the closeout gate for the corrective pass, not a new endless feature phase.
 
@@ -202,3 +202,12 @@ The regression retains the five grandchild-boundary assertions and adds five leg
 The test now has **87 assertion sites** and should execute **105 runtime checks** when it reaches completion because invariant checks repeat across the 15-year and 5-year loops. GitHub CI must pass both TypeScript gates, every established suite, all integrated runtime checks, production build, Pages artifact upload, and deployment before Slice 8 or the corrective program can be called CI Green.
 
 After Slice 8 is CI Green, return to the planned Phase 5 estate/dynasty roadmap unless new playtesting exposes a concrete blocking defect.
+
+
+## Run #88 corrective closeout
+
+Run #88 (`34546954038`) expanded upload commit `1946bed3739da73bae8c682f09bd7730c4d9b160` into `9ed003f97cf16c1df22ac44506d62766681dfc38`. Both TypeScript gates passed. Core remained 82/82 and every established dedicated suite remained green, including AI Interaction Testbench 41/41, NPC Orientation 55/55, Collision-aware Naming 32/32, and Relationship Microcopy 66/66. Integrated Long-Life completed **105/105 runtime checks** with the original `<500` retained-cast ceiling unchanged.
+
+The production build transformed 135 modules and completed successfully. The main application chunk was 954.06 kB minified / 271.25 kB gzip, leaving the known code-splitting warning as nonblocking technical debt. Pages artifact `10179381674` was 7,001,236 bytes with SHA-256 `42e7d14426ccb3b6802ca10085779892dc9147725a5b91f659632d10c9e7bc6e`, and deployment succeeded.
+
+All eight post-Run-74 corrective slices are therefore **CI Green**. Return to the planned Phase 5 estate/dynasty roadmap from Run #88's hardened baseline unless a new playtest blocker appears.
