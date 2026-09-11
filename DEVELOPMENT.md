@@ -233,11 +233,13 @@ The market-calibration conclusion from 0.9.4 still holds: inheritance is not the
 - Wider kin taxonomy (aunts/uncles/cousins) and more complex multi-household custody/guardianship where later generation work justifies it.
 - Continued very-large-dynasty profiling as special careers, organizations, and world systems add more persistent NPC affiliations.
 
-### Supplied action/static feedback assets — predeployment candidate
+### Supplied action/static feedback assets — CI Green + universal-derivation hardening candidate
 
 Mavyy supplied an original Everthread icon set for press-origin action feedback plus static Cash and DECEASED UI markers. The current candidate adds one reusable, presentation-only VFX authority instead of per-screen animation code: successful career/domain actions may request a primary icon while real post-action deltas derive stress, money, follower, and relationship feedback. Disabled actions do not execute and therefore do not emit; failed-but-executed actions may still show real adverse deltas. Touch origin is captured globally, keyboard activation uses the control center, reduced-motion avoids travel animation, and the effect never consumes game RNG or mutates saves.
 
-The supplied artwork is technically processed only for transparency/cropping/downscaling; it is not regenerated or restyled. Static Cash appears on Life and DECEASED overlays dead Threadspace nodes. Action VFX regression is 38/38 locally; all established regression suites and production build remain green. GitHub CI reproduction is required before this interlude becomes CI Green, after which Phase 5C resumes from its new certified baseline.
+The supplied artwork is technically processed only for transparency/cropping/downscaling; it is not regenerated or restyled. Static Cash appears on Life and DECEASED overlays dead Threadspace nodes. GitHub Run #93 made the asset integration CI Green at `de8f9af6a0212a0d90acecf9008afa77b042ac42` with Action VFX 38/38 and canonical preflight 4/4.
+
+The current hardening candidate changes derived consequences from opt-in to default-on at the shared result resolver. Plain gameplay buttons now automatically emit Money Loss for real cash decreases, alongside stress/follower/relationship deltas; primary-domain requests automatically combine with those consequences; `derive:false` remains the intentional opt-out. Generic Path buttons no longer disable derivation simply because they lack a primary icon. Action VFX is 42/42 locally, every legacy suite is green, and production build passes.
 
 ### Generations and inheritance
 
@@ -245,7 +247,7 @@ The green Phase 5A foundation performs multi-heir estate settlement, proportiona
 
 Phase 5B is CI Green in Run #92 and adds fictional country-sensitive estate settlement rules without new persisted state: protected administration allowances, capped administration costs, levy allowances/rates, debt-before-levy calculation, and a single obligation path that can liquidate unassigned assets/investments before sacrificing a named bequest. Preview UI exposes the breakdown and explicitly labels the values as fictional gameplay rules. Dedicated estate-administration regression includes five-generation no-income anti-duplication stress. Save schema remains 9.
 
-Next Phase 5 work after the visual-feedback integration reaches CI Green:
+Next Phase 5 work after the universal-derived-VFX hardening reaches CI Green:
 
 - NPC-owned businesses and individually addressable properties/assets rather than the current aggregate NPC property-value model.
 - Aunt/uncle/cousin relationship types if the relationship model is expanded beyond the current supported taxonomy.
@@ -360,7 +362,7 @@ Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration d
 
 ## Next development sequence
 
-1. Certify the supplied action/static feedback asset integration against the current Run #92 Phase 5B baseline; this is a presentation interlude and does not replace or renumber Phase 5C.
+1. Certify the universal derived-consequence VFX hardening against the Run #93 CI-Green asset baseline; this remains a presentation hardening interlude and does not replace or renumber Phase 5C.
 2. Continue Phase 5C with richer NPC-owned assets/businesses, then broader kin topology/performance and the stronger death → estate review → descendant-continuation loop.
 3. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
 4. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.

@@ -170,4 +170,4 @@ function SpecialPaths({state,onResult}:{state:GameState;onResult:ActionResultHan
 }
 
 type PathAction=[label:string,run:()=>EngineResult|void,disabled?:boolean];
-function Path({title,stat,actions,onResult,vfx}:{title:string;stat:string;actions:PathAction[];onResult:ActionResultHandler;vfx?:ActionVfxKind}){return <section className="path-card"><div><h2>{title}</h2><p>{stat}</p></div><div className="action-grid">{actions.map(([label,fn,disabled])=><button key={label} disabled={disabled} onClick={()=>{const result=fn();if(result)onResult(result,{primary:vfx,derive:Boolean(vfx)});}}>{label}</button>)}</div></section>}
+function Path({title,stat,actions,onResult,vfx}:{title:string;stat:string;actions:PathAction[];onResult:ActionResultHandler;vfx?:ActionVfxKind}){return <section className="path-card"><div><h2>{title}</h2><p>{stat}</p></div><div className="action-grid">{actions.map(([label,fn,disabled])=><button key={label} disabled={disabled} onClick={()=>{const result=fn();if(result)onResult(result,vfx?{primary:vfx}:undefined);}}>{label}</button>)}</div></section>}

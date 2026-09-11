@@ -1,6 +1,21 @@
 # Everthread Changelog
 
-## Visual feedback asset integration candidate — 2026-09-10
+## Universal derived action VFX candidate — 2026-09-10
+
+### Changed
+
+- Derived consequence VFX are now enabled by default for every gameplay button result that reaches the shared `App.onResult` authority. A real cash decrease therefore emits Money Loss automatically without each screen opting in with `derive:true`; stress, follower, and relationship deltas receive the same systemic treatment.
+- `derive:false` remains an explicit escape hatch for exceptional presentation-only cases, but there are currently no production call sites using it.
+- Generic special-career Path buttons no longer turn derivation off when a path has no primary domain icon, closing the remaining Politics, Military, Royalty, and Film Directing coverage hole while preserving primary icons for Acting, Music, Sports, Combat, Modeling, Motorsport, and Organized Crime.
+
+### Validation
+
+- Action VFX regression expanded from 38/38 to 42/42, including plain successful spending, failed-but-executed spending, primary-only requests with automatic derived consequences, and explicit opt-out behavior.
+- Engine TypeScript and test TypeScript gates pass.
+- Core 82/82; every established dedicated regression remains green; Integrated Long-Life 105/105.
+- Production build passes with 138 transformed modules. The hosted sandbox cannot finish the monolithic preflight wrapper before its command ceiling, so the same underlying preflight stages were executed in bounded chunks without removing or weakening any suite. GitHub CI remains the independent final authority.
+
+## Visual feedback asset integration — CI Green Run #93 — 2026-09-10
 
 ### Added
 
@@ -20,9 +35,9 @@
 
 - Engine TypeScript and test TypeScript gates pass.
 - Action VFX regression: 38/38.
-- Core: 82/82; every established dedicated regression remains green, including Estate Planning 46/46, Estate Administration 63/63, AI Interaction Testbench 41/41, and Integrated Long-Life 105/105.
-- Production build passes with 138 transformed modules; the only build warning remains the known oversized main application chunk.
-- The monolithic local preflight wrapper exceeded the hosted sandbox command ceiling during the long regression stage, so its exact four stage contents were executed and verified separately rather than weakening/skipping tests. GitHub CI reproduction is still required before this visual-feedback slice is promoted to CI Green.
+- Core: 82/82; every established dedicated regression remained green, including Estate Planning 46/46, Estate Administration 63/63, AI Interaction Testbench 41/41, and Integrated Long-Life 105/105.
+- GitHub Actions Run #93 reproduced canonical preflight 4/4 on Node 22.23.2/Linux x64, built 138 modules, published the supplied runtime assets, created the certified preflight baseline, and deployed Pages successfully.
+- CI-Green source commit: `de8f9af6a0212a0d90acecf9008afa77b042ac42`.
 
 ## Phase 5B — 2026-09-10 — Estate Administration & Settlement
 

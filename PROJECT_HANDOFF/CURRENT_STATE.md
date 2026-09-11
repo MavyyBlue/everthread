@@ -8,21 +8,23 @@ Current save schema: `9`
 
 ## Last fully verified repository baseline
 
-The latest fully green repository baseline is commit `926da2fa3c74bac021776d9f1b4825a7a3e39797` from GitHub Actions Run #92 (`34554453482`).
+The latest fully green repository baseline is commit `de8f9af6a0212a0d90acecf9008afa77b042ac42` from GitHub Actions Run #93 (`34560187999`).
 
-- Phase 5B Estate Administration & Settlement is CI Green.
+- Phase 5B Estate Administration & Settlement remains CI Green.
+- Supplied action/static feedback asset integration is CI Green: press-origin positive/adverse VFX, Life cash icon, and Threadspace DECEASED stamp.
 - Canonical `npm run preflight` passed 4/4 stages on Node 22.23.2/Linux x64.
 - Core regression: 82/82.
+- Action VFX regression: 38/38.
 - AI Interaction Testbench: 41/41.
 - Phase 5 estate planning: 46/46.
 - Phase 5 estate administration: 63/63.
 - Family continuity: 18/18.
 - Integrated long-life regression: 105/105.
 - Every established dedicated regression remained green.
-- Production build and Pages deployment passed.
-- Certified preflight artifact: `10182021697`, artifact SHA-256 `7b580ee479f57f8d81c9e5fe31dcad256206d45eeccf0e152bd56d3c3cff434a`.
-- Certified source SHA-256: `2754cb6e6099cdd8c0d084b91e9f03dd10f222bf292c691f0b101fa11cb2b24d`.
-- Certified dependency SHA-256: `b9ecdf6402cd32367f6991b62d90e56a026d1adc725a7a3231bf2cd627dd6e1e`.
+- Production build and Pages deployment passed with 138 transformed modules.
+- Certified preflight artifact: `10184043979`, artifact SHA-256 `05a81e249efd0ab5e3606f7b465c6dbc49a1746cc993993327ce5e043d5f7820`.
+- Certified source SHA-256: `815b3e07d326dbe1e44b416d69af4878ef23eaed86e9797eea4e75d84d56dd2e`.
+- Certified dependency SHA-256: `76d6b56fddc3e6b23824e6b398d19fd7e477cf3e9f68d813654b6b962c8f0eb7`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
 - Save schema remains 9.
 
@@ -33,7 +35,7 @@ Real player saves remain diagnostic evidence only. Personal save JSON, seeds, sl
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
 - Phase 5B estate administration is CI Green in Run #92: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress are now baseline behavior.
-- The current predeployment candidate is a supplied visual-feedback asset integration interlude before Phase 5C: press-origin positive/adverse action VFX, Life cash icon, and Threadspace DECEASED stamp. It is presentation-only, keeps save schema 9, and adds Action VFX regression 38/38. Phase 5C has not started yet.
+- The current predeployment candidate hardens the CI-Green feedback system so derived consequence VFX are automatic at the shared action-result authority. Cash loss, stress changes, follower gain, and relationship-score changes no longer depend on each screen remembering `derive:true`; `derive:false` remains an explicit opt-out. Action VFX regression is 42/42 locally. Phase 5C has not started yet.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.

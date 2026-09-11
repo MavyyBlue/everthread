@@ -65,5 +65,21 @@ export function runActionVfxRegression(){
   verify(resolved.includes('acting')&&resolved.includes('moneyLoss')&&resolved.includes('stressIncrease'),'a successful career action may combine its domain icon with real adverse consequence icons');
   verify(new Set(resolved).size===resolved.length,'resolved VFX kinds should be deduplicated within one press burst');
 
+  const seventh=captureActionVfxSnapshot(state);state.finances.cash-=75;
+  resolved=resolvedActionVfxKinds(true,undefined,seventh,state);
+  verify(resolved.includes('moneyLoss'),'plain successful button results should derive money-loss feedback by default');
+
+  const eighth=captureActionVfxSnapshot(state);state.finances.cash-=25;state.character.secondary.stress+=4;
+  resolved=resolvedActionVfxKinds(false,undefined,eighth,state);
+  verify(resolved.includes('moneyLoss')&&resolved.includes('stressIncrease'),'plain failed-but-executed button results should still derive real adverse consequences by default');
+
+  const ninth=captureActionVfxSnapshot(state);relationship.score+=4;
+  resolved=resolvedActionVfxKinds(true,{primary:'music'},ninth,state);
+  verify(resolved.includes('music')&&resolved.includes('relationshipGain'),'primary-only requests should keep automatic derived consequences without requiring derive:true');
+
+  const tenth=captureActionVfxSnapshot(state);state.finances.cash-=50;
+  resolved=resolvedActionVfxKinds(true,{derive:false},tenth,state);
+  verify(!resolved.includes('moneyLoss'),'derive:false should remain an explicit opt-out for exceptional UI actions');
+
   return checks;
 }

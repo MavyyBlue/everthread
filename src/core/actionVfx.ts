@@ -106,7 +106,8 @@ export function resolvedActionVfxKinds(
 ): ActionVfxKind[] {
   const kinds: ActionVfxKind[] = [];
   if (success && request?.primary) kinds.push(request.primary);
-  if (request?.derive && before) kinds.push(...deriveActionVfxKinds(before, after));
+  const shouldDerive = request?.derive !== false;
+  if (shouldDerive && before) kinds.push(...deriveActionVfxKinds(before, after));
   const suppressed = new Set(request?.suppressDerived ?? []);
   return [...new Set(kinds.filter(kind => !suppressed.has(kind) || kind === request?.primary))];
 }
