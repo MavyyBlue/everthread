@@ -2,6 +2,7 @@ import type { Business, CollectibleAsset, EngineResult, GameState, InvestmentPos
 import type { EstateAssetBequest, EstateAssetKind, EstateHeirRole, EstateTrustState } from '../types/estate';
 import { makeStateId } from '../core/ids';
 import { quoteEstateAdministration } from '../data/estateRules';
+import { addNpcBusinessHolding, addNpcInheritanceTrustHoldings, addNpcPropertyHolding, npcBusinessFromPlayerBusiness, npcPropertyFromPlayerAsset } from './NpcAssetSystem';
 
 type HeirShare={npc:Npc;ratio:number;role:EstateHeirRole};
 type EstateItem=
@@ -155,9 +156,9 @@ export function settleEstate(state:GameState,selectedChildId:string):EstateSettl
   let siblingValue=0;
   for(const allocation of plan.allocations.values()){
     if(allocation.heir.npc.id===selectedChildId)continue;
-    const heir=allocation.heir.npc;
-    if(allocation.heir.role==='child'&&heir.age<18){const existing=heir.inheritanceTrust?.value??0;heir.inheritanceTrust={releaseAge:18,value:Math.max(0,Math.round(existing+allocation.total))};}
-    else heir.wealth=Math.max(0,Math.round(heir.wealth+allocation.total));
+    const heir=allocation.heir.npc;const propertyItems=allocation.items.filter((item):item is Extract<EstateItem,{kind:'property'}>=>item.kind==='property');const businessItems=allocation.items.filter((item):item is Extract<EstateItem,{kind:'business'}>=>item.kind==='business');const collectibleValue=allocation.items.filter((item):item is Extract<EstateItem,{kind:'collectible'}>=>item.kind==='collectible').reduce((sum,item)=>sum+item.value,0);const liquidValue=Math.max(0,allocation.cash+allocation.investmentValue+collectibleValue);const properties=propertyItems.map(item=>npcPropertyFromPlayerAsset(state,heir,item.property,item.mortgage,state.character.id));const businesses=businessItems.map(item=>npcBusinessFromPlayerBusiness(state,heir,item.business,state.character.id));
+    if(allocation.heir.role==='child'&&heir.age<18){const trust=heir.inheritanceTrust??{releaseAge:18,value:0,liquidValue:0,properties:[],businesses:[]};trust.releaseAge=18;trust.value=Math.max(0,Math.round((trust.value??0)+allocation.total));trust.liquidValue=Math.max(0,Math.round((trust.liquidValue??0)+liquidValue));trust.properties??=[];trust.businesses??=[];heir.inheritanceTrust=trust;addNpcInheritanceTrustHoldings(heir,properties,businesses);}
+    else{heir.wealth=Math.max(0,Math.round(heir.wealth+liquidValue));for(const property of properties){const retained=addNpcPropertyHolding(state,heir,property);if(retained&&heir.life)heir.life.finance.debt+=property.mortgageBalance;}for(const business of businesses)addNpcBusinessHolding(state,heir,business);}
     siblingValue+=allocation.total;
   }
   const properties=selected.items.filter((item):item is Extract<EstateItem,{kind:'property'}>=>item.kind==='property').map(item=>structuredClone(item.property));
@@ -183,7 +184,7 @@ export function releaseMatureInheritanceTrust(state:GameState):boolean{
 }
 
 export function processNpcInheritanceTrusts(state:GameState){
-  for(const npc of Object.values(state.npcs)){const trust=npc.inheritanceTrust;if(!trust||npc.age<trust.releaseAge)continue;npc.wealth=Math.max(0,Math.round(npc.wealth+trust.value));npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:npc.age,kind:'inheritance',sentiment:5,summary:`Received a protected family inheritance at age ${npc.age}.`,permanent:true});delete npc.inheritanceTrust;}
+  for(const npc of Object.values(state.npcs)){const trust=npc.inheritanceTrust;if(!trust||npc.age<trust.releaseAge)continue;const properties=trust.properties??[];const businesses=trust.businesses??[];const liquid=Math.max(0,trust.liquidValue??(properties.length||businesses.length?0:trust.value));npc.wealth=Math.max(0,Math.round(npc.wealth+liquid));for(const property of properties){const retained=addNpcPropertyHolding(state,npc,property);if(retained&&npc.life)npc.life.finance.debt+=property.mortgageBalance;}for(const business of businesses)addNpcBusinessHolding(state,npc,business);npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:npc.age,kind:'inheritance',sentiment:5,summary:`Received a protected family inheritance at age ${npc.age}.`,permanent:true});if(npc.memories.length>36)npc.memories=npc.memories.slice(-36);delete npc.inheritanceTrust;}
 }
 
 function canEditEstatePlan(state:GameState):EngineResult|undefined{if(!state.character.alive)return{success:false,messages:[{text:'Estate planning must be completed during your lifetime.'}]};if(state.character.age<18)return{success:false,messages:[{text:'Estate planning becomes available at 18.'}]};return undefined;}

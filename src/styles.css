@@ -71,3 +71,4 @@
 .money-chip__value{display:flex;align-items:center;justify-content:flex-end;gap:5px}
 .money-chip__icon{width:24px;height:24px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 2px 5px rgba(0,0,0,.16))}
 @media(max-width:370px){.money-chip__icon{width:21px;height:21px}.action-vfx-particle{width:27px;height:27px}}
+.timeline-load-more{min-height:46px;margin-top:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:9px 12px;font-size:.76rem;font-weight:850;text-align:center}.timeline-load-more small{display:block;margin-top:2px;font-size:.64rem;font-weight:650;color:var(--muted)}

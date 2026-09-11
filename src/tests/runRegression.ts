@@ -36,6 +36,8 @@ import { runCollisionAwareNamingRegression } from './collisionAwareNamingRegress
 import { runRelationshipMicrocopyRegression } from './relationshipMicrocopyRegression';
 import { runIntegratedLongLifeRegression } from './integratedLongLifeRegression';
 import { runActionVfxRegression } from './actionVfxRegression';
+import { runNpcAssetOwnershipRegression } from './npcAssetOwnershipRegression';
+import { runTimelineScalingRegression } from './timelineScalingRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -76,5 +78,7 @@ try{const checks=runNpcOrientationCoherenceRegression();console.log(`NPC orienta
 try{const checks=runCollisionAwareNamingRegression();console.log(`Collision-aware naming regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runRelationshipMicrocopyRegression();console.log(`Relationship microcopy regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runActionVfxRegression();console.log(`Action VFX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runNpcAssetOwnershipRegression();console.log(`NPC asset ownership regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runTimelineScalingRegression();console.log(`Timeline scaling regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runIntegratedLongLifeRegression();console.log(`Integrated long-life regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

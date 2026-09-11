@@ -1,4 +1,5 @@
 import type { Business, CollectibleAsset, Id, InvestmentPosition, Loan, PropertyAsset } from './game';
+import type { NpcBusinessHolding, NpcPropertyHolding } from './npcAssets';
 
 export type EstateAssetKind = 'property' | 'business' | 'collectible';
 export type EstateHeirRole = 'spouse' | 'child';
@@ -24,6 +25,9 @@ export interface EstateTrustState {
 export interface NpcInheritanceTrustState {
   releaseAge: number;
   value: number;
+  liquidValue?: number;
+  properties?: NpcPropertyHolding[];
+  businesses?: NpcBusinessHolding[];
 }
 
 declare module './game' {

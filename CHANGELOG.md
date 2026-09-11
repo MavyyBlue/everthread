@@ -1,5 +1,39 @@
 # Everthread Changelog
 
+## Phase 5C candidate — Persistent NPC Asset Ownership — 2026-09-10
+
+### Added
+
+- Save schema v10 with lean persisted NPC property/business portfolios. Existing v9 aggregate NPC property migrates deterministically into stable explicit ownership without consuming the player RNG stream.
+- Bounded NPC asset rules and a dedicated asset progression substream. Meaningful NPCs can own and modestly grow property/business interests; background-tier NPCs retain cheaper simulation, do not seed new explicit property at creation, and do not organically accumulate new portfolios.
+- Explicit NPC estate settlement for retained property/business inheritance, adult/minor NPC heirs, player heirs, protected trusts, mortgage carryover, and idempotent source-estate clearing.
+- Descendant continuation now converts the selected NPC's own property/business holdings into playable assets and separates mortgage debt from unsecured personal debt.
+- People detail sheets now show NPC liquid wealth, property, businesses, debt, estimated net worth, and named holdings.
+- Dedicated `npcAssetOwnershipRegression.ts` with 82/82 checks, including protected-trust caps/overflow reconciliation and a 600-background-NPC + 3,000-entry 12-year scale fixture.
+- `timelineWindow.ts` plus a 10/10 Timeline Scaling regression: the authoritative timeline remains complete while the Life page initially renders the newest 120 entries and reveals older history in 120-entry increments.
+
+### Changed
+
+- `NpcLifeState.finance.propertyValue` is now a projection of explicit NPC property holdings instead of a second independent property-value authority. `npc.wealth` remains liquid wealth.
+- NPC annual finance incorporates explicit business profit/loss and mortgage progression while keeping asset growth bounded and deterministic.
+- Player estate settlement gives offscreen heirs retained property/businesses as real holdings instead of converting the full allocation into aggregate wealth. Minor NPC heirs retain those assets in trust until adulthood.
+- NPC-parent inheritance can pass retained assets directly to the player; minor player inheritance remains protected until age 18 and is counted once when released.
+- Adult NPC portfolios and minor NPC inheritance trusts share hard 6-property / 4-business caps. Overflow liquidates to equity/value rather than disappearing or growing the save without bound.
+- NPC asset definition lookups now use precomputed maps and legacy property migration chooses the nearest definition in a linear scan instead of sorting a copied catalog for each migration.
+
+### Predeployment validation
+
+- Engine TypeScript and test TypeScript gates pass.
+- NPC Asset Ownership: 82/82.
+- Timeline Scaling: 10/10.
+- Core 82/82; Estate Planning 46/46; Estate Administration 63/63; Action VFX 42/42; Integrated Long-Life 105/105; every established dedicated regression remains green in bounded local batches.
+- Content audit remains unchanged and clean.
+- Earlier 50-life family-policy bulk sanity: zero anomalies, zero forced terminal deaths, max NPC peak 443.
+- Scale fixture: 600 starting background NPCs + 3,000 timeline entries advanced 12 years with full history preserved, portfolio caps respected, zero organic explicit background holdings, and clean state validation.
+- Ad-hoc hosted-sandbox benchmark: 1,000 starting background NPCs + 5,000 timeline entries advanced 20 years in ~1.1 s; world grew to ~1,200 NPCs through ordinary autonomy with zero organic explicit background holdings and zero validation errors.
+- Production build passes with 142 transformed modules; main chunk ~981.03 kB minified / 278.92 kB gzip. Existing chunk-size warning remains nonblocking.
+- GitHub CI/Pages deployment is still required before Phase 5C is promoted to CI Green.
+
 ## Universal derived action VFX candidate — 2026-09-10
 
 ### Changed

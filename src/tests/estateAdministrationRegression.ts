@@ -88,7 +88,7 @@ export function runEstateAdministrationRegression(){
   verify(continueAsChild(continuation.state,continuation.a.id).success,'adult descendant continuation succeeds through the post-cost estate settlement');
   approx(Number(continuation.state.flags.inheritanceReceived),expectedHeir,1,'descendant inheritance flag records the post-cost allocation rather than gross estate value');
   verify(continuation.state.timeline[0]?.text.includes('estate administration and settlement levy costs'),'generation handoff records that settlement costs were paid before inheritance');
-  verify(continuation.state.saveVersion===9,'Phase 5B requires no new persisted estate structure or save-schema bump');
+  verify(continuation.state.saveVersion===10,'Phase 5B settlement remains intact after the Phase 5C schema migration');
 
   const minorFixture=familyState('phase5b-minor',900_000,'us');minorFixture.a.age=17;setWill(minorFixture.state,[{npcId:minorFixture.a.id,percentage:50},{npcId:minorFixture.b.id,percentage:50}]);const minorPreview=previewEstate(minorFixture.state);const minorExpected=minorPreview.heirs.find(heir=>heir.npcId===minorFixture.a.id)!.inheritanceValue;minorFixture.state.character.alive=false;
   verify(continueAsChild(minorFixture.state,minorFixture.a.id).success,'minor descendant continuation still succeeds with settlement costs enabled');

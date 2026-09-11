@@ -1,5 +1,6 @@
 import type { GameState, SocialWorld } from '../types/game';
 import { clamp } from './math';
+import { NPC_ASSET_LIMITS } from '../data/npcAssetRules';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -134,18 +135,65 @@ export function enforceStateInvariants(state: GameState): GameState {
     if (!state.npcs[rel.npcId]) rel.estranged = true;
   }
 
+  const npcPropertyIds=new Set<string>();
+  const npcBusinessIds=new Set<string>();
   for (const npc of Object.values(state.npcs)) {
     npc.age = Math.max(0, Math.floor(npc.age));
     npc.health = clamp(npc.health);
     npc.happiness = clamp(npc.happiness);
     npc.fertility = clamp(npc.fertility);
     npc.hiddenOpinion = clamp(npc.hiddenOpinion, -100, 100);
+    npc.wealth = Math.max(0, Number.isFinite(npc.wealth) ? Math.round(npc.wealth) : 0);
+    npc.assetPortfolio ??= {properties:[],businesses:[]};
+
+    const boundedProperties=[];
+    for(const property of npc.assetPortfolio.properties??[]){
+      if(!property?.id||npcPropertyIds.has(property.id))continue;
+      property.purchasePrice=Math.max(0,Number.isFinite(property.purchasePrice)?property.purchasePrice:0);
+      property.marketValue=Math.max(0,Number.isFinite(property.marketValue)?property.marketValue:0);
+      property.mortgageBalance=Math.max(0,Math.min(property.marketValue,Number.isFinite(property.mortgageBalance)?property.mortgageBalance:0));
+      property.condition=clamp(property.condition);property.propertyAge=Math.max(0,Math.floor(property.propertyAge??0));property.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(property.acquiredAge??npc.age)));
+      npcPropertyIds.add(property.id);
+      if(boundedProperties.length<NPC_ASSET_LIMITS.portfolioProperties)boundedProperties.push(property);
+      else npc.wealth+=Math.max(0,Math.round(property.marketValue-property.mortgageBalance));
+    }
+    npc.assetPortfolio.properties=boundedProperties;
+
+    const boundedBusinesses=[];
+    for(const business of npc.assetPortfolio.businesses??[]){
+      if(!business?.id||npcBusinessIds.has(business.id))continue;
+      business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
+      npcBusinessIds.add(business.id);
+      if(boundedBusinesses.length<NPC_ASSET_LIMITS.portfolioBusinesses)boundedBusinesses.push(business);
+      else if(business.active)npc.wealth+=Math.max(0,Math.round(business.valuation));
+    }
+    npc.assetPortfolio.businesses=boundedBusinesses;
+
+    if(npc.inheritanceTrust){
+      const trust=npc.inheritanceTrust;trust.value=Math.max(0,Number.isFinite(trust.value)?trust.value:0);let liquid=Math.max(0,Number.isFinite(trust.liquidValue)?trust.liquidValue!:(Array.isArray(trust.properties)&&trust.properties.length||Array.isArray(trust.businesses)&&trust.businesses.length?0:trust.value));
+      const trustProperties=[];
+      for(const property of Array.isArray(trust.properties)?trust.properties:[]){
+        if(!property?.id||npcPropertyIds.has(property.id))continue;
+        property.purchasePrice=Math.max(0,Number.isFinite(property.purchasePrice)?property.purchasePrice:0);property.marketValue=Math.max(0,Number.isFinite(property.marketValue)?property.marketValue:0);property.mortgageBalance=Math.max(0,Math.min(property.marketValue,Number.isFinite(property.mortgageBalance)?property.mortgageBalance:0));property.condition=clamp(property.condition);property.propertyAge=Math.max(0,Math.floor(property.propertyAge??0));property.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(property.acquiredAge??npc.age)));
+        npcPropertyIds.add(property.id);
+        if(trustProperties.length<NPC_ASSET_LIMITS.portfolioProperties)trustProperties.push(property);else liquid+=Math.max(0,Math.round(property.marketValue-property.mortgageBalance));
+      }
+      const trustBusinesses=[];
+      for(const business of Array.isArray(trust.businesses)?trust.businesses:[]){
+        if(!business?.id||npcBusinessIds.has(business.id))continue;
+        business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
+        npcBusinessIds.add(business.id);
+        if(trustBusinesses.length<NPC_ASSET_LIMITS.portfolioBusinesses)trustBusinesses.push(business);else if(business.active)liquid+=Math.max(0,Math.round(business.valuation));
+      }
+      trust.properties=trustProperties;trust.businesses=trustBusinesses;trust.liquidValue=Math.max(0,Math.round(liquid));
+      const represented=trust.liquidValue+trustProperties.reduce((sum,property)=>sum+Math.max(0,property.marketValue-property.mortgageBalance),0)+trustBusinesses.reduce((sum,business)=>sum+(business.active?business.valuation:0),0);trust.value=Math.max(trust.value,Math.round(represented));
+    }
     if (npc.life) {
       npc.life.aptitude = clamp(npc.life.aptitude);
       npc.life.education.performance = clamp(npc.life.education.performance);
       npc.life.finance.annualIncome = Math.max(0, Number.isFinite(npc.life.finance.annualIncome) ? npc.life.finance.annualIncome : 0);
       npc.life.finance.debt = Math.max(0, Number.isFinite(npc.life.finance.debt) ? npc.life.finance.debt : 0);
-      npc.life.finance.propertyValue = Math.max(0, Number.isFinite(npc.life.finance.propertyValue) ? npc.life.finance.propertyValue : 0);
+      npc.life.finance.propertyValue = npc.assetPortfolio.properties.reduce((sum,property)=>sum+property.marketValue,0);
       npc.life.finance.creditStress = clamp(npc.life.finance.creditStress);
       npc.life.health.fitness = clamp(npc.life.health.fitness);
       npc.life.health.wellness = clamp(npc.life.health.wellness);
@@ -219,6 +267,7 @@ export function validateState(state: GameState): string[] {
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
+  const seenNpcPropertyIds=new Set<string>();const seenNpcBusinessIds=new Set<string>();
   for (const npc of Object.values(state.npcs)) {
     if (npc.alive && npc.health <= 0) errors.push(`NPC ${npc.id} is alive with terminal health`);
     if (!npc.life) errors.push(`NPC ${npc.id} is missing life state`);
@@ -228,6 +277,21 @@ export function validateState(state: GameState): string[] {
       if (npc.life.health.conditions.length > 4) errors.push(`NPC ${npc.id} has too many active conditions`);
       if (npc.life.career.history.length > 10) errors.push(`NPC ${npc.id} career history is unbounded`);
       if (npc.life.education.records.length > 8) errors.push(`NPC ${npc.id} education history is unbounded`);
+    }
+    if(!npc.assetPortfolio)errors.push(`NPC ${npc.id} is missing asset portfolio`);
+    else{
+      if(npc.assetPortfolio.properties.length>NPC_ASSET_LIMITS.portfolioProperties)errors.push(`NPC ${npc.id} property portfolio is unbounded`);
+      if(npc.assetPortfolio.businesses.length>NPC_ASSET_LIMITS.portfolioBusinesses)errors.push(`NPC ${npc.id} business portfolio is unbounded`);
+      const projected=npc.assetPortfolio.properties.reduce((sum,property)=>sum+property.marketValue,0);if(npc.life&&Math.abs(projected-npc.life.finance.propertyValue)>.5)errors.push(`NPC ${npc.id} property projection is inconsistent`);
+      for(const property of npc.assetPortfolio.properties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC property ${property.id} has invalid value/debt`);}
+      for(const business of npc.assetPortfolio.businesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC business ${business.id} has invalid values`);}
+    }
+    if(npc.inheritanceTrust){
+      const trustProperties=npc.inheritanceTrust.properties??[];const trustBusinesses=npc.inheritanceTrust.businesses??[];
+      if(trustProperties.length>NPC_ASSET_LIMITS.portfolioProperties)errors.push(`NPC ${npc.id} inheritance trust property portfolio is unbounded`);
+      if(trustBusinesses.length>NPC_ASSET_LIMITS.portfolioBusinesses)errors.push(`NPC ${npc.id} inheritance trust business portfolio is unbounded`);
+      for(const property of trustProperties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC trust property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC trust property ${property.id} has invalid value/debt`);}
+      for(const business of trustBusinesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC trust business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC trust business ${business.id} has invalid values`);}
     }
     if (!npc.partnerId) continue;
     if (npc.partnerId === npc.id) errors.push(`NPC ${npc.id} is partnered with self`);

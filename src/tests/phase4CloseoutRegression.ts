@@ -78,7 +78,7 @@ export async function runPhase4CloseoutRegression(){
     verify(JSON.stringify(bench.getState())===before,'AI testbench unified Career World observation remains strictly read-only');
   });
 
-  const serialized=JSON.stringify(coexist);const restored=migrateSave(JSON.parse(serialized) as unknown);verify(restored.saveVersion===SAVE_VERSION&&SAVE_VERSION===9,'Phase 4 closeout preserves save schema 9');
+  const serialized=JSON.stringify(coexist);const restored=migrateSave(JSON.parse(serialized) as unknown);verify(restored.saveVersion===SAVE_VERSION&&SAVE_VERSION===10,'Phase 4 closeout preserves save schema 10');
   verify(validateState(restored).length===0,'serialized Phase 4 state migrates back into a valid state');
   verify(activeMilitaryCareerWorld(restored)?.id===activeMilitaryCareerWorld(coexist)?.id&&activePoliticsCareerWorld(restored)?.id===activePoliticsCareerWorld(coexist)?.id,'save round-trip preserves exact active military and political world IDs');
   const restoredMilitary=militaryCareerWorldView(restored)!;const restoredPolitics=politicsCareerWorldView(restored)!;verify(restoredMilitary.commanderNpcId===militaryView.commanderNpcId&&restoredPolitics.chiefStaffNpcId===politicsView.chiefStaffNpcId,'save round-trip preserves exact persistent authority NPC references');

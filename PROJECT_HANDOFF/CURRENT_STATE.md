@@ -4,17 +4,17 @@ Last handoff preparation: 2026-09-10
 Repository: `MavyyBlue/everthread`  
 Default branch: `main`  
 Public build line: `0.12.0 pre-release`  
-Current save schema: `9`
+Current save schema: `10`
 
 ## Last fully verified repository baseline
 
-The latest fully green repository baseline is commit `de8f9af6a0212a0d90acecf9008afa77b042ac42` from GitHub Actions Run #93 (`34560187999`).
+The latest fully green repository baseline is commit `10d74b7ed78c8cff08ee6b4fc9a9fe3d6d44a3ef` from GitHub Actions Run #94 (`34561634507`).
 
 - Phase 5B Estate Administration & Settlement remains CI Green.
-- Supplied action/static feedback asset integration is CI Green: press-origin positive/adverse VFX, Life cash icon, and Threadspace DECEASED stamp.
+- Supplied action/static feedback assets and universal derived consequence VFX are CI Green. Every resolved gameplay action now derives money-loss, stress, follower, and relationship feedback centrally unless explicitly opted out.
 - Canonical `npm run preflight` passed 4/4 stages on Node 22.23.2/Linux x64.
 - Core regression: 82/82.
-- Action VFX regression: 38/38.
+- Action VFX regression: 42/42.
 - AI Interaction Testbench: 41/41.
 - Phase 5 estate planning: 46/46.
 - Phase 5 estate administration: 63/63.
@@ -22,11 +22,28 @@ The latest fully green repository baseline is commit `de8f9af6a0212a0d90acecf900
 - Integrated long-life regression: 105/105.
 - Every established dedicated regression remained green.
 - Production build and Pages deployment passed with 138 transformed modules.
-- Certified preflight artifact: `10184043979`, artifact SHA-256 `05a81e249efd0ab5e3606f7b465c6dbc49a1746cc993993327ce5e043d5f7820`.
-- Certified source SHA-256: `815b3e07d326dbe1e44b416d69af4878ef23eaed86e9797eea4e75d84d56dd2e`.
-- Certified dependency SHA-256: `76d6b56fddc3e6b23824e6b398d19fd7e477cf3e9f68d813654b6b962c8f0eb7`.
+- Certified preflight artifact: `10184520254`, artifact SHA-256 `656db5fdebfe6560a7f3d1dc4c127deae7c113f8a317bf54acbe3d87870d40f8`.
+- Certified source SHA-256: `4b79fbd0c3ca622f230cad71248c6bec4213d719e94d7f7ee8ede9c9df230304`.
+- Certified dependency SHA-256: `b6ebc82aeaf135dca6fe705447ec0bab1570e1c4fc150e2b25c11c7c3177584e`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Save schema remains 9.
+- Run #94 is the source/dependency baseline for Phase 5C.
+
+### Current predeployment candidate — Phase 5C NPC-owned assets/businesses
+
+Phase 5C is implemented locally on top of the Run #94 certified source and is **not CI Green until GitHub reproduces it**.
+
+- Save schema advances from 9 to 10 because individually owned NPC assets/businesses are real persisted state. v9 aggregate NPC property migrates deterministically into a stable explicit holding without consuming player RNG.
+- Meaningful NPCs can own lean persistent property and business records with stable IDs, valuation/equity, mortgages, annual progression, and bounded portfolio sizes. Background-tier NPCs keep cheaper simulation, do not seed new explicit property at creation, and do not organically accumulate new explicit holdings during coarse simulation.
+- `npc.wealth` remains liquid wealth; `NpcLifeState.finance.propertyValue` is now a projection of explicit holdings rather than a second authority. NPC net worth reconciles liquid wealth + property equity + business value - unsecured debt.
+- Player estates can transfer retained property/businesses to offscreen NPC heirs as actual holdings; minor NPC heirs keep them in protected trusts until adulthood. Adult portfolios and minor trusts share hard caps of 6 properties / 4 businesses; overflow liquidates to represented value rather than expanding saves indefinitely.
+- NPC estates can pass retained assets to adult/minor NPC children or the player, with mortgages transferred once and the existing 55% NPC-estate inheritance tuning preserved. Source holdings clear after settlement, making repeated settlement idempotent.
+- Descendant continuation now carries the selected NPC's own property/businesses into playable state, separates mortgage debt from unsecured debt, and merges those assets with the deceased protagonist's estate without duplicate ownership IDs.
+- People detail sheets expose NPC liquid wealth, property, businesses, debt, estimated net worth, and named holdings.
+- Dedicated NPC Asset Ownership regression: 82/82 locally, including creation-tier bounds, protected-trust caps/overflow reconciliation, a 600-background-NPC + 3,000-entry 12-year scale fixture, and state validation.
+- Timeline presentation is windowed without deleting history: the Life page renders the newest 120 entries initially and reveals older entries in 120-entry increments. Dedicated Timeline Scaling regression: 10/10 locally, including a 5,000-entry authoritative history.
+- Both TypeScript gates pass; all established dedicated regressions were re-run in bounded groups and remain green, including Core 82/82, Estate Planning 46/46, Estate Administration 63/63, Action VFX 42/42, and Integrated Long-Life 105/105.
+- Production build passes with 142 transformed modules; current main chunk is ~981.03 kB minified / 278.92 kB gzip. The existing >700 kB chunk warning remains nonblocking.
+- Content audit remains unchanged/clean. The earlier 50-life family-policy sanity completed with zero anomalies and zero forced terminal deaths (max NPC peak 443). The scale-hardening pass additionally advanced 600 starting background NPCs + 3,000 timeline entries for 12 years inside regression with clean validation, and an ad-hoc 1,000-NPC + 5,000-entry / 20-year benchmark completed in ~1.1 s in the hosted sandbox with zero organic explicit background holdings and zero validation errors.
 
 Real player saves remain diagnostic evidence only. Personal save JSON, seeds, slot IDs, NPC IDs, character names, and exact histories must never be copied into production/default fixtures.
 
@@ -35,7 +52,7 @@ Real player saves remain diagnostic evidence only. Personal save JSON, seeds, sl
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
 - Phase 5B estate administration is CI Green in Run #92: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress are now baseline behavior.
-- The current predeployment candidate hardens the CI-Green feedback system so derived consequence VFX are automatic at the shared action-result authority. Cash loss, stress changes, follower gain, and relationship-score changes no longer depend on each screen remembering `derive:true`; `derive:false` remains an explicit opt-out. Action VFX regression is 42/42 locally. Phase 5C has not started yet.
+- Universal derived consequence VFX are CI Green in Run #94. The current predeployment candidate is Phase 5C NPC-owned assets/businesses on save schema 10; it builds on, rather than replaces, the estate and family-continuity authorities.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.

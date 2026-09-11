@@ -10,6 +10,8 @@ import { assignNpcIdentity, npcGender, npcReproductiveSex } from './NpcIdentityS
 import { assignGeneratedNpcOrientation, pickRomanticTargetGender } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName, resolveCollisionAwareName } from './NpcNamingSystem';
 import { reproductivePairAgeFactor, reproductivePairCanConceive } from './ReproductionSystem';
+import { ensureNpcAssetPortfolio, npcBusinessValue, npcMortgageDebt, npcNetWorth, processNpcAssetPortfolioYear, syncNpcAssetProjection } from './NpcAssetSystem';
+import { settleNpcEstateOnDeath } from './NpcEstateSystem';
 import type {
   GameState,
   Npc,
@@ -125,7 +127,7 @@ export function buildNpcLifeState(state:GameState,npc:Npc):NpcLifeState{
   const credential=[...records].reverse().find(record=>record.graduated&&record.credential)?.credential;
   const careerHistory=npc.careerId?[{jobId:npc.careerId,startAge:Math.max(jobById[npc.careerId]?.minAge??18,npc.age-rng.int(1,Math.max(1,Math.min(12,npc.age-17))))}]:[];
   const income=medianJobIncome(state,npc);
-  const propertyValue=npc.age>=28&&npc.wealth>45000&&rng.chance(.36)?Math.round(Math.min(npc.wealth*.9,350000)*rng.int(70,115)/100):0;
+  const propertyValue=npc.simulationTier!=='background'&&npc.age>=28&&npc.wealth>45000&&rng.chance(.36)?Math.round(Math.min(npc.wealth*.9,350000)*rng.int(70,115)/100):0;
   const debt=propertyValue?Math.round(propertyValue*rng.int(20,65)/100):npc.age>=22&&npc.wealth<12000&&rng.chance(.22)?rng.int(500,12000):0;
   const fame=npc.famous?rng.int(25,55):rng.int(0,8);
   const sentenceRemaining=npc.imprisoned?rng.int(1,3):0;
@@ -151,6 +153,7 @@ export function ensureNpcLife(state:GameState,npc:Npc):NpcLifeState{
   npc.life.health.conditions??=[];
   npc.life.legal.incidents??=[];
   npc.life.finance.annualIncome=Number.isFinite(npc.life.finance.annualIncome)?npc.life.finance.annualIncome:medianJobIncome(state,npc);
+  ensureNpcAssetPortfolio(state,npc);
   syncNpcHouseholdProjection(state,npc);
   return npc.life;
 }
@@ -223,33 +226,25 @@ function updateNpcCareer(state:GameState,npc:Npc,rng:SeededRng){
   if(npc.age>=64&&rng.chance(clamp(.05+(npc.age-64)*.035,0,.55))){const current=jobById[npc.careerId]??job;closeCareerRecord(npc,npc.age);addNpcMemory(state,npc,'retirement',3,`Retired from work as ${current.title}.`,true);npc.careerId=undefined;life.career.retired=true;}
 }
 
-function processNpcFinanceYear(state:GameState,npc:Npc,rng:SeededRng){
-  const life=npc.life!;const country=countryById[npc.countryId];const income=medianJobIncome(state,npc);life.finance.annualIncome=income;
-  syncNpcHouseholdProjection(state,npc);
+function processNpcFinanceYear(state:GameState,npc:Npc,rng:SeededRng,allowAssetGrowth=true){
+  const life=npc.life!;const country=countryById[npc.countryId];const jobIncome=medianJobIncome(state,npc);life.finance.annualIncome=jobIncome;
+  ensureNpcAssetPortfolio(state,npc);syncNpcAssetProjection(npc);syncNpcHouseholdProjection(state,npc);
   if(life.legal.sentenceRemaining>0)return;
   if(npc.age<18){life.finance.creditStress=0;return;}
 
-  let scheduledDebtPayment=0;
-  if(life.finance.propertyValue>0){
-    const annualHousingMove=(state.economy.housingIndex-1)*.018+rng.int(-2,4)/100;
-    const appreciation=clamp(1+annualHousingMove,.985,1.055);
-    life.finance.propertyValue=Math.max(0,Math.round(life.finance.propertyValue*appreciation));
-    if(life.finance.debt>0){scheduledDebtPayment=Math.min(life.finance.debt,Math.max(1000,life.finance.debt*.055));life.finance.debt=Math.max(0,Math.round(life.finance.debt-scheduledDebtPayment));}
-    life.finance.housing='owning';
-  }else if(npc.age>=26&&npc.wealth>=55000&&npc.traits.includes('responsible')&&rng.chance(.045)){
-    const value=Math.round(Math.min(450000,Math.max(70000,npc.wealth*1.6)));const down=Math.min(npc.wealth,Math.round(value*.22));npc.wealth-=down;life.finance.propertyValue=value;life.finance.debt=Math.max(life.finance.debt,value-down);life.finance.housing='owning';addNpcMemory(state,npc,'home',5,'Bought a home.',true);
-  }
-
-  if(!life.finance.propertyValue&&life.finance.debt>0){scheduledDebtPayment=Math.min(life.finance.debt,Math.max(300,life.finance.debt*.08));life.finance.debt=Math.max(0,Math.round(life.finance.debt-scheduledDebtPayment));}
+  const assetYear=processNpcAssetPortfolioYear(state,npc,allowAssetGrowth);syncNpcHouseholdProjection(state,npc);
+  const mortgageDebt=npcMortgageDebt(npc);let unsecuredDebt=Math.max(0,life.finance.debt-mortgageDebt);let unsecuredPayment=0;
+  if(unsecuredDebt>0){unsecuredPayment=Math.min(unsecuredDebt,Math.max(300,unsecuredDebt*.08));unsecuredDebt=Math.max(0,Math.round(unsecuredDebt-unsecuredPayment));}
+  life.finance.debt=Math.max(0,Math.round(mortgageDebt+unsecuredDebt));
+  const businessIncome=Math.max(0,assetYear.businessCashFlow);const businessLoss=Math.min(0,assetYear.businessCashFlow);const income=jobIncome+businessIncome;life.finance.annualIncome=income;
   const tax=income*(country?.taxRate??.22);const baseCost=(npc.age<22?9000:14500)*state.economy.inflationIndex*(country?.salaryMultiplier??1);const dependentCost=life.household.dependents*3200*state.economy.inflationIndex;const housingCost=life.finance.housing==='owning'?life.finance.propertyValue*.018:life.finance.housing==='shared'?5200*state.economy.inflationIndex:8200*state.economy.inflationIndex;
-  const disposable=income-tax-baseCost-dependentCost-housingCost-scheduledDebtPayment;
+  const scheduledDebtPayment=assetYear.mortgagePayment+unsecuredPayment;const disposable=income+businessLoss-tax-baseCost-dependentCost-housingCost-scheduledDebtPayment;
   const savingsRate=npc.traits.includes('responsible')?.52:npc.traits.includes('reckless')?.12:npc.traits.includes('ambitious')?.38:.28;
   const change=Math.round(disposable*savingsRate+rng.int(-1200,1200));
   if(change>=0)npc.wealth=Math.max(0,Math.round(npc.wealth+change));
-  else {
-    const shortfall=-change;const fromWealth=Math.min(npc.wealth,shortfall);npc.wealth-=fromWealth;life.finance.debt+=Math.max(0,shortfall-fromWealth);
-  }
-  if(life.finance.debt>0&&npc.wealth>12000){const payoff=Math.min(life.finance.debt,Math.round(npc.wealth*.08));npc.wealth-=payoff;life.finance.debt-=payoff;}
+  else {const shortfall=-change;const fromWealth=Math.min(npc.wealth,shortfall);npc.wealth-=fromWealth;unsecuredDebt+=Math.max(0,shortfall-fromWealth);}
+  if(unsecuredDebt>0&&npc.wealth>12000){const payoff=Math.min(unsecuredDebt,Math.round(npc.wealth*.08));npc.wealth-=payoff;unsecuredDebt-=payoff;}
+  life.finance.debt=Math.max(0,Math.round(npcMortgageDebt(npc)+unsecuredDebt));
   life.finance.creditStress=clamp((life.finance.debt/Math.max(1000,income+life.finance.propertyValue*.08))*65+(npc.wealth<1000?18:0));
 }
 
@@ -461,10 +456,7 @@ function handleNpcDeath(state:GameState,npc:Npc){
   if(!npc.alive)return false;
   const life=npc.life!;npc.alive=false;npc.imprisoned=false;life.legal.sentenceRemaining=0;life.household.status='institutional';
   if(npc.partnerId){const partner=state.npcs[npc.partnerId];if(partner?.alive){if(partner.maritalStatus==='married')partner.maritalStatus='widowed';else partner.maritalStatus='single';partner.partnerId=undefined;addNpcMemory(state,partner,'bereavement',-12,`${npc.firstName} ${npc.lastName} died.`,true);}npc.partnerId=undefined;}
-  const playerIsChild=npc.childIds.includes(state.character.id)&&state.character.alive;const livingChildren=npc.childIds.map(id=>state.npcs[id]).filter((child):child is Npc=>Boolean(child?.alive));const heirCount=livingChildren.length+(playerIsChild?1:0);
-  const estate=Math.max(0,Math.round(npc.wealth+life.finance.propertyValue-life.finance.debt));
-  if(heirCount&&estate>0){const inheritance=Math.round(estate*.55/heirCount);for(const child of livingChildren)child.wealth+=inheritance;if(playerIsChild&&inheritance>0){state.finances.cash+=inheritance;state.flags.inheritanceReceived=Number(state.flags.inheritanceReceived??0)+inheritance;state.flags.lifetimeInheritance=Number(state.flags.lifetimeInheritance??0)+inheritance;state.flags.inheritances=Number(state.flags.inheritances??0)+1;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You inherited ${inheritance.toLocaleString()} from ${npc.firstName} ${npc.lastName}.`,moneyDelta:inheritance,npcIds:[npc.id]});}}
-  npc.wealth=0;life.finance.propertyValue=0;life.finance.debt=0;for(const rel of state.relationships.filter(r=>r.npcId===npc.id))rel.score=clamp(rel.score-10);
+  settleNpcEstateOnDeath(state,npc);for(const rel of state.relationships.filter(r=>r.npcId===npc.id))rel.score=clamp(rel.score-10);
   if(timelineRelevant(state,npc.id)||isPlayerFamily(state,npc.id))state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text:`${npc.firstName} ${npc.lastName} died at age ${npc.age}.`,npcIds:[npc.id]});
   return true;
 }
@@ -490,7 +482,7 @@ export function processNpcLives(state:GameState,rng=createRng(state.seed,state.r
     processNpcEducationYear(state,npc,rng);
     const coarse=background;
     if(background&&npc.age%2!==0){npc.health=clamp(npc.health-Math.max(0,(npc.age-55)*.07));if(npcHealthIsTerminal(npc))handleNpcDeath(state,npc);continue;}
-    processNpcHealthYear(state,npc,rng,coarse);if(npcHealthIsTerminal(npc)){handleNpcDeath(state,npc);continue;}processNpcLegalYear(state,npc,rng,coarse);updateNpcCareer(state,npc,rng);processNpcFinanceYear(state,npc,rng);processNpcPublicLifeYear(state,npc,rng,coarse);processHouseholdMoves(state,npc,rng,coarse);
+    processNpcHealthYear(state,npc,rng,coarse);if(npcHealthIsTerminal(npc)){handleNpcDeath(state,npc);continue;}processNpcLegalYear(state,npc,rng,coarse);updateNpcCareer(state,npc,rng);processNpcFinanceYear(state,npc,rng,!background);processNpcPublicLifeYear(state,npc,rng,coarse);processHouseholdMoves(state,npc,rng,coarse);
     if(npc.life!.legal.sentenceRemaining<=0){
       const partnerChance=(background?.014:.025)+(npc.traits.includes('romantic')?.018:0)+(npc.happiness>70?.006:0)+(recentMemoryMood(npc)>5?.004:0);
       const cadenceOk=!background||npc.age%4===0;
@@ -514,6 +506,10 @@ export function npcLifeSummary(npc:Npc){
     annualIncome:life.finance.annualIncome,
     debt:life.finance.debt,
     propertyValue:life.finance.propertyValue,
+    businessValue:npcBusinessValue(npc),
+    netWorth:npcNetWorth(npc),
+    properties:(npc.assetPortfolio?.properties??[]).map(property=>({id:property.id,name:property.name,value:property.marketValue,equity:Math.max(0,property.marketValue-property.mortgageBalance),location:property.location})),
+    businesses:(npc.assetPortfolio?.businesses??[]).filter(business=>business.active).map(business=>({id:business.id,name:business.name,value:business.valuation,annualProfit:business.annualProfit})),
     conditions:life.health.conditions.map(condition=>condition.name),
     legalIncidents:life.legal.incidents.length,
     sentenceRemaining:life.legal.sentenceRemaining,

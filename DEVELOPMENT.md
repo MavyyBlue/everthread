@@ -2,7 +2,7 @@
 
 Last updated: 2026-09-10  
 Current build line: 0.12.0 pre-release  
-Save schema: 9
+Save schema: 10
 
 ## Product direction
 
@@ -23,6 +23,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
 ## Implemented foundations
+
+### Phase 5C — Persistent NPC asset ownership (predeployment candidate)
+
+Phase 5C moves meaningful family wealth beyond aggregate NPC property numbers while preserving the bounded simulation-tier architecture.
+
+- Save schema v10 adds lean `NpcAssetPortfolio` state for individually addressable NPC properties and business interests. Existing v9 aggregate NPC property migrates deterministically into a stable explicit holding without consuming player RNG.
+- `npc.wealth` remains liquid wealth; NPC property value is a projection of explicit holdings, and reconciled NPC net worth uses property equity, active business value, and unsecured debt without double-counting mortgages.
+- Meaningful NPCs can organically acquire/progress a small bounded portfolio through a dedicated deterministic asset substream. Background-tier NPCs can retain/progress existing or inherited holdings but cannot seed new explicit property at creation or organically accumulate new ones during coarse simulation.
+- Player estates can pass retained property/businesses to offscreen adult NPC heirs as real holdings. Minor NPC heirs hold retained assets in protected trusts until adulthood. Adult portfolios and minor trusts are both hard-capped at 6 properties / 4 businesses; overflow liquidates to represented value instead of growing saves without bound.
+- NPC death settlement transfers retained assets to player/NPC children, carries mortgage obligations once, preserves the established 55% NPC-estate distribution tuning, and clears the source estate so settlement is idempotent.
+- Descendant continuation now preserves the selected NPC's own property/businesses, reconstructs mortgages once, separates unsecured personal debt, and merges personal holdings with the deceased protagonist's estate by stable asset ID.
+- People detail sheets expose liquid wealth, property/business value, debt, estimated net worth, and individually named holdings.
+- Life timeline presentation now keeps the full authoritative history while rendering the newest 120 entries first and revealing older history in 120-entry increments, preventing multi-thousand-entry lives from creating multi-thousand-node timeline DOMs.
+- Dedicated NPC Asset Ownership regression: 82/82. Timeline Scaling: 10/10. Core 82/82, Estate Planning 46/46, Estate Administration 63/63, Action VFX 42/42, Integrated Long-Life 105/105, and every established dedicated suite remain green locally. Both TypeScript gates and the production build pass; build transforms 142 modules. The earlier 50-life family-policy bulk sanity produced zero anomalies/forced terminal deaths; scale hardening additionally validates 600 starting background NPCs + 3,000 timeline entries over 12 years, while an ad-hoc 1,000-NPC + 5,000-entry / 20-year benchmark completed in ~1.1 s with zero organic explicit background holdings and zero validation errors.
+- CI Green is still required before Phase 5C is promoted. Run #94 / `10d74b7ed78c8cff08ee6b4fc9a9fe3d6d44a3ef` is the certified source baseline for this candidate.
 
 These are functioning systems rather than navigation placeholders, though some still need additional depth.
 
