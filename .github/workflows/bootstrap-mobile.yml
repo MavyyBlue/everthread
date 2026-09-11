@@ -146,34 +146,70 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      - name: Prepare certified source baseline
+      - name: Prepare certified preflight baseline
         if: steps.source.outputs.ready == 'true'
         id: certified
         shell: bash
         run: |
           set -euo pipefail
           VERIFIED_COMMIT="$(git rev-parse HEAD)"
-          CERT_DIR="$RUNNER_TEMP/everthread-certified-source"
-          rm -rf "$CERT_DIR"
-          mkdir -p "$CERT_DIR"
+          CERT_DIR="$RUNNER_TEMP/everthread-certified-preflight"
+          RESTORE_DIR="$RUNNER_TEMP/everthread-certified-restore-smoke"
+          rm -rf "$CERT_DIR" "$RESTORE_DIR"
+          mkdir -p "$CERT_DIR" "$RESTORE_DIR"
 
-          ARCHIVE="$CERT_DIR/everthread-certified-source.tar.gz"
-          git archive --format=tar.gz --output="$ARCHIVE" "$VERIFIED_COMMIT"
+          SOURCE_ARCHIVE="$CERT_DIR/everthread-certified-source.tar.gz"
+          DEPENDENCY_ARCHIVE="$CERT_DIR/everthread-certified-node-modules-linux-x64-node22.tar.gz"
+
+          git archive --format=tar.gz --output="$SOURCE_ARCHIVE" "$VERIFIED_COMMIT"
+          tar -C "$GITHUB_WORKSPACE" -czf "$DEPENDENCY_ARCHIVE" node_modules
           cp .everthread/preflight-report.json "$CERT_DIR/preflight-report.json"
-          ARCHIVE_SHA="$(sha256sum "$ARCHIVE" | awk '{print $1}')"
 
-          python3 - "$CERT_DIR/certified-source.json" "$VERIFIED_COMMIT" "$ARCHIVE_SHA" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" <<'PY'
+          SOURCE_SHA="$(sha256sum "$SOURCE_ARCHIVE" | awk '{print $1}')"
+          DEPENDENCY_SHA="$(sha256sum "$DEPENDENCY_ARCHIVE" | awk '{print $1}')"
+          LOCK_SHA="$(sha256sum package-lock.json | awk '{print $1}')"
+          NODE_VERSION="$(node --version)"
+          NPM_VERSION="$(npm --version)"
+          PLATFORM="linux-x64"
+
+          # Prove the portable payload can be restored before publishing it.
+          tar -xzf "$SOURCE_ARCHIVE" -C "$RESTORE_DIR"
+          tar -xzf "$DEPENDENCY_ARCHIVE" -C "$RESTORE_DIR"
+          test -f "$RESTORE_DIR/package-lock.json"
+          test -x "$RESTORE_DIR/node_modules/.bin/tsc"
+          test -x "$RESTORE_DIR/node_modules/.bin/tsx"
+          test -x "$RESTORE_DIR/node_modules/.bin/vite"
+          RESTORED_LOCK_SHA="$(sha256sum "$RESTORE_DIR/package-lock.json" | awk '{print $1}')"
+          test "$RESTORED_LOCK_SHA" = "$LOCK_SHA"
+
+          python3 - "$CERT_DIR/certified-preflight.json"             "$VERIFIED_COMMIT" "$SOURCE_SHA" "$DEPENDENCY_SHA" "$LOCK_SHA"             "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$NODE_VERSION" "$NPM_VERSION" "$PLATFORM" <<'PY'
           import json, pathlib, sys
-          output, commit, archive_sha, repository, run_id = sys.argv[1:]
+          (
+              output,
+              commit,
+              source_sha,
+              dependency_sha,
+              lock_sha,
+              repository,
+              run_id,
+              node_version,
+              npm_version,
+              platform,
+          ) = sys.argv[1:]
           payload = {
-              "format": 1,
+              "format": 2,
               "product": "Everthread",
               "repository": repository,
               "verifiedCommit": commit,
-              "archive": "everthread-certified-source.tar.gz",
-              "archiveSha256": archive_sha,
+              "sourceArchive": "everthread-certified-source.tar.gz",
+              "sourceArchiveSha256": source_sha,
+              "dependencyArchive": "everthread-certified-node-modules-linux-x64-node22.tar.gz",
+              "dependencyArchiveSha256": dependency_sha,
+              "packageLockSha256": lock_sha,
               "preflightReport": "preflight-report.json",
-              "nodeMajor": 22,
+              "nodeVersion": node_version,
+              "npmVersion": npm_version,
+              "platform": platform,
               "workflowRunId": int(run_id),
           }
           pathlib.Path(output).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
@@ -181,18 +217,24 @@ jobs:
 
           echo "commit=$VERIFIED_COMMIT" >> "$GITHUB_OUTPUT"
           echo "dir=$CERT_DIR" >> "$GITHUB_OUTPUT"
-          echo "archive_sha=$ARCHIVE_SHA" >> "$GITHUB_OUTPUT"
-          echo "Certified source commit: $VERIFIED_COMMIT"
-          echo "Certified source archive SHA-256: $ARCHIVE_SHA"
+          echo "source_sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
+          echo "dependency_sha=$DEPENDENCY_SHA" >> "$GITHUB_OUTPUT"
+          echo "lock_sha=$LOCK_SHA" >> "$GITHUB_OUTPUT"
+          echo "Certified preflight commit: $VERIFIED_COMMIT"
+          echo "Certified source SHA-256: $SOURCE_SHA"
+          echo "Certified dependency SHA-256: $DEPENDENCY_SHA"
+          echo "Certified package-lock SHA-256: $LOCK_SHA"
+          du -sh node_modules || true
 
-      - name: Upload certified source baseline
+      - name: Upload certified preflight baseline
         if: steps.source.outputs.ready == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: everthread-certified-source-${{ steps.certified.outputs.commit }}
+          name: everthread-certified-preflight-${{ steps.certified.outputs.commit }}
           path: ${{ steps.certified.outputs.dir }}
           if-no-files-found: error
           retention-days: 90
+          compression-level: 0
 
       - name: Configure GitHub Pages
         if: steps.source.outputs.ready == 'true'
