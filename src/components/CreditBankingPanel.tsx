@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { EngineResult, GameState } from '../types/game';
 import { gameEngine } from '../stores/gameStore';
 import { creditCardProductById, creditInstitutionById } from '../data/creditInstitutions';
 import { assetFinanceProgramById } from '../data/assetFinancing';
-import { creditAvailable, getCreditOffers, getCreditProfile } from '../systems/CreditSystem';
+import { creditAvailable, getCreditOffers, getCreditProfile, getCreditTransactionHistory } from '../systems/CreditSystem';
 import { paymentSummary } from '../systems/PaymentSystem';
 import { exactMoney, formatMoney } from '../core/format';
 
@@ -19,8 +19,9 @@ export function CreditBankingPanel({state,onResult,onClose}:{state:GameState;onR
   const[amount,setAmount]=useState(50);
   const profile=getCreditProfile(state);const offers=getCreditOffers(state);const selectedOffer=selectedProductId?offers.find(offer=>offer.product.id===selectedProductId):undefined;
   const openAccounts=state.finances.credit.accounts.filter(account=>account.status==='open');const selectedAccount=selectedAccountId?openAccounts.find(account=>account.id===selectedAccountId):undefined;
-  const currentTransactions=useMemo(()=>state.finances.credit.transactions.filter(item=>item.year===state.currentYear).slice().reverse(),[state.finances.credit.transactions,state.currentYear]);
-  const olderTransactions=useMemo(()=>state.finances.credit.transactions.filter(item=>item.year!==state.currentYear).slice().reverse().slice(0,36),[state.finances.credit.transactions,state.currentYear]);
+  const transactionHistory=getCreditTransactionHistory(state);
+  const currentTransactions=transactionHistory.current;
+  const olderTransactions=transactionHistory.older;
   const apply=()=>{if(!selectedOffer)return;const result=gameEngine.applyForCreditCard(selectedOffer.product.id);onResult(result);if(result.success){setSelectedProductId(undefined);setTab('accounts');}};
   const doPayment=()=>{if(!selectedAccount)return;const result=gameEngine.payCreditCard(selectedAccount.id,amount);onResult(result);};
   const doPurchase=()=>{if(!selectedAccount)return;const result=gameEngine.chargeCreditCard(selectedAccount.id,amount);onResult(result);};

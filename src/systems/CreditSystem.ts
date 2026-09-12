@@ -66,6 +66,14 @@ export function creditAvailable(state:GameState){return roundMoney(activeAccount
 export function creditCardDebt(state:GameState){return roundMoney(activeAccounts(state).reduce((sum,account)=>sum+Math.max(0,account.balance),0));}
 export function securedCreditDeposits(state:GameState){return roundMoney(activeAccounts(state).reduce((sum,account)=>sum+Math.max(0,account.securedDeposit),0));}
 
+export function getCreditTransactionHistory(state:GameState){
+  const transactions=ensureCreditState(state).transactions;
+  return{
+    current:transactions.filter(item=>item.year===state.currentYear).slice().reverse(),
+    older:transactions.filter(item=>item.year!==state.currentYear).slice().reverse().slice(0,36),
+  };
+}
+
 function annualIncomeForCredit(state:GameState){
   const current=(state.employment.current?.salary??0)+(state.employment.partTimeJobs??[]).reduce((sum,job)=>sum+job.salary,0);
   return Math.max(0,current,state.finances.annualIncome??0);

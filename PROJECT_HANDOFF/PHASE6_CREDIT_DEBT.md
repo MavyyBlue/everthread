@@ -1,6 +1,6 @@
 # Everthread — Phase 6 Credit / Debt
 
-Phase 6 now builds from certified Run #101 expanded source `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`. Phase 6A Credit & Banking, Phase 6B1 Asset Financing, and Phase 6B2 Secured Delinquency/Collateral Consequences are CI Green. The current candidate is Phase 6B3 Payments & Asset Management UX on save schema 12.
+Phase 6 now builds from certified Run #102 expanded source `8b2a49fe76c5429cf55228a00a15b6103211a25b`. Phase 6A Credit & Banking, Phase 6B1 Asset Financing, Phase 6B2 Secured Delinquency/Collateral Consequences, and Phase 6B3 Payments & Asset Management UX are CI Green. Save schema is 12. The current candidate is a bounded post-6B3 Credit History live-reactivity correction before Phase 6C.
 
 ## Product intent
 
@@ -26,7 +26,7 @@ Credit/debt must be a playable life system. Material financial processes must be
 - Uncured car loans can repossess the vehicle; uncured mortgages can foreclose. Recovery settles against the same balance, with surplus/equity represented and unrecovered deficiency becoming unsecured debt.
 - Underwater voluntary home sale also preserves deficiency debt. Asset Delinquency is 82/82 and Run #101 certified the complete preflight/Pages deployment.
 
-## Phase 6B3 — Payments & Asset Management UX — current candidate
+## Phase 6B3 — Payments & Asset Management UX — CI Green Run #102
 
 ### Payment authority
 
@@ -57,11 +57,17 @@ Credit/debt must be a playable life system. Material financial processes must be
 
 - Save schema advances **11 → 12** because auto-pay preference, card past-due amount, and secured paid-ahead age are durable player decisions/accounting state. Migration is deterministic, RNG-neutral, and idempotent.
 - Dedicated Payment & Asset Management regression: 79/79 locally. Existing Core 82/82, Credit & Banking 74/74, Asset Financing 77/77, Asset Delinquency 82/82, Integrated Long-Life 105/105, and all established suites are green locally.
-- Canonical local preflight is GREEN **4/4** including the 153-module production build; a 25-life mixed-policy simulation completed with 0 anomalies and 0 forced terminal deaths. GitHub Actions remains final certification authority.
+- GitHub Actions Run #102 reproduced Payment & Asset Management 79/79, every established regression, both TypeScript gates, canonical preflight **GREEN 4/4**, the 153-module production build, certified-baseline artifact creation, and Pages deployment. Expanded certified source is `8b2a49fe76c5429cf55228a00a15b6103211a25b`.
+
+## Post-6B3 Credit History live-reactivity correction — current candidate
+
+- Credit & Banking History must derive its bounded current/prior transaction lists fresh on each engine-driven render. Do not memoize them solely against the mutable `finances.credit.transactions` array reference.
+- This correction changes presentation reactivity only: no balances, payment behavior, saves, RNG, content, or accounting authority.
+- Phase 6C remains gated until this exact correction is CI Green.
 
 ## Phase 6C — Personal borrowing / bankruptcy / recovery
 
-Only after Phase 6B3 is CI Green: deepen personal-loan offers where useful, voluntary bankruptcy/player decision flow, hardship events, default/recovery consequences, and longer-lived rehabilitation. Do not make bankruptcy a silent score reset.
+Only after the post-6B3 reactivity correction is CI Green: deepen personal-loan offers where useful, voluntary bankruptcy/player decision flow, hardship events, default/recovery consequences, and longer-lived rehabilitation. Do not make bankruptcy a silent score reset.
 
 ## Compatibility rules
 

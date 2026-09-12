@@ -22,16 +22,26 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/tests/` — deterministic regression suite, content audit, and multi-life simulation harness.
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
-## Implemented foundations
-### Phase 6B3 — Payments & asset management UX (predeployment candidate)
+## Current corrective slice
 
-- Built only on certified Run #101 / `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`; Phase 6B2 is CI Green.
+### Post-6B3 Credit History live-reactivity correction (predeployment candidate)
+
+- Built only on certified Run #102 / `8b2a49fe76c5429cf55228a00a15b6103211a25b`; Phase 6B3 is CI Green on save schema 12.
+- Credit & Banking Overview, account details, and Bills & Payments already re-render from the authoritative engine revision. The History transaction lists alone used `useMemo` dependencies keyed to `state.finances.credit.transactions`, while CreditSystem appends transactions in place.
+- The correction removes that unnecessary memoization and derives bounded current/prior history directly on render. No debt math, save state, RNG, action economy, or content changes.
+- Payment & Asset Management regression now proves the shared read-only History projection immediately reflects newly posted in-place credit transactions; the suite is 81/81 locally.
+- Both TypeScript gates, the complete regression wall, and the standalone 153-module production build pass locally. The all-in-one local preflight wrapper is host-time-limited during its repeated Vite transform, so GitHub Actions remains the integrated certification authority.
+
+## Implemented foundations
+### Phase 6B3 — Payments & asset management UX (CI Green, Run #102)
+
+- Built only on certified Run #101 / `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`; Phase 6B2 was CI Green.
 - Added centralized `PaymentSystem` projection/actions over existing CreditSystem/FinanceSystem truth. Credit-card minimums plus car/mortgage annual obligations are itemized without introducing a second balance ledger.
 - Credit & Banking Overview now opens **Bills & Payments** for Cash payment, past-due cure, and annual auto-pay preference. Card auto-pay covers only the required minimum; individual Accounts preserve optional extra/full balance payments.
 - Secured manual bill payment credits the next Age Up through `prepaidThroughAge`, preventing duplicate amortization. Auto-pay OFF deliberately creates the same real delinquency/collateral-risk path established in 6B2.
 - Property consolidates homes + vehicles with **Browse | Owned**. Owned vehicles can now be sold through a preview/confirmation sheet; financed sale proceeds settle lender payoff first and preserve any deficiency as unsecured debt.
 - Save schema advances to 12 with deterministic v11 migration for `autoPay`, `pastDueAmount`, and `prepaidThroughAge`; legacy obligations default to auto-pay ON to preserve old behavior.
-- Added Payment & Asset Management regression 79/79. Canonical local preflight is GREEN 4/4, production build is 153 modules, and 25 mixed-policy lives produced 0 anomalies / 0 forced terminal deaths. GitHub Actions remains final certification authority.
+- Added Payment & Asset Management regression 79/79. GitHub Actions Run #102 reproduced the complete wall, canonical preflight GREEN 4/4, the 153-module production build, certified-baseline artifact creation, and Pages deployment. Expanded certified source is `8b2a49fe76c5429cf55228a00a15b6103211a25b`.
 
 ### Phase 6B2 — Secured delinquency / collateral consequences (CI Green, Run #101)
 
@@ -458,7 +468,7 @@ Adds durable payment-management state while preserving existing debt authorities
 
 ## Next development sequence
 
-1. Certify the exact Phase 6B3 Payments & Asset Management UX candidate against Run #101 / `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`. Do not begin 6C until GitHub Actions reproduces this slice green.
+1. Certify the post-6B3 Credit History live-reactivity correction against Run #102 / `8b2a49fe76c5429cf55228a00a15b6103211a25b`. Do not begin 6C until this correction is GitHub Actions Green.
 2. Phase 6C: deepen personal loans, voluntary bankruptcy, recovery/rehabilitation, and hardship consequences using the same payment/credit/finance authorities.
 3. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
 4. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.

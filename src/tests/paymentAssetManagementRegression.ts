@@ -3,7 +3,7 @@ import type { GameState, Loan, PropertyAsset, VehicleAsset } from '../types/game
 import { validateState } from '../core/invariants';
 import { createNewGame } from '../systems/CharacterSystem';
 import { acceptAssetFinanceOffer, bestAssetFinanceOffer } from '../systems/AssetFinancingSystem';
-import { processAnnualCredit, payCreditCard } from '../systems/CreditSystem';
+import { getCreditTransactionHistory, processAnnualCredit, payCreditCard } from '../systems/CreditSystem';
 import { getSecuredLoanStatus, processAnnualFinance, scheduledLoanPaymentAmount } from '../systems/FinanceSystem';
 import { getPaymentObligations, migratePaymentState, payPaymentObligation, paymentSummary, setPaymentAutoPay } from '../systems/PaymentSystem';
 import { getPropertySaleQuote, getVehicleSaleQuote, sellProperty, sellVehicle } from '../systems/PropertySystem';
@@ -57,6 +57,10 @@ function approx(actual:number,expected:number,tolerance:number,message:string){i
 
 export function runPaymentAssetManagementRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Payment & asset management regression failed: ${message}`);}
+
+  const historyLive=adult('payment-history-live');const historyCard=addCard(historyLive,{balance:500,minimumDue:25});
+  const historyBefore=getCreditTransactionHistory(historyLive);verify(historyBefore.current.length===0,'credit History projection starts from the current authoritative transaction set');
+  payCreditCard(historyLive,historyCard.id,25);const historyAfter=getCreditTransactionHistory(historyLive);verify(historyAfter.current.length===1&&historyAfter.current[0]?.kind==='payment'&&historyAfter.current[0]?.amount===25,'credit History projection immediately includes a newly posted in-place transaction');
 
   const fresh=createNewGame({seed:'payment-fresh'});
   verify(SAVE_VERSION===12&&fresh.saveVersion===12,'Phase 6B3 advances new lives and save service to schema 12');

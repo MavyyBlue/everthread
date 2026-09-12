@@ -23,6 +23,10 @@ The executable life-event/career/etc. counts remain unchanged. Phase 6B1 adds **
 
 No executable content-database counts change in Phase 6B2. Secured-loan delinquency, cure windows, repossession, foreclosure, deficiency handling, and collateral-risk UI are systemic consequences over existing financed assets and existing credit history rather than new random-event rows. The dedicated Asset Delinquency regression contains 82 checks; this is QA coverage, not content inflation.
 
+## Post-6B3 Credit History reactivity note
+
+No executable content-database counts change in the post-6B3 History reactivity correction. It changes only render-time projection freshness and regression protection; save schema remains 12.
+
 ## Phase 6B3 systems/content note
 
 No executable content-database counts change in Phase 6B3. Bills & Payments, annual auto-pay preferences, schema-12 payment state, consolidated home/vehicle ownership UI, and vehicle-sale payoff/deficiency handling are system/UX integrations over existing credit, loan, and asset definitions. Payment & Asset Management regression adds 79 QA checks; it is not content-count inflation.

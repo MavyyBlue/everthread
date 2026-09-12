@@ -1,6 +1,23 @@
 # Everthread Changelog
 
-## Phase 6B3 — Payments & Asset Management UX candidate — 2026-09-12
+## Post-6B3 Credit History Reactivity correction candidate — 2026-09-12
+
+### Fixed
+
+- Credit & Banking History now derives current/prior transaction lists fresh on every game-state render instead of memoizing against the mutable credit-transaction array reference. Payments, charges, fees, deposits, and other posted credit transactions can therefore appear immediately while the banking sheet remains open.
+- Added regression protection in Payment & Asset Management proving the read-only History projection immediately reflects a newly posted in-place credit transaction.
+
+### Baseline
+
+- Built only on certified Run #102 expanded source `8b2a49fe76c5429cf55228a00a15b6103211a25b`, package `0.12.0`, save schema 12. Phase 6B3 itself is CI Green.
+- This is a presentation-reactivity correction only: it adds no debt authority, no save fields, no RNG use, and no content definitions. Phase 6C remains gated until this correction is CI Green.
+
+### Local validation
+
+- Engine TypeScript and test TypeScript pass. The complete regression wall passes with Payment & Asset Management **81/81** (up from 79/79 through two reactivity checks), Core 82/82, Credit & Banking 74/74, Asset Financing 77/77, Asset Delinquency 82/82, Integrated Long-Life 105/105, and every established suite green.
+- Standalone production build passes at 153 transformed modules. The local all-in-one preflight wrapper was interrupted by the host execution ceiling during its repeated Vite transform after both TypeScript gates and the complete wall had already passed; GitHub Actions remains the final integrated preflight authority.
+
+## Phase 6B3 — Payments & Asset Management UX — CI Green Run #102 — 2026-09-12
 
 ### Added
 
@@ -18,12 +35,11 @@
 - Payment controls are centralized in Credit & Banking instead of being scattered across asset cards. The Money liabilities view remains an accounting/status view and points players to Bills & Payments.
 - Save schema advances from 11 to **12** for durable auto-pay, credit-card past-due, and secured paid-ahead payment state. Migration is deterministic, RNG-neutral, and defaults old obligations to the prior automatic-payment behavior.
 
-### Candidate validation
+### CI validation
 
-- Built from exact certified Run #101 expanded source `c498753acb67bbb0aa930e5f8bdb7b411b1e874c` and its certified Node dependency artifact. Phase 6B2 is CI Green.
-- Local established regression wall is green: Core 82/82; Credit & Banking 74/74; Asset Financing 77/77; Asset Delinquency 82/82; new Payment & Asset Management 79/79; Integrated Long-Life 105/105; every established dedicated suite passes.
-- A 25-life mixed-policy bulk simulation completed with 0 anomalies and 0 forced terminal deaths.
-- Local canonical preflight from the exact certified Run #101 source/dependency environment is GREEN **4/4**: engine TypeScript, test TypeScript, complete regression wall, and the 153-module production build. The existing >700 kB main-chunk warning remains nonblocking. GitHub Actions remains certification authority.
+- Built from exact certified Run #101 expanded source `c498753acb67bbb0aa930e5f8bdb7b411b1e874c` and its certified Node dependency artifact.
+- GitHub Actions Run #102 (`34707368374`) imported the overlay into expanded source `8b2a49fe76c5429cf55228a00a15b6103211a25b` and reproduced both TypeScript gates, Core 82/82, Credit & Banking 74/74, Asset Financing 77/77, Asset Delinquency 82/82, Payment & Asset Management 79/79, Integrated Long-Life 105/105, every established suite, and the 153-module production build.
+- Canonical preflight reported **GREEN 4/4**, certified artifact `10302905490` was uploaded, and GitHub Pages deployment succeeded. The existing >700 kB main-chunk warning remains nonblocking.
 
 ## Phase 6B2 — Secured Delinquency & Collateral Consequences — CI Green Run #101 — 2026-09-12
 
