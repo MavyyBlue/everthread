@@ -1,4 +1,5 @@
 import { Fragment, useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from 'react';
+import { relationshipTypeLabel } from '../core/familyRelations';
 import type { GameState } from '../types/game';
 import {
   DEFAULT_PEOPLE_WORKSPACE_EXPANDED_FOLDERS,
@@ -240,7 +241,7 @@ export function PeopleWorkspace({state,revision,onSelect,floatingActions}:{state
           const person=node.person!;const rel=state.relationships.find(item=>item.npcId===person.id);const memberships=person.memberships.filter(item=>expandedFolders.includes(item.folderId)&&visibleFolders.includes(item.folderId));const connectionLabels=labelsByPersonId.get(person.id)??[];
           return <Fragment key={node.id}>
             <button className={`threadspace-node threadspace-node--person ${!person.alive?'deceased':''}`} style={{left:node.x,top:node.y}} onClick={()=>onSelect(person.id)}>
-              <span className="threadspace-person-mark">{person.name[0]}</span>{!person.alive&&<img className="threadspace-deceased-stamp" src={EVERTHREAD_UI_ICONS.deceased} alt="" aria-hidden="true"/>}<div className="threadspace-person-copy"><strong>{person.name}</strong><small>{rel?.type.replaceAll('_',' ')??'connection'} · age {person.age}{!person.alive?' · deceased':''}</small>{memberships.length>1&&<em>{memberships.length} circles</em>}</div><b>{Math.round(person.relationshipScore)}</b>
+              <span className="threadspace-person-mark">{person.name[0]}</span>{!person.alive&&<img className="threadspace-deceased-stamp" src={EVERTHREAD_UI_ICONS.deceased} alt="" aria-hidden="true"/>}<div className="threadspace-person-copy"><strong>{person.name}</strong><small>{rel?relationshipTypeLabel(rel.type):'connection'} · age {person.age}{!person.alive?' · deceased':''}</small>{memberships.length>1&&<em>{memberships.length} circles</em>}</div><b>{Math.round(person.relationshipScore)}</b>
             </button>
             {showConnectionLabels&&connectionLabels.length>0&&<div className="threadspace-person-label" style={{left:node.x,top:node.y}} aria-hidden="true">{connectionLabels.map(label=><span key={label}>{label}</span>)}</div>}
           </Fragment>;

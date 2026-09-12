@@ -1,4 +1,5 @@
 import type { GameState, Relationship, RelationshipType, SocialWorldMemberRole } from '../types/game';
+import { relationshipTypeLabel } from '../core/familyRelations';
 
 export type PeopleFolderId = 'player_family' | 'relatives' | 'friends' | 'romance' | 'school' | 'work' | 'career';
 
@@ -55,7 +56,7 @@ export interface PeopleRelationshipGraph {
 
 export const PEOPLE_FOLDERS: readonly PeopleFolderDefinition[] = [
   {id:'player_family',title:'Player Family',description:'Parents, guardians, current partner, children, and descendants closest to your household.',relationshipTypes:['parent','stepparent','partner','fiance','spouse','child','grandchild']},
-  {id:'relatives',title:'Relatives',description:'Grandparents, siblings, step and half family, nieces, and nephews.',relationshipTypes:['grandparent','sibling','half_sibling','stepsibling','niece_nephew']},
+  {id:'relatives',title:'Relatives',description:'Grandparents, siblings, aunts, uncles, cousins, step and half family, nieces, and nephews.',relationshipTypes:['grandparent','sibling','half_sibling','stepsibling','aunt_uncle','cousin','niece_nephew']},
   {id:'friends',title:'Friends & Social',description:'Friends, best friends, close school/work/career connections, and openly hostile relationships.',relationshipTypes:['friend','best_friend','enemy']},
   {id:'romance',title:'Romantic History',description:'Current and former romantic relationships across this life.',relationshipTypes:['partner','fiance','spouse','ex']},
   {id:'school',title:'School',description:'Current school relationships first, followed by muted former classmates, teachers, coaches, and school leadership.',relationshipTypes:['classmate','teacher','principal','coach']},
@@ -119,7 +120,7 @@ export function peopleFolderSummaries(state: GameState): PeopleFolderSummary[] {
   });
 }
 
-function directLabel(type: RelationshipType): string {return type.replaceAll('_', ' ');}
+function directLabel(type: RelationshipType): string {return relationshipTypeLabel(type);}
 
 function parentChildLabel(state: GameState, from: string, to: string): string {
   if (from === state.character.id) return 'your child';if (to === state.character.id) return 'your parent';

@@ -12,6 +12,8 @@ import { pickCollisionAwareNpcName, resolveCollisionAwareName } from './NpcNamin
 import { reproductivePairAgeFactor, reproductivePairCanConceive } from './ReproductionSystem';
 import { ensureNpcAssetPortfolio, npcBusinessValue, npcMortgageDebt, npcNetWorth, processNpcAssetPortfolioYear, syncNpcAssetProjection } from './NpcAssetSystem';
 import { settleNpcEstateOnDeath } from './NpcEstateSystem';
+import { EXTENDED_FAMILY_RELATION_TYPE_SET, FAMILY_RELATIONSHIP_TYPE_SET, LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET } from '../core/familyRelations';
+import { syncPlayerFamilyTopology } from './FamilyTopologySystem';
 import type {
   GameState,
   Npc,
@@ -22,9 +24,6 @@ import type {
   RelationshipType,
 } from '../types/game';
 
-const FAMILY_RELATION_TYPES = new Set<RelationshipType>([
-  'parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew',
-]);
 const PLAYER_ROMANTIC_TYPES = new Set<RelationshipType>(['partner','fiance','spouse']);
 const POST_SECONDARY_CREDENTIALS = [
   'trade_school','business','communications','computer_science','education','engineering','finance','nursing','psychology','science','art','english','history','political_science','architecture',
@@ -32,7 +31,7 @@ const POST_SECONDARY_CREDENTIALS = [
 const PROFESSIONAL_CREDENTIALS = ['graduate_school','law_school','medical_school','dental_school','veterinary_school'] as const;
 
 function directRelationship(state:GameState,npcId:string){return state.relationships.find(rel=>rel.npcId===npcId&&!rel.estranged);}
-function isPlayerFamily(state:GameState,npcId:string){const type=directRelationship(state,npcId)?.type;return Boolean(type&&FAMILY_RELATION_TYPES.has(type));}
+function isPlayerFamily(state:GameState,npcId:string){const type=directRelationship(state,npcId)?.type;return Boolean(type&&LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET.has(type));}
 function hasPlayerRomance(state:GameState,npcId:string){if(!state.character.alive)return false;const type=directRelationship(state,npcId)?.type;return Boolean(type&&PLAYER_ROMANTIC_TYPES.has(type));}
 
 export function npcHealthIsTerminal(npc:Pick<Npc,'health'>){return npc.health<=0;}
@@ -61,14 +60,14 @@ export function syncNpcHouseholdProjection(state:GameState,npc:Npc){
 function relationshipIsMeaningful(state:GameState,npcId:string){
   const rel=directRelationship(state,npcId);
   return Boolean(rel&&(
-    FAMILY_RELATION_TYPES.has(rel.type)||
+    LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET.has(rel.type)||
     ['friend','best_friend','enemy','partner','fiance','spouse','ex'].includes(rel.type)||
     rel.score>=72
   ));
 }
 function timelineRelevant(state:GameState,npcId:string){
   const rel=directRelationship(state,npcId);
-  return Boolean(rel&&(FAMILY_RELATION_TYPES.has(rel.type)||['best_friend','partner','fiance','spouse'].includes(rel.type)||rel.score>=82));
+  return Boolean(rel&&(LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET.has(rel.type)||['best_friend','partner','fiance','spouse'].includes(rel.type)||rel.score>=82));
 }
 
 function addNpcMemory(state:GameState,npc:Npc,kind:string,sentiment:number,summary:string,permanent=false){
@@ -364,6 +363,8 @@ function childRelationshipType(state:GameState,parentIds:string[]):RelationshipT
   const types=parentIds.map(id=>directRelationship(state,id)?.type).filter(Boolean) as RelationshipType[];
   if(types.some(type=>type==='child'))return'grandchild';
   if(types.some(type=>['sibling','half_sibling','stepsibling'].includes(type)))return'niece_nephew';
+  if(types.some(type=>type==='grandparent'))return'aunt_uncle';
+  if(types.some(type=>type==='aunt_uncle'))return'cousin';
   if(types.some(type=>type==='parent'))return'half_sibling';
   return undefined;
 }
@@ -372,14 +373,15 @@ function createNpcChild(state:GameState,npc:Npc,partner:Npc,rng:SeededRng,adopte
   const pool=getNamePool(npc.countryId);const id=makeStateId(state,'npc');const initialFirstName=rng.pick(pool.first);const lastName=rng.chance(.65)?npc.lastName:partner.lastName;
   const {firstName}=resolveCollisionAwareName(npc.countryId,initialFirstName,lastName,[{firstName:state.character.firstName,lastName:state.character.lastName},...Object.values(state.npcs)],{fixedLastName:lastName});
   const relationType=childRelationshipType(state,[npc.id,partner.id]);
-  // Full simulation follows the newborn's actual player-facing relationship, not merely
-  // the parent's closeness. Descendants beyond the supported kin taxonomy remain linked
-  // in the NPC family graph but use background cadence instead of spawning full-tier branches.
-  const child:Npc={id,firstName,lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,96),wealth:0,countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(5,25),memories:[],parentIds:[npc.id,partner.id],childIds:[],simulationTier:relationType?'full':'background'};
+  // Close family retains the existing full-detail behavior. New extended kin (aunts/uncles/cousins)
+  // are represented in the player-facing topology without automatically turning large dynasties into
+  // hundreds of full yearly simulations. They can still promote later if the relationship becomes close.
+  const closeFamilyRelation=Boolean(relationType&&LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET.has(relationType));
+  const child:Npc={id,firstName,lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,96),wealth:0,countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(5,25),memories:[],parentIds:[npc.id,partner.id],childIds:[],simulationTier:closeFamilyRelation?'full':'background'};
   assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;npc.childIds.push(id);partner.childIds.push(id);state.legacy.familyTreeNpcIds.push(id);ensureNpcLife(state,child);
   if(relationType&&!state.relationships.some(rel=>rel.npcId===id))state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:relationType,score:rng.int(42,72),attraction:0,compatibility:rng.int(40,80),yearsKnown:0});
   addNpcMemory(state,npc,adopted?'adoption':'child_birth',10,adopted?`Adopted ${firstName}.`:`${firstName} was born.`,true);addNpcMemory(state,partner,adopted?'adoption':'child_birth',10,adopted?`Adopted ${firstName}.`:`${firstName} was born.`,true);
-  if(relationType)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:2,text:adopted?`${firstName} ${lastName} joined your extended family through adoption.`:`${firstName} ${lastName} was born into your extended family.`,npcIds:[id,npc.id,partner.id]});
+  if(closeFamilyRelation)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:2,text:adopted?`${firstName} ${lastName} joined your extended family through adoption.`:`${firstName} ${lastName} was born into your extended family.`,npcIds:[id,npc.id,partner.id]});
 }
 
 function maybeExpandNpcFamily(state:GameState,npc:Npc,processedCouples:Set<string>,rng:SeededRng,background=false){
@@ -465,7 +467,7 @@ function processRelationshipDrift(state:GameState,rng:SeededRng){
   for(const rel of state.relationships){
     rel.yearsKnown+=1;const npc=state.npcs[rel.npcId];if(!npc?.alive)continue;
     const meaningful=relationshipIsMeaningful(state,npc.id);if(npc.simulationTier==='background'&&!meaningful&&state.character.age%2!==0)continue;
-    const recent=npc.memories.slice(-6);const memoryMood=recent.length?recent.reduce((sum,memory)=>sum+memory.sentiment,0)/recent.length:0;const family=FAMILY_RELATION_TYPES.has(rel.type)||['spouse','partner','fiance'].includes(rel.type);
+    const recent=npc.memories.slice(-6);const memoryMood=recent.length?recent.reduce((sum,memory)=>sum+memory.sentiment,0)/recent.length:0;const family=FAMILY_RELATIONSHIP_TYPE_SET.has(rel.type)||['spouse','partner','fiance'].includes(rel.type);
     const desired=clamp(52+npc.hiddenOpinion*.24+memoryMood*.9+(family?10:0));const pull=(desired-rel.score)*(family?.035:.055);const noise=family?rng.int(-1,1):rng.int(-2,1);rel.score=clamp(rel.score+pull+noise);
     npc.hiddenOpinion=clamp(npc.hiddenOpinion+memoryMood*.025,-100,100);
   }
@@ -476,7 +478,7 @@ export function processNpcLives(state:GameState,rng=createRng(state.seed,state.r
   for(const npc of startingNpcs){
     if(!npc.alive)continue;ensureNpcLife(state,npc);npc.age+=1;const meaningful=relationshipIsMeaningful(state,npc.id);
     if(meaningful)npc.simulationTier='full';
-    else if(unrepresentedNpcDescendant(state,npc))npc.simulationTier='background'; // Repair pre-fix full-tier distant descendants as they age.
+    else if(unrepresentedNpcDescendant(state,npc)||EXTENDED_FAMILY_RELATION_TYPE_SET.has(directRelationship(state,npc.id)?.type as RelationshipType))npc.simulationTier='background'; // Keep distant/extended represented kin cheap until they become meaningfully close.
     const background=npc.simulationTier==='background'&&!meaningful;
     if(npcHealthIsTerminal(npc)){handleNpcDeath(state,npc);continue;}
     processNpcEducationYear(state,npc,rng);
@@ -494,7 +496,7 @@ export function processNpcLives(state:GameState,rng=createRng(state.seed,state.r
     npc.life!.lastFullSimulationAge=npc.age;
     if((npc.age>72||npc.health<18)&&rng.chance(npcMortalityChance(npc)))handleNpcDeath(state,npc);
   }
-  processRelationshipDrift(state,rng);state.rngCounter=rng.counter();
+  processRelationshipDrift(state,rng);syncPlayerFamilyTopology(state);state.rngCounter=rng.counter();
 }
 
 export function npcLifeSummary(npc:Npc){

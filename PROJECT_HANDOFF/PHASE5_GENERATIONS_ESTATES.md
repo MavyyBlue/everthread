@@ -55,8 +55,25 @@ Implementation rules:
 
 Dedicated `npcAssetOwnershipRegression.ts` passes 82/82 across migration, RNG neutrality, portfolio projection/accounting, creation/background-tier bounds, stable ownership IDs, adult/minor player and NPC inheritance, protected-trust caps and overflow reconciliation, mortgage transfer, idempotent death settlement, descendant continuation, cap liquidation, preview read-only behavior, a 600-background-NPC + 3,000-entry 12-year scale fixture, and state validation. `timelineScalingRegression.ts` passed 10/10 on the Phase 5C deployment: authoritative history remains complete while the Life page renders the newest 120 entries initially and reveals older entries in 120-entry increments. GitHub Actions Run #95 reproduced both TypeScript gates, the complete regression wall, 142-module production build, certified artifact creation, and Pages deployment on expanded commit `62e28aafb190f8b46d10b73fb6dd00985beb724d`. Phase 5C is CI Green.
 
-Post-Run95 leisure testing found two presentation-only defects: the timeline component memoized by an in-place-mutated array reference, and capped 0/100 relationship interactions could lose VFX despite semantic deltas. The narrow hotfix candidate removes the unsafe memoization and lets action VFX consume only newly appended timeline relationship deltas as a fallback. Local candidate counts are Action VFX 46/46 and Timeline Scaling 11/11; GitHub verification is required before Phase 5D begins.
+Post-Run95 leisure testing found two presentation-only defects: the timeline component memoized by an in-place-mutated array reference, and capped 0/100 relationship interactions could lose VFX despite semantic deltas. Run #96 fixed both and is CI Green on expanded commit `3b58f04827ddc88a33c61b3cdf0d50f1e7584161`; Action VFX is 46/46 and Timeline Scaling is 11/11.
 
-## Next after Phase 5C
+## Phase 5D — Broader family topology — predeployment candidate
 
-Phase 5D may broaden family topology only where aunt/uncle/cousin or multi-household custody/guardianship materially improves real family-tree behavior and UI clarity. Do not expand kin labels merely to increase counts.
+Purpose: make large multi-generation families structurally truthful and legible without synthesizing filler relatives or turning every extended relative into an expensive fully simulated NPC.
+
+Implementation rules:
+
+- `FamilyTopologySystem` derives kinship from existing `parentIds` / `childIds` / current parent partnerships through indexed maps. It does not create NPCs and avoids all-pairs family comparison.
+- Relationship taxonomy adds `aunt_uncle` and `cousin`; existing parent/child, grandparent/grandchild, sibling/half-sibling/step-sibling, stepparent, and niece/nephew relationships are reconciled from the same graph.
+- Structural kinship can replace generic friendship/professional/enemy labels while preserving affinity/compatibility, but active romance and historical `ex` relationship types are not silently rewritten.
+- People folders, Threadspace, profile/detail labels, generic family event selectors, delayed family-favor targets, and relevant special-career family targeting recognize the expanded kin taxonomy.
+- Extended kin remain background-tier by default and do not automatically generate player timeline noise. Existing meaningful-relationship thresholds can still promote an individually close aunt/uncle/cousin to full simulation.
+- Extended-family births can materialize the correct kin relationship without automatic full-tier promotion or automatic player timeline insertion.
+- Descendant continuation resynchronizes topology after protagonist handoff, so kin labels transform correctly across generations without a second family database.
+- Load repair enforces state invariants before topology derivation. Backfill is deterministic, consumes no gameplay RNG or runtime IDs, and requires no new persisted fields; save schema remains 10.
+
+Dedicated `familyTopologyRegression.ts` passes 40/40 locally. The full established regression wall remains green, both TypeScript gates pass, and production build transforms 144 modules. An explicit 1,082-NPC extended-family benchmark (180 aunts/uncles + 900 cousins) synchronized topology in ~4.5 ms locally and advanced six years in ~362 ms; normal autonomy grew the cast to 1,182 with zero validation errors and no automatic full-tier promotion of extended kin. Run #96 remains authoritative until GitHub reproduces this candidate.
+
+## Next after Phase 5D
+
+Phase 5E should perform dynasty-scale validation and strengthen death → estate review → descendant continuation UX without creating a second estate or family truth. Multi-household custody/guardianship expansion remains deferred until a concrete gameplay need justifies additional persisted state.

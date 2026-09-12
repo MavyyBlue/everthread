@@ -193,7 +193,7 @@ export interface Npc {
 }
 
 export type RelationshipType =
-  | 'parent' | 'stepparent' | 'grandparent' | 'sibling' | 'half_sibling' | 'stepsibling' | 'niece_nephew'
+  | 'parent' | 'stepparent' | 'grandparent' | 'sibling' | 'half_sibling' | 'stepsibling' | 'aunt_uncle' | 'cousin' | 'niece_nephew'
   | 'friend' | 'best_friend' | 'enemy' | 'coworker' | 'classmate' | 'boss' | 'teacher' | 'principal' | 'coach'
   | 'partner' | 'fiance' | 'spouse' | 'ex' | 'child' | 'grandchild';
 

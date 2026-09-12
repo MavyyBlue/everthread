@@ -5,6 +5,7 @@ import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import { coherentEventChoices, coherentTargetSelector } from './EventCoherenceSystem';
+import { FAMILY_RELATIONSHIP_TYPE_SET, SIBLING_RELATIONSHIP_TYPES } from '../core/familyRelations';
 
 const RARE_THRESHOLD=.03;
 const rareEvents=lifeEvents.filter(event=>event.probability>0&&event.probability<RARE_THRESHOLD);
@@ -13,10 +14,8 @@ const routineByCategory=new Map<string,GameEventDefinition[]>();
 for(const event of routineEvents){const list=routineByCategory.get(event.category)??[];list.push(event);routineByCategory.set(event.category,list);}
 
 const categoryWeight:Record<string,number>={childhood:1.05,school:1,friends:.9,family:1,romance:.85,work:1,money:.72,health:.72,travel:.48,fame:.42,crime_legal:.42,strange:.38,relationships:.55,aging:.5};
-const FAMILY_RELATIONSHIP_TYPES=['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew'];
 const FRIEND_RELATIONSHIP_TYPES=['friend','best_friend'];
 const ROMANTIC_RELATIONSHIP_TYPES=['partner','fiance','spouse'];
-const SIBLING_RELATIONSHIP_TYPES=['sibling','half_sibling','stepsibling'];
 const PROCEDURAL_CATEGORIES=new Set(['childhood','school','friends','family','romance','work','money','health','travel','fame','crime_legal','strange']);
 const PROCEDURAL_MATURITY_FLOOR:Record<string,number>={friends:10,family:12,health:10,travel:14,strange:10};
 
@@ -53,7 +52,7 @@ function targetRule(event:GameEventDefinition):TargetRule{
   if(event.id.includes('family_family_favor_'))rule.minAge=Math.max(rule.minAge??0,12);
   if(event.id.includes('family_money_between_relatives_'))rule.minAge=Math.max(rule.minAge??0,18);
   if(event.id.includes('family_the_care_question_'))rule.needsCare=true;
-  if(event.id.includes('family_sibling_competition_')){rule.types=SIBLING_RELATIONSHIP_TYPES;rule.minAge=Math.max(rule.minAge??0,6);}
+  if(event.id.includes('family_sibling_competition_')){rule.types=[...SIBLING_RELATIONSHIP_TYPES];rule.minAge=Math.max(rule.minAge??0,6);}
   return rule;
 }
 
@@ -65,7 +64,7 @@ function baseTargetCandidates(state:GameState,event:GameEventDefinition){
   const selector=inferredTargetSelector(event);if(!selector)return[];let candidates:Relationship[]=[];
   if(selector==='school'||selector==='school_peer'||selector==='school_authority'){const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;const ids=schoolAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
   else if(selector==='work'||selector==='work_peer'||selector==='work_boss'){const roles=selector==='work_peer'?['coworker','direct_report']:selector==='work_boss'?['boss']:undefined;const ids=workplaceAffiliationIds(state,roles);candidates=state.relationships.filter(rel=>ids.has(rel.npcId)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
-  else{const allowed=selector==='romantic'?ROMANTIC_RELATIONSHIP_TYPES:selector==='family'?FAMILY_RELATIONSHIP_TYPES:selector==='friend'?FRIEND_RELATIONSHIP_TYPES:[];candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}
+  else{if(selector==='family')candidates=state.relationships.filter(rel=>FAMILY_RELATIONSHIP_TYPE_SET.has(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);else{const allowed=selector==='romantic'?ROMANTIC_RELATIONSHIP_TYPES:selector==='friend'?FRIEND_RELATIONSHIP_TYPES:[];candidates=state.relationships.filter(rel=>allowed.includes(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive);}}
   return candidates;
 }
 
@@ -84,7 +83,7 @@ function eligible(state:GameState,event:GameEventDefinition){
   if(event.tags.includes('requires:work_npc')&&!workplaceAffiliationIds(state).size)return false;
   if(event.tags.includes('romance')&&!hasLivingRelationship(state,ROMANTIC_RELATIONSHIP_TYPES))return false;
   if(event.tags.includes('requires:romantic')&&!hasLivingRelationship(state,ROMANTIC_RELATIONSHIP_TYPES))return false;
-  if(event.tags.includes('requires:family')&&!hasLivingRelationship(state,FAMILY_RELATIONSHIP_TYPES))return false;
+  if(event.tags.includes('requires:family')&&!state.relationships.some(rel=>FAMILY_RELATIONSHIP_TYPE_SET.has(rel.type)&&!rel.estranged&&state.npcs[rel.npcId]?.alive))return false;
   if(event.tags.includes('requires:friend')&&!hasLivingRelationship(state,FRIEND_RELATIONSHIP_TYPES))return false;
   if(isProceduralScenario(event)&&event.category==='travel'&&!hasTravelHistory(state))return false;
   if(inferredTargetSelector(event)&&eligibleTargetCandidates(state,event).length===0)return false;
@@ -117,7 +116,7 @@ function pickRoutineEvent(state:GameState,rng:ReturnType<typeof createRng>){if(!
 
 export function triggerRandomEvent(state:GameState):PendingEvent|undefined{if(state.pendingEvent)return state.pendingEvent;const delayed=processDelayedEvents(state);if(delayed){state.pendingEvent=delayed;return delayed;}const rng=createRng(`${state.seed}-events`,state.rngCounter);const event=pickRareEvent(state,rng)??pickRoutineEvent(state,rng);if(!event){state.rngCounter=rng.counter();return undefined;}const payload=eventContextPayload(state,event,rng);const description=renderDescription(state,event,rng,payload);state.pendingEvent=toPending(event,description,payload);state.recentEventIds=[...state.recentEventIds.slice(-35),event.id];state.rngCounter=rng.counter();return state.pendingEvent;}
 
-function relationshipCandidates(state:GameState,selector:string|undefined,payload?:Record<string,unknown>):Relationship[]{const alive=(rel:Relationship)=>Boolean(state.npcs[rel.npcId]?.alive&&!rel.estranged);if(selector==='payload'){const npcId=typeof payload?.npcId==='string'?payload.npcId:undefined;return npcId?state.relationships.filter(rel=>rel.npcId===npcId&&alive(rel)):[];}const candidates=state.relationships.filter(alive);if(selector==='romantic')return candidates.filter(rel=>ROMANTIC_RELATIONSHIP_TYPES.includes(rel.type));if(selector==='family')return candidates.filter(rel=>FAMILY_RELATIONSHIP_TYPES.includes(rel.type));if(selector==='friend')return candidates.filter(rel=>FRIEND_RELATIONSHIP_TYPES.includes(rel.type));if(selector==='school'||selector==='school_peer'||selector==='school_authority'){const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;const ids=schoolAffiliationIds(state,roles);return candidates.filter(rel=>ids.has(rel.npcId));}if(selector==='work'||selector==='work_peer'||selector==='work_boss'){const roles=selector==='work_peer'?['coworker','direct_report']:selector==='work_boss'?['boss']:undefined;const ids=workplaceAffiliationIds(state,roles);return candidates.filter(rel=>ids.has(rel.npcId));}return candidates;}
+function relationshipCandidates(state:GameState,selector:string|undefined,payload?:Record<string,unknown>):Relationship[]{const alive=(rel:Relationship)=>Boolean(state.npcs[rel.npcId]?.alive&&!rel.estranged);if(selector==='payload'){const npcId=typeof payload?.npcId==='string'?payload.npcId:undefined;return npcId?state.relationships.filter(rel=>rel.npcId===npcId&&alive(rel)):[];}const candidates=state.relationships.filter(alive);if(selector==='romantic')return candidates.filter(rel=>ROMANTIC_RELATIONSHIP_TYPES.includes(rel.type));if(selector==='family')return candidates.filter(rel=>FAMILY_RELATIONSHIP_TYPE_SET.has(rel.type));if(selector==='friend')return candidates.filter(rel=>FRIEND_RELATIONSHIP_TYPES.includes(rel.type));if(selector==='school'||selector==='school_peer'||selector==='school_authority'){const roles=selector==='school_peer'?['classmate']:selector==='school_authority'?['teacher','principal','coach']:undefined;const ids=schoolAffiliationIds(state,roles);return candidates.filter(rel=>ids.has(rel.npcId));}if(selector==='work'||selector==='work_peer'||selector==='work_boss'){const roles=selector==='work_peer'?['coworker','direct_report']:selector==='work_boss'?['boss']:undefined;const ids=workplaceAffiliationIds(state,roles);return candidates.filter(rel=>ids.has(rel.npcId));}return candidates;}
 function selectRelationshipTarget(state:GameState,selector:string|undefined,rng:ReturnType<typeof createRng>,payload?:Record<string,unknown>){const options=relationshipCandidates(state,selector,payload);return options.length?rng.pick(options):undefined;}
 
 function activeEducationRecord(state:GameState){return[...state.education].reverse().find(record=>!record.graduated&&!record.droppedOut&&!record.endAge);}

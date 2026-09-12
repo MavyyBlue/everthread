@@ -1,7 +1,11 @@
 # Everthread — Content Inventory
 
-Last audited: 2026-09-10  
+Last audited: 2026-09-11  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
+
+## Phase 5D systems note
+
+No executable content-database counts change in Phase 5D. Aunt/uncle/cousin support is a derived family-topology integration over existing NPC graph truth and existing family-event libraries, not duplicate content inflation. Generic family events and relevant special-career selectors can now target extended kin where their existing semantics permit it.
 
 ## Current counts
 

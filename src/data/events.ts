@@ -331,7 +331,7 @@ const fixedEvents: GameEventDefinition[] = [
     id:'family_favor_request',category:'family',title:'A Favor With Weight',
     descriptions:['{NPC_NAME} asks you for a substantial loan after a rough stretch. They promise they will remember who helped when things were ugly.'],
     minAge:18,maxAge:95,probability:.02,cooldown:16,tags:['family','money','requires:family','target:family'],choices:[
-      {id:'lend',label:'Lend the money',effects:{money:-3000,relationship:{npcSelector:'payload',delta:8},secondary:{karma:3},schedule:{eventId:'delayed_family_favor_return',years:2,npcSelector:'payload',requiredRelationshipTypes:['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','child','grandchild','niece_nephew']}}},
+      {id:'lend',label:'Lend the money',effects:{money:-3000,relationship:{npcSelector:'payload',delta:8},secondary:{karma:3},schedule:{eventId:'delayed_family_favor_return',years:2,npcSelector:'payload',requiredRelationshipTypes:['parent','stepparent','grandparent','sibling','half_sibling','stepsibling','aunt_uncle','cousin','child','grandchild','niece_nephew']}}},
       {id:'gift',label:'Give a smaller amount as a gift',effects:{money:-1200,relationship:{npcSelector:'payload',delta:6},secondary:{karma:4}}},
       {id:'decline',label:'Say you cannot do it',effects:{relationship:{npcSelector:'payload',delta:-4},secondary:{stress:1}}},
     ]

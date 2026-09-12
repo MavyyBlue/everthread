@@ -1,11 +1,33 @@
 # Everthread Changelog
 
-## Post-Run95 playtest hotfix candidate — Life timeline reactivity + relationship VFX — 2026-09-11
+## Phase 5D — Broader Family Topology candidate — 2026-09-11
+
+### Added
+
+- Added indexed `FamilyTopologySystem` derivation for aunt/uncle and cousin relationships plus reconciliation of the existing close-family taxonomy from authoritative parent/child/partner graph truth.
+- Integrated expanded kinship into People/Threadspace labels and folders, generic family event targeting, delayed family-favor continuity, relevant special-career family targeting, save-load backfill, and descendant continuation.
+- Added `familyTopologyRegression.ts`, now 40/40, including deterministic/idempotent derivation, no synthetic NPC creation, RNG/ID neutrality, extended-family simulation-tier bounds, event eligibility, generation handoff, migration/backfill, romantic-history preservation, UI labels, and a hundreds-relative scale fixture.
+
+### Changed
+
+- Extended kin stay background-tier unless individually meaningful; aunt/uncle/cousin births do not automatically become full-simulation branches or guaranteed player timeline entries.
+- Save load now repairs state invariants before final family-topology synchronization so derived stepfamily/kinship uses repaired authoritative pointers.
+- Threadspace person cards use the shared human-readable relationship label formatter (`aunt / uncle`, `niece / nephew`).
+- Save schema remains 10; no new persisted family database was introduced.
+
+### Predeployment validation
+
+- Family Topology: 40/40. Core 82/82; Action VFX 46/46; Timeline Scaling 11/11; NPC Asset Ownership 82/82; Integrated Long-Life 105/105; every established dedicated regression remains green.
+- Both TypeScript gates pass and production build passes at 144 transformed modules. Existing >700 kB main-chunk warning remains nonblocking.
+- Explicit large-dynasty benchmark: 1,082 starting NPCs arranged as 180 aunts/uncles + 900 cousins synchronized in ~4.5 ms locally; six simulated years completed in ~362 ms, normal autonomy grew the cast to 1,182, no extended relative was forced full-tier, and validation produced zero errors.
+- Run #96 / `3b58f04827ddc88a33c61b3cdf0d50f1e7584161` remains the certified baseline pending GitHub reproduction of this candidate.
+
+## Post-Run95 playtest hotfix — CI Green Run #96 — 2026-09-11
 
 - Fixed Life → Your Story failing to show Age Up timeline entries until navigation/refresh. Root cause was `Timeline` memoizing a bounded window by an array reference that Everthread intentionally mutates in place; the bounded window now recomputes on each render.
 - Fixed Threadspace NPC interaction VFX disappearing at relationship score caps. Action VFX snapshots now record timeline length and derive semantic relationship gain/loss from only the new `relationshipDelta` entries created by the current action when before/after stored scores cannot move past 0/100.
 - Added real capped positive/adverse `interactWithNpc()` regression coverage and same-reference timeline append coverage. Action VFX is now 46/46; Timeline Scaling is 11/11 locally.
-- Full local regression wall remains green, both TypeScript gates pass, and production build passes at 142 transformed modules. Run #95 / `62e28aafb190f8b46d10b73fb6dd00985beb724d` remains the certified baseline until GitHub reproduces this hotfix.
+- GitHub Actions Run #96 reproduced canonical preflight 4/4, Action VFX 46/46, Timeline Scaling 11/11, every established regression, the 142-module production build, certified artifact creation, and Pages deployment on expanded source `3b58f04827ddc88a33c61b3cdf0d50f1e7584161`.
 
 ## Phase 5C — Persistent NPC Asset Ownership — CI Green Run #95 — 2026-09-10
 

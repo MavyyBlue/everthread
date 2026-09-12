@@ -6,7 +6,7 @@ import type { GameEventDefinition, RelationshipType } from '../types/game';
  * become a friend, enemy, partner, or other personal relationship without breaking the arc.
  */
 export const SPECIAL_CAREER_STORY_RELATIONSHIPS: RelationshipType[] = [
-  'parent','stepparent','grandparent','sibling','half_sibling','stepsibling','niece_nephew',
+  'parent','stepparent','grandparent','sibling','half_sibling','stepsibling','aunt_uncle','cousin','niece_nephew',
   'friend','best_friend','enemy','coworker','classmate','boss','teacher','principal','coach',
   'partner','fiance','spouse','ex','child','grandchild',
 ];

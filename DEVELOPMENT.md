@@ -36,15 +36,25 @@ Phase 5C moves meaningful family wealth beyond aggregate NPC property numbers wh
 - Descendant continuation now preserves the selected NPC's own property/businesses, reconstructs mortgages once, separates unsecured personal debt, and merges personal holdings with the deceased protagonist's estate by stable asset ID.
 - People detail sheets expose liquid wealth, property/business value, debt, estimated net worth, and individually named holdings.
 - Life timeline presentation now keeps the full authoritative history while rendering the newest 120 entries first and revealing older history in 120-entry increments, preventing multi-thousand-entry lives from creating multi-thousand-node timeline DOMs.
-- Dedicated NPC Asset Ownership regression: 82/82. Deployed Timeline Scaling: 10/10. Core 82/82, Estate Planning 46/46, Estate Administration 63/63, Action VFX 42/42, Integrated Long-Life 105/105, and every established dedicated suite remained green in GitHub Run #95. Both TypeScript gates and the 142-module production build passed; Pages deployed successfully. The earlier 50-life family-policy bulk sanity produced zero anomalies/forced terminal deaths; scale hardening additionally validates 600 starting background NPCs + 3,000 timeline entries over 12 years, while an ad-hoc 1,000-NPC + 5,000-entry / 20-year benchmark completed in ~1.1 s with zero organic explicit background holdings and zero validation errors.
+- Dedicated NPC Asset Ownership regression: 82/82. Run #96 deploys Timeline Scaling 11/11 and Action VFX 46/46. Core 82/82, Estate Planning 46/46, Estate Administration 63/63, Integrated Long-Life 105/105, and every established dedicated suite remains green. Both TypeScript gates and the 142-module production build passed; Pages deployed successfully. The earlier 50-life family-policy bulk sanity produced zero anomalies/forced terminal deaths; scale hardening additionally validates 600 starting background NPCs + 3,000 timeline entries over 12 years, while an ad-hoc 1,000-NPC + 5,000-entry / 20-year benchmark completed in ~1.1 s with zero organic explicit background holdings and zero validation errors.
 - Run #95 expanded to certified source `62e28aafb190f8b46d10b73fb6dd00985beb724d`; Phase 5C is CI Green.
 
-### Post-Run95 playtest hotfix candidate — immediate timeline + capped relationship VFX
+### Post-Run95 playtest hotfix — CI Green, Run #96
 
 - Life → Your Story no longer memoizes its bounded timeline window by array identity. Because authoritative `GameState` is mutated in place and revisioned externally, Age Up can append entries to the same array reference; recomputing the 120-entry window per render makes the new year visible immediately without navigation or refresh.
-- Action VFX snapshots now record the timeline length at press time. Newly appended `relationshipDelta` values act as a semantic fallback when relationship scores clamp at 0 or 100, so valid NPC interactions still emit relationship gain/loss VFX even when the stored score cannot move farther. Historical entries are excluded.
-- Local verification: Action VFX 46/46, Timeline Scaling 11/11, Core 82/82, NPC Asset Ownership 82/82, Integrated Long-Life 105/105, every established suite green, both TypeScript gates green, production build green at 142 modules.
-- Run #95 remains authoritative until GitHub reproduces this narrow hotfix. Phase 5D is paused until then.
+- Action VFX snapshots record the timeline length at press time. Newly appended `relationshipDelta` values act as a semantic fallback when relationship scores clamp at 0 or 100, so valid NPC interactions still emit relationship gain/loss VFX even when the stored score cannot move farther. Historical entries are excluded.
+- Run #96 reproduced Action VFX 46/46, Timeline Scaling 11/11, Core 82/82, NPC Asset Ownership 82/82, Integrated Long-Life 105/105, every established suite, both TypeScript gates, and the 142-module production build. Expanded certified source is `3b58f04827ddc88a33c61b3cdf0d50f1e7584161`.
+
+### Phase 5D — Broader family topology (predeployment candidate)
+
+- `FamilyTopologySystem` derives authoritative player kinship from existing family graph edges using parent/child indexes rather than pairwise NPC comparison. It introduces aunt/uncle and cousin while reconciling the established close-family taxonomy from the same source of truth.
+- No NPCs are spawned to fill a family tree. Topology synchronization is deterministic, idempotent, RNG-neutral, runtime-ID-neutral, preserves existing affinity/compatibility, and preserves active/historical romantic labels rather than silently rewriting them.
+- Extended kin remain background-tier unless the ordinary meaningful-relationship threshold makes an individual worth full simulation. Their births and ordinary life changes do not automatically flood the player's timeline.
+- People folders, Threadspace labels/projection, generic family event selection, delayed family-favor targeting, special-career family targeting, save backfill, and descendant continuation all consume the expanded taxonomy.
+- Save loading repairs invariants before deriving topology, and descendant handoff resynchronizes kinship so prior sibling/niece relationships become aunt/cousin when control moves down a generation.
+- Save schema remains 10 because topology is fully derivable from existing parent/child/partner truth.
+- Family Topology regression: 40/40. Every established suite remains green; both TypeScript gates pass; production build passes at 144 modules.
+- Scale proof: a 1,082-NPC real extended-family graph with 180 aunts/uncles and 900 cousins synchronized in ~4.5 ms locally and advanced six years in ~362 ms; normal autonomy grew the cast to 1,182, no extended kin were forced full-tier, and validation returned zero errors.
 
 These are functioning systems rather than navigation placeholders, though some still need additional depth.
 
@@ -339,7 +349,7 @@ The shell is mobile-first and has safe-area CSS/accessibility settings, but fina
 2. The centralized action ledger now covers the major profitable/progression-bearing player actions, but every new action must be classified deliberately as unlimited configuration, resource-limited, yearly-limited, cooldown-based, or consequence-escalating. Avoid reintroducing ad-hoc button spam paths.
 3. Simulation policies are separated and wealth-source diagnostics are available. Neutral and mixed populations should remain the balance baseline; do not tune core costs around a headless bot that still underuses optional lifestyle purchases.
 4. Bulk simulation suppresses achievement/challenge evaluation and truncates timeline history intentionally for performance. Full-mode runs remain the correctness reference.
-5. Save schema migration covers versions 1→8. Every future persisted state addition needs an explicit default/migration path, and old rewind snapshots must continue to migrate before restoration.
+5. Save schema migration covers versions 1→10. Every future persisted state addition needs an explicit default/migration path, and old rewind snapshots must continue to migrate before restoration.
 6. No runtime error boundary / last-known-good transaction backup exists yet around every important action. IndexedDB persistence is versioned, but crash-safe transactional recovery needs hardening.
 7. Full React/Vite production builds require installed npm dependencies; local engine/tests are compiler-validated in the current workspace and GitHub Actions remains the authoritative dependency-backed mobile deployment gate.
 
@@ -378,14 +388,18 @@ Added persisted `socialWorlds` for school/workplace/organization membership and 
 
 Added persisted workplace-specific Social World state plus real `partTimeJobs` / `partTimeHistory`. v7 migration reconstructs workplace worlds from existing career records, while generational handoff rebuilds social worlds for the newly controlled descendant rather than carrying the prior protagonist's institutions forward.
 
-### Version 9 — current
+### Version 9
 
 Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration deterministically initializes missing NPC education/career/finance/health/legal/public-life/household state without consuming the player RNG stream; adult descendant handoff can now transfer this accumulated history directly.
 
+### Version 10 — current
+
+Added lean persistent NPC property/business portfolios and protected NPC asset trusts. v9 migration deterministically promotes legacy aggregate NPC property value into bounded explicit holdings without consuming player RNG. Phase 5D adds no new persisted fields: broader kinship is deterministically derived from the existing family graph while remaining on schema 10.
+
 ## Next development sequence
 
-1. Certify the universal derived-consequence VFX hardening against the Run #93 CI-Green asset baseline; this remains a presentation hardening interlude and does not replace or renumber Phase 5C.
-2. Continue Phase 5C with richer NPC-owned assets/businesses, then broader kin topology/performance and the stronger death → estate review → descendant-continuation loop.
+1. Certify Phase 5D broader family topology against the Run #96 CI-Green baseline. Do not begin 5E until the exact candidate is CI Green.
+2. Phase 5E: dynasty-scale validation plus a stronger death → estate review → descendant-continuation flow, preserving the existing single estate/family authorities.
 3. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences.
 4. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
 5. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.

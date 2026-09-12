@@ -1,4 +1,5 @@
 import type { GameState, RelationshipType } from '../types/game';
+import { relationshipTypeLabel } from '../core/familyRelations';
 import {
   PEOPLE_FOLDERS,
   affiliationForFolder,
@@ -107,7 +108,7 @@ const CATEGORY_SECTOR_SPAN = (Math.PI * 2 / PEOPLE_FOLDERS.length) * .7;
 const START_ANGLE = -Math.PI / 2;
 
 function roleText(value:string){return value.replaceAll('_',' ');}
-function directLabel(type:RelationshipType){return type.replaceAll('_',' ');}
+function directLabel(type:RelationshipType){return relationshipTypeLabel(type);}
 function folderAngle(folderId:PeopleFolderId){return START_ANGLE+(FOLDER_INDEX.get(folderId)??0)*(Math.PI*2/PEOPLE_FOLDERS.length);}
 function folderNodeId(folderId:PeopleFolderId){return `people-folder:${folderId}`;}
 function sortedUnique<T>(values:Iterable<T>){return [...new Set(values)];}
