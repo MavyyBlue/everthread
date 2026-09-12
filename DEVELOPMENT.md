@@ -23,16 +23,25 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
 ## Implemented foundations
-### Phase 6B1 — Asset Financing foundation (predeployment candidate)
+### Phase 6B2 — Secured delinquency / collateral consequences (predeployment candidate)
 
-- Built only on certified Run #99 / `6eb2b7876203d47dcc1ad5c48f1098bf359182cd`; Phase 6A is CI Green.
-- Added data-driven vehicle/home lender programs and `AssetFinancingSystem`. Underwriting consumes the existing `CreditSystem` profile/history, income, debt-payment burden, inquiry count, cash down payment, and bankruptcy recovery as the single creditworthiness authority.
-- Assets now open a mobile **Buy Outright | Finance** sheet. Finance browsing is deterministic/read-only and shows lender, approval/decline reason, APR, term, down payment, financed principal, annual/monthly-equivalent obligation, finance charge, full-term total cost, and projected burden before commitment.
-- Signing re-underwrites the same request, uses the shared formal-credit action limits, records the approved financing inquiry, deducts only the quote down payment, and creates the actual `car`/`mortgage` liability from the same quote.
-- Financed assets link liabilities back to collateral through `assetId`; homes also retain `mortgageId`. Existing annual finance, wealth/net-worth, estate, bankruptcy history, and schema-11 save authorities consume these liabilities rather than a parallel finance ledger.
-- Asset liabilities expose APR, annual payment, and remaining term after purchase; financing lender/programs remain visible in Credit & Banking history and material purchases enter durable timeline history.
-- Dedicated `assetFinancingRegression.ts` adds 77 targeted checks. Local touched-file syntax/transpile validation, focused strict type checks for the financing/credit/property authority, and direct runtime vehicle/home purchase-flow sanity are clean; canonical full-suite/build validation is pending GitHub Actions.
-- Next only after this exact slice is CI Green: Phase 6B2 delinquency/recovery consequences, beginning with vehicle repossession and strengthening mortgage foreclosure/player agency.
+- Built only on certified Run #100 / `819d223aa9a0d5f9109c705f16213c43ddcaeb31`; Phase 6B1 is CI Green.
+- Existing `Loan` remains the liability authority. Secured car/mortgage loans may now persist optional delinquency state (current/delinquent, arrears, missed payments, last missed age) without introducing a second debt ledger or save-schema bump.
+- Annual finance no longer amortizes a secured payment that cash flow could not actually fund. A missed payment accrues interest, preserves the remaining term, enters CreditSystem missed-payment history, and creates a durable warning with a one-Age-Up cure window.
+- Assets → Money and owned asset cards expose collateral risk. The player can cure the full past-due amount with Cash before aging; Credit Available is not a cure source.
+- Leaving a delinquent car unresolved into the next Age Up can repossess the vehicle; leaving a delinquent mortgage unresolved can foreclose the home. Recovery is applied to the secured balance, surplus/equity is represented, and unrecovered deficiency becomes ordinary unsecured debt instead of vanishing.
+- In involuntary foreclosure, residual equity reconciles existing unsecured shortfall debt before any remainder returns as cash. Voluntary underwater home sales likewise preserve a real deficiency, closing a debt-erasure exploit.
+- Same-year secured shortfall allocation protects housing first by missing car financing before a mortgage when that alone closes the gap; deeper insolvency can make both obligations delinquent.
+- Added `assetDelinquencyRegression.ts`: 82/82 locally. Full canonical local preflight from the certified Run #100 artifact is GREEN 4/4; production build succeeds at 151 transformed modules.
+- GitHub Actions remains final authority. Do not begin Phase 6C until this exact 6B2 candidate is CI Green.
+
+### Phase 6B1 — Asset Financing foundation (CI Green, Run #100)
+
+- GitHub Actions Run #100 certified expanded source `819d223aa9a0d5f9109c705f16213c43ddcaeb31` from the 6B1 overlay.
+- `AssetFinancingSystem` uses `CreditSystem` underwriting as the single creditworthiness authority for deterministic home/vehicle quotes and exact signed `car`/`mortgage` liabilities.
+- Mobile **Buy Outright | Finance** exposes lender, approval/decline reason, APR, term, down payment, financed principal, payment obligation, finance charge, full-term cost, and projected burden before commitment.
+- Asset Financing is 77/77; Credit & Banking 74/74; Core 82/82; Integrated Long-Life 105/105; all established suites, both TypeScript gates, production build, certified artifact creation, and Pages deployment are green.
+- Save schema remains 11.
 
 ### Phase 6A — Credit & Banking foundation (CI Green, Run #99)
 

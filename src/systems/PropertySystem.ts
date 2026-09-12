@@ -5,6 +5,7 @@ import { consumeAction } from '../core/actionEconomy';
 import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 import { acceptAssetFinanceOffer, bestAssetFinanceOffer, getAssetFinanceOffers } from './AssetFinancingSystem';
+import { addUnsecuredDebt } from './FinanceSystem';
 
 export function buyProperty(state:GameState,typeId:string,useMortgage=true,offerId?:string,downPaymentRate=.2):EngineResult {
   if(state.character.age<18)return{success:false,messages:[{text:'You must be an adult to purchase property.'}]};
@@ -48,7 +49,7 @@ export function rentOutProperty(state:GameState,propertyId:string):EngineResult 
 }
 
 export function sellProperty(state:GameState,propertyId:string):EngineResult {
-  const i=state.assets.properties.findIndex(p=>p.id===propertyId);if(i<0)return{success:false,messages:[{text:'Property not found.'}]};const p=state.assets.properties[i]!;const mortgage=p.mortgageId?state.finances.liabilities.find(l=>l.id===p.mortgageId):undefined;const payoff=mortgage?.balance??0;const proceeds=Math.max(0,p.marketValue-payoff-Math.round(p.marketValue*.035));state.finances.cash+=proceeds;if(mortgage)state.finances.liabilities=state.finances.liabilities.filter(l=>l.id!==mortgage.id);state.assets.properties.splice(i,1);return{success:true,messages:[{text:`Sold ${p.name}. Net proceeds: ${proceeds.toLocaleString()}.`}]};
+  const i=state.assets.properties.findIndex(p=>p.id===propertyId);if(i<0)return{success:false,messages:[{text:'Property not found.'}]};const p=state.assets.properties[i]!;const mortgage=p.mortgageId?state.finances.liabilities.find(l=>l.id===p.mortgageId):undefined;const payoff=mortgage?.balance??0;const sellingCosts=Math.round(p.marketValue*.035);const recovery=Math.max(0,p.marketValue-sellingCosts);const proceeds=Math.max(0,recovery-payoff);const deficiency=Math.max(0,payoff-recovery);state.finances.cash+=proceeds;if(mortgage)state.finances.liabilities=state.finances.liabilities.filter(l=>l.id!==mortgage.id);if(deficiency>0)addUnsecuredDebt(state,deficiency);state.assets.properties.splice(i,1);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:2,text:`You sold ${p.name}.${deficiency>0?` The sale left ${Math.round(deficiency).toLocaleString()} of unsecured deficiency debt.`:` Net proceeds were ${Math.round(proceeds).toLocaleString()}.`}`,moneyDelta:proceeds});return{success:true,stateChanges:['property','cash','financingLiability'],messages:[{text:`Sold ${p.name}. ${deficiency>0?`The mortgage payoff exceeded sale recovery by ${Math.round(deficiency).toLocaleString()}; that amount remains as unsecured debt.`:`Net proceeds: ${Math.round(proceeds).toLocaleString()}.`}`}]};
 }
 
 function vehicleDefinition(typeId:string){return[...vehicleDefinitions,...luxuryVehicleDefinitions].find(v=>v.id===typeId);}

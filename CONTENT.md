@@ -19,6 +19,10 @@ The executable life-event/career/etc. content counts remain unchanged. Phase 6A 
 
 The executable life-event/career/etc. counts remain unchanged. Phase 6B1 adds **6 fictional asset-financing programs** in a separate lender marketplace: **3 vehicle programs / 3 home programs** across the existing fictional banking institutions. Programs vary by minimum age, credit score, income, balance/payment burden, down payment, term, APR/risk pricing, recent inquiries, and bankruptcy-recovery period. These are system definitions, not padded event rows.
 
+## Phase 6B2 systems/content note
+
+No executable content-database counts change in Phase 6B2. Secured-loan delinquency, cure windows, repossession, foreclosure, deficiency handling, and collateral-risk UI are systemic consequences over existing financed assets and existing credit history rather than new random-event rows. The dedicated Asset Delinquency regression contains 82 checks; this is QA coverage, not content inflation.
+
 ## Current counts
 
 | Content family | Current | Production target | Status |

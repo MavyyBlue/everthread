@@ -327,6 +327,13 @@ export interface EmploymentState {
   retired: boolean;
 }
 
+export interface LoanDelinquency {
+  status: 'current' | 'delinquent';
+  arrears: Money;
+  missedPayments: number;
+  lastMissedPaymentAge?: number;
+}
+
 export interface Loan {
   id: Id;
   kind: 'student' | 'mortgage' | 'car' | 'personal';
@@ -336,6 +343,7 @@ export interface Loan {
   annualPayment: Money;
   remainingYears: number;
   assetId?: Id;
+  delinquency?: LoanDelinquency;
 }
 
 export interface FinancesState {

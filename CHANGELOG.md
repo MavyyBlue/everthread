@@ -1,6 +1,30 @@
 # Everthread Changelog
 
-## Phase 6B1 — Asset Financing Foundation candidate — 2026-09-12
+## Phase 6B2 — Secured Delinquency & Collateral Consequences candidate — 2026-09-12
+
+### Added
+
+- Added persistent, save-safe secured-loan delinquency state on existing `Loan` records: status, arrears, missed-payment count, and the age of the unresolved miss. Pre-6B2 schema-11 loans derive as current without mutation, so no save-schema bump is required.
+- Added explicit player curing for delinquent car loans and mortgages. Assets → Money shows the collateral, past-due amount, next-Age-Up consequence, and a touch-friendly **Cure** action that uses Cash only.
+- Added vehicle repossession for uncured financed cars and strengthened mortgage foreclosure to use the same loan/collateral/credit authorities. Missed secured payments create durable timeline warnings and existing CreditSystem derogatories; repossession creates a credit default and foreclosure preserves the established foreclosure history.
+- Added `assetDelinquencyRegression.ts` with 82 targeted checks covering current servicing, missed-payment accounting, cure success/failure, cure payoff, car repossession, foreclosure, deficiencies/surplus recovery, secured-payment priority, voluntary underwater sales, net-worth accounting, and schema-11 round trips.
+
+### Changed
+
+- Annual finance no longer reduces a secured-loan balance when the year cannot actually fund that payment. The skipped payment becomes arrears, the contractual term is not falsely consumed, and the player gets until the next Age Up to cure it.
+- Same-year secured shortfall allocation protects housing by allowing a vehicle payment to fail before a mortgage when one skipped payment is enough to close the cash gap. Deeper insolvency can make both obligations delinquent.
+- Unrecovered collateral balances become ordinary unsecured deficiency debt instead of disappearing. Involuntary foreclosure equity first reconciles existing unsecured shortfall debt before any remainder returns as cash.
+- Voluntarily selling an underwater financed home now preserves the unpaid deficiency as unsecured debt, closing the prior debt-erasure exploit.
+- Financed home/vehicle cards expose outstanding financed balance and at-risk state directly on the owned asset.
+
+### Candidate validation
+
+- Local canonical preflight from the certified Run #100 source/dependency artifact passes **4/4**: engine TypeScript, test TypeScript, complete regression wall, and production build.
+- Core remains 82/82; Credit & Banking 74/74; Asset Financing 77/77; new Asset Delinquency 82/82; Dynasty Transition 63/63; Family Topology 40/40; NPC Asset Ownership 82/82; Timeline Scaling 11/11; Action VFX 46/46; Integrated Long-Life 105/105; every established dedicated suite is green locally.
+- Production build succeeds at 151 transformed modules. The existing >700 kB main-chunk warning remains nonblocking.
+- GitHub Actions remains the certification authority. Run #100 / `819d223aa9a0d5f9109c705f16213c43ddcaeb31` remains the certified baseline until this exact 6B2 candidate is reproduced green.
+
+## Phase 6B1 — Asset Financing Foundation — CI Green Run #100 — 2026-09-12
 
 ### Added
 
@@ -16,11 +40,11 @@
 - Asset liabilities now show APR, authoritative annual payment, and remaining years. Credit & Banking history resolves asset-financing inquiries to their lender/program names.
 - Outright vehicle purchases now create a durable asset timeline entry so a material life purchase is not invisible. Credit Available remains revolving borrowing capacity only and is never treated as purchase cash or wealth.
 
-### Candidate validation
+### CI validation
 
-- Touched Phase 6B TypeScript/TSX files pass the local TypeScript syntax/transpile gate; focused strict type checks also pass across the credit/financing/property authority.
-- Direct runtime validation confirms deterministic read-only quote generation, multiple eligible lender offers for a strong fixture, exact preview→signed vehicle/home principal/APR/payment/term parity, correct collateral/cash/inquiry mutation, clean outright paths, specialized boat-financing deferral without mutation, and explicit bankruptcy-recovery decline messaging.
-- Full repository TypeScript gates, all established regressions, the new 77-check Asset Financing regression, production build, artifact creation, and Pages deployment remain pending GitHub Actions. Run #99 / `6eb2b7876203d47dcc1ad5c48f1098bf359182cd` remains the certified baseline until this exact candidate is reproduced green.
+- GitHub Actions Run #100 reproduced both TypeScript gates, Core 82/82, Asset Financing 77/77, Credit & Banking 74/74, every established dedicated regression, Integrated Long-Life 105/105, and the production build.
+- The canonical preflight reported GREEN 4/4, the certified baseline artifact was uploaded, and GitHub Pages deployed successfully.
+- Expanded certified source is `819d223aa9a0d5f9109c705f16213c43ddcaeb31`; Phase 6B1 is CI Green.
 
 ## Phase 6A — Credit & Banking Foundation — CI Green Run #99 — 2026-09-12
 

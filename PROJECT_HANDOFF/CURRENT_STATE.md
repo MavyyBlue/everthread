@@ -8,33 +8,34 @@ Current save schema: `11`
 
 ## Last fully verified repository baseline
 
-The latest fully green repository baseline is expanded source commit `6eb2b7876203d47dcc1ad5c48f1098bf359182cd` from GitHub Actions Run #99.
+The latest fully green repository baseline is expanded source commit `819d223aa9a0d5f9109c705f16213c43ddcaeb31` from GitHub Actions Run #100.
 
-- Phase 6A Credit & Banking Foundation is CI Green on save schema 11.
-- Credit & Banking 74/74, Core 82/82, Dynasty Transition 63/63, Family Topology 40/40, NPC Asset Ownership 82/82, Timeline Scaling 11/11, Action VFX 46/46, Integrated Long-Life 105/105, and all established regression suites are green.
-- Phase 6A provides the authoritative player credit profile/history, bounded revolving accounts/inquiries/derogatories, Cash + Credit Available presentation, Credit & Banking hub, net-worth/estate/bankruptcy integration, and schema-11 migration.
+- Phase 6B1 Asset Financing Foundation is CI Green on save schema 11.
+- Asset Financing 77/77, Credit & Banking 74/74, Core 82/82, Dynasty Transition 63/63, Family Topology 40/40, NPC Asset Ownership 82/82, Timeline Scaling 11/11, Action VFX 46/46, Integrated Long-Life 105/105, and all established regression suites are green.
+- Run #100 passed both TypeScript gates, the complete regression wall, production build, certified-baseline artifact creation, and Pages deployment.
 - GitHub Actions remains the final certification authority for every subsequent overlay.
 
-### Current predeployment candidate — Phase 6B1 Asset Financing Foundation
+### Current predeployment candidate — Phase 6B2 Secured Delinquency & Collateral Consequences
 
-Phase 6B1 replaces the old isolated home-mortgage check with one reusable financing authority and adds player-directed vehicle financing without weakening the Cash/Credit Available separation.
+Phase 6B2 deepens the real `car`/`mortgage` liabilities introduced in 6B1 without creating a parallel debt model.
 
-- `AssetFinancingSystem` consumes `CreditSystem.getCreditUnderwritingSnapshot()` for credit score/history, income, existing debt/payment burden, inquiries, and bankruptcy recovery. Property/vehicle UI contains no competing credit-score formula.
-- Six fictional financing programs cover vehicle and home lending with distinct down-payment, score, income, term, APR, payment-burden, inquiry, and recovery requirements. Quotes are deterministic/read-only.
-- Asset market actions now open a mobile **Buy Outright | Finance** sheet. Finance contracts expose lender, approval/decline reason, down payment, principal, APR, term, annual/monthly-equivalent payment, finance charge, total held-to-term cost, and projected burden before commitment.
-- Signing re-underwrites current truth, records a formal financing inquiry through CreditSystem history, deducts only the down payment, and creates the exact previewed `car`/`mortgage` liability.
-- Loans link to the financed asset through `assetId`; homes also retain `mortgageId`. Existing annual-finance, net-worth, estate, save, and bankruptcy-history authorities consume the real liability.
-- Assets → Money exposes APR, annual payment, balance, and remaining term. Credit & Banking History names financing programs. Outright and financed material purchases are durable timeline events.
-- Save schema remains 11; no duplicate finance ledger or migration is needed for this slice.
-- Added a 77-check Asset Financing regression. Touched-file syntax/transpile, focused strict authority type checks, and direct runtime vehicle/home purchase-flow sanity are clean locally; the full type/regression/build wall is pending GitHub Actions.
-- Do not begin Phase 6B2 repossession/delinquency expansion until this exact candidate is CI Green.
+- Secured loans can persist optional delinquency state directly on the existing `Loan`: current/delinquent status, arrears, missed-payment count, and last missed age. Old schema-11 loans with no such fields derive as current and remain valid.
+- Annual finance no longer amortizes a secured payment that the year could not actually fund. Interest remains owed, the skipped payment becomes visible arrears, the contractual term is not falsely consumed, and CreditSystem receives a missed-payment derogatory.
+- Assets → Money names the collateral, past-due amount, and next-Age-Up consequence and exposes a Cash-only **Cure** action. Owned home/vehicle cards also show financed balance and at-risk state.
+- The first secured miss creates a one-Age-Up cure window. Aging again without curing can repossess a financed car or foreclose a mortgaged home.
+- Collateral recovery settles the secured balance. Surplus/equity is represented; unrecovered balances become ordinary unsecured deficiency debt rather than disappearing. Foreclosure residual equity first reconciles existing unsecured shortfall debt before any remainder returns as cash.
+- Voluntarily selling an underwater financed home now preserves the unpaid deficiency as unsecured debt, closing the prior debt-erasure exploit.
+- Same-year shortfall allocation protects housing first by allowing a vehicle payment to fail before a mortgage when one skipped payment closes the gap; deeper insolvency can make both obligations delinquent.
+- Save schema remains 11 because delinquency is backward-compatible optional state on existing loan records.
+- Added `assetDelinquencyRegression.ts`: 82/82 locally. A canonical local preflight run using the exact certified Run #100 source/dependency artifact is GREEN 4/4, including both TypeScript gates, the complete regression wall, and a 151-module production build.
+- Do not begin Phase 6C until this exact candidate is reproduced CI Green by GitHub Actions.
 
 ## Green systems immediately relevant to current work
 
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
 - Phase 5B estate administration is CI Green in Run #92: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress are now baseline behavior.
-- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, Phase 5C NPC-owned assets/businesses, Phase 5D broader family topology, and Phase 5E dynasty transition remain certified foundations. The current candidate is Phase 6B1, built only on Run #99.
+- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, Phase 5C NPC-owned assets/businesses, Phase 5D broader family topology, and Phase 5E dynasty transition remain certified foundations. The current candidate is Phase 6B2, built only on certified Run #100.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.
