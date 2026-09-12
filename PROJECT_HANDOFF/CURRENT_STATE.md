@@ -1,5 +1,10 @@
 # Everthread — Current State
 
+## Live continuation note — Phase 6C candidate
+
+Certified starting baseline is Run #103 / `7f1f58099fe5e8528dc8ec3c70c0ed340a2e8294`. Phase 6C is now a predeployment candidate on save schema 12: shared-underwriting personal loans, centralized personal-loan payment/delinquency/cure, and voluntary bankruptcy with serious-distress and recovery gates. Local TypeScript, complete regressions, and the standalone 155-module build pass; dedicated Phase 6C regression is 31/31. GitHub Actions remains final certification authority.
+
+
 Last handoff preparation: 2026-09-12  
 Repository: `MavyyBlue/everthread`  
 Default branch: `main`  

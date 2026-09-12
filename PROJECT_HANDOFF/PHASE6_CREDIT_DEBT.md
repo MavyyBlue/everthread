@@ -79,3 +79,8 @@ Only after the post-6B3 reactivity correction is CI Green: deepen personal-loan 
 - Never erase secured debt merely because collateral was sold, seized, inherited, or the screen changed.
 - Never double-count arrears and principal as separate liabilities.
 - Keep approvals, bills, delinquency, cure, default, repossession, foreclosure, bankruptcy, estate settlement, and asset-sale payoff consequences visible and durable.
+
+
+## Phase 6C candidate — 2026-09-12
+
+Built strictly from certified Run #103 / `7f1f58099fe5e8528dc8ec3c70c0ed340a2e8294`. Personal-loan offers reuse shared CreditSystem underwriting and formal inquiry/action limits; accepted contracts remain ordinary FinanceSystem personal liabilities. PaymentSystem now includes personal-loan annual bills, auto-pay, paid-ahead manual payment, delinquency and cure. Voluntary bankruptcy adds an explicit serious-distress preview and seven-year repeat-filing gate while preserving secured/student debt. Save schema remains 12 and legacy personal debt normalization consumes no RNG. Local dedicated regression is 31/31 and the established wall remains green.

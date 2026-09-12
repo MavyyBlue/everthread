@@ -114,13 +114,19 @@ export function getSecuredLoanStatus(state:GameState,loanOrId:Loan|string):Secur
   return{loanId:loan.id,kind:loan.kind,collateralName:collateral.name,collateralValue:collateral.value,status:delinquency.status,arrears:delinquency.arrears,missedPayments:delinquency.missedPayments,...(delinquency.lastMissedPaymentAge===undefined?{}:{lastMissedPaymentAge:delinquency.lastMissedPaymentAge}),consequence:loan.kind==='mortgage'?'foreclosure':'repossession'};
 }
 
-export function addUnsecuredDebt(state:GameState,rawAmount:number){
+export function addUnsecuredDebt(state:GameState,rawAmount:number,origin:'hardship'|'deficiency'|'legacy'='hardship'){
   const amount=roundMoney(Math.max(0,rawAmount));if(amount<=.5)return 0;
-  const existing=state.finances.liabilities.find(loan=>loan.kind==='personal');
+  const existing=state.finances.liabilities.find(loan=>loan.kind==='personal'&&loan.origin!=='borrowed');
   if(existing){existing.principal=roundMoney(existing.principal+amount);existing.balance=roundMoney(existing.balance+amount);existing.annualPayment=Math.max(existing.annualPayment,Math.round(existing.balance*.16));existing.remainingYears=Math.max(existing.remainingYears,8);}
-  else state.finances.liabilities.push({id:makeStateId(state,'loan'),kind:'personal',principal:amount,balance:amount,annualRate:.12,annualPayment:Math.max(1200,Math.round(amount*.16)),remainingYears:8});
+  else state.finances.liabilities.push({id:makeStateId(state,'loan'),kind:'personal',principal:amount,balance:amount,annualRate:.12,annualPayment:Math.max(1200,Math.round(amount*.16)),remainingYears:8,autoPay:true,origin});
   return amount;
 }
+
+export function payPersonalLoanBill(state:GameState,loanId:string):EngineResult{
+  const loan=state.finances.liabilities.find(item=>item.id===loanId&&item.kind==='personal');if(!loan)return{success:false,messages:[{text:'That personal loan is no longer active.'}]};const delinquency=ensureLoanDelinquency(loan);const due=delinquency.status==='delinquent'?roundMoney(Math.min(loan.balance,delinquency.arrears)):scheduledLoanPaymentAmount(loan);if(due<=.5)return{success:false,messages:[{text:'This personal loan has no payment due.'}]};if(state.finances.cash+0.001<due)return{success:false,messages:[{text:`You need ${Math.round(due).toLocaleString()} cash to make this payment.`}]};state.finances.cash=roundMoney(state.finances.cash-due);loan.balance=roundMoney(Math.max(0,loan.balance-due));if(delinquency.status==='delinquent')loan.delinquency={status:'current',arrears:0,missedPayments:0};else{loan.prepaidThroughAge=state.character.age+1;loan.remainingYears=Math.max(0,loan.remainingYears-1);}if(loan.balance<=.5)state.finances.liabilities=state.finances.liabilities.filter(item=>item.id!==loan.id);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You paid ${Math.round(due).toLocaleString()} toward a personal loan.`,moneyDelta:-due});return{success:true,stateChanges:['cash','financingLiability'],messages:[{text:delinquency.status==='delinquent'?'Past-due personal loan cured.':'Personal-loan bill paid ahead for the next Age Up.'}]};
+}
+
+function missPersonalPayment(state:GameState,loan:Loan){const delinquency=ensureLoanDelinquency(loan);const payment=scheduledLoanPaymentAmount(loan);const misses=delinquency.status==='delinquent'?delinquency.missedPayments+1:1;const arrears=roundMoney(Math.min(loan.balance,delinquency.arrears+payment));loan.delinquency={status:'delinquent',arrears,missedPayments:misses,lastMissedPaymentAge:state.character.age};recordCreditDerogatory(state,misses>=3?'default':'missed_payment',misses>=3?68:32,`Missed personal-loan payment${misses>=3?'; account entered serious default':''}.`);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:misses>=3?3:2,text:`You missed a ${Math.round(payment).toLocaleString()} personal-loan payment. ${Math.round(arrears).toLocaleString()} is now past due.`});}
 
 function clearPaidMortgageLinks(state:GameState){
   const active=new Set(state.finances.liabilities.filter(loan=>loan.kind==='mortgage').map(loan=>loan.id));
@@ -193,7 +199,7 @@ function repossessVehicle(state:GameState,loan:Loan){
   if(vehicle)state.assets.vehicles=state.assets.vehicles.filter(item=>item.id!==vehicle.id);
   state.finances.liabilities=state.finances.liabilities.filter(item=>item.id!==loan.id);
   if(surplus>0)state.finances.cash=roundMoney(state.finances.cash+surplus);
-  if(deficiency>0)addUnsecuredDebt(state,deficiency);
+  if(deficiency>0)addUnsecuredDebt(state,deficiency,'deficiency');
   state.flags.repossessions=Number(state.flags.repossessions??0)+1;
   recordCreditDerogatory(state,'default',72,`Repossession of ${name}.`);
   state.character.stats.happiness=clamp(state.character.stats.happiness-9);
@@ -213,7 +219,7 @@ function forecloseProperty(state:GameState,loan:Loan){
   state.finances.liabilities=state.finances.liabilities.filter(item=>item.id!==loan.id);
   let residualDebtPaid=0;if(residual>0){state.finances.cash=roundMoney(state.finances.cash+residual);residualDebtPaid=payDownPersonalDebt(state,residual);}
   const residualReturned=roundMoney(Math.max(0,residual-residualDebtPaid));
-  if(deficiency>0)addUnsecuredDebt(state,deficiency);
+  if(deficiency>0)addUnsecuredDebt(state,deficiency,'deficiency');
   state.flags.foreclosures=Number(state.flags.foreclosures??0)+1;
   state.flags.mortgageMisses=0;
   recordCreditDerogatory(state,'foreclosure',80,`Foreclosure on ${name}.`);
@@ -233,7 +239,10 @@ function resolveUncuredSecuredLoans(state:GameState){
   }
 }
 
-function declareBankruptcy(state:GameState){
+export interface BankruptcyPreview {eligible:boolean;dischargeableDebt:number;securedDebt:number;studentDebt:number;yearsSinceLast?:number;reason?:string;}
+export function bankruptcyPreview(state:GameState):BankruptcyPreview{const personal=state.finances.liabilities.filter(l=>l.kind==='personal').reduce((sum,l)=>sum+l.balance,0);const revolving=creditCardDebt(state);const dischargeableDebt=roundMoney(personal+revolving);const securedDebt=roundMoney(state.finances.liabilities.filter(l=>l.kind==='mortgage'||l.kind==='car').reduce((sum,l)=>sum+l.balance,0));const studentDebt=roundMoney(state.finances.liabilities.filter(l=>l.kind==='student').reduce((sum,l)=>sum+l.balance,0));const last=Number(state.flags.lastBankruptcyAge??Number.NaN);const yearsSinceLast=Number.isFinite(last)?Math.max(0,state.character.age-last):undefined;const gross=Math.max(0,state.finances.annualIncome,state.employment.current?.salary??0);const debtPayments=state.finances.liabilities.reduce((sum,l)=>sum+Math.max(0,l.annualPayment),0);const distressed=dischargeableDebt>=Math.max(15000,gross*.4)&&(gross<=0||debtPayments/gross>.5||dischargeableDebt>gross*.8||Number(state.flags.cashShortfallYears??0)>=2);let reason:string|undefined;if(state.character.age<18)reason='Bankruptcy is available only to adults.';else if(dischargeableDebt<=.5)reason='You have no eligible unsecured debt to discharge.';else if(yearsSinceLast!==undefined&&yearsSinceLast<7)reason='You must complete seven years of recovery before filing bankruptcy again.';else if(!distressed)reason='Your current unsecured debt and payment burden do not meet the game’s serious-financial-distress threshold.';return{eligible:!reason,dischargeableDebt,securedDebt,studentDebt,...(yearsSinceLast===undefined?{}:{yearsSinceLast}),...(reason?{reason}:{})};}
+
+export function declareBankruptcy(state:GameState,source:'automatic'|'voluntary'='automatic'){
   const personal=state.finances.liabilities.filter(l=>l.kind==='personal');
   const revolving=creditCardDebt(state);
   if(!personal.length&&revolving<=0)return false;
@@ -248,7 +257,7 @@ function declareBankruptcy(state:GameState){
   state.character.stats.happiness=clamp(state.character.stats.happiness-14);
   state.character.secondary.reputation=clamp(state.character.secondary.reputation-12);
   state.character.secondary.stress=clamp(state.character.secondary.stress+15);
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:3,text:`You declared bankruptcy and discharged ${Math.round(discharged).toLocaleString()} of unsecured in-game debt.`});
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:3,text:`You ${source==='voluntary'?'filed for':'entered'} bankruptcy and discharged ${Math.round(discharged).toLocaleString()} of unsecured in-game debt.`});
   return true;
 }
 
@@ -331,9 +340,11 @@ export function processAnnualFinance(state:GameState) {
   for(const loan of state.finances.liabilities){
     if(loan.balance<=0||dependentMinor)continue;
     if(isSecuredLoan(loan)&&readLoanDelinquency(loan).status==='delinquent')continue;
-    if(isSecuredLoan(loan)&&Number.isFinite(loan.prepaidThroughAge)&&Number(loan.prepaidThroughAge)>=state.character.age){if(Number(loan.prepaidThroughAge)===state.character.age)delete loan.prepaidThroughAge;continue;}
+    if(Number.isFinite(loan.prepaidThroughAge)&&Number(loan.prepaidThroughAge)>=state.character.age){if(Number(loan.prepaidThroughAge)===state.character.age)delete loan.prepaidThroughAge;continue;}
     const interest=roundMoney(Math.max(0,loan.balance*loan.annualRate));const payment=scheduledLoanPaymentAmount(loan);
     if(isSecuredLoan(loan)&&loan.autoPay===false){loan.balance=roundMoney(Math.max(0,loan.balance+interest));missSecuredPayment(state,{loan,payment},false);continue;}
+    if(loan.kind==='personal'&&loan.autoPay===false){loan.balance=roundMoney(Math.max(0,loan.balance+interest));missPersonalPayment(state,loan);continue;}
+    if(loan.kind==='personal'&&readLoanDelinquency(loan).status==='delinquent'){loan.balance=roundMoney(Math.max(0,loan.balance+interest));missPersonalPayment(state,loan);continue;}
     loan.balance=roundMoney(Math.max(0,loan.balance+interest-payment));loan.remainingYears=Math.max(0,loan.remainingYears-1);debtPayments+=payment;loanPayments.push({loan,payment:roundMoney(payment)});
   }
   const scheduledCashExpenses=baseline+lifestyleCosts+childCosts+petCosts+propertyCosts+vehicleCosts+debtPayments+taxes;

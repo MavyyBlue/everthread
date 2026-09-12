@@ -22,6 +22,16 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/tests/` — deterministic regression suite, content audit, and multi-life simulation harness.
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
+## Current implementation slice
+
+### Phase 6C — Personal Borrowing / Bankruptcy / Recovery (predeployment candidate)
+
+- Built only on certified Run #103 / `7f1f58099fe5e8528dc8ec3c70c0ed340a2e8294`.
+- Personal-loan offers consume CreditSystem underwriting/inquiry limits; accepted contracts remain authoritative FinanceSystem liabilities. PaymentSystem projects their bills, auto-pay, paid-ahead payments, delinquency, and cure.
+- Voluntary bankruptcy is serious-distress gated, preserves secured/student debt, discharges eligible unsecured personal/card debt, and retains the existing multi-year credit recovery consequences.
+- Save schema remains 12; optional loan provenance/lender metadata is normalized deterministically without RNG.
+- Local TypeScript gates and the complete wall pass; Personal Borrowing & Recovery is 31/31 and Integrated Long-Life remains 105/105. Standalone production build passes at 155 modules. GitHub Actions remains final certification authority.
+
 ## Current corrective slice
 
 ### Post-6B3 Credit History live-reactivity correction (predeployment candidate)

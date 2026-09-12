@@ -346,6 +346,9 @@ export interface Loan {
   delinquency?: LoanDelinquency;
   autoPay?: boolean;
   prepaidThroughAge?: number;
+  origin?: 'borrowed' | 'hardship' | 'deficiency' | 'legacy';
+  institutionId?: Id;
+  productId?: Id;
 }
 
 export interface FinancesState {

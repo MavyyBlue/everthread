@@ -1,5 +1,12 @@
 # Everthread Changelog
 
+## Phase 6C — Personal Borrowing / Bankruptcy / Recovery candidate — 2026-09-12
+
+- Built only from certified Run #103 / `7f1f58099fe5e8528dc8ec3c70c0ed340a2e8294`.
+- Adds four data-driven personal-loan products through shared CreditSystem underwriting, centralized personal-loan bills/delinquency/cure, and guarded voluntary bankruptcy/recovery without creating a second debt ledger.
+- Save schema remains 12; optional personal-liability provenance/lender metadata is normalized deterministically for legacy debt with no RNG use.
+- Local TypeScript gates and the complete regression wall pass, including Personal Borrowing & Recovery 31/31 and Integrated Long-Life 105/105. Standalone production build passes at 155 modules. GitHub Actions remains certification authority.
+
 ## Post-6B3 Credit History Reactivity correction candidate — 2026-09-12
 
 ### Fixed

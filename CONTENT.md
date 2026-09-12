@@ -186,3 +186,7 @@ No executable content-database counts changed in 0.9.9. The milestone adds accou
 ## 0.9.8 systems note
 
 No content-database counts changed in 0.9.8. The milestone adds relationship-folder/tree presentation derived from persistent NPC state and the first playable minigame mechanics. Future content work should populate School and Work folders with persistent classmates/teachers/bosses/coworkers and add path-specific minigame prompt/variant libraries rather than duplicating the framework.
+
+## Phase 6C systems/content note
+
+Phase 6C adds **4 original personal-loan product definitions** using existing fictional institutions. Bankruptcy/recovery and personal-loan delinquency are systemic mechanics rather than random-event count inflation. Dedicated Personal Borrowing & Recovery regression adds 31 QA checks.

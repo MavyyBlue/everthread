@@ -10,6 +10,7 @@ import { migrateNpcAssetPortfolios } from '../systems/NpcAssetSystem';
 import { syncPlayerFamilyTopology } from '../systems/FamilyTopologySystem';
 import { migrateCreditState } from '../systems/CreditSystem';
 import { migratePaymentState } from '../systems/PaymentSystem';
+import { migratePersonalBorrowingState } from '../systems/PersonalBorrowingSystem';
 
 const DB_NAME='everthread';const DB_VERSION=1;const STORE='saves';const ACTIVE_SLOT_KEY='everthread-active-save-slot';export const SAVE_VERSION=12;
 
@@ -122,7 +123,7 @@ export function migrateSave(raw:unknown):GameState {
   state.idCounter=Number.isFinite(state.idCounter)?state.idCounter:10000;
   state.achievements=state.achievements??[];state.challenges=state.challenges??[];state.completedLives=state.completedLives??[];state.specialCareers=state.specialCareers??{};state.familyPlanning=state.familyPlanning??{};state.socialWorlds=state.socialWorlds??[];
   state.inheritance=state.inheritance??{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]};state.inheritance.assetBequests??=[];normalizeAssetBequests(state);
-  state.employment.partTimeJobs=state.employment.partTimeJobs??[];state.employment.partTimeHistory=state.employment.partTimeHistory??[];state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};delete state.flags.ageUpLocked;state.yearlySnapshots=normalizeRewindSnapshots(state.yearlySnapshots);initializeMissingNpcLives(state);migrateNpcAssetPortfolios(state);migrateCreditState(state);migratePaymentState(state);const repaired=enforceStateInvariants(state);syncPlayerFamilyTopology(repaired);return repaired;
+  state.employment.partTimeJobs=state.employment.partTimeJobs??[];state.employment.partTimeHistory=state.employment.partTimeHistory??[];state.actionLedger=state.actionLedger??{age:state.character.age,uses:{},lastUsedAge:{},revision:0};state.actionLedger.revision=Number.isFinite(state.actionLedger.revision)?state.actionLedger.revision:0;state.flags=state.flags??{sandbox:false,rewindEnabled:false,debugEnabled:false};delete state.flags.ageUpLocked;state.yearlySnapshots=normalizeRewindSnapshots(state.yearlySnapshots);initializeMissingNpcLives(state);migrateNpcAssetPortfolios(state);migrateCreditState(state);migratePaymentState(state);migratePersonalBorrowingState(state);const repaired=enforceStateInvariants(state);syncPlayerFamilyTopology(repaired);return repaired;
 }
 
 export async function saveGame(state:GameState):Promise<void>{state.lastSavedAt=new Date().toISOString();const clean=stripRuntime(state);if(!canUseIndexedDb()){localStorage.setItem(`everthread-save-${state.slotId}`,JSON.stringify(clean));return;}const db=await openDb();await new Promise<void>((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(clean);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});db.close();}
