@@ -1,6 +1,31 @@
 # Everthread Changelog
 
-## Phase 6B2 — Secured Delinquency & Collateral Consequences candidate — 2026-09-12
+## Phase 6B3 — Payments & Asset Management UX candidate — 2026-09-12
+
+### Added
+
+- Added a centralized `PaymentSystem` projection/action layer for real credit-card minimums and secured vehicle/home financing obligations. CreditSystem and FinanceSystem remain the balance authorities; the UI no longer needs to invent bill math.
+- Added **Credit & Banking → Bills & Payments** from Overview. It itemizes current/past-due obligations, shows Cash, total due, past due, and annual auto-pay status, supports Cash payment of the real bill, and exposes per-obligation auto-pay switches.
+- Added persistent annual auto-pay preferences. New cards and new asset-financing contracts default ON; schema-11 saves migrate safely to ON so old saves preserve their established automatic-servicing behavior. Card auto-pay covers the required minimum only, never the whole balance.
+- Added manual secured annual-bill payment with a paid-ahead marker so paying before Age Up cannot double-charge the same contractual year. Existing delinquent secured bills continue through the 6B2 cure authority.
+- Added vehicle sale quotes and real vehicle selling, including selling costs, lender payoff, equity proceeds, underwater deficiency conversion to unsecured debt, durable history, and confirmation before mutation.
+- Added `AssetSaleSheet` and `paymentAssetManagementRegression.ts` with 79 targeted checks across migration, projection purity, auto-pay on/off, card minimums, secured prepayment, delinquency cure, financed contract defaults, vehicle/home sale accounting, save round trips, and invariants.
+
+### Changed
+
+- Credit & Banking Overview replaces the duplicated historical block with the compact Bills & Payments entry; major derogatory history now lives under the existing History tab. Individual card Accounts still support extra/full revolving-balance payments.
+- Assets → Property now contains both homes and vehicles with a compact **Browse | Owned** toggle. Browse covers home + vehicle markets; Owned shows homes + vehicles together with contextual financing status and asset actions. Vehicles are no longer hidden under More.
+- Payment controls are centralized in Credit & Banking instead of being scattered across asset cards. The Money liabilities view remains an accounting/status view and points players to Bills & Payments.
+- Save schema advances from 11 to **12** for durable auto-pay, credit-card past-due, and secured paid-ahead payment state. Migration is deterministic, RNG-neutral, and defaults old obligations to the prior automatic-payment behavior.
+
+### Candidate validation
+
+- Built from exact certified Run #101 expanded source `c498753acb67bbb0aa930e5f8bdb7b411b1e874c` and its certified Node dependency artifact. Phase 6B2 is CI Green.
+- Local established regression wall is green: Core 82/82; Credit & Banking 74/74; Asset Financing 77/77; Asset Delinquency 82/82; new Payment & Asset Management 79/79; Integrated Long-Life 105/105; every established dedicated suite passes.
+- A 25-life mixed-policy bulk simulation completed with 0 anomalies and 0 forced terminal deaths.
+- Local canonical preflight from the exact certified Run #101 source/dependency environment is GREEN **4/4**: engine TypeScript, test TypeScript, complete regression wall, and the 153-module production build. The existing >700 kB main-chunk warning remains nonblocking. GitHub Actions remains certification authority.
+
+## Phase 6B2 — Secured Delinquency & Collateral Consequences — CI Green Run #101 — 2026-09-12
 
 ### Added
 
@@ -22,7 +47,7 @@
 - Local canonical preflight from the certified Run #100 source/dependency artifact passes **4/4**: engine TypeScript, test TypeScript, complete regression wall, and production build.
 - Core remains 82/82; Credit & Banking 74/74; Asset Financing 77/77; new Asset Delinquency 82/82; Dynasty Transition 63/63; Family Topology 40/40; NPC Asset Ownership 82/82; Timeline Scaling 11/11; Action VFX 46/46; Integrated Long-Life 105/105; every established dedicated suite is green locally.
 - Production build succeeds at 151 transformed modules. The existing >700 kB main-chunk warning remains nonblocking.
-- GitHub Actions remains the certification authority. Run #100 / `819d223aa9a0d5f9109c705f16213c43ddcaeb31` remains the certified baseline until this exact 6B2 candidate is reproduced green.
+- GitHub Actions Run #101 reproduced Asset Delinquency 82/82, every established regression, both TypeScript gates, the 151-module production build, certified-baseline artifact creation, and Pages deployment. Expanded certified source is `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`; Phase 6B2 is CI Green.
 
 ## Phase 6B1 — Asset Financing Foundation — CI Green Run #100 — 2026-09-12
 

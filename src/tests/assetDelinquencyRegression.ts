@@ -44,7 +44,7 @@ export function runAssetDelinquencyRegression(){
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Asset delinquency regression failed: ${message}`);}
   function verifyApprox(actual:number,expected:number,tolerance:number,message:string){checks+=1;approx(actual,expected,tolerance,message);}
 
-  verify(SAVE_VERSION===11,'Phase 6B2 remains backward-compatible with schema 11');
+  verify(SAVE_VERSION===12,'Phase 6B2 delinquency state remains valid under current schema 12');
 
   const legacy=adult('secured-status-legacy');const {loan:legacyCar}=addCar(legacy);
   const legacyStatus=getSecuredLoanStatus(legacy,legacyCar);
@@ -176,13 +176,13 @@ export function runAssetDelinquencyRegression(){
 
   const saveState=adult('secured-save-roundtrip');const {loan:saveLoan}=addCar(saveState);saveLoan.delinquency={status:'delinquent',arrears:5000,missedPayments:1,lastMissedPaymentAge:30};
   const restored=migrateSave(structuredClone(saveState));const restoredLoan=restored.finances.liabilities.find(item=>item.id==='car-loan')!;
-  verify(restored.saveVersion===11,'secured delinquency persists without forcing a schema bump');
-  verify(restoredLoan.delinquency?.status==='delinquent'&&restoredLoan.delinquency.arrears===5000,'schema-11 save roundtrip preserves new optional delinquency state');
+  verify(restored.saveVersion===12,'secured delinquency persists through current schema normalization');
+  verify(restoredLoan.delinquency?.status==='delinquent'&&restoredLoan.delinquency.arrears===5000,'schema-12 save roundtrip preserves secured delinquency state');
   verify(getSecuredLoanStatus(restored,restoredLoan)?.consequence==='repossession','restored delinquency still resolves its collateral consequence');
 
   const legacySave=adult('secured-old-save');const {loan:legacySaveLoan}=addCar(legacySave);delete legacySaveLoan.delinquency;
   const legacyRestored=migrateSave(structuredClone(legacySave));
-  verify(getSecuredLoanStatus(legacyRestored,'car-loan')?.status==='current','pre-6B2 schema-11 secured loans remain valid and current after load');
+  verify(getSecuredLoanStatus(legacyRestored,'car-loan')?.status==='current','legacy schema-11 secured loans remain valid and current after schema-12 load');
 
   return checks;
 }

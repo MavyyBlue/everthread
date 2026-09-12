@@ -79,6 +79,8 @@ export interface SecuredLoanStatus {
 
 function isSecuredLoan(loan:Loan):loan is Loan&{kind:SecuredLoanKind}{return loan.kind==='mortgage'||loan.kind==='car';}
 
+export function scheduledLoanPaymentAmount(loan:Loan){const interest=Math.max(0,loan.balance*loan.annualRate);return roundMoney(Math.min(Math.max(0,loan.balance+interest),Math.max(0,loan.annualPayment)));}
+
 function readLoanDelinquency(loan:Loan){
   const raw=loan.delinquency;
   const arrears=roundMoney(Math.max(0,Number(raw?.arrears??0)));
@@ -133,6 +135,17 @@ export function cureSecuredLoan(state:GameState,loanId:string):EngineResult{
   const collateral=collateralDetails(state,loan);if(loan.balance<=.5)state.finances.liabilities=state.finances.liabilities.filter(item=>item.id!==loan.id);clearPaidMortgageLinks(state);
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You cured the past-due payment on ${collateral.name} for ${Math.round(cureAmount).toLocaleString()}.`,moneyDelta:-cureAmount,detail:'The secured loan returned to current status before collateral action.'});
   return{success:true,stateChanges:['cash','financingLiability'],messages:[{text:`Past-due payment cured. ${collateral.name} is no longer at immediate risk.`}]};
+}
+
+export function paySecuredLoanBill(state:GameState,loanId:string):EngineResult{
+  const loan=state.finances.liabilities.find(item=>item.id===loanId);if(!loan||!isSecuredLoan(loan))return{success:false,messages:[{text:'That secured loan is no longer active.'}]};
+  const delinquency=ensureLoanDelinquency(loan);if(delinquency.status==='delinquent')return cureSecuredLoan(state,loanId);
+  const dueAge=state.character.age+1;if((loan.prepaidThroughAge??-1)>=dueAge)return{success:false,messages:[{text:'The next annual payment on this loan is already paid.'}]};
+  const payment=scheduledLoanPaymentAmount(loan);if(payment<=.5)return{success:false,messages:[{text:'This loan has no scheduled payment due.'}]};if(state.finances.cash+0.001<payment)return{success:false,messages:[{text:`You need ${Math.round(payment).toLocaleString()} cash to pay this annual bill.`}]};
+  const interest=roundMoney(Math.max(0,loan.balance*loan.annualRate));state.finances.cash=roundMoney(state.finances.cash-payment);loan.balance=roundMoney(Math.max(0,loan.balance+interest-payment));loan.remainingYears=Math.max(0,loan.remainingYears-1);loan.prepaidThroughAge=dueAge;loan.delinquency={status:'current',arrears:0,missedPayments:0};
+  const collateral=collateralDetails(state,loan);if(loan.balance<=.5){state.finances.liabilities=state.finances.liabilities.filter(item=>item.id!==loan.id);clearPaidMortgageLinks(state);}
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You paid the next annual financing bill on ${collateral.name} for ${Math.round(payment).toLocaleString()}.`,moneyDelta:-payment,detail:`The payment included ${Math.round(interest).toLocaleString()} of scheduled interest and is credited through age ${dueAge}.`});
+  return{success:true,stateChanges:['cash','financingLiability'],messages:[{text:`Paid ${Math.round(payment).toLocaleString()} toward ${collateral.name}. The next Age Up will not charge this loan again.`}]};
 }
 
 function specialCareerIncome(state:GameState) {
@@ -244,10 +257,10 @@ interface AnnualLoanPayment {
   payment:number;
 }
 
-function missSecuredPayment(state:GameState,entry:AnnualLoanPayment){
+function missSecuredPayment(state:GameState,entry:AnnualLoanPayment,restoreAppliedPayment=true){
   const {loan,payment}=entry;if(!isSecuredLoan(loan)||payment<=.5)return 0;
   const delinquency=ensureLoanDelinquency(loan);if(delinquency.status==='delinquent')return 0;
-  loan.balance=roundMoney(loan.balance+payment);loan.remainingYears+=1;
+  if(restoreAppliedPayment){loan.balance=roundMoney(loan.balance+payment);loan.remainingYears+=1;}
   loan.delinquency={status:'delinquent',arrears:roundMoney(payment),missedPayments:1,lastMissedPaymentAge:state.character.age};
   const collateral=collateralDetails(state,loan);const consequence=loan.kind==='mortgage'?'foreclosure':'repossession';
   if(loan.kind==='mortgage')state.flags.mortgageMisses=Number(state.flags.mortgageMisses??0)+1;
@@ -318,7 +331,9 @@ export function processAnnualFinance(state:GameState) {
   for(const loan of state.finances.liabilities){
     if(loan.balance<=0||dependentMinor)continue;
     if(isSecuredLoan(loan)&&readLoanDelinquency(loan).status==='delinquent')continue;
-    const interest=loan.balance*loan.annualRate;const payment=Math.min(loan.balance+interest,loan.annualPayment);
+    if(isSecuredLoan(loan)&&Number.isFinite(loan.prepaidThroughAge)&&Number(loan.prepaidThroughAge)>=state.character.age){if(Number(loan.prepaidThroughAge)===state.character.age)delete loan.prepaidThroughAge;continue;}
+    const interest=roundMoney(Math.max(0,loan.balance*loan.annualRate));const payment=scheduledLoanPaymentAmount(loan);
+    if(isSecuredLoan(loan)&&loan.autoPay===false){loan.balance=roundMoney(Math.max(0,loan.balance+interest));missSecuredPayment(state,{loan,payment},false);continue;}
     loan.balance=roundMoney(Math.max(0,loan.balance+interest-payment));loan.remainingYears=Math.max(0,loan.remainingYears-1);debtPayments+=payment;loanPayments.push({loan,payment:roundMoney(payment)});
   }
   const scheduledCashExpenses=baseline+lifestyleCosts+childCosts+petCosts+propertyCosts+vehicleCosts+debtPayments+taxes;

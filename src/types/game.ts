@@ -344,6 +344,8 @@ export interface Loan {
   remainingYears: number;
   assetId?: Id;
   delinquency?: LoanDelinquency;
+  autoPay?: boolean;
+  prepaidThroughAge?: number;
 }
 
 export interface FinancesState {

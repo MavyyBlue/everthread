@@ -2,7 +2,7 @@
 
 Last updated: 2026-09-12  
 Current build line: 0.12.0 pre-release  
-Save schema: 11
+Save schema: 12
 
 ## Product direction
 
@@ -23,7 +23,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
 ## Implemented foundations
-### Phase 6B2 — Secured delinquency / collateral consequences (predeployment candidate)
+### Phase 6B3 — Payments & asset management UX (predeployment candidate)
+
+- Built only on certified Run #101 / `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`; Phase 6B2 is CI Green.
+- Added centralized `PaymentSystem` projection/actions over existing CreditSystem/FinanceSystem truth. Credit-card minimums plus car/mortgage annual obligations are itemized without introducing a second balance ledger.
+- Credit & Banking Overview now opens **Bills & Payments** for Cash payment, past-due cure, and annual auto-pay preference. Card auto-pay covers only the required minimum; individual Accounts preserve optional extra/full balance payments.
+- Secured manual bill payment credits the next Age Up through `prepaidThroughAge`, preventing duplicate amortization. Auto-pay OFF deliberately creates the same real delinquency/collateral-risk path established in 6B2.
+- Property consolidates homes + vehicles with **Browse | Owned**. Owned vehicles can now be sold through a preview/confirmation sheet; financed sale proceeds settle lender payoff first and preserve any deficiency as unsecured debt.
+- Save schema advances to 12 with deterministic v11 migration for `autoPay`, `pastDueAmount`, and `prepaidThroughAge`; legacy obligations default to auto-pay ON to preserve old behavior.
+- Added Payment & Asset Management regression 79/79. Canonical local preflight is GREEN 4/4, production build is 153 modules, and 25 mixed-policy lives produced 0 anomalies / 0 forced terminal deaths. GitHub Actions remains final certification authority.
+
+### Phase 6B2 — Secured delinquency / collateral consequences (CI Green, Run #101)
 
 - Built only on certified Run #100 / `819d223aa9a0d5f9109c705f16213c43ddcaeb31`; Phase 6B1 is CI Green.
 - Existing `Loan` remains the liability authority. Secured car/mortgage loans may now persist optional delinquency state (current/delinquent, arrears, missed payments, last missed age) without introducing a second debt ledger or save-schema bump.
@@ -33,7 +43,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 - In involuntary foreclosure, residual equity reconciles existing unsecured shortfall debt before any remainder returns as cash. Voluntary underwater home sales likewise preserve a real deficiency, closing a debt-erasure exploit.
 - Same-year secured shortfall allocation protects housing first by missing car financing before a mortgage when that alone closes the gap; deeper insolvency can make both obligations delinquent.
 - Added `assetDelinquencyRegression.ts`: 82/82 locally. Full canonical local preflight from the certified Run #100 artifact is GREEN 4/4; production build succeeds at 151 transformed modules.
-- GitHub Actions remains final authority. Do not begin Phase 6C until this exact 6B2 candidate is CI Green.
+- GitHub Actions Run #101 certified expanded source `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`; Asset Delinquency is 82/82 and Phase 6B2 is CI Green.
 
 ### Phase 6B1 — Asset Financing foundation (CI Green, Run #100)
 
@@ -390,7 +400,7 @@ The shell is mobile-first and has safe-area CSS/accessibility settings, but fina
 2. The centralized action ledger now covers the major profitable/progression-bearing player actions, but every new action must be classified deliberately as unlimited configuration, resource-limited, yearly-limited, cooldown-based, or consequence-escalating. Avoid reintroducing ad-hoc button spam paths.
 3. Simulation policies are separated and wealth-source diagnostics are available. Neutral and mixed populations should remain the balance baseline; do not tune core costs around a headless bot that still underuses optional lifestyle purchases.
 4. Bulk simulation suppresses achievement/challenge evaluation and truncates timeline history intentionally for performance. Full-mode runs remain the correctness reference.
-5. Save schema migration covers versions 1→10. Every future persisted state addition needs an explicit default/migration path, and old rewind snapshots must continue to migrate before restoration.
+5. Save schema migration covers versions 1→12. Every future persisted state addition needs an explicit default/migration path, and old rewind snapshots must continue to migrate before restoration.
 6. No runtime error boundary / last-known-good transaction backup exists yet around every important action. IndexedDB persistence is versioned, but crash-safe transactional recovery needs hardening.
 7. Full React/Vite production builds require installed npm dependencies; local engine/tests are compiler-validated in the current workspace and GitHub Actions remains the authoritative dependency-backed mobile deployment gate.
 
@@ -438,16 +448,19 @@ Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration d
 Added lean persistent NPC property/business portfolios and protected NPC asset trusts. v9 migration deterministically promotes legacy aggregate NPC property value into bounded explicit holdings without consuming player RNG. Phase 5D and Phase 5E add no new persisted fields: broader kinship and the death/estate/successor review are deterministic projections over existing authoritative state while remaining on schema 10.
 
 
-### Version 11 — current
+### Version 11
 
 Adds bounded player revolving-credit authority under `finances.credit`: accounts, current/recent transactions, formal inquiries, derogatory history, and compact archived positive-history summaries. v10 migration initializes an empty deterministic credit state without consuming gameplay RNG.
 
+### Version 12 — current
+
+Adds durable payment-management state while preserving existing debt authorities: per-card/per-secured-loan annual auto-pay preference, explicit card past-due amount, and secured-loan paid-ahead age. v11 migration defaults existing obligations to auto-pay ON, carries no new RNG consumption, and preserves 6B2 delinquency state.
+
 ## Next development sequence
 
-1. Certify the exact Phase 6B1 Asset Financing candidate against Run #99 / `6eb2b7876203d47dcc1ad5c48f1098bf359182cd`. Do not begin 6B2 until GitHub Actions reproduces this slice green.
-2. Phase 6B2: deepen secured-loan delinquency/collateral consequences through the same authorities, beginning with player-visible vehicle repossession and stronger mortgage foreclosure/hardship agency.
-3. Phase 6C: deepen personal loans, voluntary bankruptcy, recovery/rehabilitation, and hardship consequences.
-4. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
-5. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
-6. Expand regional names substantially and verify long-dynasty repetition rates.
-7. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.
+1. Certify the exact Phase 6B3 Payments & Asset Management UX candidate against Run #101 / `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`. Do not begin 6C until GitHub Actions reproduces this slice green.
+2. Phase 6C: deepen personal loans, voluntary bankruptcy, recovery/rehabilitation, and hardship consequences using the same payment/credit/finance authorities.
+3. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
+4. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
+5. Expand regional names substantially and verify long-dynasty repetition rates.
+6. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

@@ -29,7 +29,7 @@ export function runCreditBankingRegression(){
   function approx(actual:number,expected:number,tolerance:number,message:string){verify(Math.abs(actual-expected)<=tolerance,`${message} (expected ${expected}±${tolerance}, got ${actual})`);}
 
   const fresh=createNewGame({seed:'credit-fresh'});
-  verify(fresh.saveVersion===11&&SAVE_VERSION===11,'Phase 6A advances saves to schema 11');
+  verify(fresh.saveVersion===12&&SAVE_VERSION===12,'Phase 6A credit state remains valid under current save schema 12');
   verify(Array.isArray(fresh.finances.credit.accounts)&&fresh.finances.credit.accounts.length===0,'fresh lives initialize an empty credit-account authority');
   verify(fresh.finances.credit.transactions.length===0&&fresh.finances.credit.inquiries.length===0,'fresh credit history begins empty');
   verify(creditAvailable(fresh)===0&&creditCardDebt(fresh)===0&&securedCreditDeposits(fresh)===0,'fresh lives do not invent borrowing capacity, revolving debt, or secured deposits');
@@ -37,10 +37,10 @@ export function runCreditBankingRegression(){
 
   const legacy=createNewGame({seed:'credit-v10-migration'});legacy.saveVersion=10;const legacyRng=legacy.rngCounter;delete (legacy.finances as unknown as {credit?:unknown}).credit;
   const migrated=migrateSave(legacy);
-  verify(migrated.saveVersion===11&&Boolean(migrated.finances.credit),'v10 saves migrate to schema 11 with credit state');
+  verify(migrated.saveVersion===12&&Boolean(migrated.finances.credit),'v10 saves migrate to current schema 12 with credit state');
   verify(migrated.rngCounter===legacyRng,'credit migration consumes no player RNG');
   verify(migrated.finances.credit.accounts.length===0&&validateState(migrated).length===0,'credit migration is empty, deterministic, and invariant-clean');
-  const remigrated=migrateSave(migrated);verify(JSON.stringify(remigrated.finances.credit)===JSON.stringify(migrated.finances.credit),'schema 11 credit migration is idempotent');
+  const remigrated=migrateSave(migrated);verify(JSON.stringify(remigrated.finances.credit)===JSON.stringify(migrated.finances.credit),'current-schema credit normalization is idempotent');
 
   const teen=createNewGame({seed:'credit-teen'});setAge(teen,16);teen.finances.cash=1000;
   const browseBefore=JSON.stringify(teen);const teenOffers=getCreditOffers(teen);verify(JSON.stringify(teen)===browseBefore,'browsing credit offers is strictly read-only');
@@ -76,7 +76,7 @@ export function runCreditBankingRegression(){
   verify(Number(card.statementBalance)===0&&Number(card.minimumDue)===0&&Number(card.paymentsTowardStatement)===0,'annual statement roll resets paid obligations cleanly');
 
   setAge(teen,17);const scoreAfterPositive=getCreditProfile(teen).score;verify(scoreAfterPositive>520,'established on-time history improves the derived credit score');
-  chargeCreditCard(teen,card.id,80);const beforeMissedBalance=card.balance;const missedCosts=processAnnualCredit(teen);verify(teen.finances.credit.history.missedPayments===1&&card.missedPayments===1,'unpaid statement records a missed payment');
+  card.autoPay=false;chargeCreditCard(teen,card.id,80);const beforeMissedBalance=card.balance;const missedCosts=processAnnualCredit(teen);verify(teen.finances.credit.history.missedPayments===1&&card.missedPayments===1,'unpaid statement records a missed payment');
   verify(card.balance>beforeMissedBalance&&missedCosts.interest>0,'missed revolving balance accrues contract interest');
   verify(teen.finances.credit.derogatories.some(item=>item.kind==='missed_payment'),'missed payment creates bounded derogatory history');
   verify(teen.timeline.some(entry=>entry.text.includes('missed the required payment')),'missed-payment consequence is durable in the player life timeline');

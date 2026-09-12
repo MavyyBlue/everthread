@@ -32,4 +32,4 @@ A new chat should begin by reading this folder and the root project tracking fil
 
 Everthread is built as one interconnected simulation, not a collection of isolated feature pages.
 
-- `PHASE6_CREDIT_DEBT.md` — active Phase 6 credit/debt architecture: 6A and 6B1 CI-Green foundations, current 6B2 secured-delinquency/collateral candidate, and later personal-borrowing/recovery sequence.
+- `PHASE6_CREDIT_DEBT.md` — active Phase 6 credit/debt architecture: 6A/6B1/6B2 CI-Green foundations, current 6B3 Payments & Asset Management UX candidate on schema 12, and later personal-borrowing/recovery sequence.

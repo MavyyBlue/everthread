@@ -64,7 +64,7 @@ export function runNpcHealthMortalityRegression(){
   const importedNpc=addNpc(importState,fixtureNpc(importState,'import-repair',61,80));
   importedNpc.health=0;
   const restored=importSave(exportSave(importState));
-  verify(restored.saveVersion===11&&alive(restored,importedNpc.id)&&health(restored,importedNpc.id)===1,'current-schema load should repair legacy living zero health without a schema bump');
+  verify(restored.saveVersion===12&&alive(restored,importedNpc.id)&&health(restored,importedNpc.id)===1,'current-schema load should repair legacy living zero health without a schema bump');
   verify(!validateState(restored).some(error=>error.includes('alive with terminal health')),'repaired current-schema save should validate without a living-terminal-health contradiction');
 
   const deadImportState=isolatedState('npc-health-dead-preserve');

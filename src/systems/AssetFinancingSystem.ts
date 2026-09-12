@@ -90,7 +90,7 @@ export function acceptAssetFinanceOffer(state:GameState,rawRequest:AssetFinanceR
   if(state.finances.cash<offer.downPayment)return{offer,result:{success:false,messages:[{text:`You need ${offer.downPayment.toLocaleString()} cash for the down payment.`}]}};
   recordCreditInquiry(state,{institutionId:offer.program.institutionId,productId:offer.program.id,outcome:'approved'});
   state.finances.cash=roundMoney(state.finances.cash-offer.downPayment);
-  const loan:Loan={id:makeStateId(state,'loan'),kind:request.kind==='home'?'mortgage':'car',principal:offer.amountFinanced,balance:offer.amountFinanced,annualRate:offer.annualRate,annualPayment:offer.annualPayment,remainingYears:offer.termYears,delinquency:{status:'current',arrears:0,missedPayments:0}};
+  const loan:Loan={id:makeStateId(state,'loan'),kind:request.kind==='home'?'mortgage':'car',principal:offer.amountFinanced,balance:offer.amountFinanced,annualRate:offer.annualRate,annualPayment:offer.annualPayment,remainingYears:offer.termYears,delinquency:{status:'current',arrears:0,missedPayments:0},autoPay:true};
   state.finances.liabilities.push(loan);
   return{offer,loan,result:{success:true,stateChanges:['creditInquiry','financingLiability'],messages:[{text:`${offer.institutionName} approved ${offer.program.name}: ${offer.downPayment.toLocaleString()} down, ${offer.amountFinanced.toLocaleString()} financed at ${(offer.annualRate*100).toFixed(1)}% APR for ${offer.termYears} years.`}]}};
 }

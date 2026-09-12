@@ -38,12 +38,12 @@ export function runEstatePlanningRegression(){
   function approx(actual:number,expected:number,tolerance:number,message:string){verify(Math.abs(actual-expected)<=tolerance,`${message} (expected ${expected}±${tolerance}, got ${actual})`);}
 
   const fresh=createNewGame({seed:'estate-schema-fresh'});
-  verify(fresh.saveVersion===11&&SAVE_VERSION===11,'Phase 5A estate planning remains available on save schema 11');
+  verify(fresh.saveVersion===12&&SAVE_VERSION===12,'Phase 5A estate planning remains available under current save schema 12');
   verify(Array.isArray(fresh.inheritance.assetBequests)&&fresh.inheritance.assetBequests.length===0,'new lives initialize an empty specific-bequest list');
 
   const legacy=createNewGame({seed:'estate-schema-legacy'});legacy.saveVersion=9;const legacyCounter=legacy.rngCounter;delete legacy.inheritance.assetBequests;
   const migrated=migrateSave(legacy);
-  verify(migrated.saveVersion===11&&Array.isArray(migrated.inheritance.assetBequests),'existing v9 saves migrate deterministically while preserving estate-planning defaults');
+  verify(migrated.saveVersion===12&&Array.isArray(migrated.inheritance.assetBequests),'existing v9 saves migrate deterministically while preserving estate-planning defaults');
   verify(migrated.rngCounter===legacyCounter,'estate migration normalization does not consume player RNG');
 
   const minor=createNewGame({seed:'estate-minor'});const minorChild=child(minor,'minor-child','Mina',1);

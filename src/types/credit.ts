@@ -57,6 +57,8 @@ export interface CreditAccount {
   onTimePayments:number;
   latePayments:number;
   missedPayments:number;
+  autoPay?: boolean;
+  pastDueAmount?: Money;
 }
 
 export interface CreditHistorySummary {
