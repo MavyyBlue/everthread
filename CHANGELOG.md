@@ -1,6 +1,32 @@
 # Everthread Changelog
 
-## Phase 5D — Broader Family Topology candidate — 2026-09-11
+## Phase 5E — Dynasty Transition / End-of-Life Agency candidate — 2026-09-11
+
+### Added
+
+- Added read-only `DynastyTransitionSystem` projection over the existing EstateSystem and NPC biography/asset authorities. The death UI no longer performs or mirrors inheritance math independently.
+- Rebuilt the death flow into an intentional mobile sequence: completed-life review → estate outcome → successor selection → detailed successor inspection → explicit continuation confirmation.
+- Successor inspection now surfaces existing education/career, partner/children, health/happiness, fame/reputation, debt, own net worth, own property/businesses, projected inheritance, inherited named assets, and protected-minor trust timing.
+- Estate review now names forced-sale assets and explains whether each sale was caused by estate obligations or by fair division among heirs.
+- Added durable post-handoff timeline entries for estate obligations/forced sales, inherited named assets/trusts, and the value distributed to other family heirs.
+- Added `dynastyTransitionRegression.ts`, currently 63/63.
+
+### Changed
+
+- A descendant card no longer immediately switches protagonists. Selecting a child is read-only; a separate confirmation button performs the real `continueAsChild()` action.
+- Protagonist-switch confirmation explicitly disables ordinary delta-derived action VFX so cash/stress/relationship differences between two different people are not misrepresented as an action consequence.
+- Heir, successor, and forced-sale lists use 24-row progressive disclosure to keep extreme dynasty death screens bounded without deleting authoritative data.
+- Added the cross-phase architecture rule that material protagonist-facing consequences must be visible/understandable through gameplay surfaces and, where meaningful agency exists, presented before commitment from the same authoritative system that applies the result.
+- Save schema remains 10; no transition snapshot or second estate database was introduced.
+
+### Predeployment validation
+
+- Dynasty Transition: 63/63. Core 82/82; Estate Planning 46/46; Estate Administration 63/63; NPC Asset Ownership 82/82; Family Topology 40/40; Action VFX 46/46; Integrated Long-Life 105/105; every established dedicated regression remains green.
+- Both TypeScript gates pass. Production build passes at 145 transformed modules; existing >700 kB main-chunk warning remains nonblocking.
+- Twelve sequential reviewed handoffs with hundreds of background NPCs preserve 7,212 archived life-history entries, unique completed-life IDs, state invariants, and bounded linear historical-cast growth.
+- Run #97 / `8e5394d0488d1c760072590ffa5c06eadfdac9f6` remains the certified baseline pending GitHub reproduction of this candidate.
+
+## Phase 5D — Broader Family Topology — CI Green Run #97 — 2026-09-11
 
 ### Added
 
@@ -20,7 +46,7 @@
 - Family Topology: 40/40. Core 82/82; Action VFX 46/46; Timeline Scaling 11/11; NPC Asset Ownership 82/82; Integrated Long-Life 105/105; every established dedicated regression remains green.
 - Both TypeScript gates pass and production build passes at 144 transformed modules. Existing >700 kB main-chunk warning remains nonblocking.
 - Explicit large-dynasty benchmark: 1,082 starting NPCs arranged as 180 aunts/uncles + 900 cousins synchronized in ~4.5 ms locally; six simulated years completed in ~362 ms, normal autonomy grew the cast to 1,182, no extended relative was forced full-tier, and validation produced zero errors.
-- Run #96 / `3b58f04827ddc88a33c61b3cdf0d50f1e7584161` remains the certified baseline pending GitHub reproduction of this candidate.
+- GitHub Actions Run #97 reproduced canonical preflight 4/4, Family Topology 40/40, every established regression, the 144-module production build, certified artifact creation, and Pages deployment on expanded source `8e5394d0488d1c760072590ffa5c06eadfdac9f6`.
 
 ## Post-Run95 playtest hotfix — CI Green Run #96 — 2026-09-11
 

@@ -129,6 +129,20 @@ The six-deep `SpecialCareerWorldKind` is a lifecycle/story configuration type, n
 - People → Career Worlds should discover generic `special-*` organization affiliation rather than requiring path-specific People UI.
 - Promote a path into a broader shared type only when several systems genuinely need the same lifecycle contract; do not broaden a type solely for presentation convenience.
 
+## Player-visible systemic truth and agency
+
+Material protagonist-facing simulation must not live only in hidden state. Everthread may simulate large amounts of background world activity, but when a process substantially changes the player character's life, relationships, wealth, legal status, health, career, family, assets, inheritance, or future options, the player needs an appropriate gameplay surface that explains what happened.
+
+- Visibility and mechanical truth must share the same authority. UI previews/projectors read the owning system; they do not reimplement outcome math in components.
+- When the fiction supports meaningful player choice, show enough consequence/context before commitment for that choice to be intentional. Do not silently auto-resolve decisions that are supposed to belong to the protagonist.
+- After a major transition, preserve the important consequence in durable player-visible history (timeline/profile/asset/relationship state) so closing a modal does not erase understanding of what just happened.
+- Background NPC/world simulation may stay summarized for scale. The moment background activity materially touches the protagonist, surface the relevant result without dumping internal simulation noise.
+- Scale presentation with summaries, bounded windows, folders, progressive disclosure, and drill-down rather than deleting authoritative history or mounting every record at once.
+- Player-facing copy explains gameplay cause/effect, not implementation internals. Developer diagnostics stay in QA/handoff tooling.
+- Regressions for major systems should include parity checks where practical: what the player previewed/saw must match what the authoritative action ultimately applied.
+
+This rule is cross-phase. Credit/debt, crime/legal outcomes, health, careers, fame, relationships, family, estates, businesses, politics, and future systems all inherit it.
+
 ## Testing technique
 
 High-value regressions include deterministic state comparisons, same-age idempotence, final-period accrual before status change, exact offer terms, archive-without-delete behavior, explicit exit/re-entry, passive residual income without lifecycle resurrection, pause-aware career-year accounting, plausible event target pools, exact delayed-event target continuity, dead-target cancellation, bounded story queues, old-save compatibility, semantic interaction transcripts, read-only observation, exact-entity inspection, persistence isolation, and per-command invariant watches.

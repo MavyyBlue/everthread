@@ -57,7 +57,7 @@ Dedicated `npcAssetOwnershipRegression.ts` passes 82/82 across migration, RNG ne
 
 Post-Run95 leisure testing found two presentation-only defects: the timeline component memoized by an in-place-mutated array reference, and capped 0/100 relationship interactions could lose VFX despite semantic deltas. Run #96 fixed both and is CI Green on expanded commit `3b58f04827ddc88a33c61b3cdf0d50f1e7584161`; Action VFX is 46/46 and Timeline Scaling is 11/11.
 
-## Phase 5D — Broader family topology — predeployment candidate
+## Phase 5D — Broader family topology — CI Green
 
 Purpose: make large multi-generation families structurally truthful and legible without synthesizing filler relatives or turning every extended relative into an expensive fully simulated NPC.
 
@@ -72,8 +72,26 @@ Implementation rules:
 - Descendant continuation resynchronizes topology after protagonist handoff, so kin labels transform correctly across generations without a second family database.
 - Load repair enforces state invariants before topology derivation. Backfill is deterministic, consumes no gameplay RNG or runtime IDs, and requires no new persisted fields; save schema remains 10.
 
-Dedicated `familyTopologyRegression.ts` passes 40/40 locally. The full established regression wall remains green, both TypeScript gates pass, and production build transforms 144 modules. An explicit 1,082-NPC extended-family benchmark (180 aunts/uncles + 900 cousins) synchronized topology in ~4.5 ms locally and advanced six years in ~362 ms; normal autonomy grew the cast to 1,182 with zero validation errors and no automatic full-tier promotion of extended kin. Run #96 remains authoritative until GitHub reproduces this candidate.
+Dedicated `familyTopologyRegression.ts` passes 40/40. GitHub Actions Run #97 reproduced both TypeScript gates, the complete regression wall, the 144-module production build, certified artifact creation, and Pages deployment on expanded commit `8e5394d0488d1c760072590ffa5c06eadfdac9f6`. An explicit 1,082-NPC extended-family benchmark (180 aunts/uncles + 900 cousins) synchronized topology in ~4.5 ms locally and advanced six years in ~362 ms; normal autonomy grew the cast to 1,182 with zero validation errors and no automatic full-tier promotion of extended kin. Phase 5D is CI Green.
 
-## Next after Phase 5D
+## Phase 5E — Dynasty transition / end-of-life agency — predeployment candidate
 
-Phase 5E should perform dynasty-scale validation and strengthen death → estate review → descendant continuation UX without creating a second estate or family truth. Multi-household custody/guardianship expansion remains deferred until a concrete gameplay need justifies additional persisted state.
+Purpose: make death, estate settlement, and descendant continuation a visible player decision while proving the existing generation/estate architecture remains sustainable across long dynasties.
+
+Implementation rules:
+
+- `DynastyTransitionSystem` is a read-only projection layer over `EstateSystem`, NPC life state, and NPC asset ownership. It never computes a second inheritance outcome, consumes no RNG/runtime IDs, and mutates no save state.
+- The death screen presents final-life context, gross estate, family distributable value, debt, administration, settlement levy, heirs, protected minor trusts, and named forced sales. Forced sales identify the actual asset and distinguish obligation-driven liquidation from fairness/division liquidation.
+- Successor choice is deliberately two-step: select a living child, inspect the life already in progress, then explicitly confirm continuation. The preview exposes age/location, education, career, partner/children, health/happiness, public life, existing debt, personal net worth, personally owned property/businesses, projected inheritance, inherited assets, and trust timing.
+- Successor review must match actual continuation. Regression captures the projected inheritance/asset allocation and proves the confirmed descendant receives that same EstateSystem result.
+- A protagonist switch explicitly suppresses ordinary before/after action-VFX derivation because cash/stress/relationship differences belong to two different people and are not an action consequence.
+- Estate consequences persist beyond the death overlay: the new protagonist timeline records the generation handoff, settlement obligations/forced sales when present, inherited named assets/trust holdings, and value distributed to other family heirs.
+- Large heir/successor/forced-sale lists are progressively revealed in bounded 24-row chunks so an extreme dynasty does not mount hundreds of decision cards at once. The authoritative estate/successor set remains complete.
+- No new persisted fields are required; save schema remains 10.
+- `dynastyTransitionRegression.ts` currently passes 63/63, including read-only preview/RNG neutrality, written-plan visibility, adult/minor successor context, named forced-sale reasons, preview→continuation parity, post-transition history, and 12 sequential reviewed handoffs with hundreds of background NPCs and 7,212 archived life-history entries.
+
+Run #97 remains authoritative until GitHub reproduces the final Phase 5E candidate.
+
+## Next after Phase 5E
+
+Phase 6 should deepen credit/debt (vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences) while following the global player-visible-system rule in `ARCHITECTURE_AND_TECHNIQUES.md`: material consequences that affect the protagonist must be inspectable and understandable through gameplay surfaces rather than existing only as silent state changes. Multi-household custody/guardianship expansion remains deferred until a concrete gameplay need justifies additional persisted state.

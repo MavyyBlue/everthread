@@ -8,39 +8,39 @@ Current save schema: `10`
 
 ## Last fully verified repository baseline
 
-The latest fully green repository baseline is commit `3b58f04827ddc88a33c61b3cdf0d50f1e7584161` from GitHub Actions Run #96 (`34650754939`).
+The latest fully green repository baseline is expanded source commit `8e5394d0488d1c760072590ffa5c06eadfdac9f6` from GitHub Actions Run #97 (`34673567914`).
 
-- Phase 5C Persistent NPC Asset Ownership remains CI Green on save schema 10.
-- The post-Run95 leisure-test hotfix is also CI Green: Life → Your Story refreshes immediately after Age Up, and relationship VFX still represents real positive/negative interaction effects when stored affinity is clamped at 0/100.
-- NPC Asset Ownership: 82/82. Timeline Scaling: 11/11. Action VFX: 46/46. Core: 82/82. Estate Planning: 46/46. Estate Administration: 63/63. Family Continuity: 18/18. Integrated Long-Life: 105/105. Every established dedicated regression remained green.
-- Both TypeScript gates and production build passed on Node 22.23.2/Linux x64; production build transformed 142 modules.
-- Certified preflight artifact: `10283497272`, artifact SHA-256 `0a3bf7da9f0160bc1a79d7cb80e0fe55883d8d9873c8d7eee10ff524d4693f3f`.
-- Certified source SHA-256: `a1995ea897df5db5da6d8f04d80e9305e8a71567ca0d9d59ca15188925a9bd16`.
-- Certified dependency SHA-256: `a90a3448fbbb8fd202e69225e067247a178b646248fdfb5948d8e8006f346581`.
+- Phase 5D Broader Family Topology is CI Green on save schema 10.
+- Family Topology: 40/40. NPC Asset Ownership: 82/82. Timeline Scaling: 11/11. Action VFX: 46/46. Core: 82/82. Estate Planning: 46/46. Estate Administration: 63/63. Family Continuity: 18/18. Integrated Long-Life: 105/105. Every established dedicated regression remained green.
+- Both TypeScript gates and production build passed on Node 22.23.2/Linux x64; production build transformed 144 modules.
+- Certified preflight artifact: `10291073451`, artifact SHA-256 `d5fb375ef4c568f0f929ead72aa003576a0ae00d358e719051a82e7c33f33be2`.
+- Certified source SHA-256: `166107dc54af11a6444205cad7186f313a6cd099de438b42a0142a990e62bbb3`.
+- Certified dependency SHA-256: `f43693f02b601faa1778e835fbc7dd4633ad1da19a6a2f19f836f66ed3910740`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
 - Pages deployment passed. The existing >700 kB main-chunk warning remains nonblocking.
 
-### Current predeployment candidate — Phase 5D broader family topology
+### Current predeployment candidate — Phase 5E dynasty transition / end-of-life agency
 
-Phase 5D is deliberately topology-first rather than population-first. It makes existing family structure more truthful and useful without spawning filler relatives or promoting an entire extended dynasty into expensive full-detail simulation.
+Phase 5E makes death and generational continuation a visible player decision instead of a one-tap state transfer, while keeping EstateSystem/NPC state as the only mechanical authorities.
 
-- New `FamilyTopologySystem` derives player-facing kinship from the existing parent/child/partner graph with indexed parent/child maps rather than pairwise NPC comparison. It materializes parent/child, grandparent/grandchild, full/half/step siblings, stepparents, aunt/uncle, cousin, and niece/nephew relationships deterministically.
-- Aunt/uncle and cousin are now first-class relationship types throughout People/Threadspace, generic family event targeting, delayed family-favor continuity, special-career family targeting, and descendant continuation. Human-readable UI labels use `aunt / uncle` and `niece / nephew`.
-- Extended kin are intentionally **not** automatic full-simulation family. Low-affinity aunts/uncles/cousins remain background-tier and do not automatically flood the Life timeline; the existing meaningful-relationship threshold can still promote an individually close relative naturally.
-- Extended-family births can become structurally visible without automatically becoming full-tier or guaranteed player timeline entries. No relatives are spawned merely to fill the topology.
-- Topology synchronization is RNG-neutral and runtime-ID-neutral, idempotent, preserves affinity/compatibility, and does not rewrite active or historical romantic relationship types. Save loading repairs invariants before deriving topology.
-- Descendant continuation resynchronizes topology so relationships reclassify correctly across generations (for example, the previous protagonist's sibling becomes the new protagonist's aunt/uncle and that person's child becomes a cousin).
-- Save schema stays 10 because all new kinship is derivable from already-persisted family graph truth. Existing schema-10 saves backfill deterministically on load.
-- Dedicated Family Topology regression is 40/40 locally. Both TypeScript gates, the complete regression wall, and production build pass; production build transforms 144 modules.
-- Explicit large-dynasty benchmark: 1,082 starting NPCs arranged as a real extended family graph (180 aunts/uncles + 900 cousins) synchronized in ~4.5 ms locally; six simulated years completed in ~362 ms, normal autonomy grew the cast to 1,182, zero extended kin were forced full-tier, and validation reported zero errors.
-- Run #96 / `3b58f04827ddc88a33c61b3cdf0d50f1e7584161` remains the certified baseline until GitHub reproduces Phase 5D. Phase 5E must not begin before that verification.
+- New `DynastyTransitionSystem` is a read-only projection over the existing estate plan plus the living children's real NPC biographies/assets. It consumes no gameplay RNG/runtime IDs and writes no transition state.
+- Death UI now shows final-life context and the actual estate outcome: gross estate, family distributable value, debt, administration, fictional levy, heir shares, minor trusts, retained assets, and named forced-sale reasons.
+- Successor choice is two-step. Selecting a child only opens a review; confirmation performs `continueAsChild()`. The review exposes education, career, partner/children, health/happiness, fame/reputation, personal debt/net worth, personal holdings, projected inheritance, inherited assets, and protected-trust timing.
+- Preview/continuation parity is an explicit regression contract: the inheritance/assets shown before selection must be the same authority applied after confirmation.
+- Confirmed protagonist switches explicitly disable ordinary derived action VFX because cross-protagonist cash/stress/relationship differences are not player-action deltas.
+- Estate consequences survive the modal transition through new-protagonist timeline entries covering settlement obligations/forced sales, inherited named assets/trusts, and value distributed to other family heirs.
+- Extreme estate/heir/successor lists use progressive 24-row disclosure rather than mounting an unbounded decision DOM.
+- Save schema remains 10; no second estate/family database or persisted transition snapshot is introduced.
+- Dynasty Transition regression is currently 63/63 locally. The complete established wall remains green, both TypeScript gates pass, and production build transforms 145 modules.
+- Dynasty-scale proof includes 12 sequential reviewed handoffs over hundreds of NPCs with 7,212 archived life-history entries plus a 120-living-child projection fixture; history remains complete and cast growth stays linearly bounded.
+- Run #97 remains authoritative until GitHub reproduces the exact Phase 5E candidate. Phase 6 must not begin before that verification.
 
 ## Green systems immediately relevant to current work
 
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
 - Phase 5B estate administration is CI Green in Run #92: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress are now baseline behavior.
-- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, and Phase 5C NPC-owned assets/businesses are CI Green on save schema 10. The current candidate is Phase 5D broader family topology, built on that exact certified source.
+- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, Phase 5C NPC-owned assets/businesses, and Phase 5D broader family topology are CI Green on save schema 10. The current candidate is Phase 5E dynasty transition, built on the exact Run #97 certified source.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.

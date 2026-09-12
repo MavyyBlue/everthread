@@ -21,6 +21,7 @@ It is not player-facing documentation. It is the continuity layer for developmen
 - Never replace a working subsystem with a shortcut just to make a new feature easier.
 - One authoritative `GameState`; critical mutations happen through systems/engine actions, not directly in React UI.
 - Save compatibility, deterministic simulation, action-economy limits, mobile UX, and regression coverage are part of the feature.
+- Material protagonist-facing consequences must be visible and understandable through gameplay surfaces; when meaningful agency exists, the player should see enough context before committing, using the same system authority that applies the result.
 - A phase is not “green” until the dependency-backed GitHub Actions run passes type checks, regressions, production build, and Pages deployment.
 - Every meaningful phase bundle must update this handoff folder in the same deployment so documentation does not drift behind code.
 - If this folder disagrees with the current repository, inspect the repository and repair the handoff rather than trusting stale notes.

@@ -7,6 +7,10 @@ Source of truth: executable definitions under `src/data/`; use `npm run content:
 
 No executable content-database counts change in Phase 5D. Aunt/uncle/cousin support is a derived family-topology integration over existing NPC graph truth and existing family-event libraries, not duplicate content inflation. Generic family events and relevant special-career selectors can now target extended kin where their existing semantics permit it.
 
+## Phase 5E systems note
+
+No executable content-database counts change in Phase 5E. The update strengthens the player-visible death/estate/descendant transition using existing life history, estate rules, NPC biographies, assets, trusts, and family state. Forced-sale explanations and successor previews are projections of authoritative systems rather than duplicate event/content rows.
+
 ## Current counts
 
 | Content family | Current | Production target | Status |
