@@ -1,6 +1,6 @@
 # Everthread — Content Inventory
 
-Last audited: 2026-09-11  
+Last audited: 2026-09-12  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
 ## Phase 5D systems note
@@ -10,6 +10,10 @@ No executable content-database counts change in Phase 5D. Aunt/uncle/cousin supp
 ## Phase 5E systems note
 
 No executable content-database counts change in Phase 5E. The update strengthens the player-visible death/estate/descendant transition using existing life history, estate rules, NPC biographies, assets, trusts, and family state. Forced-sale explanations and successor previews are projections of authoritative systems rather than duplicate event/content rows.
+
+## Phase 6A systems/content note
+
+The executable life-event/career/etc. content counts remain unchanged. Phase 6A adds a separate data-driven credit marketplace with **6 fictional institutions / 6 card products**; these are finance-system definitions rather than life-event rows and should not be counted as artificial event-library growth. Products vary by age, secured-deposit requirement, credit/income/history thresholds, line ranges, APR, and fees.
 
 ## Current counts
 

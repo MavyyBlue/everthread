@@ -2,6 +2,7 @@ import { countryById } from '../data/countries';
 import type { GameState, Loan } from '../types/game';
 import { clamp, roundMoney } from '../core/math';
 import { makeStateId } from '../core/ids';
+import { creditCardDebt, dischargeCreditForBankruptcy, processAnnualCredit, recordCreditDerogatory, securedCreditDeposits } from './CreditSystem';
 
 export interface WealthBreakdown {
   cash:number;
@@ -14,6 +15,8 @@ export interface WealthBreakdown {
   investmentGain:number;
   businesses:number;
   mortgageDebt:number;
+  securedCreditDeposits:number;
+  creditCardDebt:number;
   otherLiabilities:number;
   liabilities:number;
   netWorth:number;
@@ -28,7 +31,10 @@ export function wealthBreakdown(state:GameState):WealthBreakdown {
   const investments=state.investments.positions.reduce((sum,position)=>sum+position.units*(state.investments.prices[position.securityId]??0),0);
   const investmentCostBasis=state.investments.positions.reduce((sum,position)=>sum+position.units*position.averageCost,0);
   const businesses=state.businesses.reduce((sum,business)=>sum+(business.bankrupt?0:business.valuation),0);
-  const liabilities=state.finances.liabilities.reduce((sum,loan)=>sum+loan.balance,0);
+  const loanLiabilities=state.finances.liabilities.reduce((sum,loan)=>sum+loan.balance,0);
+  const revolvingDebt=creditCardDebt(state);
+  const deposits=securedCreditDeposits(state);
+  const liabilities=loanLiabilities+revolvingDebt;
   const otherLiabilities=Math.max(0,liabilities-propertyDebt);
   const cash=state.finances.cash;
   return {
@@ -41,16 +47,18 @@ export function wealthBreakdown(state:GameState):WealthBreakdown {
     investmentCostBasis,
     investmentGain:investments-investmentCostBasis,
     businesses,
+    securedCreditDeposits:deposits,
+    creditCardDebt:revolvingDebt,
     mortgageDebt:propertyDebt,
     otherLiabilities,
     liabilities,
-    netWorth:roundMoney(cash+propertyGross+vehicles+collectibles+investments+businesses-liabilities),
+    netWorth:roundMoney(cash+deposits+propertyGross+vehicles+collectibles+investments+businesses-liabilities),
   };
 }
 
 export function assetValue(state:GameState) {
   const breakdown=wealthBreakdown(state);
-  return breakdown.propertyGross+breakdown.vehicles+breakdown.collectibles+breakdown.investments+breakdown.businesses;
+  return breakdown.securedCreditDeposits+breakdown.propertyGross+breakdown.vehicles+breakdown.collectibles+breakdown.investments+breakdown.businesses;
 }
 export function liabilityValue(state:GameState){return wealthBreakdown(state).liabilities;}
 export function netWorth(state:GameState){return wealthBreakdown(state).netWorth;}
@@ -103,6 +111,7 @@ function forecloseProperty(state:GameState){
   state.finances.liabilities=state.finances.liabilities.filter(l=>l.id!==loan.id);
   state.finances.cash+=residual;
   state.flags.foreclosures=Number(state.flags.foreclosures??0)+1;
+  recordCreditDerogatory(state,'foreclosure',80,`Foreclosure on ${property.name}.`);
   state.flags.mortgageMisses=0;
   state.character.stats.happiness=clamp(state.character.stats.happiness-12);
   state.character.secondary.reputation=clamp(state.character.secondary.reputation-5);
@@ -112,12 +121,15 @@ function forecloseProperty(state:GameState){
 
 function declareBankruptcy(state:GameState){
   const personal=state.finances.liabilities.filter(l=>l.kind==='personal');
-  if(!personal.length)return false;
-  const discharged=personal.reduce((sum,l)=>sum+l.balance,0);
+  const revolving=creditCardDebt(state);
+  if(!personal.length&&revolving<=0)return false;
+  const personalDischarged=personal.reduce((sum,l)=>sum+l.balance,0);
   state.finances.liabilities=state.finances.liabilities.filter(l=>l.kind!=='personal');
+  const revolvingDischarged=dischargeCreditForBankruptcy(state);const discharged=personalDischarged+revolvingDischarged;
   state.finances.cash=Math.max(0,state.finances.cash);
   state.flags.bankruptcies=Number(state.flags.bankruptcies??0)+1;
   state.flags.lastBankruptcyAge=state.character.age;
+  recordCreditDerogatory(state,'bankruptcy',100,'Bankruptcy discharged unsecured debt.');
   state.flags.cashShortfallYears=0;
   state.character.stats.happiness=clamp(state.character.stats.happiness-14);
   state.character.secondary.reputation=clamp(state.character.secondary.reputation-12);
@@ -190,10 +202,11 @@ export function processAnnualFinance(state:GameState) {
     loan.balance=Math.max(0,loan.balance+interest-payment);loan.remainingYears=Math.max(0,loan.remainingYears-1);debtPayments+=payment;
   }
   state.finances.liabilities=state.finances.liabilities.filter(l=>l.balance>.5);
-  const expenses=baseline+lifestyleCosts+childCosts+petCosts+propertyCosts+vehicleCosts+debtPayments+taxes;
+  const cashExpenses=baseline+lifestyleCosts+childCosts+petCosts+propertyCosts+vehicleCosts+debtPayments+taxes;
   // Business distributions are credited by BusinessSystem before finance processing, so do not add them twice here.
-  state.finances.cash+=salary+partTimeIncome+specialIncome+rentalIncome-expenses;
+  state.finances.cash+=salary+partTimeIncome+specialIncome+rentalIncome-cashExpenses;
   handleCashShortfall(state,gross);
+  const creditCosts=processAnnualCredit(state);const expenses=cashExpenses+creditCosts.interest+creditCosts.fees;
   state.finances.annualIncome=gross;state.finances.annualExpenses=expenses;state.finances.taxesPaid=taxes;
   const investmentReturn=state.investments.positions.reduce((sum,pos)=>{const hist=state.investments.history[pos.securityId]??[];if(hist.length<2)return sum;return sum+pos.units*(hist.at(-1)!-hist.at(-2)!);},0);
   state.finances.lastYearSummary={income:gross,expenses:expenses-taxes,taxes,investmentReturn:roundMoney(investmentReturn),businessProfit:state.businesses.reduce((s,b)=>s+b.profit,0),netChange:gross-expenses};

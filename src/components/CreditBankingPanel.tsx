@@ -1,0 +1,78 @@
+import { useMemo, useState } from 'react';
+import type { EngineResult, GameState } from '../types/game';
+import { gameEngine } from '../stores/gameStore';
+import { creditInstitutionById } from '../data/creditInstitutions';
+import { creditAvailable, getCreditOffers, getCreditProfile } from '../systems/CreditSystem';
+import { exactMoney, formatMoney } from '../core/format';
+
+const money=(value:number)=>formatMoney(Math.max(0,value));
+const pct=(value:number)=>`${(value*100).toFixed(value*100%1?1:0)}%`;
+
+export function CreditBankingPanel({state,onResult,onClose}:{state:GameState;onResult:(result:EngineResult)=>void;onClose:()=>void}){
+  const hasAccounts=state.finances.credit.accounts.some(account=>account.status==='open');
+  const[tab,setTab]=useState<'overview'|'accounts'|'offers'|'history'>(hasAccounts?'overview':'offers');
+  const[selectedProductId,setSelectedProductId]=useState<string>();
+  const[selectedAccountId,setSelectedAccountId]=useState<string>();
+  const[amount,setAmount]=useState(50);
+  const profile=getCreditProfile(state);const offers=getCreditOffers(state);const selectedOffer=selectedProductId?offers.find(offer=>offer.product.id===selectedProductId):undefined;
+  const openAccounts=state.finances.credit.accounts.filter(account=>account.status==='open');const selectedAccount=selectedAccountId?openAccounts.find(account=>account.id===selectedAccountId):undefined;
+  const currentTransactions=useMemo(()=>state.finances.credit.transactions.filter(item=>item.year===state.currentYear).slice().reverse(),[state.finances.credit.transactions,state.currentYear]);
+  const olderTransactions=useMemo(()=>state.finances.credit.transactions.filter(item=>item.year!==state.currentYear).slice().reverse().slice(0,36),[state.finances.credit.transactions,state.currentYear]);
+  const apply=()=>{if(!selectedOffer)return;const result=gameEngine.applyForCreditCard(selectedOffer.product.id);onResult(result);if(result.success){setSelectedProductId(undefined);setTab('accounts');}};
+  const doPayment=()=>{if(!selectedAccount)return;const result=gameEngine.payCreditCard(selectedAccount.id,amount);onResult(result);};
+  const doPurchase=()=>{if(!selectedAccount)return;const result=gameEngine.chargeCreditCard(selectedAccount.id,amount);onResult(result);};
+  const doClose=()=>{if(!selectedAccount)return;const result=gameEngine.closeCreditCard(selectedAccount.id);onResult(result);if(result.success)setSelectedAccountId(undefined);};
+
+  return <div className="sheet-backdrop banking-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)onClose();}}>
+    <section className="bottom-sheet bottom-sheet--wide banking-sheet" role="dialog" aria-modal="true" aria-label="Credit and banking">
+      <header className="sheet-header"><span className="sheet-handle"/><h2>Credit & Banking</h2><button className="icon-button banking-close" onClick={onClose} aria-label="Close credit and banking">×</button></header>
+      <div className="sheet-body">
+        {selectedOffer?<ContractView state={state} offer={selectedOffer} onBack={()=>setSelectedProductId(undefined)} onApply={apply}/>:selectedAccount?<AccountView state={state} account={selectedAccount} amount={amount} setAmount={setAmount} onBack={()=>setSelectedAccountId(undefined)} onPayment={doPayment} onPurchase={doPurchase} onCloseAccount={doClose}/>:<>
+          <div className="segmented segmented--scroll banking-tabs">
+            <button className={tab==='overview'?'active':''} onClick={()=>setTab('overview')}>Overview</button>
+            <button className={tab==='accounts'?'active':''} onClick={()=>setTab('accounts')}>Accounts</button>
+            <button className={tab==='offers'?'active':''} onClick={()=>setTab('offers')}>Offers</button>
+            <button className={tab==='history'?'active':''} onClick={()=>setTab('history')}>History</button>
+          </div>
+          {tab==='overview'&&<Overview state={state} profile={profile}/>} 
+          {tab==='accounts'&&<Accounts state={state} onOpen={setSelectedAccountId}/>} 
+          {tab==='offers'&&<Offers offers={offers} onOpen={setSelectedProductId}/>} 
+          {tab==='history'&&<History state={state} current={currentTransactions} older={olderTransactions}/>} 
+        </>}
+      </div>
+    </section>
+  </div>;
+}
+
+function Overview({state,profile}:{state:GameState;profile:ReturnType<typeof getCreditProfile>}){
+  return <>
+    <section className="banking-score-card"><div><p className="eyebrow">Your credit</p><h3>{profile.rating}</h3><strong>{profile.score}</strong><small>Game credit score</small></div><div className="banking-score-meter"><span style={{width:`${Math.max(0,Math.min(100,(profile.score-300)/5.5))}%`}}/></div></section>
+    <div className="finance-grid banking-metrics"><div><small>Available credit</small><strong title={exactMoney(profile.availableCredit)}>{money(profile.availableCredit)}</strong></div><div><small>Total balance</small><strong title={exactMoney(profile.totalBalance)}>{money(profile.totalBalance)}</strong></div><div><small>Utilization</small><strong>{Math.round(profile.utilization)}%</strong></div><div><small>Recent inquiries</small><strong>{profile.recentInquiries}</strong></div><div><small>Payment reliability</small><strong>{Math.round(profile.paymentReliability)}%</strong></div><div><small>Oldest history</small><strong>{profile.oldestAccountYears} yr</strong></div></div>
+    <section className="action-card"><h3>What is affecting your credit</h3>{profile.factors.map((factor,index)=><p className="banking-factor" key={`${index}-${factor}`}>{factor}</p>)}</section>
+    {state.finances.credit.derogatories.length>0&&<section className="action-card"><h3>Major history</h3>{state.finances.credit.derogatories.slice(-8).reverse().map(item=><p className="history-line" key={item.id}><span>{item.summary}<small>Age {item.age} · {item.year}</small></span><strong>{item.kind.replaceAll('_',' ')}</strong></p>)}</section>}
+  </>;
+}
+
+function Accounts({state,onOpen}:{state:GameState;onOpen:(id:string)=>void}){
+  const open=state.finances.credit.accounts.filter(account=>account.status==='open');
+  return <><section className="hero-card banking-intro"><p className="eyebrow">Borrowing capacity</p><h2>{money(creditAvailable(state))} available</h2><p>Credit is borrowed money, not cash or net worth. Card balances become liabilities until you repay them.</p></section>{open.length?<div className="stack banking-account-list">{open.map(account=>{const institution=creditInstitutionById[account.institutionId]?.name??account.institutionId;const available=Math.max(0,account.creditLimit-account.balance);return <button className="banking-account-card" key={account.id} onClick={()=>onOpen(account.id)}><span><strong>{account.productName}</strong><small>{institution}</small><em>{money(account.balance)} balance · {money(available)} available</em></span><b>{pct(account.annualRate)} APR</b></button>})}</div>:<section className="hero-card banking-intro"><h2>No open credit accounts</h2><p>Visit Offers to compare starter and established-credit products.</p></section>}</>;
+}
+
+function Offers({offers,onOpen}:{offers:ReturnType<typeof getCreditOffers>;onOpen:(id:string)=>void}){
+  return <><section className="hero-card banking-intro"><p className="eyebrow">Marketplace</p><h2>Compare before you apply</h2><p>Browsing is harmless. A formal application creates a recent inquiry and can affect future underwriting.</p></section>{!offers.length&&<section className="action-card"><h3>No credit offers yet</h3><p className="muted">Starter credit products begin appearing at age 16.</p></section>}<div className="banking-offer-list">{offers.map(offer=><button className={`banking-offer-card ${offer.eligible?'eligible':'locked'}`} key={offer.product.id} onClick={()=>onOpen(offer.product.id)}><div><strong>{offer.institutionName}</strong><h3>{offer.product.name}</h3><small>{offer.statusLabel}</small></div><div className="banking-offer-metrics"><span><small>Starting line</small><strong>{money(offer.startingLimit)}</strong></span><span><small>APR</small><strong>{pct(offer.product.annualRate)}</strong></span><span><small>Deposit</small><strong>{offer.product.depositRequired?money(offer.product.depositRequired):'None'}</strong></span></div></button>)}</div></>;
+}
+
+function ContractView({state,offer,onBack,onApply}:{state:GameState;offer:ReturnType<typeof getCreditOffers>[number];onBack:()=>void;onApply:()=>void}){
+  const product=offer.product;const institution=creditInstitutionById[product.institutionId];
+  return <><button className="banking-back-button" onClick={onBack}>← Back to offers</button><section className="hero-card banking-contract"><p className="eyebrow">Credit agreement</p><h2>{institution?.name}</h2><h3>{product.name}</h3><p>{institution?.description}</p></section><div className="finance-grid banking-contract-grid"><div><small>Starting credit line</small><strong>{money(offer.startingLimit)}</strong></div><div><small>Purchase APR</small><strong>{pct(product.annualRate)}</strong></div><div><small>Annual fee</small><strong>{product.annualFee?money(product.annualFee):'None'}</strong></div><div><small>Late fee</small><strong>{money(product.lateFee)}</strong></div><div><small>Security deposit</small><strong>{product.depositRequired?money(product.depositRequired):'None'}</strong></div><div><small>Minimum payment</small><strong>5% or 25</strong></div></div><section className="action-card"><h3>Underwriting</h3><p className={offer.eligible?'banking-approved':'banking-declined'}>{offer.eligible?'You currently meet this product’s visible requirements. Final acceptance creates a formal inquiry.':offer.reason}</p>{product.depositRequired>0&&<p className="muted">A secured deposit is refundable and remains part of your net worth while the account is open.</p>}</section><button className="full-button" disabled={!offer.eligible||state.character.age<product.minAge} onClick={onApply}>{offer.eligible?'Accept & apply':'Requirements not met'}</button></>;
+}
+
+function AccountView({state,account,amount,setAmount,onBack,onPayment,onPurchase,onCloseAccount}:{state:GameState;account:GameState['finances']['credit']['accounts'][number];amount:number;setAmount:(value:number)=>void;onBack:()=>void;onPayment:()=>void;onPurchase:()=>void;onCloseAccount:()=>void}){
+  const institution=creditInstitutionById[account.institutionId];const available=Math.max(0,account.creditLimit-account.balance);
+  return <><button className="banking-back-button" onClick={onBack}>← Back to accounts</button><section className="hero-card banking-contract"><p className="eyebrow">{institution?.name}</p><h2>{account.productName}</h2><div className="banking-account-balance"><strong>{money(account.balance)}</strong><small>of {money(account.creditLimit)} used</small></div></section><div className="finance-grid banking-contract-grid"><div><small>Available</small><strong>{money(available)}</strong></div><div><small>APR</small><strong>{pct(account.annualRate)}</strong></div><div><small>Statement balance</small><strong>{money(account.statementBalance)}</strong></div><div><small>Minimum due</small><strong>{money(account.minimumDue)}</strong></div><div><small>Paid toward statement</small><strong>{money(account.paymentsTowardStatement)}</strong></div><div><small>Secured deposit</small><strong>{account.securedDeposit?money(account.securedDeposit):'None'}</strong></div></div><label className="form-field banking-amount"><span>Amount</span><input type="number" min="1" step="25" value={amount} onChange={event=>setAmount(Number(event.target.value)||0)}/></label><div className="button-row"><button disabled={amount<=0||amount>available} onClick={onPurchase}>Charge purchase</button><button disabled={amount<=0||account.balance<=0||state.finances.cash<=0} onClick={onPayment}>Pay from cash</button></div><p className="muted banking-note">Representative card purchases are discretionary spending. Pay at least the minimum due before aging up to protect payment history.</p><button className="secondary-button danger-soft banking-close-account" disabled={account.balance>.5} onClick={onCloseAccount}>Close account{account.balance>.5?' (pay balance first)':''}</button></>;
+}
+
+function History({state,current,older}:{state:GameState;current:GameState['finances']['credit']['transactions'];older:GameState['finances']['credit']['transactions']}){
+  const render=(items:typeof current)=>items.map(item=>{const account=state.finances.credit.accounts.find(candidate=>candidate.id===item.accountId);return <p className="history-line" key={item.id}><span>{item.description}<small>{account?.productName??'Credit account'} · age {item.age}</small></span><strong className={item.kind==='payment'||item.kind==='deposit_refund'?'banking-positive':''}>{item.kind==='payment'||item.kind==='deposit_refund'?'-':'+'}{money(item.amount)}</strong></p>});
+  return <><section className="action-card"><p className="eyebrow">{state.currentYear}</p><h2>Transactions this year</h2>{current.length?render(current):<p className="muted">No credit transactions have posted this year.</p>}</section>{older.length>0&&<section className="action-card"><h3>Recent prior activity</h3>{render(older)}</section>}<section className="action-card"><h3>Applications</h3>{state.finances.credit.inquiries.length?state.finances.credit.inquiries.slice(-12).reverse().map(item=><p className="history-line" key={item.id}><span>{creditInstitutionById[item.institutionId]?.name??item.institutionId}<small>Age {item.age} · {item.year}</small></span><strong>{item.outcome}</strong></p>):<p className="muted">No formal credit applications yet.</p>}</section></>;
+}

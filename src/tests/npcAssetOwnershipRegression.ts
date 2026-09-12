@@ -41,18 +41,18 @@ export function runNpcAssetOwnershipRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`NPC asset ownership regression failed: ${message}`);}
 
   const fresh=createNewGame({seed:'npc-assets-schema-fresh'});
-  verify(fresh.saveVersion===10&&SAVE_VERSION===10,'new lives and save service use schema 10');
+  verify(fresh.saveVersion===11&&SAVE_VERSION===11,'new lives and save service use schema 11');
   verify(Object.values(fresh.npcs).every(npc=>Boolean(npc.assetPortfolio)),'fresh persistent NPCs initialize an asset portfolio');
 
   const legacy=createNewGame({seed:'npc-assets-v9-migration'});const legacyNpc=npcFixture(legacy,'legacy-owner',44);legacyNpc.life!.finance.propertyValue=180000;legacyNpc.life!.finance.debt=72000;delete legacyNpc.assetPortfolio;legacy.saveVersion=9;const legacyCounter=legacy.rngCounter;
   const migrated=migrateSave(legacy);const migratedNpc=migrated.npcs[legacyNpc.id]!;const migratedPortfolio=migratedNpc.assetPortfolio!;
-  verify(migrated.saveVersion===10,'v9 saves migrate to schema 10');
+  verify(migrated.saveVersion===11,'v9 saves migrate to schema 11');
   verify(migrated.rngCounter===legacyCounter,'v9 asset migration consumes no player RNG');
   verify(migratedPortfolio.properties.length===1&&migratedPortfolio.businesses.length===0,'legacy aggregate property becomes one lean explicit holding without inventing a business');
   verify(migratedPortfolio.properties[0]!.id===`npc-property-legacy-${legacyNpc.id}`,'legacy property receives a deterministic stable id');
   verify(migratedPortfolio.properties[0]!.marketValue===180000&&migratedPortfolio.properties[0]!.mortgageBalance===72000,'legacy property value and compatible debt are preserved');
   verify(migratedNpc.life!.finance.propertyValue===180000,'legacy property projection still matches the explicit portfolio');
-  const remigrated=migrateSave(migrated);verify(JSON.stringify(remigrated.npcs[legacyNpc.id]!.assetPortfolio)===JSON.stringify(migratedPortfolio),'schema 10 migration is idempotent for explicit NPC holdings');
+  const remigrated=migrateSave(migrated);verify(JSON.stringify(remigrated.npcs[legacyNpc.id]!.assetPortfolio)===JSON.stringify(migratedPortfolio),'schema 11 migration is idempotent for explicit NPC holdings');
 
   const oldTrust=createNewGame({seed:'npc-assets-old-trust'});const trustNpc=npcFixture(oldTrust,'old-trust-heir',16);trustNpc.inheritanceTrust={releaseAge:18,value:12345};oldTrust.saveVersion=9;const migratedTrust=migrateSave(oldTrust).npcs[trustNpc.id]!.inheritanceTrust!;
   verify(migratedTrust.liquidValue===12345,'legacy value-only NPC inheritance trust migrates as liquid value');

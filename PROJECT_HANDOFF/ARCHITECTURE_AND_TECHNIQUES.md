@@ -8,7 +8,7 @@ The test-only AI interaction layer follows the same ownership direction: semanti
 
 ## Determinism, saves, and yearly processors
 
-Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current save schema remains 9; bounded primitive additions to existing flags/special-career tracks do not by themselves justify schema 10.
+Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current certified save schema is 10; Phase 6A intentionally advances the predeployment candidate to schema 11 because revolving credit introduces persisted account/history state. Schema increments are justified by new durable authority, not by presentation-only projections or bounded primitive flags.
 
 Real player saves are diagnostic evidence only. Generalize the failure shape into fabricated deterministic regression fixtures; never ship a tester's seed, IDs, NPCs, or history.
 
@@ -142,6 +142,15 @@ Material protagonist-facing simulation must not live only in hidden state. Evert
 - Regressions for major systems should include parity checks where practical: what the player previewed/saw must match what the authoritative action ultimately applied.
 
 This rule is cross-phase. Credit/debt, crime/legal outcomes, health, careers, fame, relationships, family, estates, businesses, politics, and future systems all inherit it.
+
+### Credit/debt ownership rules
+
+- Cash is owned liquid money. Available credit is unused borrowing capacity. Never merge them into one spendable-wealth or net-worth figure.
+- `CreditSystem` is the reusable revolving-credit/creditworthiness authority. Vehicle, mortgage, personal-loan, rental, or future business underwriting should consume its profile/history rather than implement independent credit scores.
+- Offer browsing/prequalification is read-only. Formal applications may create bounded inquiries and must expose understandable approval/decline reasoning.
+- Signed contract terms shown to the player must come from the same product/quote data that the authoritative liability uses.
+- Refundable secured-card deposits remain represented assets while held; revolving balances are liabilities and must participate in net worth, bankruptcy/default handling, and estate settlement.
+- Store bounded recent transactions plus compact long-term summaries. Do not preserve decades of redundant monthly rows merely to derive payment history.
 
 ## Testing technique
 

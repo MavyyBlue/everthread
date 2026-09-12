@@ -2,9 +2,9 @@
 
 This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
 
-## Current macro phase — Phase 5: Generations / Estates
+## Current macro phase — Phase 6: Credit / Debt
 
-Phase 4 is closed. People Threadspace and the post-Run-74 corrective closeout are green, Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #97 is the latest certified source baseline. Phase 5 extends the existing estate/descendant foundation without replacing its anti-duplication, trust, or family-continuity rules.
+Phase 4 and Phase 5 are closed. People Threadspace and the post-Run-74 corrective closeout are green, Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #98 (`5aa1c4338be4edc934b867f4e5a710d0e116aaa2`) is the latest certified source baseline. Phase 6 deepens credit/debt while consuming the existing Finance/Asset/Estate authorities rather than replacing them.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -113,19 +113,25 @@ After 4H is green, Phase 4 closes again. Do not add another planned Phase 4 poli
 
 ## Phase 5 — Generations / Estates
 
-**Current. Build on the green descendant/estate foundation; do not replace it.**
+**Closed. Preserve these guarantees while later finance/debt systems interact with estates and descendants.**
 
 1. **Phase 5A — Estate planning + family continuity foundation:** green. Asset-specific property/business/collectible bequests, spouse/child residuary shares, debt-first settlement, protected minor trusts, widowhood cleanup, and descendant handoff are implemented. Estate Planning remains 46/46 and Family Continuity 18/18.
 2. **Phase 5B — Fictional estate administration + settlement levy:** green; verified by Run #92. Country-sensitive fictional settlement profiles add protected administration allowances, capped administration costs, levy allowances/rates, one-authority obligation settlement, preview UI, specific-bequest protection, and multi-generation anti-duplication stress coverage.
 3. **Phase 5C — Richer NPC-owned assets/businesses:** green; verified by Run #95. Meaningful NPCs carry bounded, individually addressable property/business portfolios; player↔NPC and NPC↔NPC estate transfer preserves retained assets and mortgages exactly once; descendant continuation carries the selected NPC's own holdings into playable state. Save schema is 10 with deterministic v9 migration. NPC Asset Ownership is 82/82. Run #96 subsequently certified the immediate timeline-reactivity and capped relationship-VFX hotfix, bringing deployed Timeline Scaling to 11/11 and Action VFX to 46/46 on expanded baseline `3b58f04827ddc88a33c61b3cdf0d50f1e7584161`.
 4. **Phase 5D — Broader family topology:** green; verified by Run #97 on expanded baseline `8e5394d0488d1c760072590ffa5c06eadfdac9f6`. Aunt/uncle/cousin and the established close-family taxonomy derive from authoritative parent/child truth with indexed topology; People/Threadspace/events/continuation consume it; extended kin stay background-tier unless individually meaningful. Family Topology is 40/40 and the 1,082-NPC real-family benchmark remained bounded and state-valid.
-5. **Phase 5E — Dynasty-scale validation + death/estate continuation flow:** current predeployment candidate. Death now becomes an intentional life-review → estate-outcome → inspect-successor → confirm-continuation flow. `DynastyTransitionSystem` projects the existing Estate/NPC truths read-only; named forced-sale reasons, heir allocations, successor biography/assets/debt/trust context, bounded large-list presentation, and post-handoff timeline consequences keep the transition visible without creating a second settlement authority. Dynasty Transition is 59/59 locally; save schema remains 10.
+5. **Phase 5E — Dynasty-scale validation + death/estate continuation flow:** green; verified by Run #98 on expanded baseline `5aa1c4338be4edc934b867f4e5a710d0e116aaa2`. Death is an intentional life-review → estate-outcome → inspect-successor → confirm-continuation flow. `DynastyTransitionSystem` projects existing Estate/NPC truth read-only; preview→continuation parity, named forced-sale reasons, bounded large-list presentation, and durable handoff consequences are regression-protected. Dynasty Transition is 63/63; Phase 5 is closed on schema 10.
 
 Existing three-/eight-generation regression behavior, specific-bequest guarantees, protected minor inheritance, and estate anti-duplication rules are compatibility requirements for every later Phase 5 slice.
 
 ## Phase 6 — Credit / debt
 
-Planned: vehicle financing, repossession, creditworthiness/history, personal-loan UI, voluntary bankruptcy, longer recovery consequences, and hardship events.
+**Current. Credit/debt must remain a visible player system and one accounting authority, not a collection of purchase-screen shortcuts.**
+
+1. **Phase 6A — Credit & Banking Foundation:** current predeployment candidate. Save schema 11 adds bounded revolving-credit state, six fictional institutions/products, age-16 secured starter cards, deterministic underwriting/inquiries, visible contract terms, payments/statements/interest/fees, refundable deposits, transaction history, derived creditworthiness, evolving offers, bankruptcy/estate integration, and the Life-page Cash + Credit Available / Credit & Banking surfaces. Credit & Banking is 74/74 locally; every established regression remains green.
+2. **Phase 6B — Asset financing:** next after 6A CI Green. Add **Buy Outright** and **Finance** paths for eligible vehicles/homes, consuming the same CreditSystem profile/history. Financing must show lender terms before commitment, perform real underwriting, create authoritative installment/mortgage liabilities, preserve down payments/equity, and support delinquency/repo/foreclosure consequences without duplicating credit math.
+3. **Phase 6C — Personal borrowing + recovery:** after asset financing. Add personal-loan offers where useful, voluntary bankruptcy/player decision flow, longer recovery/derogatory consequences, hardship events, and recovery pathways. Existing automatic severe-insolvency protection remains compatible until intentionally replaced/extended.
+
+Compatibility requirements: Credit Available is never cash/net worth; browsing offers never rerolls outcomes or creates inquiries; formal applications are bounded; signed terms remain inspectable; secured deposits stay represented value; liabilities survive into estate settlement; history storage stays bounded; and material approvals/declines/delinquency/default consequences remain player-visible.
 
 ## Phase 7 — Persistent world consequences
 

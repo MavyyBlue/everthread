@@ -31,3 +31,5 @@ It is not player-facing documentation. It is the continuity layer for developmen
 A new chat should begin by reading this folder and the root project tracking files, then inspecting the exact source files named in `CURRENT_STATE.md`. Do not ask Mavyy to repeat already documented decisions. Continue from the recorded “Next implementation” section unless Mavyy changes direction.
 
 Everthread is built as one interconnected simulation, not a collection of isolated feature pages.
+
+- `PHASE6_CREDIT_DEBT.md` — active Phase 6 credit/debt architecture, 6A banking foundation, and financing/recovery sequence.

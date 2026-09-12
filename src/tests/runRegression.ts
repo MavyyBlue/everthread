@@ -40,6 +40,7 @@ import { runNpcAssetOwnershipRegression } from './npcAssetOwnershipRegression';
 import { runTimelineScalingRegression } from './timelineScalingRegression';
 import { runFamilyTopologyRegression } from './familyTopologyRegression';
 import { runDynastyTransitionRegression } from './dynastyTransitionRegression';
+import { runCreditBankingRegression } from './creditBankingRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -84,5 +85,6 @@ try{const checks=runNpcAssetOwnershipRegression();console.log(`NPC asset ownersh
 try{const checks=runTimelineScalingRegression();console.log(`Timeline scaling regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runFamilyTopologyRegression();console.log(`Family topology regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runDynastyTransitionRegression();console.log(`Dynasty transition regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runCreditBankingRegression();console.log(`Credit & banking regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runIntegratedLongLifeRegression();console.log(`Integrated long-life regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

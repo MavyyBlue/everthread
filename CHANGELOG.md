@@ -1,6 +1,30 @@
 # Everthread Changelog
 
-## Phase 5E — Dynasty Transition / End-of-Life Agency candidate — 2026-09-11
+## Phase 6A — Credit & Banking Foundation candidate — 2026-09-12
+
+### Added
+
+- Added bounded schema-11 player credit state plus `CreditSystem` for revolving accounts, available credit, refundable secured deposits, statement/minimum/payment history, interest/fees, formal inquiries, derogatories, deterministic creditworthiness, account closure, bankruptcy discharge, and bounded history repair.
+- Added six original fictional banking institutions/products spanning age-16 secured starter cards through established/premium unsecured offers. Browsing is read-only; formal applications are bounded and record understandable approval/decline reasons.
+- Added Life-page **Cash** + **Credit Available** presentation and a mobile **Credit & Banking** hub with Overview, Accounts, Offers/contracts, and History. Contract review exposes line, APR, annual fee, late fee, deposit, and minimum-payment terms before acceptance.
+- Added manual card payments, representative card purchases, secured-deposit refunds, current-year/recent transaction history, and durable timeline consequences for material credit events.
+- Added `creditBankingRegression.ts`, now 74/74.
+
+### Changed
+
+- Net worth/wealth breakdown now treats secured deposits as represented assets and revolving balances as liabilities; Credit Available never counts as cash or wealth.
+- Estate obligations include revolving debt while refundable secured deposits remain estate value. Existing insolvency/bankruptcy now discharges active cards through the credit authority and persists default/bankruptcy credit history.
+- Descendant continuation initializes the newly controlled protagonist's player credit state without inventing an unsupported NPC consumer-credit history.
+- Save schema advances from 10 to 11 with deterministic, RNG-neutral, idempotent migration.
+
+### Predeployment validation
+
+- Credit & Banking 74/74; Core 82/82; Dynasty Transition 63/63; Family Topology 40/40; NPC Asset Ownership 82/82; Timeline Scaling 11/11; Action VFX 46/46; Integrated Long-Life 105/105; every established dedicated regression remains green.
+- Both TypeScript gates pass. Production build passes at 148 transformed modules; existing >700 kB main-chunk warning remains nonblocking.
+- 80-year direct card-use benchmark completed in ~5 ms in the hosted workspace, retained 20 recent transactions after bounded pruning, serialized the full fixture at ~18 KB, and returned zero invariant errors.
+- Run #98 / `5aa1c4338be4edc934b867f4e5a710d0e116aaa2` remains the certified baseline pending GitHub reproduction of this candidate.
+
+## Phase 5E — Dynasty Transition / End-of-Life Agency — CI Green Run #98 — 2026-09-12
 
 ### Added
 
@@ -24,7 +48,7 @@
 - Dynasty Transition: 63/63. Core 82/82; Estate Planning 46/46; Estate Administration 63/63; NPC Asset Ownership 82/82; Family Topology 40/40; Action VFX 46/46; Integrated Long-Life 105/105; every established dedicated regression remains green.
 - Both TypeScript gates pass. Production build passes at 145 transformed modules; existing >700 kB main-chunk warning remains nonblocking.
 - Twelve sequential reviewed handoffs with hundreds of background NPCs preserve 7,212 archived life-history entries, unique completed-life IDs, state invariants, and bounded linear historical-cast growth.
-- Run #97 / `8e5394d0488d1c760072590ffa5c06eadfdac9f6` remains the certified baseline pending GitHub reproduction of this candidate.
+- GitHub Actions Run #98 reproduced canonical preflight 4/4, Dynasty Transition 63/63, every established regression, the 145-module production build, certified artifact creation, and Pages deployment on expanded source `5aa1c4338be4edc934b867f4e5a710d0e116aaa2`; Phase 5 is closed.
 
 ## Phase 5D — Broader Family Topology — CI Green Run #97 — 2026-09-11
 

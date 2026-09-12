@@ -3,6 +3,7 @@ import type { EstateAssetBequest, EstateAssetKind, EstateHeirRole, EstateTrustSt
 import { makeStateId } from '../core/ids';
 import { quoteEstateAdministration } from '../data/estateRules';
 import { addNpcBusinessHolding, addNpcInheritanceTrustHoldings, addNpcPropertyHolding, npcBusinessFromPlayerBusiness, npcPropertyFromPlayerAsset } from './NpcAssetSystem';
+import { creditCardDebt, securedCreditDeposits } from './CreditSystem';
 
 type HeirShare={npc:Npc;ratio:number;role:EstateHeirRole};
 type EstateItem=
@@ -105,7 +106,7 @@ function validBequestMap(state:GameState,heirs:HeirShare[]){
 }
 
 function makeCandidateItems(state:GameState,bequests:Map<string,string>){
-  let liquid=Math.max(0,state.finances.cash);const items:EstateItem[]=[];
+  let liquid=Math.max(0,state.finances.cash)+securedCreditDeposits(state);const items:EstateItem[]=[];
   for(const vehicle of state.assets.vehicles)liquid+=Math.max(0,vehicle.value*.96);
   for(const property of state.assets.properties){const value=propertyEquity(state,property);const requestedBeneficiaryId=bequests.get(`property:${property.id}`);if((requestedBeneficiaryId||state.inheritance.inheritProperties)&&value>0)items.push({kind:'property',id:property.id,name:property.name,value,property,mortgage:mortgageFor(state,property),...(requestedBeneficiaryId?{requestedBeneficiaryId}:{})});else liquid+=propertySaleValue(state,property);}
   for(const business of state.businesses){if(business.bankrupt)continue;const requestedBeneficiaryId=bequests.get(`business:${business.id}`);if(requestedBeneficiaryId||state.inheritance.inheritBusinesses)items.push({kind:'business',id:business.id,name:business.name,value:Math.max(0,business.valuation),business,...(requestedBeneficiaryId?{requestedBeneficiaryId}:{})});else liquid+=Math.max(0,business.valuation*.95);}
@@ -117,7 +118,7 @@ function buildEstatePlan(state:GameState):EstatePlan{
   const heirs=heirShares(state);const allocations=new Map<string,EstateAllocation>();
   if(!heirs.length)return{heirs,allocations,remainingInvestmentRatio:0,grossEstateValue:0,estateValue:0,debtObligations:0,administrationCosts:0,administrationAllowance:0,estateLevy:0,levyAllowance:0,levyRate:0,ruleLabel:'',countryName:'',estateObligations:0,forcedSaleIds:[],forcedSales:[]};
   const bequests=validBequestMap(state,heirs);let{liquid,items}=makeCandidateItems(state,bequests);const forcedSaleIds:string[]=[];const forcedSales:EstateForcedSale[]=[];
-  const debtObligations=state.finances.liabilities.filter(loan=>loan.kind!=='mortgage').reduce((sum,loan)=>sum+Math.max(0,loan.balance),0);
+  const debtObligations=state.finances.liabilities.filter(loan=>loan.kind!=='mortgage').reduce((sum,loan)=>sum+Math.max(0,loan.balance),0)+creditCardDebt(state);
   const originalInvestmentValue=state.investments.positions.reduce((sum,position)=>sum+position.units*(state.investments.prices[position.securityId]??0),0);
   const grossBeforeDebt=liquid+originalInvestmentValue+items.reduce((sum,item)=>sum+item.value,0);
   const administration=quoteEstateAdministration(state.character.countryId,grossBeforeDebt,debtObligations);

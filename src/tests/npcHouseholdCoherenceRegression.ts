@@ -93,7 +93,7 @@ export function runNpcHouseholdCoherenceRegression(){
   const {npc:legacyNpc,rel:legacyRel}=addFriend(legacyState,'legacy-spouse');
   legacyRel.type='spouse';legacyNpc.maritalStatus='married';legacyNpc.life!.household.status='independent';legacyNpc.life!.finance.housing='family';
   const restored=importSave(exportSave(legacyState));
-  verify(restored.saveVersion===10&&relationshipType(restored,legacyNpc.id)==='spouse','current-schema save round-trip should preserve relationship truth without a schema bump');
+  verify(restored.saveVersion===11&&relationshipType(restored,legacyNpc.id)==='spouse','current-schema save round-trip should preserve relationship truth without a schema bump');
   verify(partnerId(restored,legacyNpc.id)===undefined&&householdStatus(restored,legacyNpc.id)==='partnered'&&housing(restored,legacyNpc.id)==='shared','loading a stale player-spouse household should repair its projection from Relationship truth');
 
   const legacyPartnerIdState=adultState('household-legacy-player-id');

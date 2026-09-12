@@ -48,7 +48,7 @@ export function runRewindScalingRegression(){
   currentSchema.yearlySnapshots=Array.from({length:35},(_,age)=>({age,state:`snapshot-${age}`}));
   currentSchema.flags.ageUpLocked=true;
   const migrated=migrateSave(currentSchema);
-  verify(migrated.saveVersion===10&&migrated.yearlySnapshots.length===MAX_REWIND_SNAPSHOTS,'current-schema saves should receive retention normalization without a schema bump');
+  verify(migrated.saveVersion===11&&migrated.yearlySnapshots.length===MAX_REWIND_SNAPSHOTS,'current-schema saves should receive retention normalization without a schema bump');
   verify(migrated.flags.ageUpLocked===undefined,'migration should clear legacy transient Age Up locks, including states restored from old rewind snapshots');
 
   return checks;

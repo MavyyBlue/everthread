@@ -1,6 +1,7 @@
 import type { GameState, SocialWorld } from '../types/game';
 import { clamp } from './math';
 import { NPC_ASSET_LIMITS } from '../data/npcAssetRules';
+import { sanitizeCreditState } from '../systems/CreditSystem';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -119,6 +120,7 @@ export function enforceStateInvariants(state: GameState): GameState {
     (state.character.secondary as unknown as Record<string, number>)[key] = clamp(value);
   }
   state.finances.cash = Number.isFinite(state.finances.cash) ? state.finances.cash : 0;
+  sanitizeCreditState(state);
   state.legal.sentenceRemaining = Math.max(0, state.legal.sentenceRemaining);
   state.fame.fame = clamp(state.fame.fame);
   state.fame.publicReputation = clamp(state.fame.publicReputation);
@@ -267,6 +269,7 @@ export function validateState(state: GameState): string[] {
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
+  const credit=state.finances.credit;if(!credit)errors.push('Missing credit state');else{const active=credit.accounts.filter(account=>account.status==='open');if(active.length>5)errors.push('Too many active credit accounts');if(credit.accounts.length>12)errors.push('Credit account history is unbounded');if(credit.transactions.length>160)errors.push('Credit transaction history is unbounded');if(credit.inquiries.length>24)errors.push('Credit inquiry history is unbounded');if(credit.derogatories.length>20)errors.push('Credit derogatory history is unbounded');for(const account of credit.accounts){if(account.balance<0||account.balance>account.creditLimit+.01)errors.push(`Credit account ${account.id} has invalid balance`);if(account.creditLimit<0||account.securedDeposit<0)errors.push(`Credit account ${account.id} has invalid limits/deposit`);if(account.minimumDue<0||account.minimumDue>account.statementBalance+.01)errors.push(`Credit account ${account.id} has invalid minimum payment`);}}
   const seenNpcPropertyIds=new Set<string>();const seenNpcBusinessIds=new Set<string>();
   for (const npc of Object.values(state.npcs)) {
     if (npc.alive && npc.health <= 0) errors.push(`NPC ${npc.id} is alive with terminal health`);

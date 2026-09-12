@@ -1,8 +1,8 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-11  
+Last updated: 2026-09-12  
 Current build line: 0.12.0 pre-release  
-Save schema: 10
+Save schema candidate: 11
 
 ## Product direction
 
@@ -23,6 +23,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
 ## Implemented foundations
+### Phase 6A — Credit & Banking foundation (predeployment candidate)
+
+- Built on certified Run #98 / `5aa1c4338be4edc934b867f4e5a710d0e116aaa2`; Phase 5E is CI Green and Phase 5 is closed.
+- Save schema 11 introduces bounded persistent player revolving-credit state with deterministic v10 migration.
+- Added `CreditSystem`, six fictional institutions/products, secured starter credit from age 16, deterministic credit profile/offer projection, bounded applications/inquiries, account balances/available credit, statements/minimums, manual payments, interest/fees, account closure/refundable deposits, transaction history, and bankruptcy/estate integration.
+- Life now shows Cash and Credit Available as separate adjacent values and opens a mobile Credit & Banking hub for Overview, Accounts, Offers/contracts, and History.
+- Credit Available never counts as owned wealth. Secured deposits remain assets; card balances remain liabilities.
+- Dedicated Credit & Banking regression is 74/74; the complete established wall and both TypeScript gates pass. Production build passes at 148 modules.
+- 80-year direct-use scale benchmark remained bounded (~5 ms hosted runtime, 20 retained recent transactions, ~18 KB full fixture JSON, zero invariant errors).
+- Next only after 6A CI Green: Phase 6B asset financing with Buy Outright / Finance choices for vehicles/homes consuming this same credit authority.
+
 
 ### Phase 5C — Persistent NPC asset ownership (CI Green, Run #95)
 
@@ -404,15 +415,21 @@ Added persisted workplace-specific Social World state plus real `partTimeJobs` /
 
 Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration deterministically initializes missing NPC education/career/finance/health/legal/public-life/household state without consuming the player RNG stream; adult descendant handoff can now transfer this accumulated history directly.
 
-### Version 10 — current
+### Version 10
 
 Added lean persistent NPC property/business portfolios and protected NPC asset trusts. v9 migration deterministically promotes legacy aggregate NPC property value into bounded explicit holdings without consuming player RNG. Phase 5D and Phase 5E add no new persisted fields: broader kinship and the death/estate/successor review are deterministic projections over existing authoritative state while remaining on schema 10.
 
+
+### Version 11 — current predeployment candidate
+
+Adds bounded player revolving-credit authority under `finances.credit`: accounts, current/recent transactions, formal inquiries, derogatory history, and compact archived positive-history summaries. v10 migration initializes an empty deterministic credit state without consuming gameplay RNG.
+
 ## Next development sequence
 
-1. Certify the Phase 5E dynasty-transition candidate against the Run #97 CI-Green baseline. Do not begin Phase 6 until the exact 5E candidate is CI Green.
-2. Phase 6: finish credit/debt with vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences while keeping player-facing consequences visible and actionable through the owning finance systems.
-3. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
-4. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
-5. Expand regional names substantially and verify long-dynasty repetition rates.
-6. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.
+1. Certify Phase 6A Credit & Banking against the Run #98 CI-Green baseline. Do not begin asset financing until the exact 6A candidate is CI Green.
+2. Phase 6B: add vehicle/home Buy Outright vs Finance flows, real underwriting/contracts, down payments, authoritative installment/mortgage liabilities, delinquency, repossession/foreclosure consequences, and preview→signed-term parity using the 6A credit authority.
+3. Phase 6C: deepen personal loans, voluntary bankruptcy, recovery/rehabilitation, and hardship consequences.
+4. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
+5. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
+6. Expand regional names substantially and verify long-dynasty repetition rates.
+7. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.

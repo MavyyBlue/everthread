@@ -104,7 +104,7 @@ export function runFamilyTopologyRegression(){
   verify(background.state.npcs[background.cousin.id]?.simulationTier==='full','a genuinely close cousin can still promote naturally through the existing meaningful-relationship threshold');
 
   const migration=topologyFixture();migration.state.relationships=migration.state.relationships.filter(rel=>!['aunt_uncle','cousin'].includes(rel.type));const migrationRng=migration.state.rngCounter;const migrated=migrateSave(structuredClone(migration.state));
-  verify(migrated.saveVersion===10,'broader kin topology requires no save-schema bump because it derives from existing family graph truth');
+  verify(migrated.saveVersion===11,'broader kin topology requires no save-schema bump because it derives from existing family graph truth');
   verify(migrated.rngCounter===migrationRng,'current-schema family-topology backfill is RNG-neutral');
   verify(migrated.relationships.some(rel=>rel.npcId===migration.aunt.id&&rel.type==='aunt_uncle')&&migrated.relationships.some(rel=>rel.npcId===migration.cousin.id&&rel.type==='cousin'),'loading an existing schema-10 dynasty deterministically backfills aunt/uncle and cousin relationships');
   const migratedAgain=migrateSave(structuredClone(migration.state));

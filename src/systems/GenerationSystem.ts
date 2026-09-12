@@ -12,6 +12,7 @@ import { characterIdentityFromNpc, npcGenderFromCharacterIdentity } from './NpcI
 import { ensureNpcAssetPortfolio, npcMortgageDebt, playerBusinessFromNpcHolding, playerPropertyFromNpcHolding } from './NpcAssetSystem';
 import type { EstateTrustState } from '../types/estate';
 import { syncPlayerFamilyTopology } from './FamilyTopologySystem';
+import { createEmptyCreditState } from './CreditSystem';
 
 export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
@@ -81,7 +82,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   state.assets={properties:mergeUnique(ownProperties,inheritedImmediately?settlement.properties:[]),vehicles:[],collectibles:inheritedImmediately?settlement.collectibles:[]};
   state.businesses=mergeUnique(ownBusinesses,inheritedImmediately?settlement.businesses:[]);
   state.investments={...state.investments,positions:inheritedImmediately?settlement.investments:[]};
-  state.finances={cash:Math.max(0,originalChild.wealth)+(inheritedImmediately?settlement.cash:0),annualIncome:state.employment.current?.salary??0,annualExpenses:0,taxesPaid:0,liabilities:mergeUnique(ownMortgages,[...(inheritedImmediately?settlement.liabilities:[]),...(personalDebtLoan?[personalDebtLoan]:[])])};
+  state.finances={cash:Math.max(0,originalChild.wealth)+(inheritedImmediately?settlement.cash:0),annualIncome:state.employment.current?.salary??0,annualExpenses:0,taxesPaid:0,liabilities:mergeUnique(ownMortgages,[...(inheritedImmediately?settlement.liabilities:[]),...(personalDebtLoan?[personalDebtLoan]:[])]),credit:createEmptyCreditState()};
   state.legal={criminalRecord:npcLife.legal.incidents.map((incident,index)=>({crimeId:`npc_incident_${index+1}`,age:incident.age,convicted:incident.convicted,sentenceYears:incident.sentenceYears})),investigationHeat:clamp(npcLife.legal.recordSeverity*.25),imprisoned:npcLife.legal.sentenceRemaining>0,prisonSecurity:npcLife.legal.sentenceRemaining>0?'minimum':undefined,sentenceRemaining:npcLife.legal.sentenceRemaining,paroleEligible:npcLife.legal.sentenceRemaining>1};
   state.health={conditions:npcLife.health.conditions.map(condition=>({id:makeStateId(state,'condition'),illnessId:condition.illnessId,name:condition.name,severity:condition.severity,diagnosedAge:condition.diagnosedAge,chronic:condition.chronic,treated:condition.treated})),fitness:npcLife.health.fitness,wellness:npcLife.health.wellness,addictions:[]};
   const inheritedFame=Math.max(Math.round((parentLife?.fame??0)*.2),npcLife.publicLife.fame);state.fame={fame:clamp(inheritedFame),publicReputation:npcLife.publicLife.reputation,followers:Math.max(npcLife.publicLife.followers,Math.round(inheritedFame*500)),engagement:25,platforms:{},scandals:Array.from({length:npcLife.publicLife.scandals},(_,index)=>`Past public controversy ${index+1}`)};

@@ -94,4 +94,11 @@ Run #97 remains authoritative until GitHub reproduces the final Phase 5E candida
 
 ## Next after Phase 5E
 
+
+## Phase 5E — CI Green Run #98
+
+Run #98 certified the completed death/estate/successor transition on expanded source `5aa1c4338be4edc934b867f4e5a710d0e116aaa2`. Dynasty Transition is 63/63, every established regression stayed green, canonical preflight passed 4/4, and Pages deployed successfully. Phase 5 is closed on save schema 10.
+
+Phase 6 must preserve estate obligations for all new debt forms and keep player-visible finance truth aligned with the same authoritative settlement/liability data. The active Phase 6 design lives in `PHASE6_CREDIT_DEBT.md`.
+
 Phase 6 should deepen credit/debt (vehicle finance, repossession, creditworthiness, voluntary bankruptcy, recovery, and hardship consequences) while following the global player-visible-system rule in `ARCHITECTURE_AND_TECHNIQUES.md`: material consequences that affect the protagonist must be inspectable and understandable through gameplay surfaces rather than existing only as silent state changes. Multi-household custody/guardianship expansion remains deferred until a concrete gameplay need justifies additional persisted state.
