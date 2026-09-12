@@ -4,43 +4,37 @@ Last handoff preparation: 2026-09-12
 Repository: `MavyyBlue/everthread`  
 Default branch: `main`  
 Public build line: `0.12.0 pre-release`  
-Current save schema candidate: `11`
+Current save schema: `11`
 
 ## Last fully verified repository baseline
 
-The latest fully green repository baseline is expanded source commit `5aa1c4338be4edc934b867f4e5a710d0e116aaa2` from GitHub Actions Run #98 (`34675350564`).
+The latest fully green repository baseline is expanded source commit `6eb2b7876203d47dcc1ad5c48f1098bf359182cd` from GitHub Actions Run #99.
 
-- Phase 5E Dynasty Transition / End-of-Life Agency is CI Green on save schema 10; Phase 5 is closed.
-- Dynasty Transition 63/63, Family Topology 40/40, NPC Asset Ownership 82/82, Timeline Scaling 11/11, Action VFX 46/46, Core 82/82, Estate Planning 46/46, Estate Administration 63/63, Family Continuity 18/18, Integrated Long-Life 105/105, and every established dedicated regression passed.
-- Both TypeScript gates and production build passed on Node 22.23.2/Linux x64; production build transformed 145 modules.
-- Certified preflight artifact: `10292311126`, artifact SHA-256 `28eb138aee4cce911992d73155e7b9a1e0321b64fb1f37e4fb3a734f037e84f4`.
-- Certified source SHA-256: `5971f9609d999b9aa508d389c24146ee54cd271bb6b9f64a6fe4445c000f9373`.
-- Certified dependency SHA-256: `4faca927b0768c1dbfd270c84da6ece08b54123d9cdbf0f3758489845a585d62`.
-- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Pages deployment passed. The existing >700 kB main-chunk warning remains nonblocking.
+- Phase 6A Credit & Banking Foundation is CI Green on save schema 11.
+- Credit & Banking 74/74, Core 82/82, Dynasty Transition 63/63, Family Topology 40/40, NPC Asset Ownership 82/82, Timeline Scaling 11/11, Action VFX 46/46, Integrated Long-Life 105/105, and all established regression suites are green.
+- Phase 6A provides the authoritative player credit profile/history, bounded revolving accounts/inquiries/derogatories, Cash + Credit Available presentation, Credit & Banking hub, net-worth/estate/bankruptcy integration, and schema-11 migration.
+- GitHub Actions remains the final certification authority for every subsequent overlay.
 
-### Current predeployment candidate — Phase 6A Credit & Banking Foundation
+### Current predeployment candidate — Phase 6B1 Asset Financing Foundation
 
-Phase 6A establishes one reusable credit authority before vehicle/home financing is added. Cash and borrowing capacity are intentionally separate: cash is owned money; Credit Available is unused revolving borrowing capacity and never inflates net worth.
+Phase 6B1 replaces the old isolated home-mortgage check with one reusable financing authority and adds player-directed vehicle financing without weakening the Cash/Credit Available separation.
 
-- Save schema advances to 11 with deterministic v10→v11 migration of a bounded `finances.credit` authority. Migration consumes no gameplay RNG and is idempotent.
-- `CreditSystem` owns revolving accounts, refundable secured deposits, balances/limits, statements/minimums, payments, interest/fees, applications/inquiries, derogatory history, bounded transaction history, derived creditworthiness, marketplace offers, account closure, and bankruptcy discharge integration.
-- Six original fictional institutions/products provide age-16 secured starter cards through mature premium offers. Browsing/prequalification is read-only; formal applications are bounded and persist understandable approval/decline reasons.
-- Life shows **Cash** and **Credit Available** side by side while keeping them mechanically distinct, plus a mobile **Credit & Banking** hub for Overview, Accounts, Offers/contracts, and History.
-- Offer contracts expose line, APR, annual fee, late fee, secured deposit, and minimum-payment terms before acceptance. Players can back out without applying.
-- Secured deposits remain refundable assets; card balances are liabilities. Revolving debt participates in net worth, bankruptcy/default history, and estate obligations instead of disappearing at death.
-- Current-year transaction history and durable timeline consequences make approvals, missed payments, account closure, and other material credit events visible to the player.
-- Histories are bounded (accounts 12 stored/5 active, transactions 160, inquiries 24, derogatories 20) with compact archived positive-history summaries rather than unbounded monthly records.
-- Dedicated Credit & Banking regression is 74/74 on the final current code. Every established suite remains at its certified count, both TypeScript gates pass, and production build passes at 148 transformed modules.
-- An 80-year card-use benchmark completed in ~5 ms in the hosted workspace, retained only 20 current/recent transactions after pruning, serialized the entire fixture at ~18 KB, and produced zero invariant errors.
-- Run #98 remains authoritative until GitHub reproduces the exact Phase 6A candidate. Asset financing must build on this authority rather than introduce a second credit model.
+- `AssetFinancingSystem` consumes `CreditSystem.getCreditUnderwritingSnapshot()` for credit score/history, income, existing debt/payment burden, inquiries, and bankruptcy recovery. Property/vehicle UI contains no competing credit-score formula.
+- Six fictional financing programs cover vehicle and home lending with distinct down-payment, score, income, term, APR, payment-burden, inquiry, and recovery requirements. Quotes are deterministic/read-only.
+- Asset market actions now open a mobile **Buy Outright | Finance** sheet. Finance contracts expose lender, approval/decline reason, down payment, principal, APR, term, annual/monthly-equivalent payment, finance charge, total held-to-term cost, and projected burden before commitment.
+- Signing re-underwrites current truth, records a formal financing inquiry through CreditSystem history, deducts only the down payment, and creates the exact previewed `car`/`mortgage` liability.
+- Loans link to the financed asset through `assetId`; homes also retain `mortgageId`. Existing annual-finance, net-worth, estate, save, and bankruptcy-history authorities consume the real liability.
+- Assets → Money exposes APR, annual payment, balance, and remaining term. Credit & Banking History names financing programs. Outright and financed material purchases are durable timeline events.
+- Save schema remains 11; no duplicate finance ledger or migration is needed for this slice.
+- Added a 77-check Asset Financing regression. Touched-file syntax/transpile, focused strict authority type checks, and direct runtime vehicle/home purchase-flow sanity are clean locally; the full type/regression/build wall is pending GitHub Actions.
+- Do not begin Phase 6B2 repossession/delinquency expansion until this exact candidate is CI Green.
 
 ## Green systems immediately relevant to current work
 
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
 - Phase 5B estate administration is CI Green in Run #92: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress are now baseline behavior.
-- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, Phase 5C NPC-owned assets/businesses, and Phase 5D broader family topology are CI Green on save schema 10. The current candidate is Phase 5E dynasty transition, built on the exact Run #97 certified source.
+- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, Phase 5C NPC-owned assets/businesses, Phase 5D broader family topology, and Phase 5E dynasty transition remain certified foundations. The current candidate is Phase 6B1, built only on Run #99.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.

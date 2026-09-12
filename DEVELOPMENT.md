@@ -2,7 +2,7 @@
 
 Last updated: 2026-09-12  
 Current build line: 0.12.0 pre-release  
-Save schema candidate: 11
+Save schema: 11
 
 ## Product direction
 
@@ -23,16 +23,25 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
 
 ## Implemented foundations
-### Phase 6A — Credit & Banking foundation (predeployment candidate)
+### Phase 6B1 — Asset Financing foundation (predeployment candidate)
 
-- Built on certified Run #98 / `5aa1c4338be4edc934b867f4e5a710d0e116aaa2`; Phase 5E is CI Green and Phase 5 is closed.
+- Built only on certified Run #99 / `6eb2b7876203d47dcc1ad5c48f1098bf359182cd`; Phase 6A is CI Green.
+- Added data-driven vehicle/home lender programs and `AssetFinancingSystem`. Underwriting consumes the existing `CreditSystem` profile/history, income, debt-payment burden, inquiry count, cash down payment, and bankruptcy recovery as the single creditworthiness authority.
+- Assets now open a mobile **Buy Outright | Finance** sheet. Finance browsing is deterministic/read-only and shows lender, approval/decline reason, APR, term, down payment, financed principal, annual/monthly-equivalent obligation, finance charge, full-term total cost, and projected burden before commitment.
+- Signing re-underwrites the same request, uses the shared formal-credit action limits, records the approved financing inquiry, deducts only the quote down payment, and creates the actual `car`/`mortgage` liability from the same quote.
+- Financed assets link liabilities back to collateral through `assetId`; homes also retain `mortgageId`. Existing annual finance, wealth/net-worth, estate, bankruptcy history, and schema-11 save authorities consume these liabilities rather than a parallel finance ledger.
+- Asset liabilities expose APR, annual payment, and remaining term after purchase; financing lender/programs remain visible in Credit & Banking history and material purchases enter durable timeline history.
+- Dedicated `assetFinancingRegression.ts` adds 77 targeted checks. Local touched-file syntax/transpile validation, focused strict type checks for the financing/credit/property authority, and direct runtime vehicle/home purchase-flow sanity are clean; canonical full-suite/build validation is pending GitHub Actions.
+- Next only after this exact slice is CI Green: Phase 6B2 delinquency/recovery consequences, beginning with vehicle repossession and strengthening mortgage foreclosure/player agency.
+
+### Phase 6A — Credit & Banking foundation (CI Green, Run #99)
+
+- Built on certified Run #98 / `5aa1c4338be4edc934b867f4e5a710d0e116aaa2`; GitHub Actions Run #99 certified expanded source `6eb2b7876203d47dcc1ad5c48f1098bf359182cd`.
 - Save schema 11 introduces bounded persistent player revolving-credit state with deterministic v10 migration.
 - Added `CreditSystem`, six fictional institutions/products, secured starter credit from age 16, deterministic credit profile/offer projection, bounded applications/inquiries, account balances/available credit, statements/minimums, manual payments, interest/fees, account closure/refundable deposits, transaction history, and bankruptcy/estate integration.
-- Life now shows Cash and Credit Available as separate adjacent values and opens a mobile Credit & Banking hub for Overview, Accounts, Offers/contracts, and History.
+- Life shows Cash and Credit Available as separate adjacent values and opens a mobile Credit & Banking hub for Overview, Accounts, Offers/contracts, and History.
 - Credit Available never counts as owned wealth. Secured deposits remain assets; card balances remain liabilities.
-- Dedicated Credit & Banking regression is 74/74; the complete established wall and both TypeScript gates pass. Production build passes at 148 modules.
-- 80-year direct-use scale benchmark remained bounded (~5 ms hosted runtime, 20 retained recent transactions, ~18 KB full fixture JSON, zero invariant errors).
-- Next only after 6A CI Green: Phase 6B asset financing with Buy Outright / Finance choices for vehicles/homes consuming this same credit authority.
+- Credit & Banking regression is 74/74; Core 82/82; Dynasty Transition 63/63; Family Topology 40/40; NPC Asset Ownership 82/82; Timeline Scaling 11/11; Action VFX 46/46; Integrated Long-Life 105/105; established suites are green.
 
 
 ### Phase 5C — Persistent NPC asset ownership (CI Green, Run #95)
@@ -420,14 +429,14 @@ Added persistent `NpcLifeState` biographies and simulation tiers. v8 migration d
 Added lean persistent NPC property/business portfolios and protected NPC asset trusts. v9 migration deterministically promotes legacy aggregate NPC property value into bounded explicit holdings without consuming player RNG. Phase 5D and Phase 5E add no new persisted fields: broader kinship and the death/estate/successor review are deterministic projections over existing authoritative state while remaining on schema 10.
 
 
-### Version 11 — current predeployment candidate
+### Version 11 — current
 
 Adds bounded player revolving-credit authority under `finances.credit`: accounts, current/recent transactions, formal inquiries, derogatory history, and compact archived positive-history summaries. v10 migration initializes an empty deterministic credit state without consuming gameplay RNG.
 
 ## Next development sequence
 
-1. Certify Phase 6A Credit & Banking against the Run #98 CI-Green baseline. Do not begin asset financing until the exact 6A candidate is CI Green.
-2. Phase 6B: add vehicle/home Buy Outright vs Finance flows, real underwriting/contracts, down payments, authoritative installment/mortgage liabilities, delinquency, repossession/foreclosure consequences, and preview→signed-term parity using the 6A credit authority.
+1. Certify the exact Phase 6B1 Asset Financing candidate against Run #99 / `6eb2b7876203d47dcc1ad5c48f1098bf359182cd`. Do not begin 6B2 until GitHub Actions reproduces this slice green.
+2. Phase 6B2: deepen secured-loan delinquency/collateral consequences through the same authorities, beginning with player-visible vehicle repossession and stronger mortgage foreclosure/hardship agency.
 3. Phase 6C: deepen personal loans, voluntary bankruptcy, recovery/rehabilitation, and hardship consequences.
 4. Phase 7: expand exact cooldowns, long-term delayed consequences, persistent target-aware follow-ups, and national/world events across the whole simulation.
 5. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.

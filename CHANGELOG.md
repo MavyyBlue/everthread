@@ -1,6 +1,28 @@
 # Everthread Changelog
 
-## Phase 6A — Credit & Banking Foundation candidate — 2026-09-12
+## Phase 6B1 — Asset Financing Foundation candidate — 2026-09-12
+
+### Added
+
+- Added a reusable, data-driven `AssetFinancingSystem` plus six fictional vehicle/home lender programs. Asset underwriting consumes `CreditSystem.getCreditUnderwritingSnapshot()` for the existing derived credit profile, real income, installment/revolving payment burden, inquiries, and bankruptcy recovery instead of inventing a second score model.
+- Added deterministic, read-only lender quotes for appropriate vehicles and homes with visible APR, term, down payment, amount financed, annual payment, monthly equivalent, finance charge, full-term total cost, projected payment burden, and human-readable approval/decline reasons.
+- Added a mobile **Buy Outright | Finance** purchase sheet for property and vehicles. Browsing does not create an inquiry; signing re-underwrites current state and then records the approved financing inquiry.
+- Added persistent `car` and `mortgage` liabilities using the existing `Loan` authority, including collateral `assetId` links, annual-finance servicing, net-worth accounting, estate debt treatment, schema-11 save persistence, and durable timeline/history context.
+- Added `assetFinancingRegression.ts` with 77 targeted checks covering deterministic browsing, lender requirements, down-payment effects, stale-quote revalidation, preview→signed parity, shared application limits, cash-vs-credit separation, vehicle/home outright and finance paths, accounting identity, annual servicing, estates, saves, and CreditSystem authority reuse.
+
+### Changed
+
+- Replaced the legacy hard-coded home-mortgage approval math inside `PropertySystem` with the shared financing authority. Vehicle financing now uses that same authority; asset screens contain no independent creditworthiness calculation.
+- Asset liabilities now show APR, authoritative annual payment, and remaining years. Credit & Banking history resolves asset-financing inquiries to their lender/program names.
+- Outright vehicle purchases now create a durable asset timeline entry so a material life purchase is not invisible. Credit Available remains revolving borrowing capacity only and is never treated as purchase cash or wealth.
+
+### Candidate validation
+
+- Touched Phase 6B TypeScript/TSX files pass the local TypeScript syntax/transpile gate; focused strict type checks also pass across the credit/financing/property authority.
+- Direct runtime validation confirms deterministic read-only quote generation, multiple eligible lender offers for a strong fixture, exact preview→signed vehicle/home principal/APR/payment/term parity, correct collateral/cash/inquiry mutation, clean outright paths, specialized boat-financing deferral without mutation, and explicit bankruptcy-recovery decline messaging.
+- Full repository TypeScript gates, all established regressions, the new 77-check Asset Financing regression, production build, artifact creation, and Pages deployment remain pending GitHub Actions. Run #99 / `6eb2b7876203d47dcc1ad5c48f1098bf359182cd` remains the certified baseline until this exact candidate is reproduced green.
+
+## Phase 6A — Credit & Banking Foundation — CI Green Run #99 — 2026-09-12
 
 ### Added
 
@@ -22,7 +44,7 @@
 - Credit & Banking 74/74; Core 82/82; Dynasty Transition 63/63; Family Topology 40/40; NPC Asset Ownership 82/82; Timeline Scaling 11/11; Action VFX 46/46; Integrated Long-Life 105/105; every established dedicated regression remains green.
 - Both TypeScript gates pass. Production build passes at 148 transformed modules; existing >700 kB main-chunk warning remains nonblocking.
 - 80-year direct card-use benchmark completed in ~5 ms in the hosted workspace, retained 20 recent transactions after bounded pruning, serialized the full fixture at ~18 KB, and returned zero invariant errors.
-- Run #98 / `5aa1c4338be4edc934b867f4e5a710d0e116aaa2` remains the certified baseline pending GitHub reproduction of this candidate.
+- GitHub Actions Run #99 reproduced the Phase 6A regression wall and certified expanded source `6eb2b7876203d47dcc1ad5c48f1098bf359182cd`; Phase 6A is CI Green.
 
 ## Phase 5E — Dynasty Transition / End-of-Life Agency — CI Green Run #98 — 2026-09-12
 

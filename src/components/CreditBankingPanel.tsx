@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import type { EngineResult, GameState } from '../types/game';
 import { gameEngine } from '../stores/gameStore';
-import { creditInstitutionById } from '../data/creditInstitutions';
+import { creditCardProductById, creditInstitutionById } from '../data/creditInstitutions';
+import { assetFinanceProgramById } from '../data/assetFinancing';
 import { creditAvailable, getCreditOffers, getCreditProfile } from '../systems/CreditSystem';
 import { exactMoney, formatMoney } from '../core/format';
 
@@ -74,5 +75,6 @@ function AccountView({state,account,amount,setAmount,onBack,onPayment,onPurchase
 
 function History({state,current,older}:{state:GameState;current:GameState['finances']['credit']['transactions'];older:GameState['finances']['credit']['transactions']}){
   const render=(items:typeof current)=>items.map(item=>{const account=state.finances.credit.accounts.find(candidate=>candidate.id===item.accountId);return <p className="history-line" key={item.id}><span>{item.description}<small>{account?.productName??'Credit account'} · age {item.age}</small></span><strong className={item.kind==='payment'||item.kind==='deposit_refund'?'banking-positive':''}>{item.kind==='payment'||item.kind==='deposit_refund'?'-':'+'}{money(item.amount)}</strong></p>});
-  return <><section className="action-card"><p className="eyebrow">{state.currentYear}</p><h2>Transactions this year</h2>{current.length?render(current):<p className="muted">No credit transactions have posted this year.</p>}</section>{older.length>0&&<section className="action-card"><h3>Recent prior activity</h3>{render(older)}</section>}<section className="action-card"><h3>Applications</h3>{state.finances.credit.inquiries.length?state.finances.credit.inquiries.slice(-12).reverse().map(item=><p className="history-line" key={item.id}><span>{creditInstitutionById[item.institutionId]?.name??item.institutionId}<small>Age {item.age} · {item.year}</small></span><strong>{item.outcome}</strong></p>):<p className="muted">No formal credit applications yet.</p>}</section></>;
+  const inquiryName=(productId:string)=>creditCardProductById[productId]?.name??assetFinanceProgramById[productId]?.name??productId;
+  return <><section className="action-card"><p className="eyebrow">{state.currentYear}</p><h2>Transactions this year</h2>{current.length?render(current):<p className="muted">No credit transactions have posted this year.</p>}</section>{older.length>0&&<section className="action-card"><h3>Recent prior activity</h3>{render(older)}</section>}<section className="action-card"><h3>Applications & financing</h3>{state.finances.credit.inquiries.length?state.finances.credit.inquiries.slice(-12).reverse().map(item=><p className="history-line" key={item.id}><span>{creditInstitutionById[item.institutionId]?.name??item.institutionId}<small>{inquiryName(item.productId)} · age {item.age} · {item.year}{item.reason?` · ${item.reason}`:''}</small></span><strong>{item.outcome}</strong></p>):<p className="muted">No formal credit applications or financing contracts yet.</p>}</section></>;
 }

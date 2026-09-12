@@ -1,5 +1,5 @@
 import type { EngineResult, GameState } from '../types/game';
-import type { CreditAccount, CreditDerogatoryKind, CreditState, CreditTransactionKind } from '../types/credit';
+import type { CreditAccount, CreditDerogatoryKind, CreditInquiryOutcome, CreditState, CreditTransactionKind } from '../types/credit';
 import { creditCardProductById, creditCardProducts, creditInstitutionById, type CreditCardProductDefinition } from '../data/creditInstitutions';
 import { makeStateId } from '../core/ids';
 import { clamp, roundMoney } from '../core/math';
@@ -23,6 +23,21 @@ export interface CreditProfile {
   recentInquiries:number;
   paymentReliability:number;
   factors:string[];
+}
+
+export interface CreditUnderwritingSnapshot {
+  profile:CreditProfile;
+  annualIncome:number;
+  annualDebtPayments:number;
+  debtPaymentRatio:number;
+  yearsSinceBankruptcy?:number;
+}
+
+export interface CreditInquiryRecord {
+  institutionId:string;
+  productId:string;
+  outcome:CreditInquiryOutcome;
+  reason?:string;
 }
 
 export interface CreditOffer {
@@ -92,6 +107,14 @@ export function getCreditProfile(state:GameState):CreditProfile {
   return{score,rating,totalLimit:roundMoney(totalLimit),totalBalance:roundMoney(totalBalance),availableCredit:roundMoney(Math.max(0,totalLimit-totalBalance)),utilization:clamp(utilization*100),debtToIncome,oldestAccountYears,recentInquiries:inquiries,paymentReliability:clamp(paymentReliability*100),factors:factors.slice(0,4)};
 }
 
+export function getCreditUnderwritingSnapshot(state:GameState):CreditUnderwritingSnapshot {
+  const profile=getCreditProfile(state);const income=annualIncomeForCredit(state);const revolvingAnnual=activeAccounts(state).reduce((sum,account)=>sum+Math.max(account.minimumDue,account.balance*.05),0);const installmentAnnual=state.finances.liabilities.reduce((sum,loan)=>sum+Math.max(0,loan.annualPayment),0);const annualDebtPayments=roundMoney(revolvingAnnual+installmentAnnual);const rawBankruptcyAge=Number(state.flags.lastBankruptcyAge??Number.NaN);const yearsSinceBankruptcy=Number.isFinite(rawBankruptcyAge)?Math.max(0,state.character.age-rawBankruptcyAge):undefined;return{profile,annualIncome:roundMoney(income),annualDebtPayments,debtPaymentRatio:income>0?annualDebtPayments/income:(annualDebtPayments>0?9:0),...(yearsSinceBankruptcy!==undefined?{yearsSinceBankruptcy}:{})};
+}
+
+export function recordCreditInquiry(state:GameState,record:CreditInquiryRecord){
+  const credit=ensureCreditState(state);credit.inquiries.push({id:makeStateId(state,'credit-inquiry'),institutionId:record.institutionId,productId:record.productId,year:state.currentYear,age:state.character.age,outcome:record.outcome,...(record.reason?{reason:record.reason}:{})});if(credit.inquiries.length>MAX_CREDIT_INQUIRIES)credit.inquiries=credit.inquiries.slice(-MAX_CREDIT_INQUIRIES);
+}
+
 function offerReason(state:GameState,product:CreditCardProductDefinition,profile:CreditProfile):string|undefined {
   if(state.character.age<product.minAge)return`Available starting at age ${product.minAge}.`;
   if(activeAccounts(state).some(account=>account.productId===product.id))return'You already have this product.';
@@ -125,10 +148,10 @@ export function applyForCreditCard(state:GameState,productId:string):EngineResul
   if(!state.character.alive)return{success:false,messages:[{text:'Credit applications are unavailable after this life has ended.'}]};
   const product=creditCardProductById[productId];if(!product)return{success:false,messages:[{text:'That credit offer is no longer available.'}]};
   const gate=consumeAction(state,[{policy:'credit.application.total'},{policy:'credit.application.product',target:product.id}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
-  const credit=ensureCreditState(state);const profile=getCreditProfile(state);const reason=offerReason(state,product,profile);const outcome=reason?'declined':'approved';credit.inquiries.push({id:makeStateId(state,'credit-inquiry'),institutionId:product.institutionId,productId:product.id,year:state.currentYear,age:state.character.age,outcome,reason});if(credit.inquiries.length>MAX_CREDIT_INQUIRIES)credit.inquiries=credit.inquiries.slice(-MAX_CREDIT_INQUIRIES);
+  const profile=getCreditProfile(state);const reason=offerReason(state,product,profile);const outcome=reason?'declined':'approved';recordCreditInquiry(state,{institutionId:product.institutionId,productId:product.id,outcome,...(reason?{reason}:{})});
   const institution=creditInstitutionById[product.institutionId];
   if(reason){state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:1,text:`${institution?.name??'A lender'} declined your ${product.name} application: ${reason}`});return{success:false,stateChanges:['creditInquiry'],messages:[{text:`Application declined: ${reason}`}]};}
-  const limit=startingLimit(state,product,profile);const deposit=product.secured?product.depositRequired:0;if(deposit>0)state.finances.cash-=deposit;
+  const credit=ensureCreditState(state);const limit=startingLimit(state,product,profile);const deposit=product.secured?product.depositRequired:0;if(deposit>0)state.finances.cash-=deposit;
   const account:CreditAccount={id:makeStateId(state,'credit-account'),institutionId:product.institutionId,productId:product.id,productName:product.name,openedYear:state.currentYear,openedAge:state.character.age,status:'open',creditLimit:limit,balance:0,annualRate:product.annualRate,annualFee:product.annualFee,lateFee:product.lateFee,securedDeposit:deposit,statementBalance:0,minimumDue:0,paymentsTowardStatement:0,statementAge:state.character.age,onTimePayments:0,latePayments:0,missedPayments:0};credit.accounts.push(account);if(deposit)appendTransaction(state,account,'secured_deposit',deposit,'Refundable secured-card deposit');
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`${institution?.name??'A lender'} approved your ${product.name} card with a ${limit.toLocaleString()} credit line.${deposit?` You placed a refundable ${deposit.toLocaleString()} security deposit.`:''}`,moneyDelta:deposit?-deposit:undefined});return{success:true,stateChanges:['creditAccount','creditInquiry'],messages:[{text:`Approved for ${product.name} with ${limit.toLocaleString()} of available credit.`}]};
 }

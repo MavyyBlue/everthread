@@ -15,6 +15,10 @@ No executable content-database counts change in Phase 5E. The update strengthens
 
 The executable life-event/career/etc. content counts remain unchanged. Phase 6A adds a separate data-driven credit marketplace with **6 fictional institutions / 6 card products**; these are finance-system definitions rather than life-event rows and should not be counted as artificial event-library growth. Products vary by age, secured-deposit requirement, credit/income/history thresholds, line ranges, APR, and fees.
 
+## Phase 6B1 systems/content note
+
+The executable life-event/career/etc. counts remain unchanged. Phase 6B1 adds **6 fictional asset-financing programs** in a separate lender marketplace: **3 vehicle programs / 3 home programs** across the existing fictional banking institutions. Programs vary by minimum age, credit score, income, balance/payment burden, down payment, term, APR/risk pricing, recent inquiries, and bankruptcy-recovery period. These are system definitions, not padded event rows.
+
 ## Current counts
 
 | Content family | Current | Production target | Status |

@@ -4,23 +4,28 @@ import { makeStateId } from '../core/ids';
 import { consumeAction } from '../core/actionEconomy';
 import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
+import { acceptAssetFinanceOffer, bestAssetFinanceOffer, getAssetFinanceOffers } from './AssetFinancingSystem';
 
-export function buyProperty(state:GameState,typeId:string,useMortgage=true):EngineResult {
+export function buyProperty(state:GameState,typeId:string,useMortgage=true,offerId?:string,downPaymentRate=.2):EngineResult {
   if(state.character.age<18)return{success:false,messages:[{text:'You must be an adult to purchase property.'}]};
   const def=propertyDefinitions.find(p=>p.id===typeId);if(!def)return{success:false,messages:[{text:'Unknown property type.'}]};
-  const price=Math.round(def.basePrice*state.economy.housingIndex); const down=useMortgage?Math.round(price*.2):price;
-  if(state.finances.cash<down)return{success:false,messages:[{text:`You need ${down.toLocaleString()} available for this purchase${useMortgage?' including the down payment':''}.`}]};
+  const price=Math.round(def.basePrice*state.economy.housingIndex);
+  let amountDue=price;let mortgageId:string|undefined;let financeMessage:string|undefined;let financeDetail:string|undefined;
   if(useMortgage){
-    const balance=price-down;const annualPayment=Math.round(balance/30+balance*.052);const carryingCost=annualPayment+Math.round(price*.018);const income=Math.max(state.finances.annualIncome,state.employment.current?.salary??0);const recentBankruptcy=state.flags.lastBankruptcyAge!==undefined&&state.character.age-Number(state.flags.lastBankruptcyAge)<5;
-    if(recentBankruptcy)return{success:false,messages:[{text:'A recent bankruptcy prevents a new mortgage under the current game rules.'}]};
-    if((income<=0&&state.finances.cash<price*.6)||(income>0&&carryingCost>income*.42&&state.finances.cash<price*.6))return{success:false,messages:[{text:'The mortgage would be unaffordable under the current income and cash rules.'}]};
-  }
-  state.finances.cash-=down; const propertyId=makeStateId(state,'property'); let mortgageId: string|undefined;
-  if(useMortgage){const balance=price-down;mortgageId=makeStateId(state,'loan');state.finances.liabilities.push({id:mortgageId,kind:'mortgage',principal:balance,balance,annualRate:.052,annualPayment:Math.round(balance/30+balance*.052),remainingYears:30,assetId:propertyId});}
+    const request={kind:'home' as const,price,downPaymentRate};const chosen=offerId?getAssetFinanceOffers(state,request).find(offer=>offer.id===offerId):bestAssetFinanceOffer(state,request);
+    if(!chosen){const reasons=getAssetFinanceOffers(state,request).map(offer=>offer.reason).filter(Boolean);return{success:false,messages:[{text:reasons[0]?`No current home-finance offer is available: ${reasons[0]}`:'No current home-finance offer is available.'}]};}
+    const application=acceptAssetFinanceOffer(state,request,chosen.id);if(!application.result.success||!application.loan||!application.offer)return application.result;
+    mortgageId=application.loan.id;amountDue=application.offer.downPayment;financeMessage=application.result.messages[0]?.text;financeDetail=`${application.offer.institutionName} · ${application.offer.program.name} · ${(application.offer.annualRate*100).toFixed(1)}% APR · ${application.offer.termYears} years · ${application.offer.annualPayment.toLocaleString()} annual payment`;
+  } else if(state.finances.cash<price)return{success:false,messages:[{text:`You need ${price.toLocaleString()} available for this purchase.`}]};
+  if(!useMortgage)state.finances.cash-=price;
+  const propertyId=makeStateId(state,'property');
+  if(mortgageId){const loan=state.finances.liabilities.find(item=>item.id===mortgageId);if(loan)loan.assetId=propertyId;}
   state.assets.properties.push({id:propertyId,typeId:def.id,name:def.name,location:state.character.city,purchasePrice:price,marketValue:price,condition:90,age:0,amenities:[...def.amenities],mortgageId});
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:3,text:`You purchased a ${def.name} in ${state.character.city}.`,moneyDelta:-down});
-  return{success:true,messages:[{text:`Purchased ${def.name} for ${price.toLocaleString()}.`}]};
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:3,text:useMortgage?`You purchased a ${def.name} in ${state.character.city} with financing.`:`You purchased a ${def.name} in ${state.character.city} outright.`,moneyDelta:-amountDue,...(financeDetail?{detail:financeDetail}:{})});
+  return{success:true,stateChanges:useMortgage?['property','financingLiability','creditInquiry']:['property'],messages:[...(financeMessage?[{text:financeMessage}]:[]),{text:`Purchased ${def.name} for ${price.toLocaleString()}${useMortgage?` with ${amountDue.toLocaleString()} down`:' outright'}.`}]};
 }
+
+export function financeProperty(state:GameState,typeId:string,offerId:string,downPaymentRate=.2){return buyProperty(state,typeId,true,offerId,downPaymentRate);}
 
 export function processPropertiesYear(state:GameState) {
   const rng=createRng(`${state.seed}-property`,state.rngCounter);
@@ -46,10 +51,20 @@ export function sellProperty(state:GameState,propertyId:string):EngineResult {
   const i=state.assets.properties.findIndex(p=>p.id===propertyId);if(i<0)return{success:false,messages:[{text:'Property not found.'}]};const p=state.assets.properties[i]!;const mortgage=p.mortgageId?state.finances.liabilities.find(l=>l.id===p.mortgageId):undefined;const payoff=mortgage?.balance??0;const proceeds=Math.max(0,p.marketValue-payoff-Math.round(p.marketValue*.035));state.finances.cash+=proceeds;if(mortgage)state.finances.liabilities=state.finances.liabilities.filter(l=>l.id!==mortgage.id);state.assets.properties.splice(i,1);return{success:true,messages:[{text:`Sold ${p.name}. Net proceeds: ${proceeds.toLocaleString()}.`}]};
 }
 
-export function buyVehicle(state:GameState,typeId:string):EngineResult {
-  if(state.character.age<16)return{success:false,messages:[{text:'You are too young to purchase a vehicle.'}]};const def=[...vehicleDefinitions,...luxuryVehicleDefinitions].find(v=>v.id===typeId);if(!def)return{success:false,messages:[{text:'Unknown vehicle.'}]};
+function vehicleDefinition(typeId:string){return[...vehicleDefinitions,...luxuryVehicleDefinitions].find(v=>v.id===typeId);}
+function vehiclePurchaseGate(state:GameState,typeId:string):EngineResult|undefined {
+  if(state.character.age<16)return{success:false,messages:[{text:'You are too young to purchase a vehicle.'}]};const def=vehicleDefinition(typeId);if(!def)return{success:false,messages:[{text:'Unknown vehicle.'}]};
   if(def.category==='boat'&&!state.flags.boatLicense)return{success:false,messages:[{text:'A boating license is required for this purchase.'}]};if(def.category==='aircraft'&&!state.flags.pilotLicense)return{success:false,messages:[{text:'A pilot license is required for this purchase.'}]};
-  if(state.finances.cash<def.price)return{success:false,messages:[{text:`You need ${def.price.toLocaleString()} cash.`}]};state.finances.cash-=def.price;state.assets.vehicles.push({id:makeStateId(state,'vehicle'),typeId:def.id,name:def.name,purchasePrice:def.price,value:def.price,age:0,condition:100,mileage:0,category:def.category});return{success:true,messages:[{text:`Purchased ${def.name}.`}]};
+}
+
+export function buyVehicle(state:GameState,typeId:string):EngineResult {
+  const gate=vehiclePurchaseGate(state,typeId);if(gate)return gate;const def=vehicleDefinition(typeId)!;
+  if(state.finances.cash<def.price)return{success:false,messages:[{text:`You need ${def.price.toLocaleString()} cash.`}]};state.finances.cash-=def.price;const vehicleId=makeStateId(state,'vehicle');state.assets.vehicles.push({id:vehicleId,typeId:def.id,name:def.name,purchasePrice:def.price,value:def.price,age:0,condition:100,mileage:0,category:def.category});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:2,text:`You purchased a ${def.name} outright.`,moneyDelta:-def.price});return{success:true,stateChanges:['vehicle'],messages:[{text:`Purchased ${def.name}.`}]};
+}
+
+export function financeVehicle(state:GameState,typeId:string,offerId:string,downPaymentRate=.2):EngineResult {
+  const gate=vehiclePurchaseGate(state,typeId);if(gate)return gate;const def=vehicleDefinition(typeId)!;if(def.category==='boat'||def.category==='aircraft')return{success:false,messages:[{text:'Specialized financing is not available for boats or aircraft yet.'}]};const request={kind:'vehicle' as const,price:def.price,downPaymentRate};const application=acceptAssetFinanceOffer(state,request,offerId);if(!application.result.success||!application.loan||!application.offer)return application.result;
+  const vehicleId=makeStateId(state,'vehicle');application.loan.assetId=vehicleId;state.assets.vehicles.push({id:vehicleId,typeId:def.id,name:def.name,purchasePrice:def.price,value:def.price,age:0,condition:100,mileage:0,category:def.category});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:3,text:`You financed a ${def.name} through ${application.offer.institutionName}.`,moneyDelta:-application.offer.downPayment,detail:`${application.offer.program.name} · ${(application.offer.annualRate*100).toFixed(1)}% APR · ${application.offer.termYears} years · ${application.offer.annualPayment.toLocaleString()} annual payment`});return{success:true,stateChanges:['vehicle','financingLiability','creditInquiry'],messages:[...application.result.messages,{text:`Purchased ${def.name} with ${application.offer.downPayment.toLocaleString()} down and ${application.offer.amountFinanced.toLocaleString()} financed.`}]};
 }
 
 export function repairVehicle(state:GameState,vehicleId:string):EngineResult {
