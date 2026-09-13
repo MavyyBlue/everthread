@@ -9,6 +9,9 @@ import { makeStateId } from '../core/ids';
 import { actionGateStatus, consumeAction } from '../core/actionEconomy';
 import { currentWorkplaceWorld, syncWorkplaceWorlds } from './WorkplaceSystem';
 
+export const FREELANCE_MIN_AGE=14;
+export const MINIMUM_FULL_TIME_JOB_AGE=Math.min(...jobs.map(job=>job.minAge));
+
 function completedPrograms(state:GameState) { return state.education.filter(e=>e.graduated).map(e=>e.programId).filter(Boolean) as string[]; }
 function hasSecondary(state:GameState) { return state.education.some(e=>e.stage==='secondary'&&e.graduated); }
 
@@ -176,7 +179,7 @@ export function retire(state:GameState):EngineResult {
 }
 
 export function takeFreelanceGig(state:GameState,category:'writing'|'programming'|'design'|'tutoring'|'photography'|'music'|'consulting'):EngineResult {
-  if(state.character.age<14)return{success:false,messages:[{text:'You are too young for freelance work.'}]};
+  if(state.character.age<FREELANCE_MIN_AGE)return{success:false,messages:[{text:'You are too young for freelance work.'}]};
   const gate=consumeAction(state,{policy:'career.freelance'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const skill={writing:state.character.stats.intelligence,programming:state.character.stats.intelligence,design:state.character.secondary.creativity,tutoring:state.character.stats.intelligence,photography:state.character.secondary.creativity,music:state.character.talents.music,consulting:state.character.secondary.charisma}[category];
   const rng=createRng(state.seed,state.rngCounter); const success=rng.chance(clamp(skill+state.employment.freelanceReputation-35,10,90)/100);

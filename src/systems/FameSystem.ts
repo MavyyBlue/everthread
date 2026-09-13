@@ -4,6 +4,8 @@ import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import { consumeAction } from '../core/actionEconomy';
 
+export const SOCIAL_MEDIA_MIN_AGE=13;
+
 const platformNames: Record<string,string> = {loop:'Loopline',video:'Longform',photo:'PrismPic',micro:'Chattermark',live:'BeaconLive'};
 
 export function processFameYear(state:GameState) {
@@ -20,7 +22,7 @@ export function processFameYear(state:GameState) {
 }
 
 export function postContent(state:GameState,platform:keyof typeof platformNames):EngineResult {
-  if(state.character.age<13)return{success:false,messages:[{text:'Social posting becomes available in the teen years.'}]};const gate=consumeAction(state,[{policy:'fame.post.total'},{policy:'fame.post.platform',target:platform}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-social`,state.rngCounter);const creativity=state.character.secondary.creativity;const charisma=state.character.secondary.charisma;const quality=(creativity+charisma)/2+rng.int(-25,25);const base=Math.max(4,Math.round(quality*quality/20));const current=state.fame.platforms[platform]??0;const viral=rng.chance(clamp((quality-72)/180,0,.12));const gained=Math.round(base*(viral?rng.int(30,120):rng.int(1,5)));
+  if(state.character.age<SOCIAL_MEDIA_MIN_AGE)return{success:false,messages:[{text:'Social posting becomes available in the teen years.'}]};const gate=consumeAction(state,[{policy:'fame.post.total'},{policy:'fame.post.platform',target:platform}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-social`,state.rngCounter);const creativity=state.character.secondary.creativity;const charisma=state.character.secondary.charisma;const quality=(creativity+charisma)/2+rng.int(-25,25);const base=Math.max(4,Math.round(quality*quality/20));const current=state.fame.platforms[platform]??0;const viral=rng.chance(clamp((quality-72)/180,0,.12));const gained=Math.round(base*(viral?rng.int(30,120):rng.int(1,5)));
   state.fame.platforms[platform]=current+gained;state.fame.followers+=gained;state.fame.engagement=clamp((state.fame.engagement*.7)+Math.max(8,quality)*.3);if(state.fame.followers>25000)state.fame.fame=clamp(state.fame.fame+(viral?5:1));state.character.stats.happiness=clamp(state.character.stats.happiness+2);state.rngCounter=rng.counter();return{success:true,messages:[{text:`You posted on ${platformNames[platform]} and gained ${gained.toLocaleString()} followers${viral?' after the post went viral':''}.`}]};
 }
 

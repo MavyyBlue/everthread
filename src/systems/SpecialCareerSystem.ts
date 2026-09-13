@@ -9,6 +9,11 @@ import { beginActingProject, beginDirectingProject, screenCareerOffer } from './
 import { beginMusicTour, launchMusicRelease, musicPartnershipDecision, processMusicCareerYear } from './MusicCareerCycleSystem';
 import { processCombatCareerYear, takeCombatFight, trainCombatCareer } from './CombatCareerWorldSystem';
 
+export const SPECIAL_CAREER_MIN_AGES={acting:8,music:0,sports:8,combat:12,politics:25,royalty:0,military:18,crimeOrg:18,modeling:14,racing:16,directing:21} as const;
+export const ACTING_AUDITION_MIN_AGE=14;
+export const MUSIC_RELEASE_MIN_AGE=13;
+export const SPORTS_PRO_MIN_AGE=18;
+
 type CareerTrack = Record<string, number | string | boolean>;
 const track = (state:GameState,key:keyof GameState['specialCareers']) => (state.specialCareers[key] ??= {}) as CareerTrack;
 const n = (r:CareerTrack,key:string,def=0) => typeof r[key]==='number' ? r[key] as number : def;
@@ -40,7 +45,7 @@ export function processSpecialCareersYear(state:GameState){
 }
 
 export function takeActingLesson(state:GameState):EngineResult {
-  if(state.character.age<8)return{success:false,messages:[{text:'Acting lessons are not available yet.'}]};
+  if(state.character.age<SPECIAL_CAREER_MIN_AGES.acting)return{success:false,messages:[{text:'Acting lessons are not available yet.'}]};
   const cost=state.character.age>=18?120:0;
   if(state.finances.cash<cost)return{success:false,messages:[{text:`An acting lesson costs ${cost.toLocaleString()} in game currency.`}]};
   const gate=consumeAction(state,{policy:'special.training',target:'acting'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
@@ -49,7 +54,7 @@ export function takeActingLesson(state:GameState):EngineResult {
 }
 
 export function auditionActing(state:GameState,miniGameScore?:number):EngineResult {
-  if(state.character.age<14)return{success:false,messages:[{text:'Professional auditions become available in the teen years.'}]};
+  if(state.character.age<ACTING_AUDITION_MIN_AGE)return{success:false,messages:[{text:'Professional auditions become available in the teen years.'}]};
   if(activeSpecialCareerWorld(state,'acting'))return{success:false,messages:[{text:'You are already committed to an acting production. Age up to complete it before taking another role.'}]};
   const r=track(state,'acting');
   const offer=screenCareerOffer(state,'acting');
@@ -83,7 +88,7 @@ export function practiceMusic(state:GameState,instrument='vocals'):EngineResult 
 }
 
 export function releaseMusic(state:GameState,kind:'song'|'album'):EngineResult {
-  if(state.character.age<13)return{success:false,messages:[{text:'Music releases become available in the teen years.'}]};const r=track(state,'music');const skill=n(r,'skill',state.character.talents.music*.35);if(skill<20)return{success:false,messages:[{text:'You need more musical skill before releasing material.'}]};const gate=consumeAction(state,{policy:'special.music_release'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  if(state.character.age<MUSIC_RELEASE_MIN_AGE)return{success:false,messages:[{text:'Music releases become available in the teen years.'}]};const r=track(state,'music');const skill=n(r,'skill',state.character.talents.music*.35);if(skill<20)return{success:false,messages:[{text:'You need more musical skill before releasing material.'}]};const gate=consumeAction(state,{policy:'special.music_release'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const beforeCount=n(r,'songsReleased')+n(r,'albumsReleased');const world=careerWorld(state,'music',String(r.instrument??'music'),{announce:beforeCount===0});const rng=createRng(`${state.seed}-music`,state.rngCounter);const result=launchMusicRelease(state,r,world,kind,rng);
   state.rngCounter=rng.counter();return{success:true,messages:[{text:`${result.title} launched with ${result.streams.toLocaleString()} streams, ${result.reception}, and ${result.royalties.toLocaleString()} in royalties. Its catalog tail will continue across future Age Ups.`}]};
 }
@@ -98,7 +103,7 @@ export function musicPartnershipAction(state:GameState,action:'accept'|'decline'
 
 const sports=['American football','Basketball','Baseball','Soccer','Hockey','Tennis','Golf','Volleyball'];
 export function joinSportsPath(state:GameState,sport:string):EngineResult {
-  if(!sports.includes(sport))return{success:false,messages:[{text:'Unknown sport.'}]};if(state.character.age<8)return{success:false,messages:[{text:'Organized sports become available later in childhood.'}]};const r=track(state,'sports');if(r.retired===true)return{success:false,messages:[{text:'You have already retired from professional competition in this life.'}]};if(r.active===true)return{success:false,messages:[{text:`You are already committed to the ${String(r.sport??'sports')} pathway.`}]};r.active=true;r.sport=sport;r.freeAgent=false;setN(r,'skill',Math.max(n(r,'skill'),state.character.talents.athletics*.4));setN(r,'fitness',state.health.fitness);return{success:true,messages:[{text:`You joined the ${sport} pathway.`}]};
+  if(!sports.includes(sport))return{success:false,messages:[{text:'Unknown sport.'}]};if(state.character.age<SPECIAL_CAREER_MIN_AGES.sports)return{success:false,messages:[{text:'Organized sports become available later in childhood.'}]};const r=track(state,'sports');if(r.retired===true)return{success:false,messages:[{text:'You have already retired from professional competition in this life.'}]};if(r.active===true)return{success:false,messages:[{text:`You are already committed to the ${String(r.sport??'sports')} pathway.`}]};r.active=true;r.sport=sport;r.freeAgent=false;setN(r,'skill',Math.max(n(r,'skill'),state.character.talents.athletics*.4));setN(r,'fitness',state.health.fitness);return{success:true,messages:[{text:`You joined the ${sport} pathway.`}]};
 }
 
 export function trainSport(state:GameState):EngineResult {
@@ -106,7 +111,7 @@ export function trainSport(state:GameState):EngineResult {
 }
 
 export function pursueProSports(state:GameState,miniGameScore?:number):EngineResult {
-  const r=track(state,'sports');if(r.retired===true)return{success:false,messages:[{text:'Your professional playing career is already retired.'}]};if(state.character.age<18||n(r,'skill')<58)return{success:false,messages:[{text:'You need adulthood and stronger athletic skill before pursuing a professional contract.'}]};if(r.pro===true)return{success:false,messages:[{text:'You already hold a professional sports contract.'}]};const gate=consumeAction(state,{policy:'special.pro_contract'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-pro-sport`,state.rngCounter);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.2;const success=rng.chance(clamp(n(r,'skill')*.75+n(r,'fitness')*.2+challengeBonus+rng.int(-15,20),5,90)/100);
+  const r=track(state,'sports');if(r.retired===true)return{success:false,messages:[{text:'Your professional playing career is already retired.'}]};if(state.character.age<SPORTS_PRO_MIN_AGE||n(r,'skill')<58)return{success:false,messages:[{text:'You need adulthood and stronger athletic skill before pursuing a professional contract.'}]};if(r.pro===true)return{success:false,messages:[{text:'You already hold a professional sports contract.'}]};const gate=consumeAction(state,{policy:'special.pro_contract'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-pro-sport`,state.rngCounter);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.2;const success=rng.chance(clamp(n(r,'skill')*.75+n(r,'fitness')*.2+challengeBonus+rng.int(-15,20),5,90)/100);
   let text='No professional team offered you a contract this time.';
   if(success){
     r.active=true;r.pro=true;r.freeAgent=false;const years=rng.int(1,5);const salary=rng.int(80000,3200000);setN(r,'contractYears',years);setN(r,'contractRemaining',years);setN(r,'salary',salary);setN(r,'contractSignedAge',state.character.age);setN(r,'proContracts',n(r,'proContracts')+1);setN(r,'teamsPlayedFor',n(r,'teamsPlayedFor')+1);setN(r,'seasonSalaryDue',0);state.fame.fame=clamp(state.fame.fame+8);const world=careerWorld(state,'sports',String(r.sport??'sport'),{announce:false});state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You signed a ${years}-year professional ${String(r.sport)} contract with ${world.name} at ${salary.toLocaleString()} per year.`,npcIds:world.members.slice(0,4).map(member=>member.npcId)});text=`You signed with ${world.name} for ${salary.toLocaleString()} per year.`;
@@ -118,7 +123,7 @@ export function trainCombat(state:GameState):EngineResult {return trainCombatCar
 export function takeFight(state:GameState,miniGameScore?:number):EngineResult {return takeCombatFight(state,miniGameScore);}
 
 export function enlistMilitary(state:GameState,branch:string,officer=false):EngineResult {
-  if(state.character.age<18)return{success:false,messages:[{text:'Military service requires adulthood.'}]};if(state.legal.criminalRecord.some(r=>r.convicted))return{success:false,messages:[{text:'Your criminal record prevents entry under current game rules.'}]};const r=track(state,'military');if(r.active===true)return{success:false,messages:[{text:'You are already in military service.'}]};r.active=true;r.branch=branch;r.path=officer?'officer':'enlisted';setN(r,'rank',officer?2:1);setN(r,'skill',40);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You joined the ${branch} on the ${officer?'officer':'enlisted'} path.`});return{success:true,messages:[{text:'You entered military service.'}]};
+  if(state.character.age<SPECIAL_CAREER_MIN_AGES.military)return{success:false,messages:[{text:'Military service requires adulthood.'}]};if(state.legal.criminalRecord.some(r=>r.convicted))return{success:false,messages:[{text:'Your criminal record prevents entry under current game rules.'}]};const r=track(state,'military');if(r.active===true)return{success:false,messages:[{text:'You are already in military service.'}]};r.active=true;r.branch=branch;r.path=officer?'officer':'enlisted';setN(r,'rank',officer?2:1);setN(r,'skill',40);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You joined the ${branch} on the ${officer?'officer':'enlisted'} path.`});return{success:true,messages:[{text:'You entered military service.'}]};
 }
 
 export function militaryTraining(state:GameState):EngineResult {
@@ -126,7 +131,7 @@ export function militaryTraining(state:GameState):EngineResult {
 }
 
 export function enterPolitics(state:GameState,officeLevel=1):EngineResult {
-  if(state.character.age<25)return{success:false,messages:[{text:'You need more life experience before running for office.'}]};const r=track(state,'politics');const rng=createRng(`${state.seed}-politics`,state.rngCounter);const budget=Math.max(5000,officeLevel*25000);if(state.finances.cash<budget)return{success:false,messages:[{text:`A campaign at this level needs at least ${budget.toLocaleString()} in game funds.`}]};const gate=consumeAction(state,{policy:'special.campaign'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=budget;const score=state.character.secondary.charisma*.3+state.character.secondary.reputation*.25+state.fame.fame*.15+state.character.stats.intelligence*.15+rng.int(-20,25)-state.legal.criminalRecord.filter(x=>x.convicted).length*12;const win=score>42+officeLevel*7;if(win){r.active=true;r.office=officeLevel;setN(r,'approval',55);setN(r,'electionsWon',n(r,'electionsWon')+1);state.fame.fame=clamp(state.fame.fame+officeLevel*3);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You won election to public office level ${officeLevel}.`});}state.rngCounter=rng.counter();return{success:win,messages:[{text:win?'You won the election.':'You lost the election.'}]};
+  if(state.character.age<SPECIAL_CAREER_MIN_AGES.politics)return{success:false,messages:[{text:'You need more life experience before running for office.'}]};const r=track(state,'politics');const rng=createRng(`${state.seed}-politics`,state.rngCounter);const budget=Math.max(5000,officeLevel*25000);if(state.finances.cash<budget)return{success:false,messages:[{text:`A campaign at this level needs at least ${budget.toLocaleString()} in game funds.`}]};const gate=consumeAction(state,{policy:'special.campaign'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=budget;const score=state.character.secondary.charisma*.3+state.character.secondary.reputation*.25+state.fame.fame*.15+state.character.stats.intelligence*.15+rng.int(-20,25)-state.legal.criminalRecord.filter(x=>x.convicted).length*12;const win=score>42+officeLevel*7;if(win){r.active=true;r.office=officeLevel;setN(r,'approval',55);setN(r,'electionsWon',n(r,'electionsWon')+1);state.fame.fame=clamp(state.fame.fame+officeLevel*3);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You won election to public office level ${officeLevel}.`});}state.rngCounter=rng.counter();return{success:win,messages:[{text:win?'You won the election.':'You lost the election.'}]};
 }
 
 export function politicalAction(state:GameState,action:'speech'|'policy'|'press'|'fundraise'):EngineResult {
@@ -138,7 +143,7 @@ export function royalDuty(state:GameState):EngineResult {
 }
 
 export function modelingAction(state:GameState, action:'lesson'|'audition'|'photoshoot'|'runway'):EngineResult {
-  if(state.character.age<14)return{success:false,messages:[{text:'Professional modeling becomes available in the teen years.'}]};
+  if(state.character.age<SPECIAL_CAREER_MIN_AGES.modeling)return{success:false,messages:[{text:'Professional modeling becomes available in the teen years.'}]};
   const r=track(state,'modeling');r.active=true;const rng=createRng(`${state.seed}-model`,state.rngCounter);
   if(action==='lesson'){
     const gate=consumeAction(state,{policy:'special.training',target:'modeling'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};setN(r,'technique',clamp(n(r,'technique',25)+5));state.rngCounter=rng.counter();return{success:true,messages:[{text:'You took a modeling lesson.'}]};
@@ -153,7 +158,7 @@ export function modelingAction(state:GameState, action:'lesson'|'audition'|'phot
 export function racingAction(state:GameState, action:'join'|'train'|'race',miniGameScore?:number):EngineResult {
   const r=track(state,'racing');const rng=createRng(`${state.seed}-racing`,state.rngCounter);
   if(action==='join'){
-    if(state.character.age<16)return{success:false,messages:[{text:'You are too young for the racing pathway.'}]};if(r.active===true)return{success:false,messages:[{text:'You are already in the racing pathway.'}]};r.active=true;setN(r,'skill',state.character.secondary.athleticism*.35+20);setN(r,'seasons',0);const world=careerWorld(state,'racing','motorsport',{announce:true});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You entered fictional motorsport with ${world.name}.`}]};
+    if(state.character.age<SPECIAL_CAREER_MIN_AGES.racing)return{success:false,messages:[{text:'You are too young for the racing pathway.'}]};if(r.active===true)return{success:false,messages:[{text:'You are already in the racing pathway.'}]};r.active=true;setN(r,'skill',state.character.secondary.athleticism*.35+20);setN(r,'seasons',0);const world=careerWorld(state,'racing','motorsport',{announce:true});state.rngCounter=rng.counter();return{success:true,messages:[{text:`You entered fictional motorsport with ${world.name}.`}]};
   }
   if(!r.active)return{success:false,messages:[{text:'Join the racing pathway first.'}]};
   if(action==='train'){
@@ -163,7 +168,7 @@ export function racingAction(state:GameState, action:'join'|'train'|'race',miniG
 }
 
 export function directFilm(state:GameState,budget:number):EngineResult {
-  if(state.character.age<21)return{success:false,messages:[{text:'You need more experience before directing a full production.'}]};
+  if(state.character.age<SPECIAL_CAREER_MIN_AGES.directing)return{success:false,messages:[{text:'You need more experience before directing a full production.'}]};
   if(activeSpecialCareerWorld(state,'directing'))return{success:false,messages:[{text:'You already have a film in production. Age up to complete it before starting another.'}]};
   const r=track(state,'directing');const offer=screenCareerOffer(state,'directing');const actualBudget=Math.round(offer?.budget??budget);
   if(!Number.isFinite(actualBudget)||actualBudget<250000)return{success:false,messages:[{text:'That production budget is not available.'}]};
@@ -177,7 +182,7 @@ export function directFilm(state:GameState,budget:number):EngineResult {
 }
 
 export function joinCrimeOrganization(state:GameState):EngineResult {
-  if(state.character.age<18)return{success:false,messages:[{text:'This fictional organization path requires adulthood.'}]};const r=track(state,'crimeOrg');if(r.active===true)return{success:false,messages:[{text:'You are already in this fictional organization.'}]};r.active=true;r.rank='Associate';setN(r,'rankLevel',1);setN(r,'standing',25);return{success:true,messages:[{text:'You joined a fictional criminal organization as an Associate. Mechanics remain abstract and non-instructional.'}]};
+  if(state.character.age<SPECIAL_CAREER_MIN_AGES.crimeOrg)return{success:false,messages:[{text:'This fictional organization path requires adulthood.'}]};const r=track(state,'crimeOrg');if(r.active===true)return{success:false,messages:[{text:'You are already in this fictional organization.'}]};r.active=true;r.rank='Associate';setN(r,'rankLevel',1);setN(r,'standing',25);return{success:true,messages:[{text:'You joined a fictional criminal organization as an Associate. Mechanics remain abstract and non-instructional.'}]};
 }
 
 export function crimeOrganizationAction(state:GameState,action:'earn'|'contribute'|'reputation'|'informant'):EngineResult {

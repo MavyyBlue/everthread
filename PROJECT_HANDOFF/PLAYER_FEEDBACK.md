@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay baseline: **Run #115 / expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa` / save schema 13**.
+Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay baseline: **Run #115 / expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa` / save schema 13**. The newest certified repository source is docs-only Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,14 +94,13 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified **Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`**.
+Last central review checkpoint: certified **Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`** (documentation-only on top of the Run #115 gameplay baseline).
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, Mavyy automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
-- `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114. Procedural life-event descriptions now use scene-safe composition while preserving the same events/choices and random-selection shape.
-- `ET-20260913-BE8649B9`: **triaged · normal priority**, suggestion/interface improvement requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for an appropriate UI/polish slice; it does not block Phase 7B1.
-- Central new/untriaged reports after the Run #114 review: **0**.
+- `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114. Procedural life-event descriptions use scene-safe composition while preserving event/choice/RNG shape.
+- `ET-20260913-BE8649B9`: **triaged · normal priority · reproduced · prioritized before the next phase**. Early-life Activities and Career/Life Paths show age-locked choices too early. A presentation-only progressive-disclosure candidate is locally green; the report stays open until canonical CI supplies its fixing source/run.
+- Central new/untriaged reports after the Run #116 review: **0**.
 - Player-visible disposition read-back remains certified and deployed.
-- Run #115 certified Phase 7B1 on expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa`. The database review checkpoint remains Run #114 until the next successful live inbox refresh; perform that refresh before selecting any further gameplay slice.
-
+- Do not proceed to the next Phase 7 gameplay slice while an active triaged report is being corrected unless Mavyy explicitly changes priority.

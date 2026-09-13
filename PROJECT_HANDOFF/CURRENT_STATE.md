@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The authoritative certified gameplay/source baseline is **GitHub Actions Run #115** (`34782061788`) on expanded source commit **`f417403ff8a091f92f823c074d6a132dd27b90aa`**.
+The newest certified expanded repository source is **GitHub Actions Run #116** (`34782320223`) on expanded source commit **`6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`**. Run #116 is documentation-only; the last gameplay-changing certified baseline remains **Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`**.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **13**
@@ -10,10 +10,10 @@ The authoritative certified gameplay/source baseline is **GitHub Actions Run #11
 - Post-4G random-event narrative-composition correction: **CI Green, certified, deployed in Run #114**
 - Current macro phase: **Phase 7 — Persistent World Consequences**
 - Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories: **CI Green, certified, deployed in Run #115**
-- Supabase Feedback Inbox: **live; last successful central review checkpoint is Run #114 and must be refreshed before the next gameplay slice**
+- Supabase Feedback Inbox: **live; reviewed against Run #116; one active triaged normal-priority UX report is being corrected before the next gameplay slice**
 - Activity-specific minigames remain established historical work, not the current implementation target.
 
-If memory, an older handoff, or a historical chat conflicts with this status, the certified repository and Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa` win. Phase 7B1 is certified; do not reopen it as a candidate.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Use Run #116 / `6810b2dc…` as the newest certified source and Run #115 / `f417403f…` as the last gameplay-changing baseline. Phase 7B1 is certified; the active work is the feedback-driven progressive-disclosure correction.
 
 Last handoff synchronization: 2026-09-13
 Repository: `MavyyBlue/everthread`
@@ -21,17 +21,22 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `13`
 
-## Newest certified gameplay/source baseline — Run #115
+## Newest certified expanded source — Run #116
 
-- Upload wrapper: `0a4372ac7f8a9c3474e5b9e50e995abe11dae2f1`.
+- Upload wrapper: `fc3013f544cf8066f7da06ac81893c83f66e18d7`.
+- Expanded certified source: `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`.
+- Run #116 is a documentation/handoff synchronization overlay on top of Run #115 gameplay; it introduced no simulation or gameplay changes.
+- Canonical preflight remained green: both TypeScript gates, complete regression wall, Phase 7B1 33/33, Integrated Long-Life 105/105, Phase 7A 36/36, 167-module production build, certified restore smoke, artifact publication, and Pages deployment.
+- Certified source SHA-256: `6dbbfbcd054b1ee8add92d29d769d4c94d58fcfd304bb6bfe89e3824ad6018ed`.
+- Certified dependency SHA-256: `b890c2233cc970a14e192670d90fb94a7f4a673465db40d7efad6b8a4c8a59a3`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10325523556`, digest `008768286dcce27a075d0791f65481036c5a7d06d5823695525dcf4e0bea3edf`.
+- Pages artifact ID `10325219407`, digest `1a3049dd5f53d2160993496c3527e45480ab9f23fc47af8ffb8af487c51a7552`; deployment reported success.
+
+## Last gameplay-changing certified baseline — Run #115
+
 - Expanded certified source: `f417403ff8a091f92f823c074d6a132dd27b90aa`.
-- Run #115 passed Engine TypeScript, Test TypeScript, the complete regression wall, Phase 7B1 Systemic Story 33/33, Random-event Coherence 77/77, Integrated Long-Life 105/105, Phase 7A Persistent Consequence 36/36, production build at 167 modules, certified-baseline restore smoke, artifact publication, and Pages deployment.
-- Certified source SHA-256: `b30483a74c4c674ad3fbb025a3cb7f78d065b6f438fcf43482e3e21ef9c39613`.
-- Certified dependency SHA-256: `dfc18617ab0a94454a3cdae218baa0e9800bff1d5628b32262feba193c212827`.
-- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact ID `10325695174`, digest `a58934b96b90348293cbe7eec09c4734cf74255802e7d406cbd561bb2d7e26fc`.
-- Pages artifact ID `10324654718`, digest `5ffa444fdbdf27c5ec5f630bad39a0be2b336fdaf731b7b78099fcee91059075`; deployment reported success.
-- Phase 7B1 is now part of the baseline: five action-driven family/school/friendship/romance delayed stories use exact durable targets through the certified scheduler while preserving schema 13 and the 691-event random pool.
+- Phase 7B1 is part of this baseline: five action-driven family/school/friendship/romance delayed stories use exact durable targets through the certified scheduler while preserving schema 13 and the 691-event random pool.
+- Phase 7B1 Systemic Story is 33/33; canonical Run #115 passed the complete regression wall and production build at 167 modules.
 
 ## Phase 7A — Persistent Consequence Foundation — certified
 
@@ -42,17 +47,24 @@ Certified save schema: `13`
 - `pendingEvent` remains the one unresolved player-facing gate. Age Up surfaces same-age due backlog before advancing again.
 - Descendant continuation resets previous-protagonist consequence queue/history/cooldowns, preserving per-life ownership.
 - Random-event content remains exactly **691** definitions; scheduler bookkeeping consumes no gameplay RNG.
-- Dedicated Phase 7A regression remains **36/36** through Run #115.
+- Dedicated Phase 7A regression remains **36/36** through Run #116.
 
 Do not reopen scheduler ownership casually. Any change to queue ownership, migration, Age Up gating, or consequence arbitration requires dedicated regression coverage and full CI certification.
 
-## Feedback queue snapshot reviewed against Run #114 / `60bfa3ea…`
+## Feedback queue snapshot reviewed against Run #116 / `6810b2dc…`
 
-- `ET-20260913-0AA876B7`: **resolved → backend_defect** in Run #114 / `60bfa3ea…`. Procedural random-event descriptions now use scene-safe composition; Random-event Coherence is 77/77.
-- `ET-20260913-BE8649B9`: **triaged · normal priority suggestion**, requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for a later UX/polish slice; it does not block Phase 7B1.
+- Live Supabase review found **4 total reviewed reports, 0 new/untriaged reports, and exactly 1 active triaged report**.
+- `ET-20260913-BE8649B9`: **triaged · normal priority · reproduced · prioritized now**. Early-life Activities and Career/Life Paths surfaces expose disabled choices long before their age gates. A narrow presentation-only progressive-disclosure candidate is locally green and awaiting canonical certification.
+- `ET-20260913-0AA876B7`: **resolved → backend_defect** in Run #114 / `60bfa3ea…`. Procedural random-event descriptions use scene-safe composition; Random-event Coherence remains 77/77.
 - Test reports `ET-20260913-A527E2A6` and `ET-20260913-55F088C9` remain resolved as successful feedback-pipeline tests.
-- Central review checkpoint has **4 reviewed reports** and is advanced to certified source `60bfa3eaecb574df5a74920cbc64f513055bae46`.
-- Active technical/experience defects requiring an immediate corrective slice: **0**.
+- Central review checkpoint is advanced to certified source `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e` with **4 reviewed reports**.
+- Do not mark `ET-20260913-BE8649B9` resolved until a fixing expanded-source commit and successful canonical Actions run are known. Do not start the next Phase 7 gameplay slice before that correction is certified.
+
+## Active corrective candidate — early-life progressive disclosure
+
+The correction hides age-inappropriate Activities, work surfaces, school actions/groups, and Life Paths until the owning gameplay system says their age threshold has been reached. Engine guards remain intact and authoritative. Shared thresholds are exported from their existing owning systems rather than copied into the UI; active/legacy records remain visible to protect imported old saves. Save schema stays 13 and the slice consumes no gameplay RNG.
+
+Local validation is green: Progressive-disclosure UX **25/25**, both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Random-event Coherence 77/77, minigame 19/19, feedback suites, and production build at **168 modules**. Canonical GitHub Actions remains the certification authority.
 
 ## Phase 6 closeout guarantees
 
@@ -85,7 +97,7 @@ The new probability-zero `systemicConsequenceEvents` registry stays outside the 
 
 Dedicated 7B1 regression is **33/33** in canonical Run #115. Both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, feedback suites, global invariants, certified artifact restore smoke, and production build at **167 modules** are green. The long-life harness resolves scheduler-required same-age backlog before retrying Age Up, preserving certified Phase 7A gating.
 
-Phase 7B1 is now certified baseline behavior. Before selecting the next gameplay slice, refresh the live Supabase Feedback Inbox. Read `PROJECT_HANDOFF/PHASE7B1_SYSTEMIC_STORIES.md` for the certified contract.
+Phase 7B1 is certified baseline behavior. The live inbox has now been refreshed against Run #116; its sole active triaged UX report is the current corrective candidate and must be certified before selecting the next gameplay slice. Read `PROJECT_HANDOFF/PHASE7B1_SYSTEMIC_STORIES.md` for the certified 7B1 contract.
 
 ## Green systems immediately relevant to current work
 

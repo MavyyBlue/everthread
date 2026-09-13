@@ -10,6 +10,8 @@ import { ensureNpcLife } from './NpcLifeSystem';
 import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 
+export const MINIMUM_PART_TIME_JOB_AGE=Math.min(...partTimeJobs.map(job=>job.minAge));
+
 const WORK_RELATIONSHIP_TYPES = new Set<RelationshipType>(['coworker','boss']);
 const NPC_TRAITS = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
 

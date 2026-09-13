@@ -52,6 +52,8 @@ export function seekTreatment(state:GameState,conditionId:string,kind:'general'|
   return{success,messages:[{text:success?`Treatment for ${condition.name} was effective.`:`Treatment helped only a little this time. This is a game outcome, not medical guidance.`}]};
 }
 
+export const RISKY_HABIT_MIN_AGE=16;
+
 export const WELLNESS_MIN_AGES={gym:13,running:5,walking:3,martial_arts:6,meditation:6,diet:10} as const;
 
 export function performWellnessActivity(state:GameState,activity:keyof typeof WELLNESS_MIN_AGES):EngineResult {
@@ -65,7 +67,7 @@ export function performWellnessActivity(state:GameState,activity:keyof typeof WE
 }
 
 export function riskyHabit(state:GameState,kind:'alcohol'|'gambling'|'smoking'|'fictional_substance'):EngineResult {
-  if(state.character.age<16)return{success:false,messages:[{text:'That activity is unavailable at your age.'}]};const gate=consumeAction(state,{policy:'habit.kind',target:kind});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const existing=state.health.addictions.find(a=>a.kind===kind);const rng=createRng(state.seed,state.rngCounter);
+  if(state.character.age<RISKY_HABIT_MIN_AGE)return{success:false,messages:[{text:'That activity is unavailable at your age.'}]};const gate=consumeAction(state,{policy:'habit.kind',target:kind});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const existing=state.health.addictions.find(a=>a.kind===kind);const rng=createRng(state.seed,state.rngCounter);
   const risk=state.character.secondary.addictionSusceptibility/220+(existing?.severity??0)/180;if(existing)existing.severity=clamp(existing.severity+rng.int(1,6));else if(rng.chance(risk))state.health.addictions.push({kind,severity:rng.int(8,22),years:0,recovering:false});
   const cost=kind==='gambling'?rng.int(50,1200):rng.int(20,180);state.finances.cash-=cost;state.character.stats.happiness=clamp(state.character.stats.happiness+rng.int(-2,4));state.rngCounter=rng.counter();return{success:true,messages:[{text:`You engaged in ${kind.replace('_',' ')}. The game tracks health, money, and addiction risk abstractly.`}]};
 }

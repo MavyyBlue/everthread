@@ -8,6 +8,8 @@ import { archiveSpecialCareerWorld, specialCareerWorlds, type SpecialCareerWorld
 import { employmentRecordKey, syncWorkplaceWorlds } from './WorkplaceSystem';
 
 type Track = Record<string, number | string | boolean>;
+export const THERAPY_MIN_AGE=13;
+
 export type StrainKind = 'Burnout' | 'Emotional Volatility' | 'Chronic Strain';
 
 const STRAIN_KINDS:StrainKind[]=['Burnout','Emotional Volatility','Chronic Strain'];
@@ -44,7 +46,7 @@ function setStrain(state:GameState,kind:StrainKind,severity:number){state.flags.
 function reduceStrain(state:GameState,amount:number){const current=stressStrainView(state);if(!current)return;const next=clamp(current.severity-amount);if(next<=4){delete state.flags.stressStrainKind;delete state.flags.stressStrainSeverity;}else setStrain(state,current.kind,next);}
 
 export function therapySession(state:GameState):EngineResult{
-  if(state.character.age<13)return{success:false,messages:[{text:'Therapy becomes available in the teen years.'}]};
+  if(state.character.age<THERAPY_MIN_AGE)return{success:false,messages:[{text:'Therapy becomes available in the teen years.'}]};
   const cost=state.character.age>=18?600:0;if(cost>0&&state.finances.cash<cost)return{success:false,messages:[{text:`A therapy session costs ${cost.toLocaleString()} in game currency.`}]};
   const gate=consumeAction(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:'therapy'}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   if(cost>0)state.finances.cash-=cost;const before=state.character.secondary.stress;state.character.secondary.stress=clamp(before-24);state.health.wellness=clamp(state.health.wellness+7);state.character.stats.happiness=clamp(state.character.stats.happiness+3);reduceStrain(state,28);

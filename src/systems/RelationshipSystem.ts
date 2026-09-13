@@ -10,6 +10,8 @@ import { assignGeneratedNpcOrientation, characterRomanticGender, pickRomanticTar
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 import { scheduleFriendArgumentStory, scheduleMarriageExpectationsStory, scheduleParentingPresenceStory, scheduleReconciliationStory } from './SystemicStorySystem';
 
+export const DATING_MIN_AGE=14;
+
 export type RelationshipInteractionAction='conversation'|'compliment'|'insult'|'spend_time'|'give_money'|'gift'|'ask_money'|'argue'|'apologize'|'prank'|'fight'|'counseling'|'vacation';
 
 type RelationshipInteractionEffect={base:number;happiness:number;karma?:number};
@@ -193,7 +195,7 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
 }
 
 export function meetPotentialPartner(state:GameState):EngineResult {
-  if (state.character.age<14) return {success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
+  if (state.character.age<DATING_MIN_AGE) return {success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
   const gate=consumeAction(state,{policy:'social.meet'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const minPartnerAge=state.character.age>=18?18:14;
@@ -219,7 +221,7 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   const npc=state.npcs[npcId]; const rel=state.relationships.find(r=>r.npcId===npcId);
   if(!npc||!rel||!npc.alive) return {success:false,messages:[{text:'That relationship is unavailable.'}]};
   if(action==='ask_out'||action==='reconcile'){
-    if(state.character.age<14||npc.age<14)return{success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
+    if(state.character.age<DATING_MIN_AGE||npc.age<DATING_MIN_AGE)return{success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
     if(state.character.age<18&&npc.age>=18)return{success:false,messages:[{text:'Teen dating is limited to other teens.'}]};
     if(state.character.age>=18&&npc.age<18)return{success:false,messages:[{text:'Adult dating is limited to adults.'}]};
   }

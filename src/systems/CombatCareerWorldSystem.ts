@@ -7,6 +7,9 @@ import { ensureNpcLife } from './NpcLifeSystem';
 import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 
+export const COMBAT_TRAINING_MIN_AGE=12;
+export const COMBAT_FIGHT_MIN_AGE=16;
+
 type Track = Record<string, number | string | boolean>;
 type GroupKey = 'coaches' | 'training' | 'rivals';
 type Rng = ReturnType<typeof createRng>;
@@ -120,14 +123,14 @@ function syncCompositeSkill(career:Track){
 }
 
 export function trainCombatCareer(state:GameState):EngineResult{
-  if(state.character.age<12)return{success:false,messages:[{text:'Combat-sport training is not available yet.'}]};const gate=consumeAction(state,{policy:'special.training',target:'combat'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  if(state.character.age<COMBAT_TRAINING_MIN_AGE)return{success:false,messages:[{text:'Combat-sport training is not available yet.'}]};const gate=consumeAction(state,{policy:'special.training',target:'combat'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const career=track(state);career.active=true;const world=ensureCombatCareerWorld(state,{announce:!activeCombatCareerWorld(state)});const view=combatCareerWorldView(state,world);const coachBonus=view&&view.coachSupport>=70?1:view&&view.coachSupport<34?-1:0;
   setN(career,'striking',clamp(n(career,'striking',state.character.talents.combat*.3)+Math.max(1,3+coachBonus)));setN(career,'grappling',clamp(n(career,'grappling',state.character.talents.combat*.3)+Math.max(1,3+coachBonus)));setN(career,'defense',clamp(n(career,'defense',25)+Math.max(1,2+coachBonus)));setN(career,'stamina',clamp(n(career,'stamina',state.health.fitness)+Math.max(1,3+coachBonus)));setN(career,'fightIQ',clamp(n(career,'fightIQ',state.character.stats.intelligence*.4)+Math.max(1,2+coachBonus)));syncCompositeSkill(career);state.health.fitness=clamp(state.health.fitness+2);state.character.secondary.athleticism=clamp(state.character.secondary.athleticism+1);
   return{success:true,messages:[{text:`You completed a combat-sport training block at ${world.name}. Your persistent coaches and training partners now influence the environment around your career.`}]};
 }
 
 export function takeCombatFight(state:GameState,miniGameScore?:number):EngineResult{
-  const career=track(state);if(state.character.age<16||career.active!==true)return{success:false,messages:[{text:'You are not ready for a sanctioned fictional bout.'}]};const gate=consumeAction(state,{policy:'special.fight'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  const career=track(state);if(state.character.age<COMBAT_FIGHT_MIN_AGE||career.active!==true)return{success:false,messages:[{text:'You are not ready for a sanctioned fictional bout.'}]};const gate=consumeAction(state,{policy:'special.fight'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const world=ensureCombatCareerWorld(state,{announce:false});const rosterRng=createRng(`${state.seed}-combat-roster-on-demand-${world.id}-${state.character.age}`);const used=usedNames(state);replenishGroup(state,world,'rivals',rosterRng,used);const view=combatCareerWorldView(state,world)!;const rng=createRng(`${state.seed}-combat-fight-${world.id}`,state.rngCounter);const opponentId=rng.pick(view.rivalNpcIds);const opponent=state.npcs[opponentId]!;const opponentRel=relation(state,opponentId);const rivalGroup=groupFor(world,'rivals');
   const detail=syncCompositeSkill(career);const playerPower=clamp(detail*.85+n(career,'skill',detail)*.15);const opponentPower=clamp(25+opponent.health*.18+(rivalGroup?.prestige??50)*.34+rng.int(-9,10),28,92);const challengeBonus=miniGameScore===undefined?0:(clamp(miniGameScore)-50)*.35;const win=rng.chance(clamp(50+(playerPower-opponentPower)*1.15+challengeBonus,8,92)/100);setN(career,'fights',n(career,'fights')+1);career.lastOpponentNpcId=opponentId;career.lastFightWorldId=world.id;career.lastFightResult=win?'win':'loss';setN(career,'lastFightAge',state.character.age);
   let purse=0;

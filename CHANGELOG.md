@@ -1,5 +1,22 @@
 # Everthread Changelog
 
+## Feedback UX — age-appropriate progressive disclosure candidate — 2026-09-13
+
+### Corrected
+
+- Prioritized and reproduced live report `ET-20260913-BE8649B9`: early-life Activities and Career/Life Paths surfaces could render choices years before they were usable, leaving disabled controls that made the mobile interface feel cluttered and misleading.
+- Added presentation-only progressive disclosure for age-gated activities, licenses, work surfaces, school actions/groups, and special-career paths/actions. The engine still owns eligibility and continues to reject invalid calls; this slice changes visibility, not gameplay permissions.
+- Exported existing age thresholds from their owning systems (Relationship, Stress/therapy, Fame, Health, Travel, Career, Workplace, SchoolWorld, SpecialCareer, and CombatCareerWorld) so UI visibility does not become a second set of magic-number rules.
+- Preserved current/legacy work records, school-group memberships, and special-career histories even if an imported old save would otherwise sit below a modern visibility threshold.
+- Save schema remains **13**; no migration, gameplay RNG, action economy, simulation state, random-event pool, or scheduler authority changes.
+
+### Local candidate validation
+
+- New `progressiveDisclosureRegression.ts`: **25/25** checks for age visibility boundaries, legacy-state preservation, school-group disclosure, royalty visibility, and special-path/action thresholds.
+- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Core 82/82; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
+- Production build PASS with Vite 7.3.6 at **168 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Built from newest certified source **Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`** (documentation-only synchronization on top of the Run #115 gameplay baseline). Canonical GitHub Actions certification is still pending; keep `ET-20260913-BE8649B9` open until the fixing expanded-source commit/run are known.
+
 ## Phase 7B1 — Family, School & Relationship systemic stories — CI Green Run #115 — 2026-09-13
 
 ### Added / changed

@@ -3,7 +3,7 @@
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
 Certified save schema: 13
-Newest certified expanded source: Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`
+Newest certified expanded source: Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e` (documentation-only synchronization)
 Certified gameplay baseline: Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`
 
 ## Product direction
@@ -28,15 +28,15 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories — certified Run #115
+### Feedback UX — age-appropriate progressive disclosure (local candidate; CI certification pending)
 
-Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa` is now the certified gameplay/source baseline. Phase 7B1 is deployed on save schema **13**. Five probability-zero systemic follow-ups are scheduled only by real player actions: spending time with a child, taking an academic shortcut, arguing with a friend, reconciling with an ex, and marrying a partner.
+The live Supabase review against certified Run #116 found exactly one active triaged report: `ET-20260913-BE8649B9` (normal-priority interface suggestion). The report is reproduced: Activities and Career/Life Paths can advertise actions years before the player can use them, producing disabled early-life clutter. Per Mavyy's direction, this feedback correction is prioritized before the next Phase 7 gameplay slice.
 
-`SystemicStorySystem` remains only an RNG-neutral request bridge. `ConsequenceSystem` remains the sole scheduler/queue/history authority; RelationshipSystem, SchoolWorldSystem, NPC state, and SocialWorld state remain authoritative for their own truth. `systemicConsequenceEvents.ts` stays outside `lifeEvents`, preserving the 691-event random pool and random-selection behavior. Invalid exact targets cancel rather than retarget, and school follow-ups mutate the exact persistent school record already consumed by admissions.
+The candidate is presentation-only. Existing engine guards remain authoritative. Age thresholds are exported from their owning systems and consumed by `src/screens/progressiveDisclosure.ts`; Activities and Career then hide not-yet-age-appropriate choices while preserving already-active/legacy work, school-group, and special-career records from older saves. No save migration, RNG, action-economy, scheduler, random-event, or simulation-state change is introduced.
 
-Canonical Run #115 passed both TypeScript gates, the full regression wall, Phase 7B1 **33/33**, Core 82/82, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, both feedback suites, certified artifact restore smoke, and Pages deployment. Production build is green at **167 modules**.
+New `progressiveDisclosureRegression.ts` is **25/25** locally. Both TypeScript gates, the complete regression wall, Core 82/82, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Random-event Coherence 77/77, minigame 19/19, Feedback Reporting 20/20, and Feedback Central Inbox 23/23 all pass. Production build is green at **168 modules**. GitHub Actions remains final certification authority.
 
-No next gameplay candidate is promoted yet. Before selecting the next Phase 7B expansion, refresh the live Supabase Feedback Inbox. Roadmap direction after that review is property, business, employment, and special-career long-tail stories through the same scheduler foundation.
+Newest certified source remains docs-only Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`; last gameplay-changing certification is Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`. Do not mark `ET-20260913-BE8649B9` resolved or resume the next Phase 7 slice until this corrective candidate is canonically certified.
 
 Activity-specific minigame work remains established historical functionality and is not the current implementation slice.
 

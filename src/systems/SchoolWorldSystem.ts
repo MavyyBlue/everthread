@@ -12,7 +12,9 @@ import { scheduleSchoolConductStory } from './SystemicStorySystem';
 const SCHOOL_RELATIONSHIP_TYPES = new Set<RelationshipType>(['classmate','teacher','principal','coach']);
 const NPC_TRAITS = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
 
-export function educationRecordKey(record: EducationRecord) {
+export const ACADEMIC_SHORTCUT_MIN_AGE=10;
+
+function educationRecordKey(record: EducationRecord) {
   return `${record.stage}|${record.startAge}|${record.institution}|${record.programId ?? ''}`;
 }
 
@@ -229,7 +231,7 @@ export function attendSchoolGroup(state: GameState, groupId: string): EngineResu
 }
 
 export function cheatAtSchool(state: GameState): EngineResult {
-  const world=currentSchoolWorld(state);if(!world?.school)return{success:false,messages:[{text:'You are not currently enrolled.'}]};if(state.character.age<10)return{success:false,messages:[{text:'That kind of academic shortcut is not available at your age.'}]};
+  const world=currentSchoolWorld(state);if(!world?.school)return{success:false,messages:[{text:'You are not currently enrolled.'}]};if(state.character.age<ACADEMIC_SHORTCUT_MIN_AGE)return{success:false,messages:[{text:'That kind of academic shortcut is not available at your age.'}]};
   const gate=consumeAction(state,{policy:'school.risk'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(`${state.seed}-school-risk`,state.rngCounter);const detection=clamp(30+(100-world.school.conduct)*.2+(100-state.character.secondary.discipline)*.12,12,68)/100;const caught=rng.chance(detection);
   if(caught){world.school.conduct=clamp(world.school.conduct-18);world.school.disciplinaryActions+=1;state.character.secondary.academicPerformance=clamp(state.character.secondary.academicPerformance-5);state.character.secondary.reputation=clamp(state.character.secondary.reputation-4);state.character.secondary.stress=clamp(state.character.secondary.stress+6);const authority=world.members.filter(member=>['teacher','principal'].includes(member.role)).map(member=>member.npcId);for(const npcId of authority){const rel=schoolRelation(state,npcId);if(rel)rel.score=clamp(rel.score-7);addMemory(state,npcId,'academic_misconduct',-9,`${state.character.firstName} was caught cheating.`,true);}state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',importance:3,text:`You were caught cheating at ${world.name}. The disciplinary record now follows this school stage.`,npcIds:authority.slice(0,2)});}else{world.school.conduct=clamp(world.school.conduct-4);state.character.secondary.academicPerformance=clamp(state.character.secondary.academicPerformance+rng.int(5,9));state.character.secondary.stress=clamp(state.character.secondary.stress+2);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',importance:1,text:'You used an academic shortcut and were not caught, but it still became part of your conduct trajectory.'});}
