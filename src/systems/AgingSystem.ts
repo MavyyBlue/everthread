@@ -23,7 +23,8 @@ import { processPoliticsCareerYear } from './PoliticsCareerWorldSystem';
 import { processSpecialCareerStoriesYear } from './SpecialCareerStorySystem';
 import { processAnnualFinance } from './FinanceSystem';
 import { processStressConsequencesYear } from './StressConsequenceSystem';
-import { triggerRandomEvent } from './EventSystem';
+import { processDelayedEvents, triggerRandomEvent } from './EventSystem';
+import { scheduleConsequence } from './ConsequenceSystem';
 import { evaluateAchievements, evaluateChallenges } from './AchievementSystem';
 import { checkDeath } from './DeathSystem';
 import { processNpcInheritanceTrusts, releaseMatureInheritanceTrust } from './EstateSystem';
@@ -32,6 +33,7 @@ import { processFamilyConflictYear } from './FamilyConflictSystem';
 export function ageUp(state:GameState):EngineResult {
   if(!state.character.alive)return{success:false,messages:[{text:'This life has ended. Continue as a descendant or begin a new life.'}]};
   if(state.pendingEvent)return{success:false,messages:[{text:'Resolve the current event before aging again.'}]};
+  const dueBeforeAging=processDelayedEvents(state);if(dueBeforeAging){state.pendingEvent=dueBeforeAging;return{success:false,messages:[{text:'A consequence from this year needs your attention before aging again.'}],events:[dueBeforeAging],stateChanges:['pendingEvent']};}
   if(state.flags.ageUpLocked)return{success:false,messages:[{text:'Aging is already being processed.'}]};
   state.flags.ageUpLocked=true;captureRewindSnapshot(state);
   try{
@@ -59,7 +61,7 @@ export function ageUp(state:GameState):EngineResult {
     processPoliticsCareerYear(state);
     processSpecialCareerStoriesYear(state);
     processAnnualFinance(state);
-    if(state.character.age===18&&state.flags.financiallyIndependent!==true&&!state.pendingEvent){state.pendingEvent={eventId:'financial_independence_transition',title:'Your Money, Your Responsibility',description:'You are legally an adult, but becoming financially independent is a separate life transition. While you remain in your family household, ordinary living costs stay with your supporting household. You can take responsibility for your own costs now or remain supported for the time being.',choices:[{id:'stay_supported',label:'Stay with family for now'},{id:'become_independent',label:'Become financially independent'}]};}
+    if(state.character.age===18&&state.flags.financiallyIndependent!==true){scheduleConsequence(state,{eventId:'financial_independence_transition',dueAge:state.character.age,payload:{originAge:state.character.age},priority:'critical',origin:{kind:'system',id:'age_milestone',age:state.character.age},dedupeKey:'milestone:financial_independence'});}
     processStressConsequencesYear(state);
     initializeMissingNpcLives(state);
 

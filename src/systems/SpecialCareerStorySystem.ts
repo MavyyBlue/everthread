@@ -1,6 +1,6 @@
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
-import { makeStateId } from '../core/ids';
+import { scheduleConsequence } from './ConsequenceSystem';
 import type { GameState, SocialWorld, SocialWorldMember } from '../types/game';
 import { SPECIAL_CAREER_STORY_RELATIONSHIPS } from '../data/specialCareerStoryEvents';
 import { specialCareerWorldKind } from './SpecialCareerEcosystemSystem';
@@ -173,6 +173,9 @@ export function queueSpecialCareerStoryStart(state: GameState, arc: SpecialCaree
   const eventId = START_EVENT[arc];
   if (state.delayedEvents.some(delayed => delayed.eventId === eventId && delayed.payload?.npcId === npcId)) return false;
   if (state.pendingEvent?.eventId === eventId && state.pendingEvent.payload?.npcId === npcId) return false;
+  const chainId=`special:${arc}:${world.id}:${npcId}`;
+  const scheduled=scheduleConsequence(state,{eventId,dueAge:state.character.age,priority:'high',chainId,origin:{kind:'system',id:'special_career_story',age:state.character.age},targetRefs:[{kind:'npc',id:npcId},{kind:'social_world',id:world.id},{kind:'career',id:kind}],validity:{targetMustExist:true,targetMustBeAlive:true,requiredRelationshipTypes:SPECIAL_CAREER_STORY_RELATIONSHIPS},dedupeKey:`special:${eventId}:${npcId}:${world.id}`,payload:{npcId,originAge:state.character.age,storyArc:arc,storyCareerKind:kind,storyWorldId:world.id,requiredRelationshipTypes:SPECIAL_CAREER_STORY_RELATIONSHIPS}});
+  if(!scheduled.scheduled)return false;
   const career = track(state, kind); setN(career, 'storyArcStarts', n(career, 'storyArcStarts') + 1);
   if (arc === 'mentor') setN(career, 'storyMentorLastStartAge', state.character.age);
   else if (arc === 'rivalry') setN(career, 'storyRivalryLastStartAge', state.character.age);
@@ -180,10 +183,6 @@ export function queueSpecialCareerStoryStart(state: GameState, arc: SpecialCaree
     setN(career, 'storyPathLastStartAge', state.character.age); setN(career, 'storyPathArcStarts', n(career, 'storyPathArcStarts') + 1);
     career.storyPathLastNpcId = npcId; career.storyPathLastWorldId = world.id; career.storyPathLastArc = arc;
   }
-  state.delayedEvents.push({
-    id: makeStateId(state, 'delay'), eventId, dueAge: state.character.age,
-    payload: { npcId, originAge: state.character.age, storyArc: arc, storyCareerKind: kind, storyWorldId: world.id, requiredRelationshipTypes: SPECIAL_CAREER_STORY_RELATIONSHIPS },
-  });
   return true;
 }
 

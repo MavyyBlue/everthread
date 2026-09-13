@@ -118,8 +118,8 @@ export async function runSpecialCareerPathStoryRegression(){
   const ai=pathFixture(PATH_CASES[0]!,'path-story-ai-playthrough');verify(queueSpecialCareerStoryStart(ai.state,'acting_reunion','acting',ai.world.id,ai.targetId),'64 AI playthrough fixture must contain a real queued acting reunion');ai.state.flags.specialCareerStoryScanAge=35;
   await withEverthreadAiTestbench({state:ai.state,screen:'life'},async bench=>{
     const aged=bench.execute('life.age_up');
-    verify(aged.result.success&&aged.invariantIssues.length===0,'65 AI testbench must Age Up through the real GameEngine with no invariant failure');
-    verify(bench.getState().pendingEvent?.eventId==='special_career_acting_reunion_opening'&&bench.getState().pendingEvent?.payload?.npcId===ai.targetId,'66 the AI-readable player flow must surface the exact archived collaborator event rather than a test-only shortcut');
+    verify(!aged.result.success&&aged.invariantIssues.length===0&&bench.getState().character.age===34,'65 a consequence already due at the current age must block Age Up without creating an invariant failure');
+    verify(bench.getState().pendingEvent?.eventId==='special_career_acting_reunion_opening'&&bench.getState().pendingEvent?.payload?.npcId===ai.targetId,'66 the AI-readable player flow must surface the exact archived collaborator before advancing the year');
     const resolved=bench.execute({id:'event.choose',args:{choiceId:'reconnect'}});
     verify(resolved.result.success&&resolved.invariantIssues.length===0,'67 AI semantic event choice must resolve the new path story through GameEngine and normal EventSystem ownership');
     const queued=bench.getState().delayedEvents.find(event=>event.eventId==='special_career_acting_reunion_followthrough');

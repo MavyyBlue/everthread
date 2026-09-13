@@ -1,6 +1,24 @@
 # Everthread Changelog
 
-## Player-visible Feedback disposition candidate — 2026-09-13
+## Phase 7A — Persistent Consequence Foundation candidate — 2026-09-13
+
+### Added / changed
+
+- Added one authoritative bounded `ConsequenceSystem` while retaining `state.delayedEvents` as the sole active consequence queue.
+- Added stable consequence/chain/origin identity, exact due windows, priority/tie ordering, exact durable target refs, validity/cancellation requirements, dedupe, bounded completion/cancellation history, and exact event cooldown ages.
+- Added shared `CURRENT_SAVE_VERSION` and candidate schema **13** migration. Schema-12 migration is deterministic, RNG-neutral, idempotent, preserves old pending choices and delayed targets, preserves distinct legacy queued entries when no old dedupe authority existed, and reconstructs legacy cooldown ages without consuming gameplay RNG.
+- Moved Financial Pressure arbitration out of FinanceSystem; Finance requests a normal-priority consequence and the scheduler owns ordering. Special-career story openings now schedule high-priority exact-target consequences with stable chain/validity metadata.
+- Age Up surfaces already-due backlog before advancing, preventing multiple due consequences from silently drifting into later ages. Descendant continuation resets previous-life scheduler state.
+- Added `persistentConsequenceRegression.ts`: **36/36** checks covering cooldowns, deterministic order, pending protection, windows, exact targets/cancellation, dedupe, bounds, migration/idempotence, save/rewind, Finance priority, descendants, content count and invariants.
+- Ordinary random event definitions remain **691**.
+
+### Local validation
+
+- Engine TypeScript PASS; Test TypeScript PASS; complete established regression wall PASS.
+- Phase 7A Persistent Consequence 36/36; Integrated Long-Life 105/105; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
+- Production build PASS with Vite 7.3.6 at 165 transformed modules. Canonical GitHub Actions remains final certification authority.
+
+## Player-visible Feedback disposition — CI Green Run #111 — 2026-09-13
 
 ### Added
 
@@ -15,9 +33,11 @@
 - The public status endpoint does not expose internal triage/resolution notes, cancellation-token hashes, database access, or other players’ reports.
 - No simulation/save authority or gameplay RNG changes. Supabase security advisor remains clean after the schema extension.
 
-### Local validation
+### CI validation
 
-- Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Feedback Central Inbox 23/23, and the 163-module production build pass locally. Canonical GitHub Actions remains final certification authority.
+- GitHub Actions Run #111 (`34774175236`) certified expanded source `576f9402deb854f8d5bd11891610e035cdd6d7ec`.
+- Canonical preflight passed 4/4 with Feedback Central Inbox 23/23, Activity Feedback Reporting 20/20, Activity-specific Minigame 19/19, Core 82/82, AI Interaction Testbench 41/41, Integrated Long-Life 105/105, all established suites, and the 163-module production build.
+- Certified artifact ID `10323017491`; Pages artifact ID `10322703128`; Pages deployment succeeded.
 
 ## Central Feedback Inbox v2 — CI Green Run #110 — 2026-09-13
 

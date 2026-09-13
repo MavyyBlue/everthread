@@ -515,11 +515,80 @@ export interface Pet {
   alive: boolean;
 }
 
+export type ConsequencePriority = 'low' | 'normal' | 'high' | 'critical';
+export type ConsequenceTargetKind = 'npc' | 'property' | 'vehicle' | 'business' | 'collectible' | 'social_world' | 'career' | 'other';
+export type ConsequenceResolutionStatus = 'completed' | 'cancelled';
+
+export interface ConsequenceOrigin {
+  kind: 'event' | 'system' | 'legacy';
+  id: Id;
+  age: number;
+}
+
+export interface ConsequenceTargetRef {
+  kind: ConsequenceTargetKind;
+  id: Id;
+}
+
+export interface ConsequenceValidity {
+  targetMustExist?: boolean;
+  targetMustBeAlive?: boolean;
+  requiredRelationshipTypes?: RelationshipType[];
+  requiredFlags?: string[];
+  forbiddenFlags?: string[];
+}
+
+/**
+ * Backward-compatible active consequence record. `delayedEvents` remains the one active queue;
+ * Phase 7A enriches each entry instead of creating a second scheduling authority.
+ */
 export interface DelayedEvent {
   id: Id;
   eventId: Id;
   dueAge: number;
   payload?: Record<string, unknown>;
+  scheduledAge?: number;
+  earliestAge?: number;
+  latestAge?: number;
+  priority?: ConsequencePriority;
+  chainId?: Id;
+  origin?: ConsequenceOrigin;
+  targetRefs?: ConsequenceTargetRef[];
+  validity?: ConsequenceValidity;
+  dedupeKey?: string;
+}
+
+export interface ConsequenceHistoryEntry {
+  id: Id;
+  eventId: Id;
+  status: ConsequenceResolutionStatus;
+  scheduledAge: number;
+  dueAge: number;
+  resolvedAge: number;
+  priority: ConsequencePriority;
+  chainId?: Id;
+  origin?: ConsequenceOrigin;
+  targetRefs?: ConsequenceTargetRef[];
+  dedupeKey?: string;
+  reason?: string;
+}
+
+export interface ConsequenceSchedulerState {
+  version: 1;
+  eventCooldownAges: Record<Id, number>;
+  history: ConsequenceHistoryEntry[];
+}
+
+export interface PendingConsequenceContext {
+  id: Id;
+  eventId: Id;
+  scheduledAge: number;
+  dueAge: number;
+  priority: ConsequencePriority;
+  chainId?: Id;
+  origin?: ConsequenceOrigin;
+  targetRefs?: ConsequenceTargetRef[];
+  dedupeKey?: string;
 }
 
 export interface PendingEvent {
@@ -528,6 +597,7 @@ export interface PendingEvent {
   description: string;
   choices: Array<{ id: Id; label: string }>;
   payload?: Record<string, unknown>;
+  consequence?: PendingConsequenceContext;
 }
 
 export interface AchievementProgress {
@@ -656,6 +726,7 @@ export interface GameState {
   pets: Pet[];
   timeline: TimelineEntry[];
   delayedEvents: DelayedEvent[];
+  consequenceScheduler: ConsequenceSchedulerState;
   pendingEvent?: PendingEvent;
   recentEventIds: Id[];
   achievements: AchievementProgress[];

@@ -2,7 +2,8 @@
 
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
-Save schema: 12
+Certified save schema: 12
+Local Phase 7A candidate schema: 13
 
 ## Product direction
 
@@ -26,17 +27,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Player-visible Feedback disposition (predeployment candidate)
+### Phase 7A — Persistent Consequence Foundation (local candidate; CI certification pending)
 
-- Built only on certified Run #110 expanded source `9980d8c278cb3bb2306d73a07963bf172096fd1e`; package remains 0.12.0 and save schema remains 12.
-- Central Feedback Inbox v2 itself is certified in Run #110. This slice extends the existing authority rather than introducing a second status system.
-- Supabase `triage_status` remains the review lifecycle authority and `resolution_class` remains the disposition authority. A new bounded `player_message` is presentation-only reviewer communication.
-- Edge Function version 2 adds token-authenticated status read-back. It never exposes the whole inbox, cancellation-token hash, internal triage notes, or resolution notes.
-- `src/feedback/remoteInbox.ts` stores a safe local projection of received/reviewed/fix/certification status beside the existing private cancellation token and refreshes only the same bounded 10-report batch used by startup synchronization.
-- Feedback Center displays Received / review lifecycle / disposition / player message and offers Check status.
-- Live test report `ET-20260913-A527E2A6` is centrally dispositioned `resolved` / `suggestion` with a player-safe confirmation message for end-to-end validation after deployment.
-- No `GameState`, save schema, rewind, engine action, or gameplay RNG changes.
-- Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Feedback Central Inbox **23/23**, Activity Feedback Reporting 20/20, Activity-specific Minigame 19/19, Core 82/82, Integrated Long-Life 105/105, and the 163-module production build all pass locally. GitHub Actions remains final certification authority.
+- Built only on certified Run #111 expanded source `576f9402deb854f8d5bd11891610e035cdd6d7ec`. Package remains 0.12.0; certified schema is 12 and the candidate intentionally advances to 13.
+- Added `ConsequenceSystem` as the one scheduler authority while retaining `state.delayedEvents` as the single active queue for backward compatibility. No parallel active consequence ledger was introduced.
+- Scheduler metadata persists exact event cooldown ages and bounded completion/cancellation history. Active queue/history/cooldown caps are 96 / 160 / 256.
+- Consequences can carry stable chain/origin identity, due windows, explicit priority, exact durable target references, validity requirements, and dedupe keys. Deterministic arbitration is priority → due age → scheduled age → stable ID.
+- Failed duplicate/queue-full scheduling consumes no runtime ID and scheduler bookkeeping consumes no gameplay RNG. Invalid exact targets cancel deterministically rather than retargeting.
+- Age Up surfaces already-due same-age backlog before advancing; `pendingEvent` remains the single unresolved player-facing gate.
+- Financial Pressure now only schedules a normal-priority request; Finance no longer decides whether it may overwrite pending stories. Special-career story openings schedule high-priority exact-target consequences with chain/validity metadata.
+- Added `src/core/saveVersion.ts` so CharacterSystem and SaveSystem share one schema authority. Schema-12→13 migration is deterministic, idempotent, RNG-neutral, preserves current pending choices, normalizes legacy delayed events, and reconstructs exact cooldown ages from bounded legacy event history.
+- Descendant continuation resets prior-protagonist consequence queue/history/cooldowns, preserving established per-life ownership. Rewind/save import-export preserve scheduler state.
+- Random event definitions remain exactly 691.
+- Local validation: Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Phase 7A Persistent Consequence **36/36**, including legacy no-dedupe queue preservation; Integrated Long-Life 105/105; Feedback Reporting 20/20; Feedback Central Inbox 23/23; production build PASS at **165 modules**. GitHub Actions remains final certification authority.
 
 ## Recent corrective history
 

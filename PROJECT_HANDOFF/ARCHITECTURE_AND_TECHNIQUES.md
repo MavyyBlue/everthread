@@ -6,9 +6,13 @@ Everthread has one authoritative `GameState`. Preferred direction remains UI →
 
 The test-only AI interaction layer follows the same ownership direction: semantic command → `GameEngine` → controlled system mutation → semantic observation. It must never become a second gameplay engine.
 
+## Persistent consequence ownership
+
+Phase 7A extends the existing delayed-event authority rather than creating a parallel narrative queue. `state.delayedEvents` remains the one active consequence queue. `ConsequenceSystem` owns scheduling, deterministic priority/order, due windows, exact target validity/cancellation, dedupe, exact event cooldown ages, bounded completion/cancellation history, and schema-13 normalization. Feature systems request consequences; they do not arbitrate `pendingEvent`. `pendingEvent` remains the one unresolved player-facing gate. Read-only eligibility/projections must not normalize or mutate scheduler state.
+
 ## Determinism, saves, and yearly processors
 
-Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current certified save schema is 12. Phase 6A advanced to schema 11 for durable revolving-credit account/history authority; Phase 6B3 advanced to schema 12 for durable auto-pay, card past-due, and secured paid-ahead payment state. Schema increments are justified by new durable authority, not by presentation-only projections or bounded primitive flags.
+Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current **certified** save schema is 12 on Run #111. The local Phase 7A candidate advances schema to **13** for durable consequence-scheduler cooldown/history authority through shared `CURRENT_SAVE_VERSION`; certification is pending. Phase 6A advanced to schema 11 for durable revolving-credit account/history authority; Phase 6B3 advanced to schema 12 for durable auto-pay, card past-due, and secured paid-ahead payment state. Schema increments are justified by new durable authority, not by presentation-only projections or bounded primitive flags.
 
 Real player saves are diagnostic evidence only. Generalize the failure shape into fabricated deterministic regression fixtures; never ship a tester's seed, IDs, NPCs, or history.
 

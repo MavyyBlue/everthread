@@ -1,50 +1,51 @@
 # Everthread — Current State
 
-## Live continuation note — Run #110 certified; player-visible feedback disposition candidate
+## Live continuation note — Run #111 certified; Phase 7A local candidate
 
-Phase 6 remains closed. The authoritative certified baseline is GitHub Actions **Run #110** (`34773384580`) on expanded source commit `9980d8c278cb3bb2306d73a07963bf172096fd1e`. Package remains `everthread-life-unwritten@0.12.0`; save schema remains **12**. Phase 7A remains the next macro gameplay implementation after this small feedback-UX slice is certified.
+Phase 6 remains closed. The authoritative certified baseline is GitHub Actions **Run #111** (`34774175236`) on expanded source commit `576f9402deb854f8d5bd11891610e035cdd6d7ec`. Package remains `everthread-life-unwritten@0.12.0`; certified save schema remains **12**. Player-visible central feedback status/disposition is certified and deployed. Phase 7A is now the active local gameplay candidate and intentionally advances candidate save schema **12 → 13**.
 
-Run #110 certified the Supabase-backed Central Feedback Inbox v2, including automatic local-first submission/retry, secure withdrawal, direct future-Yuki inbox review, and Feedback Central Inbox regression 17/17. Pages deployment succeeded from the expanded source build identified by `build-info.json`.
+Run #111 certified secure player-visible feedback read-back on top of the central Supabase inbox: token-authenticated status lookup, reviewer disposition/message projection, Feedback Central Inbox **23/23**, and successful Pages deployment from the expanded source build identified by `build-info.json`.
 
 Last handoff preparation: 2026-09-13
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `12`
+Local Phase 7A candidate schema: `13`
 
-## Last fully verified repository baseline — Run #110
+## Last fully verified repository baseline — Run #111
 
-- Expanded certified source: `9980d8c278cb3bb2306d73a07963bf172096fd1e`.
-- Upload wrapper: `c195efe220b38769a0acfdb5d277a8f488107c77`.
-- Run #110 passed Engine TypeScript, Test TypeScript, complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
-- Core 82/82; AI Interaction Testbench 41/41; Integrated Long-Life 105/105; Activity-specific Minigame 19/19; Activity Feedback Reporting 20/20; Feedback Central Inbox 17/17; every established suite green.
+- Expanded certified source: `576f9402deb854f8d5bd11891610e035cdd6d7ec`.
+- Upload wrapper: `6569c4c718eeae817847bf75b10c70116e1ecfe4`.
+- Run #111 passed Engine TypeScript, Test TypeScript, complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
+- Core 82/82; AI Interaction Testbench 41/41; Integrated Long-Life 105/105; Activity-specific Minigame 19/19; Activity Feedback Reporting 20/20; Feedback Central Inbox 23/23; every established suite green.
 - Vite 7.3.6 transformed 163 modules. Existing >700 kB main-chunk warning remains nonblocking technical debt.
-- Certified source SHA-256: `77c0c313d23d7eafaeedf4b01fec7a3acd3330e544a8d21181d8fdd42dabbb14`.
-- Certified dependency SHA-256: `6aad29885dea0456c8c0716ee17eb8565ad8be0e85cfc1aa69798f52364c3317`.
+- Certified source SHA-256: `f342ec71c823f45f76d661d96f0ed3d1cdf415ab99e6c36054f2da8f1cbdf0e8`.
+- Certified dependency SHA-256: `16270fbffb002a5bf803f8b3e024999beb6f0ca85d9bea92aa629d6b121f450a`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact: `everthread-certified-preflight-9980d8c278cb3bb2306d73a07963bf172096fd1e`, artifact ID `10322692198`, digest `23693a3a94042444cac39a29f9c28dd243944907e35c204cd955ca9496492f98`.
-- Pages artifact ID `10322592615`, digest `94375b7e7de8638e26dad25250503e9d14eaa931d1a5aae6fe90b0db880f7251`; deployment reported success.
+- Certified artifact: `everthread-certified-preflight-576f9402deb854f8d5bd11891610e035cdd6d7ec`, artifact ID `10323017491`, digest `12529cb08519f0176778cf9161b73b83beb0592ba5778f9c3420a8261d8c733a`.
+- Pages artifact ID `10322703128`, digest `7dabf6647ee2da91cd9a42789a0321aeb608774b3ff3763bca1af20d59f88055`; deployment reported success.
 
-## Player-visible feedback disposition candidate
+## Phase 7A — Persistent Consequence Foundation local candidate
 
-- Supabase remains an online-services layer only; `GameState`, saves, rewind, RNG, and simulation authorities are unchanged.
-- Live Edge Function version 2 adds a `status` operation authenticated by the same private per-report cancellation token already stored only on the player device.
-- The status endpoint exposes only safe fields: receipt time, authoritative triage lifecycle, resolution class, review/build linkage, certification linkage, withdrawal time, and bounded `player_message`. Internal `triage_notes`, `resolution_notes`, cancellation-token hash, and other reports remain private.
-- Feedback client transport stores the returned review projection beside existing delivery metadata and maps it to friendly states such as Received, Under investigation, Fix in progress, Fix certified, Resolved, and Unable to reproduce.
-- Feedback Center shows disposition labels and reviewer messages and adds an explicit **Check status** action; startup/Feedback Center sync also refreshes submitted reports in the same bounded 10-report batch.
-- Live test report `ET-20260913-A527E2A6` has been dispositioned centrally as `resolved` / `suggestion` with a player-safe confirmation message. The existing deployed Run #110 client cannot read that disposition yet; the next certified client can.
-- Supabase security advisor remains clean after the player-message schema addition.
-- Dedicated Feedback Central Inbox regression expands from 17/17 to **23/23** locally for token-authenticated status read-back, safe disposition projection, receipt language, and bounded status refresh.
-- GitHub Actions remains final certification authority for this client/repository candidate.
+- `state.delayedEvents` remains the **single authoritative active consequence queue** for backward compatibility; no shadow active queue was introduced.
+- New `ConsequenceSystem` owns scheduling, deterministic priority/tie order, exact due windows, dedupe, target validity/cancellation, completion/cancellation history, exact event cooldown ages, and bounded retention.
+- Durable `consequenceScheduler` metadata adds exact cooldown ages plus bounded history; candidate schema advances **12 → 13** through one `CURRENT_SAVE_VERSION` authority shared by CharacterSystem and SaveSystem.
+- Schema-12 migration is deterministic, idempotent, RNG-neutral, preserves old `pendingEvent`, normalizes existing delayed entries, reconstructs cooldown ages from bounded legacy history, and preserves exact NPC/origin/relationship semantics.
+- Finance no longer owns pending-event arbitration. Financial Pressure is a normal-priority scheduler request; higher-priority due stories remain ahead of it while the pressure notice stays in the same-age backlog.
+- Special-career stories schedule high-priority exact-target consequences with stable chain IDs and validity requirements instead of relying on loose payload-only semantics.
+- Age Up checks an already-due backlog before advancing the year, so multiple same-age consequences are surfaced/resolved rather than silently drifting overdue.
+- Descendant continuation resets the previous protagonist scheduler queue/history/cooldowns, preserving the established per-life ownership boundary.
+- Random-event content remains exactly **691** definitions; Phase 7A adds no event-count inflation and no gameplay RNG for scheduler bookkeeping.
+- Local verification: both TypeScript gates pass; complete established regression wall passes; dedicated **Phase 7A Persistent Consequence 36/36** passes, including preservation of distinct schema-12 queued entries that lacked an explicit dedupe key; Integrated Long-Life remains 105/105; Feedback Reporting 20/20; Feedback Central Inbox 23/23; production build passes at **165 modules**. GitHub Actions remains final certification authority.
 
-## Feedback queue snapshot reviewed against Run #110 / `9980d8c…`
+## Feedback queue snapshot reviewed against Run #111 / `576f9402…`
 
-- Active technical reports requiring action: **0**
-- Active experience reports requiring action: **0**
-- Active suggestions requiring action: **0**
-- Central new/untriaged reports: **0**
-- Reviewed reports in central checkpoint: **1**
-- `ET-20260913-A527E2A6` is a deliberate delivery test and is resolved as a suggestion; no development action is required.
+- Active technical reports requiring immediate action: **0**.
+- Active experience reports requiring immediate action: **0**.
+- Active normal-priority suggestion backlog: **1** — `ET-20260913-BE8649B9`, requesting that unavailable early-life actions/career paths be hidden or progressively disclosed to reduce interface clutter.
+- Test reports `ET-20260913-A527E2A6` and `ET-20260913-55F088C9` are resolved as successful pipeline tests.
+- Central review checkpoint has been advanced to Run #111 with **3 reviewed reports**. The early-life visibility suggestion is intentionally retained for a later UX/polish slice and does not block Phase 7A.
 
 ## Phase 6 closeout guarantees
 
@@ -59,15 +60,15 @@ Phase 6A–6C plus the post-6C household-finance correction are now certified fo
 - Due delayed stories retain priority over a newly created financial-pressure notice; finance consequences must not overwrite unrelated story continuity.
 - System-owned milestone/crisis events remain outside the established 691-event random library.
 
-## Next implementation — Phase 7A: Persistent Consequence Foundation
+## Active implementation — Phase 7A: Persistent Consequence Foundation
 
 Do not begin Phase 7 by adding large event counts. First create one bounded, authoritative persistent consequence scheduler that later systems can safely consume.
 
-Phase 7A should provide exact event cooldown ages, stable consequence/chain IDs, origin event and origin age, exact target references, due-age windows, explicit priority, cancellation/validity conditions, deduplication, completion/cancellation history, deterministic ordering, bounded retention, and save migration. Existing `DelayedEvent` callers must remain compatible while migrating toward the new authority.
+The local Phase 7A candidate now provides exact event cooldown ages, stable consequence/chain IDs, origin event and origin age, exact target references, due-age windows, explicit priority, cancellation/validity conditions, deduplication, completion/cancellation history, deterministic ordering, bounded retention, and save migration. Existing `DelayedEvent` callers remain compatible through normalization into the same authoritative active queue.
 
 Priority belongs to the scheduler rather than individual feature systems. Finance, parenting, school, property, business, relationships, and special careers should schedule consequences without independently deciding whether they may steal the pending-event slot.
 
-Phase 7A is expected to advance save schema **12 → 13** because durable consequence/cooldown metadata is real persistent state. Migration must be deterministic, RNG-neutral, idempotent, and preserve old pending/delayed event completion. New-game save version initialization must not drift from the SaveSystem authority.
+Phase 7A advances candidate save schema **12 → 13** because durable consequence/cooldown metadata is real persistent state. Migration is deterministic, RNG-neutral, idempotent, preserves old pending/delayed event completion, and new-game/save migration share `CURRENT_SAVE_VERSION`. Canonical CI must still certify this before schema 13 becomes the certified baseline.
 
 Read `PROJECT_HANDOFF/PHASE7_PERSISTENT_CONSEQUENCES.md` before implementation, then inspect `src/types/game.ts`, `src/systems/EventSystem.ts`, `src/systems/AgingSystem.ts`, `src/services/SaveSystem.ts`, `src/systems/SpecialCareerStorySystem.ts`, and all existing delayed-event call sites before editing.
 
@@ -143,7 +144,7 @@ The pending Slice 2 overlay:
 - works through descendant continuation: when an NPC spouse becomes spouse of the new controlled descendant, the obsolete NPC-to-NPC pointer to the now-player character is removed and household state is rebuilt from player relationship truth;
 - uses no new persisted structure and adds no new main-RNG draw, so save schema remains 9.
 
-A dedicated synthetic `npcHouseholdCoherenceRegression.ts` passes **35/35** in Run #77 across dating, engagement, marriage, divorce, reconciliation, breakup, ownership, stale-save repair, custody/release, NPC-to-NPC couples, player death, teen relationships, and descendant continuation. The supplied real save was used only as diagnosis: under the green logic its stale spouse household projects as `partnered/shared`; none of its private seed/IDs/history are shipped in fixtures.
+A dedicated synthetic `npcHouseholdCoherenceRegression.ts` passes **36/36** in Run #77 across dating, engagement, marriage, divorce, reconciliation, breakup, ownership, stale-save repair, custody/release, NPC-to-NPC couples, player death, teen relationships, and descendant continuation. The supplied real save was used only as diagnosis: under the green logic its stale spouse household projects as `partnered/shared`; none of its private seed/IDs/history are shipped in fixtures.
 
 Run #76 failed only because the new regression held TypeScript-narrowed object references across mutations. The corrective Run #77 test re-reads authoritative state after each mutation; production Slice 2 logic was unchanged. Run #77 passed both TypeScript gates, all regressions, production build, Pages artifact upload, and live deployment. Slice 2 is **CI Green**.
 
@@ -165,7 +166,7 @@ The green Slice 3 implementation:
 - adds validator coverage for any future living terminal-health contradiction;
 - keeps save schema at 9 and introduces no persisted field.
 
-Dedicated `npcHealthMortalityRegression.ts`: **18/18 checks passed in Run #79**. NPC Household Coherence remained **35/35**, every established regression stayed green, and the production build, Pages artifact, and live deployment passed. The real diagnostic save was used only as diagnosis: its 7 living zero-health NPCs normalize to living health-1 critical NPCs on import, with no remaining living terminal-health records and 7 rewind snapshots retained. Slice 3 is **CI Green**.
+Dedicated `npcHealthMortalityRegression.ts`: **18/18 checks passed in Run #79**. NPC Household Coherence remained **36/36**, every established regression stayed green, and the production build, Pages artifact, and live deployment passed. The real diagnostic save was used only as diagnosis: its 7 living zero-health NPCs normalize to living health-1 critical NPCs on import, with no remaining living terminal-health records and 7 rewind snapshots retained. Slice 3 is **CI Green**.
 
 
 ## Slice 4 implementation — CI Green

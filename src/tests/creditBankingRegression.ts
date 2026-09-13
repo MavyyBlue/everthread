@@ -1,5 +1,6 @@
 import type { GameState, Npc, Relationship } from '../types/game';
 import { createNewGame } from '../systems/CharacterSystem';
+import { processDelayedEvents } from '../systems/EventSystem';
 import { SAVE_VERSION, migrateSave } from '../services/SaveSystem';
 import { actionAllowed } from '../core/actionEconomy';
 import { validateState } from '../core/invariants';
@@ -30,7 +31,7 @@ export function runCreditBankingRegression(){
   function approx(actual:number,expected:number,tolerance:number,message:string){verify(Math.abs(actual-expected)<=tolerance,`${message} (expected ${expected}±${tolerance}, got ${actual})`);}
 
   const fresh=createNewGame({seed:'credit-fresh'});
-  verify(fresh.saveVersion===12&&SAVE_VERSION===12,'Phase 6A credit state remains valid under current save schema 12');
+  verify(fresh.saveVersion===13&&SAVE_VERSION===13,'Phase 6A credit state remains valid under current save schema 13');
   verify(Array.isArray(fresh.finances.credit.accounts)&&fresh.finances.credit.accounts.length===0,'fresh lives initialize an empty credit-account authority');
   verify(fresh.finances.credit.transactions.length===0&&fresh.finances.credit.inquiries.length===0,'fresh credit history begins empty');
   verify(creditAvailable(fresh)===0&&creditCardDebt(fresh)===0&&securedCreditDeposits(fresh)===0,'fresh lives do not invent borrowing capacity, revolving debt, or secured deposits');
@@ -38,7 +39,7 @@ export function runCreditBankingRegression(){
 
   const legacy=createNewGame({seed:'credit-v10-migration'});legacy.saveVersion=10;const legacyRng=legacy.rngCounter;delete (legacy.finances as unknown as {credit?:unknown}).credit;
   const migrated=migrateSave(legacy);
-  verify(migrated.saveVersion===12&&Boolean(migrated.finances.credit),'v10 saves migrate to current schema 12 with credit state');
+  verify(migrated.saveVersion===13&&Boolean(migrated.finances.credit),'v10 saves migrate to current schema 13 with credit state');
   verify(migrated.rngCounter===legacyRng,'credit migration consumes no player RNG');
   verify(migrated.finances.credit.accounts.length===0&&validateState(migrated).length===0,'credit migration is empty, deterministic, and invariant-clean');
   const remigrated=migrateSave(migrated);verify(JSON.stringify(remigrated.finances.credit)===JSON.stringify(migrated.finances.credit),'current-schema credit normalization is idempotent');
@@ -103,8 +104,8 @@ export function runCreditBankingRegression(){
   verify(closeState.finances.credit.transactions.some(tx=>tx.kind==='deposit_refund'),'deposit refund remains visible in transaction history');
   verify(closeState.timeline.some(entry=>entry.text.includes('closed Seed Secured in good standing')),'account closure remains visible in durable life history');
 
-  const bankrupt=createNewGame({seed:'credit-bankruptcy'});setAge(bankrupt,30);bankrupt.finances.cash=5000;bankrupt.employment.current={jobId:'bankruptcy-fixture',title:'Technician',company:'Fixture Co',startAge:25,salary:50000,performance:65,level:1};bankrupt.finances.credit.history.closedGoodStanding=1;bankrupt.finances.credit.history.archivedAccountYears=5;bankrupt.finances.credit.history.onTimePayments=3;applyForCreditCard(bankrupt,'northstar_foundation');const bankruptCard=bankrupt.finances.credit.accounts[0]!;chargeCreditCard(bankrupt,bankruptCard.id,100);bankrupt.finances.liabilities.push({id:'bankruptcy-personal',kind:'personal',principal:90000,balance:90000,annualRate:.12,annualPayment:1000,remainingYears:8});bankrupt.finances.cash=-100000;bankrupt.flags.cashShortfallYears=4;processAnnualFinance(bankrupt);
-  verify(Number(bankrupt.flags.bankruptcies??0)===0&&bankrupt.pendingEvent?.eventId==='financial_pressure_notice','severe insolvency surfaces a crisis decision instead of auto-filing bankruptcy');
+  const bankrupt=createNewGame({seed:'credit-bankruptcy'});setAge(bankrupt,30);bankrupt.finances.cash=5000;bankrupt.employment.current={jobId:'bankruptcy-fixture',title:'Technician',company:'Fixture Co',startAge:25,salary:50000,performance:65,level:1};bankrupt.finances.credit.history.closedGoodStanding=1;bankrupt.finances.credit.history.archivedAccountYears=5;bankrupt.finances.credit.history.onTimePayments=3;applyForCreditCard(bankrupt,'northstar_foundation');const bankruptCard=bankrupt.finances.credit.accounts[0]!;chargeCreditCard(bankrupt,bankruptCard.id,100);bankrupt.finances.liabilities.push({id:'bankruptcy-personal',kind:'personal',principal:90000,balance:90000,annualRate:.12,annualPayment:1000,remainingYears:8});bankrupt.finances.cash=-100000;bankrupt.flags.cashShortfallYears=4;processAnnualFinance(bankrupt);const pressure=processDelayedEvents(bankrupt);if(pressure)bankrupt.pendingEvent=pressure;
+  verify(Number(bankrupt.flags.bankruptcies??0)===0&&bankrupt.pendingEvent?.eventId==='financial_pressure_notice','severe insolvency surfaces a crisis decision through scheduler arbitration instead of auto-filing bankruptcy');
   verify(fileVoluntaryBankruptcy(bankrupt).success,'player can explicitly file bankruptcy from severe insolvency after being warned');
   verify(bankruptCard.status==='defaulted'&&bankruptCard.balance===0,'bankruptcy closes and discharges active revolving accounts instead of leaving impossible live debt');
   verify(bankrupt.finances.credit.derogatories.some(item=>item.kind==='bankruptcy')&&bankrupt.finances.credit.derogatories.some(item=>item.kind==='default'),'bankruptcy and discharged-card default both persist in credit history');

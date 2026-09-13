@@ -3,6 +3,10 @@
 Last audited: 2026-09-12  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 7A systems/content note
+
+No executable content-database counts change in the Phase 7A candidate. The ordinary/random event library remains **691** definitions and the dedicated special-career story registry remains separate. Phase 7A adds scheduler authority, migration, cooldown/history metadata, target validity, priority, and regression coverage; it does not inflate story counts.
+
 ## Phase 5D systems note
 
 No executable content-database counts change in Phase 5D. Aunt/uncle/cousin support is a derived family-topology integration over existing NPC graph truth and existing family-event libraries, not duplicate content inflation. Generic family events and relevant special-career selectors can now target extended kin where their existing semantics permit it.

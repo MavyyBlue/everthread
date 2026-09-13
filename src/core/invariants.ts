@@ -2,6 +2,7 @@ import type { GameState, SocialWorld } from '../types/game';
 import { clamp } from './math';
 import { NPC_ASSET_LIMITS } from '../data/npcAssetRules';
 import { sanitizeCreditState } from '../systems/CreditSystem';
+import { CONSEQUENCE_SCHEDULER_VERSION, MAX_ACTIVE_CONSEQUENCES, MAX_CONSEQUENCE_HISTORY, MAX_EVENT_COOLDOWNS, ensureConsequenceSchedulerState } from '../systems/ConsequenceSystem';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -110,6 +111,7 @@ function normalizePhase4CareerWorlds(state:GameState){
 }
 
 export function enforceStateInvariants(state: GameState): GameState {
+  ensureConsequenceSchedulerState(state);
   state.character.age = Math.max(0, Math.floor(state.character.age));
   state.character.stats.health = clamp(state.character.stats.health);
   state.character.stats.happiness = clamp(state.character.stats.happiness);
@@ -269,6 +271,16 @@ export function validateState(state: GameState): string[] {
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
+  if(!state.consequenceScheduler||state.consequenceScheduler.version!==CONSEQUENCE_SCHEDULER_VERSION)errors.push('Missing or invalid consequence scheduler state');
+  else{
+    if(state.delayedEvents.length>MAX_ACTIVE_CONSEQUENCES)errors.push('Active consequence queue is unbounded');
+    if(state.consequenceScheduler.history.length>MAX_CONSEQUENCE_HISTORY)errors.push('Consequence history is unbounded');
+    if(Object.keys(state.consequenceScheduler.eventCooldownAges).length>MAX_EVENT_COOLDOWNS)errors.push('Event cooldown history is unbounded');
+    const activeIds=new Set<string>(),dedupeKeys=new Set<string>();
+    for(const consequence of state.delayedEvents){if(activeIds.has(consequence.id))errors.push(`Duplicate consequence id ${consequence.id}`);activeIds.add(consequence.id);if(consequence.dedupeKey){if(dedupeKeys.has(consequence.dedupeKey))errors.push(`Duplicate unresolved consequence key ${consequence.dedupeKey}`);dedupeKeys.add(consequence.dedupeKey);}if((consequence.earliestAge??consequence.dueAge)>consequence.dueAge)errors.push(`Consequence ${consequence.id} has invalid due window`);if(consequence.latestAge!==undefined&&consequence.latestAge<(consequence.earliestAge??consequence.dueAge))errors.push(`Consequence ${consequence.id} has invalid latest age`);}
+    if(state.pendingEvent?.consequence&&activeIds.has(state.pendingEvent.consequence.id))errors.push(`Pending consequence ${state.pendingEvent.consequence.id} remains duplicated in the active queue`);
+    const historyIds=new Set<string>();for(const item of state.consequenceScheduler.history){if(historyIds.has(item.id))errors.push(`Duplicate consequence history id ${item.id}`);historyIds.add(item.id);}
+  }
   const credit=state.finances.credit;if(!credit)errors.push('Missing credit state');else{const active=credit.accounts.filter(account=>account.status==='open');if(active.length>5)errors.push('Too many active credit accounts');if(credit.accounts.length>12)errors.push('Credit account history is unbounded');if(credit.transactions.length>160)errors.push('Credit transaction history is unbounded');if(credit.inquiries.length>24)errors.push('Credit inquiry history is unbounded');if(credit.derogatories.length>20)errors.push('Credit derogatory history is unbounded');for(const account of credit.accounts){if(account.balance<0||account.balance>account.creditLimit+.01)errors.push(`Credit account ${account.id} has invalid balance`);if(account.creditLimit<0||account.securedDeposit<0)errors.push(`Credit account ${account.id} has invalid limits/deposit`);if(account.minimumDue<0||account.minimumDue>account.statementBalance+.01)errors.push(`Credit account ${account.id} has invalid minimum payment`);}}
   const seenNpcPropertyIds=new Set<string>();const seenNpcBusinessIds=new Set<string>();
   for (const npc of Object.values(state.npcs)) {

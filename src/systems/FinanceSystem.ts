@@ -2,6 +2,7 @@ import { countryById } from '../data/countries';
 import type { EngineResult, GameState, Loan } from '../types/game';
 import { clamp, roundMoney } from '../core/math';
 import { makeStateId } from '../core/ids';
+import { scheduleConsequence } from './ConsequenceSystem';
 import { creditCardDebt, dischargeCreditForBankruptcy, processAnnualCredit, recordCreditDerogatory, securedCreditDeposits } from './CreditSystem';
 
 export interface WealthBreakdown {
@@ -302,11 +303,9 @@ function handleCashShortfall(state:GameState,grossIncome:number,loanPayments:Ann
     state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You could not cover ${Math.round(shortfall).toLocaleString()} of annual costs and added it to unsecured debt.`,moneyDelta:-shortfall});
   }
 
-  if(shortfall>.5&&!state.pendingEvent){
+  if(shortfall>.5){
     const debt=state.finances.liabilities.filter(l=>l.kind==='personal').reduce((sum,l)=>sum+l.balance,0);
-    const dueStory=state.delayedEvents.some(item=>item.dueAge<=state.character.age);
-    if(dueStory){if(!state.delayedEvents.some(item=>item.eventId==='financial_pressure_notice'))state.delayedEvents.push({id:makeStateId(state,'delay'),eventId:'financial_pressure_notice',dueAge:state.character.age+1,payload:{shortfall,debt}});}
-    else state.pendingEvent={eventId:'financial_pressure_notice',title:'Financial Pressure',description:`Your annual costs exceeded the money you had available. ${Math.round(shortfall).toLocaleString()} became hardship debt, bringing unsecured personal debt to ${Math.round(debt).toLocaleString()}. Nothing will be corrected automatically—you decide how to respond.`,choices:[{id:'reduce',label:'Use investments to reduce debt'},{id:'review',label:'Review bankruptcy options'},{id:'carry',label:'Carry the debt for now'}],payload:{shortfall,debt}};
+    scheduleConsequence(state,{eventId:'financial_pressure_notice',dueAge:state.character.age,payload:{shortfall,debt,originAge:state.character.age},priority:'normal',origin:{kind:'system',id:'finance',age:state.character.age},dedupeKey:'system:financial_pressure'});
   }
   return missedPayments;
 }

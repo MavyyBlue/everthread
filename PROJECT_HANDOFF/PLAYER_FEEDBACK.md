@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Certified central-inbox baseline: Run #110 / expanded source `9980d8c278cb3bb2306d73a07963bf172096fd1e`.
+Certified central-inbox/player-status baseline: Run #111 / expanded source `576f9402deb854f8d5bd11891610e035cdd6d7ec`.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,12 +94,12 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified Run #110 / `9980d8c278cb3bb2306d73a07963bf172096fd1e`.
+Last central review checkpoint: certified Run #111 / `576f9402deb854f8d5bd11891610e035cdd6d7ec`.
 
-- Central active reports requiring development action: **0**
-- Central new/untriaged reports: **0**
-- Reviewed reports in checkpoint: **1**
-- Test report `ET-20260913-A527E2A6`: **resolved → suggestion**, used to prove automatic delivery; `player_message` is populated.
-- Player-visible disposition read-back client: **candidate** until the next canonical GitHub Actions certification.
+- Reviewed reports in checkpoint: **3**.
+- `ET-20260913-A527E2A6`: **resolved → suggestion**, Mavyy automatic-delivery/status test.
+- `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
+- `ET-20260913-BE8649B9`: **triaged · normal priority**, suggestion/interface improvement requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for an appropriate UI/polish slice; it does not block Phase 7A.
+- Central new/untriaged reports at the Phase 7A start review: **0**.
+- Player-visible disposition read-back is **certified and deployed** in Run #111.
 
-The live Edge Function already supports secure status lookup, but do not call the player UI certified until the matching repository/client slice passes canonical CI and Pages deployment.
