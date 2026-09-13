@@ -2,11 +2,11 @@
 
 ## Status
 
-**Phase 7A — Persistent Consequence Foundation is CI Green, certified, and deployed. Phase 7B1 is the active local candidate.**
+**Phase 7A — Persistent Consequence Foundation and Phase 7B1 — first systemic delayed stories are CI Green, certified, and deployed.**
 
-Newest certified gameplay/source baseline: GitHub Actions **Run #114** (`34780654179`), expanded source `60bfa3eaecb574df5a74920cbc64f513055bae46`, package `everthread-life-unwritten@0.12.0`, certified save schema **13**. Run #114 also certified the random-event narrative-composition correction with Random-event Coherence 77/77 while preserving the 691-event pool.
+Newest certified gameplay/source baseline: GitHub Actions **Run #115** (`34782061788`), expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa`, package `everthread-life-unwritten@0.12.0`, certified save schema **13**. Run #115 certified Phase 7B1 at 33/33 while preserving the 691-event pool and Phase 7A scheduler authority.
 
-Phase 7A itself was established in Run #112 and remains unchanged as scheduler authority. The current **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories** candidate builds on it rather than adding another queue.
+Phase 7A itself was established in Run #112 and remains unchanged as scheduler authority. **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories** is now certified on top of it without adding another queue.
 
 ## Why Phase 7A came first
 
@@ -76,11 +76,11 @@ Both TypeScript gates, every existing regression, Phase 7A 36/36, Integrated Lon
 
 ## Phase 7B — Systemic delayed stories — IN PROGRESS
 
-The first 7B1 candidate turns earlier player actions into exact multi-year follow-ups through existing authorities. Five probability-zero systemic definitions are outside the 691-event random library and are requested only by real actions: child time, academic misconduct, friend arguments, reconciliation, and marriage.
+The certified first 7B1 slice turns earlier player actions into exact multi-year follow-ups through existing authorities. Five probability-zero systemic definitions are outside the 691-event random library and are requested only by real actions: child time, academic misconduct, friend arguments, reconciliation, and marriage.
 
 `SystemicStorySystem` is deliberately a stateless request bridge. `ConsequenceSystem` remains the scheduler authority; Relationship/NPC/SchoolWorld/SocialWorld remain truth owners. Stories persist exact NPC or `social_world` refs, cancel invalid targets, dedupe unresolved repeats, and consume no gameplay RNG when scheduled. The school story adds a narrow data-driven school-world effect so later resolution changes the persistent conduct/social-standing record already used by admissions.
 
-Dedicated `phase7BSystemicStoryRegression.ts` is **33/33 locally**. The complete regression wall and 167-module production build are green. Canonical CI certification is pending; do not promote this candidate until Actions passes the uploaded expanded source.
+Dedicated `phase7BSystemicStoryRegression.ts` is **33/33 in Run #115**. The complete regression wall, certified artifact restore smoke, 167-module production build, and Pages deployment are green. Before selecting the next 7B slice, refresh the live Feedback Inbox.
 
 Later 7B slices should expand property, business, employment, and special-career long-tail stories using the same pattern rather than creating a second narrative graph.
 

@@ -3,8 +3,8 @@
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
 Certified save schema: 13
-Newest certified expanded source: Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`
-Certified gameplay baseline: Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`
+Newest certified expanded source: Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`
+Certified gameplay baseline: Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`
 
 ## Product direction
 
@@ -28,15 +28,15 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories (local candidate; CI certification pending)
+### Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories — certified Run #115
 
-Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46` is the certified gameplay/source baseline. It certified and deployed the random-event narrative-composition correction, so report `ET-20260913-0AA876B7` is resolved. The only active central-feedback item is the nonblocking early-life progressive-disclosure suggestion `ET-20260913-BE8649B9` for a later UI/polish slice.
+Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa` is now the certified gameplay/source baseline. Phase 7B1 is deployed on save schema **13**. Five probability-zero systemic follow-ups are scheduled only by real player actions: spending time with a child, taking an academic shortcut, arguing with a friend, reconciling with an ex, and marrying a partner.
 
-The 7B1 candidate adds five probability-zero systemic follow-ups that are scheduled only by real player actions: spending time with a child, taking an academic shortcut, arguing with a friend, reconciling with an ex, and marrying a partner. `SystemicStorySystem` is deliberately only an RNG-neutral request bridge; the certified `ConsequenceSystem` remains the sole scheduler/queue/history authority, while RelationshipSystem, SchoolWorldSystem, NPC state, and SocialWorld state remain authoritative for their own truth.
+`SystemicStorySystem` remains only an RNG-neutral request bridge. `ConsequenceSystem` remains the sole scheduler/queue/history authority; RelationshipSystem, SchoolWorldSystem, NPC state, and SocialWorld state remain authoritative for their own truth. `systemicConsequenceEvents.ts` stays outside `lifeEvents`, preserving the 691-event random pool and random-selection behavior. Invalid exact targets cancel rather than retarget, and school follow-ups mutate the exact persistent school record already consumed by admissions.
 
-`src/data/systemicConsequenceEvents.ts` keeps these story definitions outside `lifeEvents`, preserving the 691-event random pool and random selection behavior. Exact NPC and school-world references survive through scheduler target refs; dead/missing/relationship-invalid targets cancel rather than retarget. A small `ChoiceEffect.school` projection lets delayed school choices modify the exact persistent school record already consumed by admissions. No save-schema change is required; schema remains 13.
+Canonical Run #115 passed both TypeScript gates, the full regression wall, Phase 7B1 **33/33**, Core 82/82, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, both feedback suites, certified artifact restore smoke, and Pages deployment. Production build is green at **167 modules**.
 
-Dedicated `phase7BSystemicStoryRegression.ts` is **33/33** locally. Both TypeScript gates, the complete regression wall, Core 82/82, Integrated Long-Life 105/105, Phase 7A Persistent Consequence 36/36, Random-event Coherence 77/77, Activity-specific Minigame 19/19, Feedback Reporting 20/20, Feedback Central Inbox 23/23, and the 167-module production build are green. Canonical GitHub Actions remains final certification authority; do not call 7B1 certified until the uploaded expanded source passes CI.
+No next gameplay candidate is promoted yet. Before selecting the next Phase 7B expansion, refresh the live Supabase Feedback Inbox. Roadmap direction after that review is property, business, employment, and special-career long-tail stories through the same scheduler foundation.
 
 Activity-specific minigame work remains established historical functionality and is not the current implementation slice.
 

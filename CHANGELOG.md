@@ -1,6 +1,6 @@
 # Everthread Changelog
 
-## Phase 7B1 — Family, School & Relationship systemic stories candidate — 2026-09-13
+## Phase 7B1 — Family, School & Relationship systemic stories — CI Green Run #115 — 2026-09-13
 
 ### Added / changed
 
@@ -13,12 +13,15 @@
 - Updated the integrated long-life test helper to resolve scheduler-required same-age backlog before retrying Age Up, matching certified Phase 7A player-facing gating instead of assuming every Age Up advances immediately.
 - Save schema remains **13**; no gameplay RNG is consumed by story scheduling and no new durable authority was introduced.
 
-### Local candidate validation
+### Certification
 
-- New `phase7BSystemicStoryRegression.ts`: **33/33** checks covering action wiring, exact targets, validity cancellation, dedupe, save round-trip, RNG-neutral scheduling, exact school-world effects, admissions propagation, semantic state changes, random-pool stability, schema stability, and invariants.
-- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Core 82/82; Integrated Long-Life 105/105; Phase 7A Persistent Consequence 36/36; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
+- GitHub Actions Run #115 (`34782061788`) certified expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa`, package `0.12.0`, save schema **13**.
+- Upload wrapper: `0a4372ac7f8a9c3474e5b9e50e995abe11dae2f1`. Canonical preflight passed Engine TypeScript, Test TypeScript, the complete regression wall, and production build.
+- `phase7BSystemicStoryRegression.ts`: **33/33**; Core 82/82; Integrated Long-Life 105/105; Phase 7A Persistent Consequence 36/36; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
 - Production build PASS with Vite 7.3.6 at **167 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
-- Built from certified **Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`**. Canonical GitHub Actions remains final certification authority; Phase 7B1 is not yet certified.
+- Certified source SHA-256: `b30483a74c4c674ad3fbb025a3cb7f78d065b6f438fcf43482e3e21ef9c39613`.
+- Certified dependency SHA-256: `dfc18617ab0a94454a3cdae218baa0e9800bff1d5628b32262feba193c212827`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10325695174`, digest `a58934b96b90348293cbe7eec09c4734cf74255802e7d406cbd561bb2d7e26fc`; Pages artifact ID `10324654718`, digest `5ffa444fdbdf27c5ec5f630bad39a0be2b336fdaf731b7b78099fcee91059075`. Pages deployment reported success.
 
 ## Post-4G random-event narrative-composition correction — CI Green Run #114 — 2026-09-13
 

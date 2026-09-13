@@ -2,18 +2,18 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The authoritative certified gameplay/source baseline is **GitHub Actions Run #114** (`34780654179`) on expanded source commit **`60bfa3eaecb574df5a74920cbc64f513055bae46`**.
+The authoritative certified gameplay/source baseline is **GitHub Actions Run #115** (`34782061788`) on expanded source commit **`f417403ff8a091f92f823c074d6a132dd27b90aa`**.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **13**
 - Phase 7A — Persistent Consequence Foundation: **CI Green, certified, deployed**
 - Post-4G random-event narrative-composition correction: **CI Green, certified, deployed in Run #114**
 - Current macro phase: **Phase 7 — Persistent World Consequences**
-- Active implementation candidate: **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories**
-- Supabase Feedback Inbox: **live and reviewed against Run #114**
+- Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories: **CI Green, certified, deployed in Run #115**
+- Supabase Feedback Inbox: **live; last successful central review checkpoint is Run #114 and must be refreshed before the next gameplay slice**
 - Activity-specific minigames remain established historical work, not the current implementation target.
 
-If memory, an older handoff, or a historical chat conflicts with this status, the certified repository and Run #114 win. Phase 7B1 is locally green but **not certified** until canonical Actions passes the uploaded candidate.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository and Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa` win. Phase 7B1 is certified; do not reopen it as a candidate.
 
 Last handoff synchronization: 2026-09-13
 Repository: `MavyyBlue/everthread`
@@ -21,17 +21,17 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `13`
 
-## Newest certified gameplay/source baseline — Run #114
+## Newest certified gameplay/source baseline — Run #115
 
-- Upload wrapper: `5f83328b334b82e6e38465ec28a4f5054d2c97d6`.
-- Expanded certified source: `60bfa3eaecb574df5a74920cbc64f513055bae46`.
-- Run #114 passed Engine TypeScript, Test TypeScript, complete regression wall, Random-event Coherence 77/77, Integrated Long-Life 105/105, Phase 7A Persistent Consequence 36/36, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
-- Certified source SHA-256: `21f7ecbeb2f531cff582ed003925def89e555b5842a06e7231e3375ed6f6daf3`.
-- Certified dependency SHA-256: `0833b91abb51c9a7518141591e84b936fbfaecb855d75a8f39d7a8143db7969d`.
+- Upload wrapper: `0a4372ac7f8a9c3474e5b9e50e995abe11dae2f1`.
+- Expanded certified source: `f417403ff8a091f92f823c074d6a132dd27b90aa`.
+- Run #115 passed Engine TypeScript, Test TypeScript, the complete regression wall, Phase 7B1 Systemic Story 33/33, Random-event Coherence 77/77, Integrated Long-Life 105/105, Phase 7A Persistent Consequence 36/36, production build at 167 modules, certified-baseline restore smoke, artifact publication, and Pages deployment.
+- Certified source SHA-256: `b30483a74c4c674ad3fbb025a3cb7f78d065b6f438fcf43482e3e21ef9c39613`.
+- Certified dependency SHA-256: `dfc18617ab0a94454a3cdae218baa0e9800bff1d5628b32262feba193c212827`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact ID `10324957306`, digest `67835c1585a8ee92bb7bc2db8b638145628f28e3b99ab48dc804119e98ada7af`.
-- Pages artifact ID `10324533122`, digest `5bbb65b63f006278d402a60d665c3a898304104432cf83ffcf089f61acbe5f1d`; deployment reported success.
-- Run #114 resolved the procedural-description defect while preserving all 691 random-event definitions, 664 procedural variants, 80 dilemma families, three-description RNG shape, schema 13, and EventSystem authority.
+- Certified artifact ID `10325695174`, digest `a58934b96b90348293cbe7eec09c4734cf74255802e7d406cbd561bb2d7e26fc`.
+- Pages artifact ID `10324654718`, digest `5ffa444fdbdf27c5ec5f630bad39a0be2b336fdaf731b7b78099fcee91059075`; deployment reported success.
+- Phase 7B1 is now part of the baseline: five action-driven family/school/friendship/romance delayed stories use exact durable targets through the certified scheduler while preserving schema 13 and the 691-event random pool.
 
 ## Phase 7A — Persistent Consequence Foundation — certified
 
@@ -42,7 +42,7 @@ Certified save schema: `13`
 - `pendingEvent` remains the one unresolved player-facing gate. Age Up surfaces same-age due backlog before advancing again.
 - Descendant continuation resets previous-protagonist consequence queue/history/cooldowns, preserving per-life ownership.
 - Random-event content remains exactly **691** definitions; scheduler bookkeeping consumes no gameplay RNG.
-- Dedicated Phase 7A regression remains **36/36** through Run #114.
+- Dedicated Phase 7A regression remains **36/36** through Run #115.
 
 Do not reopen scheduler ownership casually. Any change to queue ownership, migration, Age Up gating, or consequence arbitration requires dedicated regression coverage and full CI certification.
 
@@ -67,9 +67,9 @@ Phase 6A–6C plus the post-6C household-finance correction are now certified fo
 - Due delayed stories retain priority over a newly created financial-pressure notice; finance consequences must not overwrite unrelated story continuity.
 - System-owned milestone/crisis events remain outside the established 691-event random library.
 
-## Active implementation candidate — Phase 7B1: Family, Parenting, School & Relationship systemic delayed stories
+## Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories — certified
 
-Built only on certified Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`. Save schema remains **13**.
+Certified in Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa` on save schema **13**.
 
 The first 7B1 slice is intentionally action-driven rather than another random-story pool. Five real player actions can now request exact future consequences through the certified scheduler:
 
@@ -83,9 +83,9 @@ The first 7B1 slice is intentionally action-driven rather than another random-st
 
 The new probability-zero `systemicConsequenceEvents` registry stays outside the 691 random definitions. `ChoiceEffect.school` lets a delayed school decision modify the exact targeted school record, so conduct/social-standing consequences flow into the existing admissions profile. Event rendering resolves the school name from `worldId`; no copied school identity is persisted in story state.
 
-Dedicated 7B1 regression is **33/33** locally. Both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, feedback suites, global invariants, and production build at **167 modules** are green. The first long-life run correctly exposed that the stress harness needed to resolve scheduler-required same-age backlog before retrying Age Up; the harness was corrected to follow certified Phase 7A behavior rather than bypass it.
+Dedicated 7B1 regression is **33/33** in canonical Run #115. Both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, feedback suites, global invariants, certified artifact restore smoke, and production build at **167 modules** are green. The long-life harness resolves scheduler-required same-age backlog before retrying Age Up, preserving certified Phase 7A gating.
 
-Canonical GitHub Actions is still required before this slice becomes the new baseline. Read `PROJECT_HANDOFF/PHASE7B1_SYSTEMIC_STORIES.md` for the candidate-specific contract.
+Phase 7B1 is now certified baseline behavior. Before selecting the next gameplay slice, refresh the live Supabase Feedback Inbox. Read `PROJECT_HANDOFF/PHASE7B1_SYSTEMIC_STORIES.md` for the certified contract.
 
 ## Green systems immediately relevant to current work
 

@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay baseline: **Run #114 / expanded source `60bfa3eaecb574df5a74920cbc64f513055bae46` / save schema 13**.
+Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay baseline: **Run #115 / expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa` / save schema 13**.
 
 Central Feedback Inbox infrastructure:
 
@@ -103,4 +103,5 @@ Last central review checkpoint: certified **Run #114 / `60bfa3eaecb574df5a74920c
 - `ET-20260913-BE8649B9`: **triaged · normal priority**, suggestion/interface improvement requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for an appropriate UI/polish slice; it does not block Phase 7B1.
 - Central new/untriaged reports after the Run #114 review: **0**.
 - Player-visible disposition read-back remains certified and deployed.
+- Run #115 certified Phase 7B1 on expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa`. The database review checkpoint remains Run #114 until the next successful live inbox refresh; perform that refresh before selecting any further gameplay slice.
 

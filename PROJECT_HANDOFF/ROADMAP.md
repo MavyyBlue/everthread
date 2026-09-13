@@ -4,7 +4,7 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 ## Current macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, and 6 are closed. Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure. **Run #114** (`34780654179`) is the newest certified gameplay/source baseline on expanded source `60bfa3eaecb574df5a74920cbc64f513055bae46`, save schema **13**. Phase 7A remains the certified scheduler foundation; the random-event narrative correction is deployed; **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories is the active local candidate**.
+Phases 4, 5, and 6 are closed. Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure. **Run #115** (`34782061788`) is the newest certified gameplay/source baseline on expanded source `f417403ff8a091f92f823c074d6a132dd27b90aa`, save schema **13**. Phase 7A remains the certified scheduler foundation; the random-event narrative correction and **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories** are deployed.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -145,17 +145,17 @@ Compatibility requirements: Credit Available is never cash/net worth; browsing o
 
 **Current. Architecture is certified; consequence breadth is now expanding.**
 
-Run #114 certified the narrow random-event narrative correction and returned sequencing to Phase 7B. The active 7B1 candidate adds five action-driven family/school/friendship/romance follow-ups through the existing scheduler without changing the random pool or save schema.
+Run #115 certified Phase 7B1: five action-driven family/school/friendship/romance follow-ups now use the existing scheduler without changing the random pool or save schema.
 
-1. **Phase 7A — Persistent Consequence Foundation:** **green; certified in Run #112** and still green through Run #114. One authoritative bounded scheduler owns cooldown ages, chain/consequence identity, origin context, exact targets, due windows, priority, cancellation/validity, dedupe, bounded completion/cancellation history, deterministic ordering, and migration. Dedicated regression: 36/36.
-2. **Phase 7B — Systemic delayed stories:** **in progress.** **7B1 family, parenting, school, friendships/romance is locally green at 33/33 and awaiting canonical certification.** Its first stories are triggered by real actions and exact NPC/school-world authorities. After 7B1, expand property, business, employment, and special-career long-tail stories without creating copied story state.
+1. **Phase 7A — Persistent Consequence Foundation:** **green; certified in Run #112** and still green through Run #115. One authoritative bounded scheduler owns cooldown ages, chain/consequence identity, origin context, exact targets, due windows, priority, cancellation/validity, dedupe, bounded completion/cancellation history, deterministic ordering, and migration. Dedicated regression: 36/36.
+2. **Phase 7B — Systemic delayed stories:** **in progress.** **7B1 family, parenting, school, friendships/romance is certified in Run #115 at 33/33.** Before promoting the next slice, refresh the live Feedback Inbox; planned breadth then expands property, business, employment, and special-career long-tail stories without creating copied story state.
 3. **Phase 7C — Persistent world conditions:** after scheduler/story foundations are stable. Add national/world conditions whose effects flow through existing systems such as employment, business demand, investments, housing, travel, fame/media, and finance rather than existing as flavor-only popups.
 
 Phase 7 compatibility requirements: scheduler priority is centralized; one feature cannot overwrite another feature's due consequence; exact NPC/asset/world targets survive across years; invalid targets cancel deterministically; random-event library counts/RNG behavior do not change merely because system-owned stories are added; history stays bounded; and save migrations consume no simulation RNG.
 
 ## Cross-cutting player-feedback gate
 
-Player feedback/issue reporting is a playtest-driven cross-cutting priority and does not replace Phase 7 sequencing. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111 and remains deployed in the Run #114 baseline. Future development contexts must query the live inbox before choosing a slice. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
+Player feedback/issue reporting is a playtest-driven cross-cutting priority and does not replace Phase 7 sequencing. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111 and remains deployed in the Run #115 baseline. Future development contexts must query the live inbox before choosing a slice. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
 
 Future feature work should review active supplied/exported reports before starting, with data-loss/crash/accounting/state-integrity/blocking defects taking priority. A backend-green test result redirects technical triage into UI/experience investigation rather than invalidating the report.
 
