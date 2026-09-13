@@ -2,8 +2,8 @@
 
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
-Certified save schema: 12
-Local Phase 7A candidate schema: 13
+Certified save schema: 13
+Certified gameplay baseline: Run #112 / `536c102e10f27694caa89a8b1d9c473953ca6e76`
 
 ## Product direction
 
@@ -27,19 +27,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Phase 7A — Persistent Consequence Foundation (local candidate; CI certification pending)
+### Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories (next)
 
-- Built only on certified Run #111 expanded source `576f9402deb854f8d5bd11891610e035cdd6d7ec`. Package remains 0.12.0; certified schema is 12 and the candidate intentionally advances to 13.
-- Added `ConsequenceSystem` as the one scheduler authority while retaining `state.delayedEvents` as the single active queue for backward compatibility. No parallel active consequence ledger was introduced.
-- Scheduler metadata persists exact event cooldown ages and bounded completion/cancellation history. Active queue/history/cooldown caps are 96 / 160 / 256.
-- Consequences can carry stable chain/origin identity, due windows, explicit priority, exact durable target references, validity requirements, and dedupe keys. Deterministic arbitration is priority → due age → scheduled age → stable ID.
-- Failed duplicate/queue-full scheduling consumes no runtime ID and scheduler bookkeeping consumes no gameplay RNG. Invalid exact targets cancel deterministically rather than retargeting.
-- Age Up surfaces already-due same-age backlog before advancing; `pendingEvent` remains the single unresolved player-facing gate.
-- Financial Pressure now only schedules a normal-priority request; Finance no longer decides whether it may overwrite pending stories. Special-career story openings schedule high-priority exact-target consequences with chain/validity metadata.
-- Added `src/core/saveVersion.ts` so CharacterSystem and SaveSystem share one schema authority. Schema-12→13 migration is deterministic, idempotent, RNG-neutral, preserves current pending choices, normalizes legacy delayed events, and reconstructs exact cooldown ages from bounded legacy event history.
-- Descendant continuation resets prior-protagonist consequence queue/history/cooldowns, preserving established per-life ownership. Rewind/save import-export preserve scheduler state.
-- Random event definitions remain exactly 691.
-- Local validation: Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Phase 7A Persistent Consequence **36/36**, including legacy no-dedupe queue preservation; Integrated Long-Life 105/105; Feedback Reporting 20/20; Feedback Central Inbox 23/23; production build PASS at **165 modules**. GitHub Actions remains final certification authority.
+Phase 7A is no longer a candidate. GitHub Actions **Run #112** certified expanded source `536c102e10f27694caa89a8b1d9c473953ca6e76` on save schema **13**. Canonical preflight passed both TypeScript gates, the complete regression wall, Phase 7A Persistent Consequence **36/36**, Integrated Long-Life 105/105, Feedback Reporting 20/20, Feedback Central Inbox 23/23, the 165-module production build, certified artifact restore smoke, and Pages deployment.
+
+The certified `ConsequenceSystem` is now infrastructure: `state.delayedEvents` remains the single active queue, scheduler metadata is bounded, exact targets/cancellation/dedupe/priority/cooldown history are centralized, Finance no longer owns pending-event arbitration, and schema 12→13 migration is deterministic/RNG-neutral.
+
+Next work should use that foundation for meaningful multi-year family/parenting, school, friendship, and romance follow-ups. Content must reference real NPC/relationship/education/family authorities, cancel rather than silently retarget invalid exact targets, create understandable cross-system consequences, and receive dedicated regressions before promotion.
+
+The live Supabase Feedback Inbox remains a mandatory cross-cutting review gate before each development slice. The current nonblocking backlog contains one triaged normal-priority early-life progressive-disclosure suggestion (`ET-20260913-BE8649B9`).
+
+Activity-specific minigame work is established historical functionality and is not the current implementation slice.
 
 ## Recent corrective history
 

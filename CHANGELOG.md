@@ -1,5 +1,23 @@
 # Everthread Changelog
 
+## Phase 7A — Persistent Consequence Foundation — CI Green Run #112 — 2026-09-13
+
+### Certification
+
+- GitHub Actions Run #112 (`34778449301`) certified expanded source `536c102e10f27694caa89a8b1d9c473953ca6e76` on save schema **13**.
+- Canonical preflight passed 4/4: Engine TypeScript, Test TypeScript, complete regression wall, and production build.
+- Phase 7A Persistent Consequence passed **36/36**; Integrated Long-Life 105/105; Feedback Reporting 20/20; Feedback Central Inbox 23/23; all established suites remained green.
+- Production build passed with Vite 7.3.6 at **165 modules**; Pages deployment succeeded.
+- Certified source SHA-256: `1de3ef6b9063b864afb5a4f80165bbd9eedd3db3a9280313ed68236ebd464c17`.
+- Certified artifact ID `10324148743`, digest `e71dfa2020932fa856ec15a425530d7310d8b29ac2b083148abba44943513b3f`; Pages artifact ID `10324273336`, digest `dc0ff7b8d199e46c8dad632fdd506830e580f02fb7ca6feb1d89c78aa919ca4b`.
+
+### Handoff synchronization
+
+- Promoted Phase 7A from local candidate to certified/deployed foundation in `CURRENT_STATE`, `ROADMAP`, `PHASE7_PERSISTENT_CONSEQUENCES`, `DEVELOPMENT`, and `PLAYER_FEEDBACK`.
+- Marked **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories** as the next gameplay slice.
+- Corrected stale wording that still described the secure central Feedback Inbox as future work. Supabase central submission, independent-device receipt, and player-visible disposition/status read-back are already live.
+- Explicitly marked activity-specific minigame work as historical/established rather than current so a fresh chat cannot incorrectly resume that older slice.
+
 ## Phase 7A — Persistent Consequence Foundation candidate — 2026-09-13
 
 ### Added / changed

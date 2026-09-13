@@ -1,51 +1,62 @@
 # Everthread — Current State
 
-## Live continuation note — Run #111 certified; Phase 7A local candidate
+## READ THIS FIRST IN A NEW CHAT
 
-Phase 6 remains closed. The authoritative certified baseline is GitHub Actions **Run #111** (`34774175236`) on expanded source commit `576f9402deb854f8d5bd11891610e035cdd6d7ec`. Package remains `everthread-life-unwritten@0.12.0`; certified save schema remains **12**. Player-visible central feedback status/disposition is certified and deployed. Phase 7A is now the active local gameplay candidate and intentionally advances candidate save schema **12 → 13**.
+The authoritative certified gameplay baseline is **GitHub Actions Run #112** (`34778449301`) on expanded source commit **`536c102e10f27694caa89a8b1d9c473953ca6e76`**.
 
-Run #111 certified secure player-visible feedback read-back on top of the central Supabase inbox: token-authenticated status lookup, reviewer disposition/message projection, Feedback Central Inbox **23/23**, and successful Pages deployment from the expanded source build identified by `build-info.json`.
+- Package: `everthread-life-unwritten@0.12.0`
+- Certified save schema: **13**
+- Phase 7A — Persistent Consequence Foundation: **CI Green, certified, deployed**
+- Current macro phase: **Phase 7 — Persistent World Consequences**
+- Next gameplay slice: **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories**
+- Supabase Feedback Inbox: **live and in active use**
+- Player-visible feedback status/disposition: **certified and deployed**
+- Activity-specific minigames are established historical work, not the current implementation target.
 
-Last handoff preparation: 2026-09-13
+If memory, an older handoff, or another historical section conflicts with this status, the certified repository and Run #112 win. Do **not** resume the old minigame slice from conversation memory.
+
+Last handoff synchronization: 2026-09-13
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
-Certified save schema: `12`
-Local Phase 7A candidate schema: `13`
+Certified save schema: `13`
 
-## Last fully verified repository baseline — Run #111
+## Last fully verified repository baseline — Run #112
 
-- Expanded certified source: `576f9402deb854f8d5bd11891610e035cdd6d7ec`.
-- Upload wrapper: `6569c4c718eeae817847bf75b10c70116e1ecfe4`.
-- Run #111 passed Engine TypeScript, Test TypeScript, complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
-- Core 82/82; AI Interaction Testbench 41/41; Integrated Long-Life 105/105; Activity-specific Minigame 19/19; Activity Feedback Reporting 20/20; Feedback Central Inbox 23/23; every established suite green.
-- Vite 7.3.6 transformed 163 modules. Existing >700 kB main-chunk warning remains nonblocking technical debt.
-- Certified source SHA-256: `f342ec71c823f45f76d661d96f0ed3d1cdf415ab99e6c36054f2da8f1cbdf0e8`.
-- Certified dependency SHA-256: `16270fbffb002a5bf803f8b3e024999beb6f0ca85d9bea92aa629d6b121f450a`.
+- Expanded certified source: `536c102e10f27694caa89a8b1d9c473953ca6e76`.
+- Upload wrapper: `e461dd9d202a1d1cde6d11416c19f7f05ae56703`.
+- Run #112 passed Engine TypeScript, Test TypeScript, complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
+- Core 82/82; AI Interaction Testbench 41/41; Integrated Long-Life 105/105; Phase 7A Persistent Consequence 36/36; Activity-specific Minigame 19/19; Activity Feedback Reporting 20/20; Feedback Central Inbox 23/23; every established suite green.
+- Vite 7.3.6 transformed 165 modules. Existing >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `1de3ef6b9063b864afb5a4f80165bbd9eedd3db3a9280313ed68236ebd464c17`.
+- Certified dependency SHA-256: `884c6f4945f1e02b8512d7935def8761e271cbe3d3e35a6f745ea93a561f0162`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact: `everthread-certified-preflight-576f9402deb854f8d5bd11891610e035cdd6d7ec`, artifact ID `10323017491`, digest `12529cb08519f0176778cf9161b73b83beb0592ba5778f9c3420a8261d8c733a`.
-- Pages artifact ID `10322703128`, digest `7dabf6647ee2da91cd9a42789a0321aeb608774b3ff3763bca1af20d59f88055`; deployment reported success.
+- Certified artifact: `everthread-certified-preflight-536c102e10f27694caa89a8b1d9c473953ca6e76`, artifact ID `10324148743`, digest `e71dfa2020932fa856ec15a425530d7310d8b29ac2b083148abba44943513b3f`.
+- Pages artifact ID `10324273336`, digest `dc0ff7b8d199e46c8dad632fdd506830e580f02fb7ca6feb1d89c78aa919ca4b`; deployment reported success.
 
-## Phase 7A — Persistent Consequence Foundation local candidate
+## Phase 7A — Persistent Consequence Foundation — certified
 
-- `state.delayedEvents` remains the **single authoritative active consequence queue** for backward compatibility; no shadow active queue was introduced.
-- New `ConsequenceSystem` owns scheduling, deterministic priority/tie order, exact due windows, dedupe, target validity/cancellation, completion/cancellation history, exact event cooldown ages, and bounded retention.
-- Durable `consequenceScheduler` metadata adds exact cooldown ages plus bounded history; candidate schema advances **12 → 13** through one `CURRENT_SAVE_VERSION` authority shared by CharacterSystem and SaveSystem.
-- Schema-12 migration is deterministic, idempotent, RNG-neutral, preserves old `pendingEvent`, normalizes existing delayed entries, reconstructs cooldown ages from bounded legacy history, and preserves exact NPC/origin/relationship semantics.
-- Finance no longer owns pending-event arbitration. Financial Pressure is a normal-priority scheduler request; higher-priority due stories remain ahead of it while the pressure notice stays in the same-age backlog.
-- Special-career stories schedule high-priority exact-target consequences with stable chain IDs and validity requirements instead of relying on loose payload-only semantics.
-- Age Up checks an already-due backlog before advancing the year, so multiple same-age consequences are surfaced/resolved rather than silently drifting overdue.
-- Descendant continuation resets the previous protagonist scheduler queue/history/cooldowns, preserving the established per-life ownership boundary.
-- Random-event content remains exactly **691** definitions; Phase 7A adds no event-count inflation and no gameplay RNG for scheduler bookkeeping.
-- Local verification: both TypeScript gates pass; complete established regression wall passes; dedicated **Phase 7A Persistent Consequence 36/36** passes, including preservation of distinct schema-12 queued entries that lacked an explicit dedupe key; Integrated Long-Life remains 105/105; Feedback Reporting 20/20; Feedback Central Inbox 23/23; production build passes at **165 modules**. GitHub Actions remains final certification authority.
+- `state.delayedEvents` remains the **single authoritative active consequence queue** for backward compatibility; no shadow active queue exists.
+- `ConsequenceSystem` owns scheduling, deterministic priority/tie order, exact due windows, dedupe, target validity/cancellation, completion/cancellation history, exact event cooldown ages, and bounded retention.
+- `consequenceScheduler` persists only bounded cooldown/history metadata; schema 13 is owned by shared `CURRENT_SAVE_VERSION`.
+- Schema 12→13 migration is deterministic, idempotent, RNG-neutral, preserves old `pendingEvent`, preserves distinct legacy delayed stories without explicit dedupe keys, repairs explicit duplicates deterministically, normalizes timing, bounds oversized legacy queues, and preserves exact target/origin/relationship semantics.
+- Finance no longer owns pending-event arbitration. Financial Pressure schedules a normal-priority consequence; scheduler priority decides ordering.
+- Special-career stories use the same scheduler with stable chain IDs, exact targets, and validity requirements.
+- Age Up surfaces already-due same-age backlog before advancing again. `pendingEvent` remains the one unresolved player-facing event gate.
+- Descendant continuation resets previous-protagonist consequence queue/history/cooldowns, preserving per-life ownership.
+- Random-event content remains exactly **691** definitions; scheduler bookkeeping consumes no gameplay RNG.
+- Dedicated Phase 7A regression is **36/36** and is part of canonical Run #112.
 
-## Feedback queue snapshot reviewed against Run #111 / `576f9402…`
+Do not reopen scheduler ownership casually. Any change to queue ownership, migration, Age Up gating, or consequence arbitration requires dedicated regression coverage and full CI certification.
+
+## Feedback queue snapshot reviewed against Run #112 / `536c102e…`
 
 - Active technical reports requiring immediate action: **0**.
 - Active experience reports requiring immediate action: **0**.
 - Active normal-priority suggestion backlog: **1** — `ET-20260913-BE8649B9`, requesting that unavailable early-life actions/career paths be hidden or progressively disclosed to reduce interface clutter.
 - Test reports `ET-20260913-A527E2A6` and `ET-20260913-55F088C9` are resolved as successful pipeline tests.
-- Central review checkpoint has been advanced to Run #111 with **3 reviewed reports**. The early-life visibility suggestion is intentionally retained for a later UX/polish slice and does not block Phase 7A.
+- Central review checkpoint has been advanced to Run #112 / `536c102e10f27694caa89a8b1d9c473953ca6e76` with **3 reviewed reports**.
+- The early-life visibility suggestion is intentionally retained for a later UX/polish slice and does not block Phase 7B1.
 
 ## Phase 6 closeout guarantees
 
@@ -60,17 +71,25 @@ Phase 6A–6C plus the post-6C household-finance correction are now certified fo
 - Due delayed stories retain priority over a newly created financial-pressure notice; finance consequences must not overwrite unrelated story continuity.
 - System-owned milestone/crisis events remain outside the established 691-event random library.
 
-## Active implementation — Phase 7A: Persistent Consequence Foundation
+## Active implementation — Phase 7B1: Family, Parenting, School & Relationship systemic delayed stories
 
-Do not begin Phase 7 by adding large event counts. First create one bounded, authoritative persistent consequence scheduler that later systems can safely consume.
+Phase 7A is certified infrastructure. The next gameplay slice should use that scheduler to make earlier player choices resurface years later through the exact real NPCs and authoritative systems.
 
-The local Phase 7A candidate now provides exact event cooldown ages, stable consequence/chain IDs, origin event and origin age, exact target references, due-age windows, explicit priority, cancellation/validity conditions, deduplication, completion/cancellation history, deterministic ordering, bounded retention, and save migration. Existing `DelayedEvent` callers remain compatible through normalization into the same authoritative active queue.
+Start with family/parenting, school, friendships, and romance because those domains already have persistent NPC identity, relationship state, education history, memories, family topology, and exact-target consequence support. Good first chains include parenting choices that affect later child/adult-child relationships, school conduct that resurfaces in admissions or early work, and friendship/romance choices that carry promises, trust, conflict, reconciliation, or long-memory consequences across years.
 
-Priority belongs to the scheduler rather than individual feature systems. Finance, parenting, school, property, business, relationships, and special careers should schedule consequences without independently deciding whether they may steal the pending-event slot.
+Rules:
 
-Phase 7A advances candidate save schema **12 → 13** because durable consequence/cooldown metadata is real persistent state. Migration is deterministic, RNG-neutral, idempotent, preserves old pending/delayed event completion, and new-game/save migration share `CURRENT_SAVE_VERSION`. Canonical CI must still certify this before schema 13 becomes the certified baseline.
+- use the certified `ConsequenceSystem`; do not add another scheduler or story queue;
+- store stable references plus only minimal immutable origin context;
+- NPC/Relationship/Education/Career/Family systems remain authorities for their own truth;
+- invalid targets cancel deterministically rather than silently retargeting;
+- consequences should create understandable cross-system effects rather than cosmetic duplicate events;
+- keep the random library count/RNG behavior stable unless a future slice intentionally changes random content;
+- preserve schema 13 unless genuinely new durable state requires a justified migration;
+- add dedicated 7B regressions before promotion;
+- canonical GitHub Actions remains the only certification authority.
 
-Read `PROJECT_HANDOFF/PHASE7_PERSISTENT_CONSEQUENCES.md` before implementation, then inspect `src/types/game.ts`, `src/systems/EventSystem.ts`, `src/systems/AgingSystem.ts`, `src/services/SaveSystem.ts`, `src/systems/SpecialCareerStorySystem.ts`, and all existing delayed-event call sites before editing.
+Read `PROJECT_HANDOFF/PHASE7_PERSISTENT_CONSEQUENCES.md` before implementation and query the live Supabase Feedback Inbox before choosing exact content.
 
 ## Green systems immediately relevant to current work
 

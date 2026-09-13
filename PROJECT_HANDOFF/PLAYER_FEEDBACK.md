@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Certified central-inbox/player-status baseline: Run #111 / expanded source `576f9402deb854f8d5bd11891610e035cdd6d7ec`.
+Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay baseline: **Run #112 / expanded source `536c102e10f27694caa89a8b1d9c473953ca6e76` / save schema 13**.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,12 +94,12 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified Run #111 / `576f9402deb854f8d5bd11891610e035cdd6d7ec`.
+Last central review checkpoint: certified **Run #112 / `536c102e10f27694caa89a8b1d9c473953ca6e76`**.
 
 - Reviewed reports in checkpoint: **3**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, Mavyy automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
-- `ET-20260913-BE8649B9`: **triaged · normal priority**, suggestion/interface improvement requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for an appropriate UI/polish slice; it does not block Phase 7A.
-- Central new/untriaged reports at the Phase 7A start review: **0**.
+- `ET-20260913-BE8649B9`: **triaged · normal priority**, suggestion/interface improvement requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for an appropriate UI/polish slice; it does not block Phase 7B1.
+- Central new/untriaged reports at the Run #112 / Phase 7B1 transition review: **0**.
 - Player-visible disposition read-back is **certified and deployed** in Run #111.
 
