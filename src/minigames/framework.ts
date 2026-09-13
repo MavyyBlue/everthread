@@ -3,7 +3,7 @@ import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 
 export type MiniGameKind='driving'|'boating'|'flight'|'prison_escape'|'deployment'|'combat'|'racing'|'acting'|'sports';
-export type MiniGameMechanic='timing'|'sequence'|'grid_memory'|'decision';
+export type MiniGameMechanic='timing'|'sequence'|'grid_memory'|'decision'|'racing_dodge'|'combat_memory';
 export interface MiniGameResult{score:number;success:boolean;summary:string;}
 export interface MiniGameDefinition{kind:MiniGameKind;title:string;instructions:string;target:number;durationSeconds:number;mechanic:MiniGameMechanic;rounds:number;}
 export const miniGames:Record<MiniGameKind,MiniGameDefinition>={
@@ -12,8 +12,8 @@ export const miniGames:Record<MiniGameKind,MiniGameDefinition>={
   flight:{kind:'flight',title:'Instrument Rhythm',instructions:'Remember and repeat a short fictional control pattern.',target:72,durationSeconds:35,mechanic:'sequence',rounds:4},
   prison_escape:{kind:'prison_escape',title:'Route Break',instructions:'Memorize an abstract tile route, then repeat it. This does not model real escape tactics.',target:68,durationSeconds:35,mechanic:'grid_memory',rounds:6},
   deployment:{kind:'deployment',title:'Field Decisions',instructions:'Choose safe abstract responses to changing fictional mission conditions. No real-world tactics are simulated.',target:64,durationSeconds:35,mechanic:'decision',rounds:3},
-  combat:{kind:'combat',title:'Three-Beat Fight',instructions:'Tap during the highlighted timing window across five abstract fight beats.',target:60,durationSeconds:30,mechanic:'timing',rounds:5},
-  racing:{kind:'racing',title:'Apex Pulse',instructions:'Tap inside changing timing windows to maintain pace through fictional corners.',target:62,durationSeconds:35,mechanic:'timing',rounds:5},
+  combat:{kind:'combat',title:'Strike Sequence',instructions:'Watch the colored targets flash on the training bag, then repeat the growing pattern through eight rounds.',target:60,durationSeconds:30,mechanic:'combat_memory',rounds:8},
+  racing:{kind:'racing',title:'Pixel Overtake',instructions:'Swipe left or right to change lanes and avoid eight rival cars before the finish line.',target:62,durationSeconds:20,mechanic:'racing_dodge',rounds:8},
   acting:{kind:'acting',title:'Scene Focus',instructions:'Remember the pacing cues, then perform them in the same order.',target:58,durationSeconds:30,mechanic:'sequence',rounds:4},
   sports:{kind:'sports',title:'Clutch Sequence',instructions:'Hit a series of timing windows representing an important fictional sports moment.',target:60,durationSeconds:30,mechanic:'timing',rounds:5},
 };

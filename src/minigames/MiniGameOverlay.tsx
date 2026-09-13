@@ -2,21 +2,26 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { clamp } from '../core/math';
 import { createRng } from '../core/rng';
 import { miniGames, type MiniGameKind, type MiniGameResult } from './framework';
+import { CombatMemoryChallenge, RacingDodgeChallenge } from './ArcadeChallenges';
 
 export function MiniGameOverlay({kind,seedKey,reducedMotion=false,onComplete,onCancel,onResolveFromSkill}:{kind:MiniGameKind;seedKey:string;reducedMotion?:boolean;onComplete:(result:MiniGameResult)=>void;onCancel:()=>void;onResolveFromSkill:()=>MiniGameResult}){
   const def=miniGames[kind];
   const systemReducedMotion=useMemo(()=>typeof window!=='undefined'&&window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,[]);
-  const mechanic=(reducedMotion||systemReducedMotion)&&def.mechanic==='timing'?'sequence':def.mechanic;
+  const motionReduced=reducedMotion||systemReducedMotion;
+  const mechanic=motionReduced&&def.mechanic==='timing'?'sequence':def.mechanic;
   const[phase,setPhase]=useState<'intro'|'playing'|'result'>('intro');
   const[result,setResult]=useState<MiniGameResult>();
-  const finish=(score:number,summary:string)=>{const rounded=Math.round(clamp(score));setResult({score:rounded,success:rounded>=def.target,summary});setPhase('result');};
-  const resolveFromSkill=()=>{setResult(onResolveFromSkill());setPhase('result');};
+  const finishLocked=useRef(false);
+  const resultApplied=useRef(false);
+  const finish=(score:number,summary:string)=>{if(finishLocked.current)return;finishLocked.current=true;const rounded=Math.round(clamp(score));setResult({score:rounded,success:rounded>=def.target,summary});setPhase('result');};
+  const resolveFromSkill=()=>{if(finishLocked.current)return;finishLocked.current=true;setResult(onResolveFromSkill());setPhase('result');};
+  const applyResult=()=>{if(!result||resultApplied.current)return;resultApplied.current=true;onComplete(result);};
   return <div className="minigame-overlay" role="dialog" aria-modal="true" aria-label={def.title}>
     <div className="minigame-shell">
       <div className="minigame-heading"><div><p className="eyebrow">Everthread challenge</p><h2>{def.title}</h2></div><span>{def.target}+ target</span></div>
       {phase==='intro'&&<div className="minigame-intro"><div className="minigame-mark">◇</div><p>{def.instructions}</p><p className="muted">Your character's underlying skill still matters to the final life-sim outcome. The minigame adds your performance to that system rather than replacing character progression.</p><div className="minigame-actions"><button className="full-button" onClick={()=>setPhase('playing')}>Start challenge</button><button onClick={resolveFromSkill}>Resolve from character skill</button><button className="ghost-button" onClick={onCancel}>Not now</button></div></div>}
-      {phase==='playing'&&<>{mechanic==='timing'&&<TimingChallenge kind={kind} seedKey={seedKey} rounds={def.rounds} onFinish={finish}/>} {mechanic==='sequence'&&<SequenceChallenge kind={kind} seedKey={seedKey} length={def.rounds} onFinish={finish}/>} {mechanic==='grid_memory'&&<GridMemoryChallenge seedKey={seedKey} length={def.rounds} onFinish={finish}/>} {mechanic==='decision'&&<DecisionChallenge kind={kind} onFinish={finish}/>}<button className="minigame-forfeit" onClick={()=>finish(0,'You ended the challenge early.')}>End challenge</button></>}
-      {phase==='result'&&result&&<div className="minigame-result"><div className={`minigame-score ${result.success?'success':''}`}>{result.score}</div><h3>{result.success?'Strong performance':'Challenge complete'}</h3><p>{result.summary}</p><p className="muted">Final success is resolved by Everthread using this score together with your character's relevant skills and circumstances.</p><button className="full-button" onClick={()=>onComplete(result)}>Use this result</button></div>}
+      {phase==='playing'&&<>{mechanic==='racing_dodge'&&<RacingDodgeChallenge seedKey={seedKey} reducedMotion={motionReduced} onFinish={finish}/>} {mechanic==='combat_memory'&&<CombatMemoryChallenge seedKey={seedKey} reducedMotion={motionReduced} onFinish={finish}/>} {mechanic==='timing'&&<TimingChallenge kind={kind} seedKey={seedKey} rounds={def.rounds} onFinish={finish}/>} {mechanic==='sequence'&&<SequenceChallenge kind={kind} seedKey={seedKey} length={def.rounds} onFinish={finish}/>} {mechanic==='grid_memory'&&<GridMemoryChallenge seedKey={seedKey} length={def.rounds} onFinish={finish}/>} {mechanic==='decision'&&<DecisionChallenge kind={kind} onFinish={finish}/>}<button className="minigame-forfeit" onClick={()=>finish(0,'You ended the challenge early.')}>End challenge</button></>}
+      {phase==='result'&&result&&<div className="minigame-result"><div className={`minigame-score ${result.success?'success':''}`}>{result.score}</div><h3>{result.success?'Strong performance':'Challenge complete'}</h3><p>{result.summary}</p><p className="muted">Final success is resolved by Everthread using this score together with your character's relevant skills and circumstances.</p><button className="full-button" onClick={applyResult}>Use this result</button></div>}
     </div>
   </div>;
 }

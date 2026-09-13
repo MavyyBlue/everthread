@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "tsx src/tests/runRegression.ts",
+    "test": "tsx src/tests/runRegression.ts && tsx src/tests/minigameArcadeRegression.ts",
     "test:watch": "vitest",
     "sim": "tsx src/tests/runSimulation.ts 1000 bulk",
     "typecheck": "tsc --noEmit",
