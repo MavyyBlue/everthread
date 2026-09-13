@@ -1,6 +1,25 @@
 # Everthread Changelog
 
-## Central Feedback Inbox v2 candidate — 2026-09-13
+## Player-visible Feedback disposition candidate — 2026-09-13
+
+### Added
+
+- Added secure player status read-back to the existing Supabase `everthread-feedback` Edge Function. A report can be queried only with its report ID plus the private 32-byte device token already required for withdrawal.
+- Added bounded `player_message` reviewer communication while keeping `triage_status` and `resolution_class` as the only authoritative lifecycle/disposition fields.
+- Feedback Center now displays central receipt, review lifecycle, disposition, reviewer message, review timestamp, and a manual **Check status** action.
+- Automatic feedback synchronization refreshes review state only for the same bounded 10-report batch already used for retry.
+- Centrally dispositioned test report `ET-20260913-A527E2A6` as Resolved → Suggestion noted to validate player read-back after deployment.
+
+### Security / architecture
+
+- The public status endpoint does not expose internal triage/resolution notes, cancellation-token hashes, database access, or other players’ reports.
+- No simulation/save authority or gameplay RNG changes. Supabase security advisor remains clean after the schema extension.
+
+### Local validation
+
+- Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Feedback Central Inbox 23/23, and the 163-module production build pass locally. Canonical GitHub Actions remains final certification authority.
+
+## Central Feedback Inbox v2 — CI Green Run #110 — 2026-09-13
 
 ### Added
 
@@ -17,10 +36,11 @@
 - Supabase security advisor is clean after setup. Performance advisor findings were reduced to expected unused-index notices on the empty new database.
 - Feedback remains entirely outside `GameState`, save schema, rewind, descendants, simulation RNG, and gameplay authorities.
 
-### Local validation
+### CI validation
 
-- Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Activity Feedback Reporting 20/20, Feedback Central Inbox 17/17, and the 163-module production build pass.
-- Canonical GitHub Actions remains final certification authority for the client/repository candidate.
+- GitHub Actions Run #110 (`34773384580`) certified expanded source `9980d8c278cb3bb2306d73a07963bf172096fd1e`.
+- Canonical preflight passed 4/4 with Feedback Central Inbox 17/17, Activity Feedback Reporting 20/20, Activity-specific Minigame 19/19, Core 82/82, AI Interaction Testbench 41/41, Integrated Long-Life 105/105, all established suites, and the 163-module production build.
+- Certified artifact ID `10322692198`; Pages deployment succeeded.
 
 ## Player Feedback / Issue Reporting — CI Green Run #109 — 2026-09-13
 

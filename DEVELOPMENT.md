@@ -26,18 +26,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Central Feedback Inbox v2 (predeployment candidate)
+### Player-visible Feedback disposition (predeployment candidate)
 
-- Built only on certified Run #109 expanded source `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`; package remains 0.12.0 and save schema remains 12.
-- A dedicated free Supabase **Everthread** project now owns the central feedback service (`oyzcwkirqivbauqfqhbk`, `us-east-2`).
-- The public `everthread-feedback` Edge Function accepts only bounded submit/withdraw operations from the Everthread Pages origin (plus localhost development), validates the report catalog/schema, limits payload size, and applies a per-client submission rate limit.
-- `anon` and `authenticated` have revoked table grants plus explicit deny RLS policies. Server-side credentials never enter the browser. Supabase security advisors are clean.
-- `src/feedback/remoteInbox.ts` adds device-local transport metadata outside `GameState`, cryptographic cancellation secrets, idempotent submit, secure withdrawal, offline/error retention, startup/online retry, and a 10-report retry batch cap.
-- Feedback Center now communicates central delivery status. JSON export remains a backup rather than the normal Yuki handoff.
-- App startup and browser `online` transitions retry stored reports automatically; opening Feedback Center also retries. Existing v1 queued reports can migrate naturally without changing report schema.
-- `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` now makes direct Supabase inbox review mandatory before new implementation slices and defines the central review checkpoint workflow.
-- No simulation/save authority changes and no main gameplay RNG use.
-- Local validation: Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Activity Feedback Reporting 20/20, Feedback Central Inbox 17/17, and production build at 163 transformed modules all pass. GitHub Actions remains final certification authority.
+- Built only on certified Run #110 expanded source `9980d8c278cb3bb2306d73a07963bf172096fd1e`; package remains 0.12.0 and save schema remains 12.
+- Central Feedback Inbox v2 itself is certified in Run #110. This slice extends the existing authority rather than introducing a second status system.
+- Supabase `triage_status` remains the review lifecycle authority and `resolution_class` remains the disposition authority. A new bounded `player_message` is presentation-only reviewer communication.
+- Edge Function version 2 adds token-authenticated status read-back. It never exposes the whole inbox, cancellation-token hash, internal triage notes, or resolution notes.
+- `src/feedback/remoteInbox.ts` stores a safe local projection of received/reviewed/fix/certification status beside the existing private cancellation token and refreshes only the same bounded 10-report batch used by startup synchronization.
+- Feedback Center displays Received / review lifecycle / disposition / player message and offers Check status.
+- Live test report `ET-20260913-A527E2A6` is centrally dispositioned `resolved` / `suggestion` with a player-safe confirmation message for end-to-end validation after deployment.
+- No `GameState`, save schema, rewind, engine action, or gameplay RNG changes.
+- Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Feedback Central Inbox **23/23**, Activity Feedback Reporting 20/20, Activity-specific Minigame 19/19, Core 82/82, Integrated Long-Life 105/105, and the 163-module production build all pass locally. GitHub Actions remains final certification authority.
 
 ## Recent corrective history
 

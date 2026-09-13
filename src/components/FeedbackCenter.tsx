@@ -20,7 +20,10 @@ import {
 } from '../feedback/reporting';
 import {
   feedbackDeliveryLabel,
+  feedbackDispositionLabel,
+  feedbackReviewLabel,
   loadFeedbackSyncRecords,
+  refreshFeedbackStatus,
   syncFeedbackQueue,
   syncFeedbackReport,
   type FeedbackSyncRecord,
@@ -67,8 +70,10 @@ export function FeedbackCenter({state}:{state:GameState}){
       const next=queueFeedbackReport(report);setReports(next);
       setDraft(makeDraft());setFormOpen(false);setMessage(`Report ${report.id} saved. Sending to the Everthread Feedback Inbox…`);
       const delivery=await syncFeedbackReport(report);refreshSync();
-      if(delivery?.remoteStatus==='submitted')setMessage(`Report ${report.id} sent to the Everthread Feedback Inbox.`);
-      else setMessage(`Report ${report.id} is saved on this device and will retry delivery when you are online.`);
+      if(delivery?.remoteStatus==='submitted'){
+        const review=await refreshFeedbackStatus(report.id);refreshSync();
+        setMessage(review?.receivedAt?`Report ${report.id} was received by Everthread.`:`Report ${report.id} sent to the Everthread Feedback Inbox.`);
+      }else setMessage(`Report ${report.id} is saved on this device and will retry delivery when you are online.`);
     }catch(error){setMessage(error instanceof Error?error.message:'Could not create the report.');}
   };
   const copyReport=async(report:FeedbackReport)=>{
@@ -90,6 +95,14 @@ export function FeedbackCenter({state}:{state:GameState}){
     const delivery=await syncFeedbackReport(withdrawn);refreshSync();
     if(delivery?.remoteStatus==='withdrawn')setMessage(`${report.id} withdrawn from the Everthread Feedback Inbox.`);
     else setMessage(`${report.id} is withdrawn locally; the central withdrawal will retry when you are online.`);
+  };
+  const checkStatus=async(report:FeedbackReport)=>{
+    setMessage(`Checking review status for ${report.id}…`);
+    const review=await refreshFeedbackStatus(report.id);refreshSync();
+    if(!review){setMessage(`${report.id} has not reached the central inbox yet.`);return;}
+    if(review.statusError){setMessage(`${report.id} is still safe locally, but its review status could not refresh right now.`);return;}
+    const disposition=feedbackDispositionLabel(review);
+    setMessage(`${report.id}: ${feedbackReviewLabel(review)}${disposition?` · ${disposition}`:''}.`);
   };
   const exportInbox=()=>{
     const text=serializeFeedbackInbox(reports);
@@ -114,11 +127,21 @@ export function FeedbackCenter({state}:{state:GameState}){
     <details className="feedback-history" open={reports.length>0}>
       <summary><span><strong>My reports</strong><small>{reports.length?`${active.length} active · ${reports.length-active.length} withdrawn`:'No reports on this device'}</small></span><b>{reports.length}</b></summary>
       <div className="feedback-report-list">
-        {reports.map(report=>{const delivery=syncById.get(report.id);return <article className={`feedback-report-card ${report.status}`} key={report.id}>
-          <div className="feedback-report-top"><div><strong>{report.id}</strong><small>{report.interfaceLabel} → {report.actionLabel}</small></div><span>{report.status}</span></div>
+        {reports.map(report=>{
+          const delivery=syncById.get(report.id);
+          const reviewLabel=feedbackReviewLabel(delivery);
+          const disposition=feedbackDispositionLabel(delivery);
+          return <article className={`feedback-report-card ${report.status}`} key={report.id}>
+          <div className="feedback-report-top"><div><strong>{report.id}</strong><small>{report.interfaceLabel} → {report.actionLabel}</small></div><span>{report.status==='withdrawn'?'withdrawn':delivery?.triageStatus?reviewLabel:report.status}</span></div>
           <p>{report.description}</p><small>{report.kind} · {report.categoryLabel}</small>
           <small className={`feedback-delivery ${delivery?.remoteStatus??'pending'}`}>{feedbackDeliveryLabel(delivery,report.status)}</small>
-          <div className="feedback-report-actions"><button type="button" onClick={()=>void shareReport(report)}>Share</button><button type="button" onClick={()=>void copyReport(report)}>Copy</button>{report.status==='queued'&&<button type="button" className="danger-soft" onClick={()=>void cancelReport(report)}>Cancel report</button>}</div>
+          {delivery?.remoteStatus==='submitted'&&<div className="feedback-review-status">
+            <div><strong>{reviewLabel}</strong>{disposition&&<span>{disposition}</span>}</div>
+            {delivery.playerMessage&&<p>{delivery.playerMessage}</p>}
+            <small>{delivery.reviewedAt?`Reviewed ${new Date(delivery.reviewedAt).toLocaleString()}`:delivery.receivedAt?`Received ${new Date(delivery.receivedAt).toLocaleString()}`:'Review status will appear here after Everthread receives the report.'}</small>
+            {delivery.statusError&&<small className="feedback-status-error">Could not refresh review status. Try again when online.</small>}
+          </div>}
+          <div className="feedback-report-actions"><button type="button" onClick={()=>void shareReport(report)}>Share</button><button type="button" onClick={()=>void copyReport(report)}>Copy</button>{delivery?.remoteStatus==='submitted'&&report.status==='queued'&&<button type="button" onClick={()=>void checkStatus(report)}>Check status</button>}{report.status==='queued'&&<button type="button" className="danger-soft" onClick={()=>void cancelReport(report)}>Cancel report</button>}</div>
           {report.status==='withdrawn'&&<small className="feedback-withdrawn">Withdrawn {report.withdrawnAt?new Date(report.withdrawnAt).toLocaleString():''}. If central delivery was temporarily unavailable, Everthread will retry the withdrawal later.</small>}
         </article>;})}
         {!reports.length&&<p className="empty-card">No feedback reports have been created on this device.</p>}

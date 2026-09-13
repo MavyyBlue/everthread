@@ -77,6 +77,14 @@ async function rateLimit(req:Request){
 }
 async function existingReport(id:string){const response=await rest(`everthread_feedback_reports?id=eq.${encodeURIComponent(id)}&select=id,status,cancellation_token_hash`);if(!response.ok)throw new Error('Could not inspect existing feedback report.');const rows=await response.json();return Array.isArray(rows)?rows[0]:undefined;}
 
+async function playerStatusReport(id:string){
+  const fields=['id','status','received_at','withdrawn_at','cancellation_token_hash','triage_status','resolution_class','reviewed_at','reviewed_against_commit','fix_commit','certification_run_id','player_message','updated_at'].join(',');
+  const response=await rest(`everthread_feedback_reports?id=eq.${encodeURIComponent(id)}&select=${fields}`);
+  if(!response.ok)throw new Error('Could not inspect feedback review status.');
+  const rows=await response.json();
+  return Array.isArray(rows)?rows[0]:undefined;
+}
+
 async function submit(req:Request,origin:string|null,body:any){
   const report=body?.report;const token=body?.cancellationToken;const error=reportValidationError(report);
   if(error)return json(400,{ok:false,error},origin);
@@ -90,6 +98,19 @@ async function submit(req:Request,origin:string|null,body:any){
   if(!response.ok){const detail=await response.text();console.error('feedback insert failed',response.status,detail.slice(0,500));return json(500,{ok:false,error:'Everthread could not submit this report right now. It is still saved on your device.'},origin);}
   return json(201,{ok:true,id:report.id,status:'queued'},origin);
 }
+async function status(origin:string|null,body:any){
+  const id=cleanText(body?.id,40);const token=body?.cancellationToken;
+  if(!/^ET-[0-9]{8}-[A-Z0-9]{6,12}$/.test(id)||!validToken(token))return json(400,{ok:false,error:'Invalid status request.'},origin);
+  const existing=await playerStatusReport(id);if(!existing)return json(404,{ok:false,error:'That report is not in the central inbox.'},origin);
+  const tokenHash=await sha256Hex(token.toLowerCase());if(existing.cancellation_token_hash!==tokenHash)return json(403,{ok:false,error:'This device cannot view that report status.'},origin);
+  return json(200,{
+    ok:true,id:existing.id,status:existing.status,receivedAt:existing.received_at,withdrawnAt:existing.withdrawn_at,
+    triageStatus:existing.triage_status,resolutionClass:existing.resolution_class,reviewedAt:existing.reviewed_at,
+    reviewedAgainstCommit:existing.reviewed_against_commit,fixCommit:existing.fix_commit,
+    certificationRunId:existing.certification_run_id,playerMessage:existing.player_message,updatedAt:existing.updated_at,
+  },origin);
+}
+
 async function withdraw(origin:string|null,body:any){
   const id=cleanText(body?.id,40);const token=body?.cancellationToken;
   if(!/^ET-[0-9]{8}-[A-Z0-9]{6,12}$/.test(id)||!validToken(token))return json(400,{ok:false,error:'Invalid withdrawal request.'},origin);
@@ -108,5 +129,5 @@ Deno.serve(async(req:Request)=>{
   if(req.method!=='POST')return json(405,{ok:false,error:'Method not allowed.'},origin);
   if(!isAllowedOrigin(origin))return json(403,{ok:false,error:'Origin not allowed.'},origin);
   const length=Number(req.headers.get('content-length')??0);if(Number.isFinite(length)&&length>MAX_BODY_BYTES)return json(413,{ok:false,error:'Report payload is too large.'},origin);
-  try{const raw=await req.text();if(raw.length>MAX_BODY_BYTES)return json(413,{ok:false,error:'Report payload is too large.'},origin);const body=JSON.parse(raw);if(body?.operation==='submit')return await submit(req,origin,body);if(body?.operation==='withdraw')return await withdraw(origin,body);return json(400,{ok:false,error:'Unknown feedback operation.'},origin);}catch(error){console.error('feedback function error',error);return json(500,{ok:false,error:'Everthread could not reach the feedback inbox. Your local report is safe.'},origin);}
+  try{const raw=await req.text();if(raw.length>MAX_BODY_BYTES)return json(413,{ok:false,error:'Report payload is too large.'},origin);const body=JSON.parse(raw);if(body?.operation==='submit')return await submit(req,origin,body);if(body?.operation==='withdraw')return await withdraw(origin,body);if(body?.operation==='status')return await status(origin,body);return json(400,{ok:false,error:'Unknown feedback operation.'},origin);}catch(error){console.error('feedback function error',error);return json(500,{ok:false,error:'Everthread could not reach the feedback inbox. Your local report is safe.'},origin);}
 });

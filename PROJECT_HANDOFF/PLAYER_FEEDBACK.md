@@ -13,14 +13,14 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Certified local-report foundation: Run #109 / expanded source `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`.
+Certified central-inbox baseline: Run #110 / expanded source `9980d8c278cb3bb2306d73a07963bf172096fd1e`.
 
 Central Feedback Inbox infrastructure:
 
 - Supabase project: **Everthread**
 - Project ref: `oyzcwkirqivbauqfqhbk`
 - Region: `us-east-2`
-- Public Edge Function: `everthread-feedback`
+- Public Edge Function: `everthread-feedback` (live version 2 adds token-authenticated player status read-back)
 - Reports table: `public.everthread_feedback_reports`
 - Review checkpoint: `public.everthread_feedback_review_state`, key `main`
 - Rate-limit table: `public.everthread_feedback_rate_limits`
@@ -29,7 +29,7 @@ Central Feedback Inbox infrastructure:
 
 The public game never receives database read access or a service-role/secret key. `anon` and `authenticated` have explicit deny policies and revoked table grants. The public Edge Function validates origin, report schema, interface/action/category IDs, payload size, and a bounded per-client submission rate before using server-side credentials. Supabase security advisors were clean after setup.
 
-Each device creates a 32-byte cancellation secret for a report. The raw secret remains only in device-local delivery metadata; the database stores only its SHA-256 hash. Retried submissions are idempotent by report ID + secret. Withdrawal requires the same secret.
+Each device creates a 32-byte cancellation secret for a report. The raw secret remains only in device-local delivery metadata; the database stores only its SHA-256 hash. Retried submissions are idempotent by report ID + secret. Withdrawal and player-visible status lookup require the same secret. Status lookup returns only safe lifecycle/disposition fields; internal triage notes and the rest of the inbox are never exposed to the public client.
 
 ## Player lifecycle
 
@@ -40,7 +40,9 @@ Each device creates a 32-byte cancellation secret for a report. The raw secret r
 5. When online, the client submits it automatically to the central Feedback Inbox.
 6. Failed deliveries remain local and retry on app startup, when the Feedback Center opens, and when the browser returns online. Startup retries are bounded to 10 reports per pass.
 7. The player may Share/Copy/Export a JSON backup at any time.
-8. **Cancel report** marks the local report withdrawn and propagates withdrawal to the central inbox when reachable.
+8. After central receipt, **My Reports** can refresh the report’s review lifecycle and disposition using the private per-report token. Player-facing states are projections of authoritative `triage_status` / `resolution_class`; no second status ledger exists.
+9. A reviewer may provide a bounded `player_message` for safe player-facing context. Never copy private triage notes into it.
+10. **Cancel report** marks the local report withdrawn and propagates withdrawal to the central inbox when reachable.
 
 A cancelled draft is discarded. A queued report that was never successfully delivered may resolve its remote withdrawal as “not found”; that is valid because no central report existed. A report that may have reached the server before a lost response is still safely withdrawable because retries reuse the same private cancellation secret.
 
@@ -57,8 +59,9 @@ Before beginning a new implementation slice or after identifying a newly certifi
 7. Group obvious duplicates while preserving every original report ID. Never overwrite one player's report with another.
 8. Triage technical reports through backend authority first, then the actual interface path if backend checks are green.
 9. Mark reviewed reports with `reviewed_at`, `reviewed_against_commit`, appropriate `triage_status`, priority, and notes. Use `duplicate_of` only when the duplicate relationship is clear.
-10. After the review pass, update `everthread_feedback_review_state` with the certified commit used for review, the check time, the newest report receipt time seen, and reviewed-count snapshot.
-11. Summarize the actionable queue in `CURRENT_STATE.md`; do not copy the entire database into the handoff.
+10. When a player should see the outcome, set `resolution_class` and a concise `player_message`. Keep internal reasoning in `triage_notes` / `resolution_notes`; never expose those fields through the public endpoint.
+11. After the review pass, update `everthread_feedback_review_state` with the certified commit used for review, the check time, the newest report receipt time seen when available, and reviewed-count snapshot.
+12. Summarize the actionable queue in `CURRENT_STATE.md`; do not copy the entire database into the handoff.
 
 If Supabase access is unavailable, say so explicitly and fall back to any supplied `everthread-feedback-inbox-*.json` files or pasted `ET-*` reports. Never conclude that there are no reports merely because the device-local queue is inaccessible remotely.
 
@@ -91,11 +94,12 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint before Feedback v2 client deployment: certified Run #109 / `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`.
+Last central review checkpoint: certified Run #110 / `9980d8c278cb3bb2306d73a07963bf172096fd1e`.
 
-- Central active reports: **0**
-- Central withdrawn reports: **0**
+- Central active reports requiring development action: **0**
 - Central new/untriaged reports: **0**
-- Previously supplied device-export test report: `ET-20260913-76FA01` (a deliberate test suggestion; not yet centrally imported)
+- Reviewed reports in checkpoint: **1**
+- Test report `ET-20260913-A527E2A6`: **resolved → suggestion**, used to prove automatic delivery; `player_message` is populated.
+- Player-visible disposition read-back client: **candidate** until the next canonical GitHub Actions certification.
 
-Once the Feedback v2 client is deployed and that same browser opens Everthread, existing queued v1 device reports will be eligible for automatic central synchronization.
+The live Edge Function already supports secure status lookup, but do not call the player UI certified until the matching repository/client slice passes canonical CI and Pages deployment.

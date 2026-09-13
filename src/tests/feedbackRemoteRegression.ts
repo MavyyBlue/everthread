@@ -6,7 +6,10 @@ import {
   FEEDBACK_SYNC_STORAGE_KEY,
   ensureFeedbackSyncRecord,
   feedbackDeliveryLabel,
+  feedbackDispositionLabel,
+  feedbackReviewLabel,
   loadFeedbackSyncRecords,
+  refreshFeedbackStatus,
   syncFeedbackQueue,
   syncFeedbackReport,
 } from '../feedback/remoteInbox';
@@ -33,6 +36,7 @@ async function run(){
   const calls:Array<{operation:string;cancellationToken?:string;id?:string;report?:{id:string}}>=[];
   const fetcher=async(_input:string|URL|Request,init?:RequestInit)=>{
     const body=JSON.parse(String(init?.body??'{}')) as {operation:string;cancellationToken?:string;id?:string;report?:{id:string}};calls.push(body);
+    if(body.operation==='status')return new Response(JSON.stringify({ok:true,id:body.id,status:'queued',receivedAt:'2026-09-13T18:01:30.000Z',triageStatus:'resolved',resolutionClass:'suggestion',reviewedAt:'2026-09-13T18:02:30.000Z',reviewedAgainstCommit:'9980d8c278cb3bb2306d73a07963bf172096fd1e',playerMessage:'Received and confirmed.'}),{status:200,headers:{'Content-Type':'application/json'}});
     return new Response(JSON.stringify({ok:true,id:body.report?.id??body.id,status:body.operation==='withdraw'?'withdrawn':'queued'}),{status:body.operation==='withdraw'?200:201,headers:{'Content-Type':'application/json'}});
   };
   const delivery=await syncFeedbackReport(report,{storage,fetcher,token:'B'.repeat(64),now:()=>new Date('2026-09-13T18:02:00.000Z')});
@@ -41,8 +45,14 @@ async function run(){
   verify(calls[0].cancellationToken==='b'.repeat(64),'central submission sends the device cancellation secret without adding it to the report payload');
   verify(JSON.stringify(report)===reportBefore,'remote submission does not mutate the player report or GameState-derived diagnostics');
   await syncFeedbackReport(report,{storage,fetcher,now:()=>new Date('2026-09-13T18:03:00.000Z')});
-  verify(calls.length===1,'already-submitted queued reports are idempotent and do not send duplicate requests');
+  verify(calls.filter(call=>call.operation==='submit').length===1,'already-submitted queued reports are idempotent and do not send duplicate submissions');
   verify(feedbackDeliveryLabel(delivery,'queued')==='Sent to Everthread Feedback Inbox','submitted reports expose clear delivery status to the player');
+  const review=await refreshFeedbackStatus(report.id,{storage,fetcher,now:()=>new Date('2026-09-13T18:02:45.000Z')});
+  verify(calls.at(-1)?.operation==='status'&&calls.at(-1)?.cancellationToken==='b'.repeat(64),'review-status lookup uses the same private per-report token');
+  verify(review?.receivedAt==='2026-09-13T18:01:30.000Z'&&review.triageStatus==='resolved','player status sync records server receipt and authoritative triage lifecycle');
+  verify(review?.resolutionClass==='suggestion'&&review.playerMessage==='Received and confirmed.','player status sync records safe disposition and reviewer message');
+  verify(feedbackReviewLabel(review)==='Resolved'&&feedbackDispositionLabel(review)==='Suggestion noted','player-facing labels translate internal lifecycle and disposition without exposing triage notes');
+  verify(feedbackDeliveryLabel(review,'queued')==='Received by Everthread','server receipt upgrades delivery language from sent to received');
 
   queueFeedbackReport(report,storage);
   const withdrawn=withdrawFeedbackReport(report.id,'I realized this was expected behavior.',storage,new Date('2026-09-13T18:04:00.000Z')).find(item=>item.id===report.id)!;
@@ -63,11 +73,12 @@ async function run(){
   verify(errorResult?.remoteStatus==='error'&&errorResult.error==='offline','network failures retain retryable delivery state instead of losing the report');
   verify(JSON.stringify(errorReport)===errorBefore,'network failure leaves the original report untouched');
 
-  const batchStorage=new MemoryStorage();let batchCalls=0;
+  const batchStorage=new MemoryStorage();let batchCalls=0;let batchSubmissions=0;let batchStatusChecks=0;
   const batchReports=Array.from({length:FEEDBACK_SYNC_BATCH+3},(_,index)=>createFeedbackReport(draft,state,{now:new Date(Date.UTC(2026,8,13,19,0,index)),token:`R${String(index).padStart(5,'0')}`}));
-  const batchFetcher=async()=>{batchCalls++;return new Response(JSON.stringify({ok:true,status:'queued'}),{status:201,headers:{'Content-Type':'application/json'}});};
+  const batchFetcher=async(_input:string|URL|Request,init?:RequestInit)=>{batchCalls++;const body=JSON.parse(String(init?.body??'{}')) as {operation?:string};if(body.operation==='submit')batchSubmissions++;if(body.operation==='status')batchStatusChecks++;return new Response(JSON.stringify(body.operation==='status'?{ok:true,status:'queued',triageStatus:'new',receivedAt:'2026-09-13T19:29:00.000Z'}:{ok:true,status:'queued'}),{status:body.operation==='status'?200:201,headers:{'Content-Type':'application/json'}});};
   await syncFeedbackQueue(batchReports,{storage:batchStorage,fetcher:batchFetcher,token:'E'.repeat(64),now:()=>new Date('2026-09-13T19:30:00.000Z')});
-  verify(batchCalls===FEEDBACK_SYNC_BATCH,'startup retry sends only the bounded batch instead of flooding the inbox');
+  verify(batchSubmissions===FEEDBACK_SYNC_BATCH,'startup retry submits only the bounded batch instead of flooding the inbox');
+  verify(batchStatusChecks===FEEDBACK_SYNC_BATCH&&batchCalls===FEEDBACK_SYNC_BATCH*2,'startup sync refreshes player-visible review state only for that same bounded batch');
 
   const broken=new MemoryStorage();broken.setItem(FEEDBACK_SYNC_STORAGE_KEY,'not-json');
   verify(loadFeedbackSyncRecords(broken).length===0,'corrupt sync metadata fails closed without affecting reports or saves');
