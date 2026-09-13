@@ -767,6 +767,7 @@ export interface ChoiceEffect {
   flags?: Record<string, boolean | number | string>;
   schedule?: { eventId: Id; years: number; npcSelector?: string; requiredRelationshipTypes?: RelationshipType[] };
   workplace?: Partial<Pick<WorkplaceWorldState, 'morale' | 'culture' | 'tension' | 'reputation'>>;
+  school?: Partial<Pick<SchoolWorldState, 'attendance' | 'conduct' | 'socialStanding'>>;
   health?: number;
   legalHeat?: number;
 }

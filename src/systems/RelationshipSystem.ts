@@ -8,6 +8,7 @@ import { biologicalChildGate } from './ReproductionSystem';
 import { assignNpcIdentity } from './NpcIdentitySystem';
 import { assignGeneratedNpcOrientation, characterRomanticGender, pickRomanticTargetGender, playerNpcRomanticallyCompatible, playerNpcSexuallyCompatible } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
+import { scheduleFriendArgumentStory, scheduleMarriageExpectationsStory, scheduleParentingPresenceStory, scheduleReconciliationStory } from './SystemicStorySystem';
 
 export type RelationshipInteractionAction='conversation'|'compliment'|'insult'|'spend_time'|'give_money'|'gift'|'ask_money'|'argue'|'apologize'|'prank'|'fight'|'counseling'|'vacation';
 
@@ -186,6 +187,8 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   state.character.secondary.karma+=spec.karma??0;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:Math.abs(delta)>10?2:1,text:copy.timeline,npcIds:[npcId],relationshipDelta:delta});
   state.rngCounter=rng.counter();
+  if(interactionAction==='spend_time'&&rel.type==='child')scheduleParentingPresenceStory(state,npcId);
+  if(interactionAction==='argue'&&['friend','best_friend'].includes(rel.type))scheduleFriendArgumentStory(state,npcId);
   return {success:true,messages:[{text:`${npc.firstName}'s relationship with you ${delta>=0?'improved':'worsened'} (${delta>=0?'+':''}${Math.round(delta)}).`}]};
 }
 
@@ -244,7 +247,10 @@ export function changeRelationshipType(state:GameState,npcId:string,action:'ask_
   if(!success && !text) text='That relationship step is not available right now.';
   if(success){rel.type=newType;if(CURRENT_ROMANTIC_TYPES.has(newType))assignNpcIdentity(state,npc);ensureNpcLife(state,npc);if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:success?3:1,text,npcIds:[npcId]});
-  state.rngCounter=rng.counter(); return {success,messages:[{text}]};
+  state.rngCounter=rng.counter();
+  if(success&&action==='reconcile')scheduleReconciliationStory(state,npcId);
+  if(success&&action==='marry')scheduleMarriageExpectationsStory(state,npcId);
+  return {success,messages:[{text}]};
 }
 
 function pickChildName(state:GameState,rng:ReturnType<typeof createRng>){

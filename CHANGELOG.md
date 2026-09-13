@@ -1,20 +1,41 @@
 # Everthread Changelog
 
-## Post-4G random-event narrative-composition correction candidate — 2026-09-13
+## Phase 7B1 — Family, School & Relationship systemic stories candidate — 2026-09-13
+
+### Added / changed
+
+- Added five system-owned delayed stories driven by real player actions rather than annual random rolls: time spent with a child, academic misconduct, a serious friend argument, romantic reconciliation, and marriage expectations.
+- Added `SystemicStorySystem` as an RNG-neutral request bridge into the already-certified `ConsequenceSystem`. It owns no queue, relationship, NPC, school, or save truth; `state.delayedEvents` remains the sole active consequence queue.
+- Added `systemicConsequenceEvents.ts` as a dedicated probability-zero content registry outside the 691-event random pool. Exact NPC/social-world targets, origin age, due age, validity, and dedupe are carried by the certified scheduler.
+- Added exact school-world event effects for conduct/social standing/attendance. The first school follow-up can therefore change the persistent school record already consumed by post-secondary admissions rather than applying a detached stat-only outcome.
+- Event description rendering now resolves `{WORLD_NAME}` from the referenced `SocialWorld`; relationship stories continue to resolve the exact NPC from payload authority.
+- Reconciliation stories cancel if the relationship ends before they mature; marriage stories require the same exact spouse; dead NPCs and missing school worlds cancel deterministically rather than retargeting.
+- Updated the integrated long-life test helper to resolve scheduler-required same-age backlog before retrying Age Up, matching certified Phase 7A player-facing gating instead of assuming every Age Up advances immediately.
+- Save schema remains **13**; no gameplay RNG is consumed by story scheduling and no new durable authority was introduced.
+
+### Local candidate validation
+
+- New `phase7BSystemicStoryRegression.ts`: **33/33** checks covering action wiring, exact targets, validity cancellation, dedupe, save round-trip, RNG-neutral scheduling, exact school-world effects, admissions propagation, semantic state changes, random-pool stability, schema stability, and invariants.
+- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Core 82/82; Integrated Long-Life 105/105; Phase 7A Persistent Consequence 36/36; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
+- Production build PASS with Vite 7.3.6 at **167 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Built from certified **Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`**. Canonical GitHub Actions remains final certification authority; Phase 7B1 is not yet certified.
+
+## Post-4G random-event narrative-composition correction — CI Green Run #114 — 2026-09-13
+
+### Certification
+
+- GitHub Actions Run #114 (`34780654179`) certified expanded source `60bfa3eaecb574df5a74920cbc64f513055bae46`, package `0.12.0`, save schema **13**.
+- Canonical preflight passed both TypeScript gates, the complete regression wall, Random-event Coherence **77/77**, Integrated Long-Life 105/105, Phase 7A Persistent Consequence 36/36, production build, certified artifact restore smoke, and Pages deployment.
+- Certified source SHA-256: `21f7ecbeb2f531cff582ed003925def89e555b5842a06e7231e3375ed6f6daf3`.
+- Certified dependency SHA-256: `0833b91abb51c9a7518141591e84b936fbfaecb855d75a8f39d7a8143db7969d`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10324957306`, digest `67835c1585a8ee92bb7bc2db8b638145628f28e3b99ab48dc804119e98ada7af`; Pages artifact ID `10324533122`, digest `5bbb65b63f006278d402a60d665c3a898304104432cf83ffcf089f61acbe5f1d`.
 
 ### Corrected
 
-- Reproduced live feedback report `ET-20260913-0AA876B7`: procedural event choices were coherent, but generic description templates could produce invalid scene grammar such as `While the playground...`, `You are the playground when...`, duplicated setting conjunctions, or unrelated eye-contact filler.
-- Kept EventSystem/coherence ownership unchanged. The correction only normalizes childhood scene settings and replaces the three procedural description frames with context-safe composition across all 664 procedural variants.
-- Preserved all 691 random-event definitions, 664 procedural variants, 80 dilemma families, event IDs, probabilities, cooldowns, exact-target behavior, choices/effects, save schema 13, and exactly three descriptions per procedural event so RNG selection shape does not change.
+- Resolved live feedback report `ET-20260913-0AA876B7`: procedural event choices were coherent, but generic description templates could produce grammatically invalid or contextless scene text.
+- Kept EventSystem/coherence ownership unchanged. The correction normalizes scene settings and uses context-safe description frames across all 664 procedural variants.
+- Preserved all 691 random-event definitions, 664 procedural variants, 80 dilemma families, event IDs, probabilities, cooldowns, exact targets, choices/effects, save schema 13, and exactly three descriptions per procedural event, preserving description-selection RNG shape.
 - Existing saved `pendingEvent.description` text is not rewritten; already-open choices remain compatible.
-
-### Regression / local candidate validation
-
-- Expanded `eventCoherenceRegression.ts` from 72 to **77/77** checks with aggregate narrative-composition coverage.
-- Built from the certified Run #113 artifact / expanded source `3d38dec97b0e3eb01eff4756e78dda9319eb323b`.
-- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Integrated Long-Life 105/105; Phase 7A Persistent Consequence 36/36; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23; production build PASS at **165 modules**.
-- Canonical GitHub Actions certification is still pending. Phase 7B1 remains next immediately after this narrow corrective slice is certified.
 
 ## Phase 7A — Persistent Consequence Foundation — CI Green Run #112 — 2026-09-13
 

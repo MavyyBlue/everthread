@@ -47,6 +47,7 @@ import { runPaymentAssetManagementRegression } from './paymentAssetManagementReg
 import { runPersonalBorrowingRegression } from './personalBorrowingRegression';
 import { runHouseholdFinanceRegression } from './householdFinanceRegression';
 import { runPersistentConsequenceRegression } from './persistentConsequenceRegression';
+import { runPhase7BSystemicStoryRegression } from './phase7BSystemicStoryRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -99,4 +100,5 @@ try{const checks=runPersonalBorrowingRegression();console.log(`Personal borrowin
 try{const checks=runHouseholdFinanceRegression();console.log(`Household finance & crisis regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runIntegratedLongLifeRegression();console.log(`Integrated long-life regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPersistentConsequenceRegression();console.log(`Phase 7A persistent consequence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runPhase7BSystemicStoryRegression();console.log(`Phase 7B1 systemic story regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

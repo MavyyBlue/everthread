@@ -3,8 +3,8 @@
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
 Certified save schema: 13
-Newest certified expanded source: Run #113 / `3d38dec97b0e3eb01eff4756e78dda9319eb323b`
-Certified gameplay baseline: Run #112 / `536c102e10f27694caa89a8b1d9c473953ca6e76` (Run #113 only synchronized handoff/docs on top of this gameplay state)
+Newest certified expanded source: Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`
+Certified gameplay baseline: Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`
 
 ## Product direction
 
@@ -28,27 +28,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Post-4G random-event narrative-composition correction (local candidate; CI certification pending)
+### Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories (local candidate; CI certification pending)
 
-Live feedback report `ET-20260913-0AA876B7` was reproduced against the current certified source: procedural event choices are coherent, but `makeFamilyEvents()` could compose descriptions such as `While the playground...`, `You are the playground when...`, duplicated conjunction/preposition phrases, and unrelated eye-contact filler. The root cause is limited to description composition in `src/data/events.ts`; EventSystem authority, coherent choices, exact targets, event IDs/counts, probabilities, cooldowns, save schema, and consequence scheduling are unchanged.
+Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46` is the certified gameplay/source baseline. It certified and deployed the random-event narrative-composition correction, so report `ET-20260913-0AA876B7` is resolved. The only active central-feedback item is the nonblocking early-life progressive-disclosure suggestion `ET-20260913-BE8649B9` for a later UI/polish slice.
 
-The candidate converts the childhood setting literals into grammatical context phrases and uses three context-safe narrative frames across all 664 procedural variants. It deliberately preserves exactly three descriptions per procedural event so description selection consumes the same RNG shape as the certified baseline. Existing already-open `pendingEvent.description` text remains whatever the save already contains and therefore resolves compatibly.
+The 7B1 candidate adds five probability-zero systemic follow-ups that are scheduled only by real player actions: spending time with a child, taking an academic shortcut, arguing with a friend, reconciling with an ex, and marrying a partner. `SystemicStorySystem` is deliberately only an RNG-neutral request bridge; the certified `ConsequenceSystem` remains the sole scheduler/queue/history authority, while RelationshipSystem, SchoolWorldSystem, NPC state, and SocialWorld state remain authoritative for their own truth.
 
-`eventCoherenceRegression.ts` now protects description count/distinctness, sentence completeness, removal of the legacy broken composition frames, childhood location composition, and school timing composition. Local validation from the Run #113 certified artifact is green: Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Random-event Coherence **77/77**; Integrated Long-Life 105/105; Phase 7A Persistent Consequence 36/36; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23; production build PASS at **165 modules**. GitHub Actions remains final certification authority.
+`src/data/systemicConsequenceEvents.ts` keeps these story definitions outside `lifeEvents`, preserving the 691-event random pool and random selection behavior. Exact NPC and school-world references survive through scheduler target refs; dead/missing/relationship-invalid targets cancel rather than retarget. A small `ChoiceEffect.school` projection lets delayed school choices modify the exact persistent school record already consumed by admissions. No save-schema change is required; schema remains 13.
 
-After this narrow correction is certified, resume **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories** without widening this corrective slice.
+Dedicated `phase7BSystemicStoryRegression.ts` is **33/33** locally. Both TypeScript gates, the complete regression wall, Core 82/82, Integrated Long-Life 105/105, Phase 7A Persistent Consequence 36/36, Random-event Coherence 77/77, Activity-specific Minigame 19/19, Feedback Reporting 20/20, Feedback Central Inbox 23/23, and the 167-module production build are green. Canonical GitHub Actions remains final certification authority; do not call 7B1 certified until the uploaded expanded source passes CI.
 
-### Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories (next after corrective certification)
-
-Phase 7A is no longer a candidate. GitHub Actions **Run #112** certified expanded source `536c102e10f27694caa89a8b1d9c473953ca6e76` on save schema **13**. Canonical preflight passed both TypeScript gates, the complete regression wall, Phase 7A Persistent Consequence **36/36**, Integrated Long-Life 105/105, Feedback Reporting 20/20, Feedback Central Inbox 23/23, the 165-module production build, certified artifact restore smoke, and Pages deployment.
-
-The certified `ConsequenceSystem` is now infrastructure: `state.delayedEvents` remains the single active queue, scheduler metadata is bounded, exact targets/cancellation/dedupe/priority/cooldown history are centralized, Finance no longer owns pending-event arbitration, and schema 12→13 migration is deterministic/RNG-neutral.
-
-Next work should use that foundation for meaningful multi-year family/parenting, school, friendship, and romance follow-ups. Content must reference real NPC/relationship/education/family authorities, cancel rather than silently retarget invalid exact targets, create understandable cross-system consequences, and receive dedicated regressions before promotion.
-
-The live Supabase Feedback Inbox remains a mandatory cross-cutting review gate before each development slice. Current reviewed backlog: `ET-20260913-0AA876B7` is the reproduced normal-priority random-event narrative defect driving this corrective candidate; `ET-20260913-BE8649B9` remains a triaged normal-priority early-life progressive-disclosure suggestion for a later UX/polish slice.
-
-Activity-specific minigame work is established historical functionality and is not the current implementation slice.
+Activity-specific minigame work remains established historical functionality and is not the current implementation slice.
 
 ## Recent corrective history
 

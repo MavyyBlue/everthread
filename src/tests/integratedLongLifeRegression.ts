@@ -70,7 +70,8 @@ function resolveAgeEvent(state:GameState){
 
 function advanceResolvedYear(state:GameState){
   state.character.stats.health=100;
-  const result=ageUp(state);
+  let result=ageUp(state);let backlogResolutions=0;
+  while(!result.success&&state.pendingEvent&&backlogResolutions<128){resolveAgeEvent(state);backlogResolutions+=1;result=ageUp(state);}
   if(!result.success)throw new Error(`Integrated long-life regression failed: Age Up was blocked at age ${state.character.age}: ${result.messages.map(message=>message.text).join(' | ')}`);
   resolveAgeEvent(state);
   if(!state.character.alive)throw new Error(`Integrated long-life regression failed: stress protagonist died unexpectedly at age ${state.character.age}`);

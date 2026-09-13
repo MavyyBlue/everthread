@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay baseline: **Run #112 / expanded source `536c102e10f27694caa89a8b1d9c473953ca6e76` / save schema 13**.
+Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay baseline: **Run #114 / expanded source `60bfa3eaecb574df5a74920cbc64f513055bae46` / save schema 13**.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,13 +94,13 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified source **Run #113 / `3d38dec97b0e3eb01eff4756e78dda9319eb323b`** (documentation-only on top of the Run #112 gameplay baseline).
+Last central review checkpoint: certified **Run #114 / `60bfa3eaecb574df5a74920cbc64f513055bae46`**.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, Mavyy automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
+- `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114. Procedural life-event descriptions now use scene-safe composition while preserving the same events/choices and random-selection shape.
 - `ET-20260913-BE8649B9`: **triaged · normal priority**, suggestion/interface improvement requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for an appropriate UI/polish slice; it does not block Phase 7B1.
-- `ET-20260913-0AA876B7`: **triaged · normal priority · reproduced**, random procedural event descriptions can become grammatically incoherent even when choices are coherent. Root cause is generic description composition in `makeFamilyEvents()`; a narrow local correction candidate is green, but the report remains open until canonical CI certification supplies a fix commit/run.
-- Central new/untriaged reports after this review: **0**.
-- Player-visible disposition read-back is **certified and deployed** in Run #111.
+- Central new/untriaged reports after the Run #114 review: **0**.
+- Player-visible disposition read-back remains certified and deployed.
 

@@ -87,6 +87,8 @@ Not every button should have a cooldown. Investment buy/sell and business tuning
 
 Total ordinary/random event definitions: 691.
 
+Phase 7B1 adds **5 probability-zero system-owned delayed story definitions** outside that random pool: parenting presence, school conduct, friend conflict, reconciliation, and marriage expectations. They are triggered by real player actions through the consequence scheduler and therefore do not change the 691-event random-selection count.
+
 Routine events use multiple description variants and data-defined choices. The 691 count is based on distinct event definitions produced from scenario families rather than copies of identical prose. Five explicit delayed-consequence chains cover romantic secrecy, family favors, ignored health warnings, workplace shortcuts, and broken confidences with persistent context.
 
 Special-career story definitions are intentionally counted separately because they never enter the ordinary random-event pool. Phase 4D8A introduced six exact-NPC mentor/rival beats. Phase 4D8B adds twelve path-specific beats across acting, music, modeling, professional sports, motorsport, and directing, bringing the dedicated registry to 18. These stories are scheduled through Career World history and `DelayedEvent`, not selected as generic random work events.
