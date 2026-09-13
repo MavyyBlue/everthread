@@ -32,6 +32,7 @@ export function buyProperty(state:GameState,typeId:string,useMortgage=true,offer
   const propertyId=makeStateId(state,'property');
   if(mortgageId){const loan=state.finances.liabilities.find(item=>item.id===mortgageId);if(loan)loan.assetId=propertyId;}
   state.assets.properties.push({id:propertyId,typeId:def.id,name:def.name,location:state.character.city,purchasePrice:price,marketValue:price,condition:90,age:0,amenities:[...def.amenities],mortgageId});
+  state.flags.financiallyIndependent=true;state.flags.financialSupportChoiceMade=true;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:3,text:useMortgage?`You purchased a ${def.name} in ${state.character.city} with financing.`:`You purchased a ${def.name} in ${state.character.city} outright.`,moneyDelta:-amountDue,...(financeDetail?{detail:financeDetail}:{})});
   return{success:true,stateChanges:useMortgage?['property','financingLiability','creditInquiry']:['property'],messages:[...(financeMessage?[{text:financeMessage}]:[]),{text:`Purchased ${def.name} for ${price.toLocaleString()}${useMortgage?` with ${amountDue.toLocaleString()} down`:' outright'}.`}]};
 }

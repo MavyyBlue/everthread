@@ -190,3 +190,9 @@ No content-database counts changed in 0.9.8. The milestone adds relationship-fol
 ## Phase 6C systems/content note
 
 Phase 6C adds **4 original personal-loan product definitions** using existing fictional institutions. Bankruptcy/recovery and personal-loan delinquency are systemic mechanics rather than random-event count inflation. Dedicated Personal Borrowing & Recovery regression adds 31 QA checks.
+
+## Household finance and crisis decisions
+
+Ordinary generated lives begin with two parent NPCs and $0 of player-owned cash. Childhood household costs belong to the supporting household rather than becoming hidden player expenses. At adulthood, Everthread explicitly asks whether the player remains family-supported or becomes financially independent; buying a home also establishes independence.
+
+Financially independent players who cannot cover annual costs can accumulate clearly labeled hardship debt. A Financial Pressure event explains the shortfall and offers non-forced responses: reduce debt with available investments/cash, review bankruptcy eligibility, or carry the debt. Major insolvency is no longer silently resolved by automatic bankruptcy.

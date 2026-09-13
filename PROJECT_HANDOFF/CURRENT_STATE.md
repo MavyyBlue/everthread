@@ -245,3 +245,7 @@ GitHub installs the committed lock with `npm ci`, calls the same canonical prefl
 - Final 360/390/412/430 device, accessibility, PWA/install/offline QA remains later work.
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.
 - GitHub Actions Node-20-targeted action warnings remain nonblocking technical debt.
+
+## Post-Run #104 correction candidate
+
+Certified baseline before this candidate: Run #104 / expanded commit `0799142af839976d9031a17ece7e03b892c063c3`. The local correction fixes player-reported childhood/support debt semantics and financial-crisis visibility: $0 newborn personal cash, household-supported living costs, explicit adulthood independence, player-facing hardship events, no silent automatic bankruptcy, and delayed-story priority protection. Save schema remains 12. Local full regression and production build are green; do not promote this candidate until CI certifies the uploaded overlay.

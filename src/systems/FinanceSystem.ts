@@ -302,14 +302,20 @@ function handleCashShortfall(state:GameState,grossIncome:number,loanPayments:Ann
     state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You could not cover ${Math.round(shortfall).toLocaleString()} of annual costs and added it to unsecured debt.`,moneyDelta:-shortfall});
   }
 
-  const personalDebt=state.finances.liabilities.filter(l=>l.kind==='personal').reduce((sum,l)=>sum+l.balance,0);
-  const severeThreshold=Math.max(45000,grossIncome*1.35);
-  if(personalDebt>severeThreshold||Number(state.flags.cashShortfallYears)>=4){
-    liquidateInvestmentsForDebt(state);payDownPersonalDebt(state);
-    const remaining=state.finances.liabilities.filter(l=>l.kind==='personal').reduce((sum,l)=>sum+l.balance,0);
-    if(remaining>Math.max(25000,grossIncome*.75))declareBankruptcy(state);
+  if(shortfall>.5&&!state.pendingEvent){
+    const debt=state.finances.liabilities.filter(l=>l.kind==='personal').reduce((sum,l)=>sum+l.balance,0);
+    const dueStory=state.delayedEvents.some(item=>item.dueAge<=state.character.age);
+    if(dueStory){if(!state.delayedEvents.some(item=>item.eventId==='financial_pressure_notice'))state.delayedEvents.push({id:makeStateId(state,'delay'),eventId:'financial_pressure_notice',dueAge:state.character.age+1,payload:{shortfall,debt}});}
+    else state.pendingEvent={eventId:'financial_pressure_notice',title:'Financial Pressure',description:`Your annual costs exceeded the money you had available. ${Math.round(shortfall).toLocaleString()} became hardship debt, bringing unsecured personal debt to ${Math.round(debt).toLocaleString()}. Nothing will be corrected automatically—you decide how to respond.`,choices:[{id:'reduce',label:'Use investments to reduce debt'},{id:'review',label:'Review bankruptcy options'},{id:'carry',label:'Carry the debt for now'}],payload:{shortfall,debt}};
   }
   return missedPayments;
+}
+
+export function reduceHardshipDebtWithInvestments(state:GameState){
+  const before=state.finances.liabilities.filter(l=>l.kind==='personal').reduce((sum,l)=>sum+l.balance,0);
+  if(before<=.5)return 0;liquidateInvestmentsForDebt(state);const paid=payDownPersonalDebt(state,before);
+  if(paid>0)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'money',importance:2,text:`You used available investments and cash to reduce ${Math.round(paid).toLocaleString()} of unsecured debt.`,moneyDelta:-paid});
+  return paid;
 }
 
 
@@ -324,21 +330,22 @@ export function processAnnualFinance(state:GameState) {
   const gross=salary+partTimeIncome+specialIncome+rentalIncome+businessDistribution;
   const taxes=Math.round(gross*(country?.taxRate??.24));
   const age=state.character.age;
+  const householdSupported=age<18||(age===18&&state.flags.financiallyIndependent!==true)||(state.flags.financialSupportChoiceMade===true&&state.flags.financiallyIndependent!==true);
   const dependentMinor=age<18;
-  const baseline=dependentMinor?0:Math.round((15500+age*90)*state.economy.inflationIndex);
+  const baseline=householdSupported?0:Math.round((15500+age*90)*state.economy.inflationIndex);
   const children=state.relationships.filter(r=>r.type==='child'&&state.npcs[r.npcId]?.alive&&state.npcs[r.npcId]!.age<18).length;
-  const childCosts=dependentMinor?0:Math.round(children*6500*state.economy.inflationIndex);
+  const childCosts=householdSupported?0:Math.round(children*6500*state.economy.inflationIndex);
   // Ordinary leisure, clothing, local transport, subscriptions and other discretionary consumption rise with means.
   // Explicit player purchases/travel remain separate; this prevents high earners from unrealistically banking every unused salary dollar.
   const afterTaxIncome=Math.max(0,gross-taxes);
   const lifestyleRate=gross<35000?.03:gross<80000?.07:gross<160000?.10:.14;
-  const lifestyleCosts=dependentMinor?0:Math.round(afterTaxIncome*lifestyleRate);
-  const petCosts=dependentMinor?0:Math.round(state.pets.filter(p=>p.alive).length*900*state.economy.inflationIndex);
-  const propertyCosts=dependentMinor?0:Math.round(state.assets.properties.reduce((s,p)=>s+p.marketValue*.018,0));
-  const vehicleCosts=dependentMinor?0:Math.round(state.assets.vehicles.reduce((s,v)=>s+Math.max(450,v.value*.025),0));
+  const lifestyleCosts=householdSupported?0:Math.round(afterTaxIncome*lifestyleRate);
+  const petCosts=householdSupported?0:Math.round(state.pets.filter(p=>p.alive).length*900*state.economy.inflationIndex);
+  const propertyCosts=householdSupported?0:Math.round(state.assets.properties.reduce((s,p)=>s+p.marketValue*.018,0));
+  const vehicleCosts=householdSupported?0:Math.round(state.assets.vehicles.reduce((s,v)=>s+Math.max(450,v.value*.025),0));
   let debtPayments=0;const loanPayments:AnnualLoanPayment[]=[];
   for(const loan of state.finances.liabilities){
-    if(loan.balance<=0||dependentMinor)continue;
+    if(loan.balance<=0||householdSupported)continue;
     if(isSecuredLoan(loan)&&readLoanDelinquency(loan).status==='delinquent')continue;
     if(Number.isFinite(loan.prepaidThroughAge)&&Number(loan.prepaidThroughAge)>=state.character.age){if(Number(loan.prepaidThroughAge)===state.character.age)delete loan.prepaidThroughAge;continue;}
     const interest=roundMoney(Math.max(0,loan.balance*loan.annualRate));const payment=scheduledLoanPaymentAmount(loan);

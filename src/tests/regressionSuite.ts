@@ -503,11 +503,11 @@ export const regressionCases:RegressionCase[]=[
     }
   },
   {
-    name:'repeated severe shortfalls trigger bankruptcy instead of runaway negative balances',
+    name:'repeated severe shortfalls surface financial crisis without silently forcing bankruptcy',
     run:()=>{
       const state=highStatAdult('bankruptcy-pressure');state.character.age=35;state.currentYear=2061;state.finances.cash=0;state.finances.liabilities=[];state.employment.current=undefined;state.assets={properties:[],vehicles:[],collectibles:[]};state.businesses=[];state.pets=[];state.economy.inflationIndex=1;
-      for(let i=0;i<8&&Number(state.flags.bankruptcies??0)===0;i++){processAnnualFinance(state);state.character.age+=1;state.currentYear+=1;assert(state.finances.cash>=0,'shortfall processing produced negative cash');}
-      assert(Number(state.flags.bankruptcies??0)>=1,'sustained insolvency never triggered bankruptcy');assert(state.finances.cash>=0,'bankruptcy left negative cash');assert(!state.finances.liabilities.some(l=>l.kind==='personal'&&l.balance>0),'bankruptcy failed to discharge personal debt');
+      for(let i=0;i<8;i++){state.pendingEvent=undefined;processAnnualFinance(state);state.character.age+=1;state.currentYear+=1;assert(state.finances.cash>=0,'shortfall processing produced negative cash');}
+      assert(Number(state.flags.bankruptcies??0)===0,'sustained insolvency silently forced bankruptcy');assert(state.finances.liabilities.some(l=>l.kind==='personal'&&l.balance>0),'player-choice insolvency path unexpectedly erased hardship debt');assert(state.pendingEvent?.eventId==='financial_pressure_notice','sustained insolvency failed to surface a financial-crisis event');
     }
   },
   {

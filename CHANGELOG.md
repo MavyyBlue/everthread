@@ -676,3 +676,12 @@ Everthread is pre-release. Versions below are development milestones, not public
 - Added IndexedDB persistence, settings persistence, save migration through schema version 3, JSON import/export, autosave and rewind-enabled snapshots.
 - Added achievements/challenges, settings/past-life/sandbox sheets, mobile bottom navigation, event/death sheets, theme/accessibility controls and PWA scaffolding.
 - Added large original content databases for events, careers, health, crimes, properties, pets, countries, achievements and challenges.
+
+### Post-6C household finance / crisis UX correction candidate
+
+- New lives now begin with $0 of personally owned cash while the generated two-parent household remains the source of ordinary childhood support.
+- Ordinary living costs and debt service no longer attach to a household-supported player; age 18 now presents an explicit financial-independence decision before independent living costs begin. Purchasing a home establishes financial independence.
+- Annual shortfalls still create transparent hardship debt for financially independent adults, but now immediately surface a Financial Pressure event with player-controlled response options. Existing due story events retain priority and defer the finance notice rather than being overwritten.
+- Severe hardship no longer silently liquidates investments or auto-files bankruptcy. Bankruptcy remains an explicit player decision through the existing guarded bankruptcy authority.
+- Legacy adult saves without the new support flag preserve prior independent-expense behavior. Save schema remains v12.
+- Added 21 household-finance/crisis regression checks and updated insolvency regressions to protect player agency. Local engine/test TypeScript, full regression wall, and production build are green.

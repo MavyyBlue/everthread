@@ -95,7 +95,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
   const state: GameState = {
     saveVersion:12,slotId:options.slotId??'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
     education:[], socialWorlds:[], employment:{history:[],partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:false},
-    finances:{cash:familyCash,annualIncome:0,annualExpenses:0,taxesPaid:0,liabilities:[],credit:createEmptyCreditState()},
+    finances:{cash:0,annualIncome:0,annualExpenses:0,taxesPaid:0,liabilities:[],credit:createEmptyCreditState()},
     assets:{properties:[],vehicles:[],collectibles:[]}, investments:{positions:[],prices:{},marketRegime:'neutral',history:{}}, businesses:[],
     health:{conditions:[],fitness:rng.int(35,70),wellness:rng.int(50,85),addictions:[]}, legal:{criminalRecord:[],investigationHeat:0,imprisoned:false,sentenceRemaining:0,paroleEligible:false},
     fame:{fame:0,publicReputation:50,followers:0,engagement:0,platforms:{},scandals:[]}, specialCareers:{}, pets:[],
@@ -104,7 +104,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     legacy:{generation:1,totalFamilyWealth:familyCash,totalYearsSimulated:0,familyTreeNpcIds:[p1.id,p2.id],accountCollectibleIds:[],completedLifeIds:[]},completedLives:[],
     travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]},familyPlanning:{},actionLedger:{age:character.age,uses:{},lastUsedAge:{},revision:0},
     economy:{inflationIndex:1,housingIndex:1,salaryIndex:1,businessDemandIndex:1,year:2026},
-    flags:{sandbox:options.sandbox ?? false,rewindEnabled:options.rewindEnabled ?? false,debugEnabled:false},
+    flags:{sandbox:options.sandbox ?? false,rewindEnabled:options.rewindEnabled ?? false,debugEnabled:false,financiallyIndependent:false},
     settings:{theme:'system',accent:EVERTHREAD_DEFAULT_ACCENT,fontFamily:'sans',textColor:null,sound:true,haptics:true,animations:true,textScale:1,notifications:false,minigames:true,profanityFilter:false,autoSave:true,highContrast:false,reducedMotion:false},
     yearlySnapshots:[],
   };

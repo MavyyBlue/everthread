@@ -4,6 +4,7 @@ import { SAVE_VERSION, migrateSave } from '../services/SaveSystem';
 import { actionAllowed } from '../core/actionEconomy';
 import { validateState } from '../core/invariants';
 import { netWorth, processAnnualFinance, wealthBreakdown } from '../systems/FinanceSystem';
+import { fileVoluntaryBankruptcy } from '../systems/PersonalBorrowingSystem';
 import { previewEstate } from '../systems/EstateSystem';
 import {
   applyForCreditCard,
@@ -103,7 +104,8 @@ export function runCreditBankingRegression(){
   verify(closeState.timeline.some(entry=>entry.text.includes('closed Seed Secured in good standing')),'account closure remains visible in durable life history');
 
   const bankrupt=createNewGame({seed:'credit-bankruptcy'});setAge(bankrupt,30);bankrupt.finances.cash=5000;bankrupt.employment.current={jobId:'bankruptcy-fixture',title:'Technician',company:'Fixture Co',startAge:25,salary:50000,performance:65,level:1};bankrupt.finances.credit.history.closedGoodStanding=1;bankrupt.finances.credit.history.archivedAccountYears=5;bankrupt.finances.credit.history.onTimePayments=3;applyForCreditCard(bankrupt,'northstar_foundation');const bankruptCard=bankrupt.finances.credit.accounts[0]!;chargeCreditCard(bankrupt,bankruptCard.id,100);bankrupt.finances.liabilities.push({id:'bankruptcy-personal',kind:'personal',principal:90000,balance:90000,annualRate:.12,annualPayment:1000,remainingYears:8});bankrupt.finances.cash=-100000;bankrupt.flags.cashShortfallYears=4;processAnnualFinance(bankrupt);
-  verify(Number(bankrupt.flags.bankruptcies??0)>=1,'existing insolvency path still reaches bankruptcy with active credit cards');
+  verify(Number(bankrupt.flags.bankruptcies??0)===0&&bankrupt.pendingEvent?.eventId==='financial_pressure_notice','severe insolvency surfaces a crisis decision instead of auto-filing bankruptcy');
+  verify(fileVoluntaryBankruptcy(bankrupt).success,'player can explicitly file bankruptcy from severe insolvency after being warned');
   verify(bankruptCard.status==='defaulted'&&bankruptCard.balance===0,'bankruptcy closes and discharges active revolving accounts instead of leaving impossible live debt');
   verify(bankrupt.finances.credit.derogatories.some(item=>item.kind==='bankruptcy')&&bankrupt.finances.credit.derogatories.some(item=>item.kind==='default'),'bankruptcy and discharged-card default both persist in credit history');
   verify(creditAvailable(bankrupt)===0,'defaulted cards no longer expose borrowing capacity after bankruptcy');

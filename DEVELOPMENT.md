@@ -484,3 +484,9 @@ Adds durable payment-management state while preserving existing debt authorities
 4. Perform target-device mobile/accessibility/PWA QA and add crash-safe last-known-good transaction recovery around major engine actions.
 5. Expand regional names substantially and verify long-dynasty repetition rates.
 6. Run save-migration, large-family, full-mode and 10k/100k bulk simulation gates before release labeling.
+
+## Post-6C household-finance correction candidate
+
+The current correction separates household support from personal finances. Newborn cash is zero, ordinary supported-child costs are excluded from the player's annual ledger, and financial independence is explicit state rather than inferred solely from age. Existing adult saves without the flag migrate to independent behavior for compatibility. System-owned milestone/crisis events live outside the random-event content pool so the established 691-event pool and RNG behavior remain stable. Financial crisis events do not overwrite already-due delayed stories. Automatic insolvency bankruptcy was removed in favor of the existing voluntary bankruptcy authority. Save schema remains 12.
+
+Local QA: engine TypeScript PASS; test TypeScript PASS; core 82/82; Credit & Banking 75/75; Personal Borrowing & Recovery 31/31; Household Finance & Crisis 21/21; Integrated Long-Life 105/105; all other established suites PASS; production build PASS at 155 modules. CI certification is still required.

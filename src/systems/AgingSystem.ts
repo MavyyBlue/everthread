@@ -59,6 +59,7 @@ export function ageUp(state:GameState):EngineResult {
     processPoliticsCareerYear(state);
     processSpecialCareerStoriesYear(state);
     processAnnualFinance(state);
+    if(state.character.age===18&&state.flags.financiallyIndependent!==true&&!state.pendingEvent){state.pendingEvent={eventId:'financial_independence_transition',title:'Your Money, Your Responsibility',description:'You are legally an adult, but becoming financially independent is a separate life transition. While you remain in your family household, ordinary living costs stay with your supporting household. You can take responsibility for your own costs now or remain supported for the time being.',choices:[{id:'stay_supported',label:'Stay with family for now'},{id:'become_independent',label:'Become financially independent'}]};}
     processStressConsequencesYear(state);
     initializeMissingNpcLives(state);
 
