@@ -1,7 +1,7 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-12  
-Current build line: 0.12.0 pre-release  
+Last updated: 2026-09-13
+Current build line: 0.12.0 pre-release
 Save schema: 12
 
 ## Product direction
@@ -20,19 +20,23 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/services/SaveSystem.ts` — IndexedDB/local fallback, schema migration, account-level multi-slot life saves, active-slot tracking, JSON import/export.
 - `src/screens/` and `src/components/` — mobile UI only; critical state is not intended to be mutated here.
 - `src/tests/` — deterministic regression suite, content audit, and multi-life simulation harness.
-- `src/minigames/` — reusable minigame definitions plus interactive timing, sequence, grid-memory, and decision challenge components with character-skill accessibility resolution.
+- `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
+- `src/feedback/` — report catalog/schema, bounded device-local QA queue, safe diagnostic projection, withdrawal, copy/share/export formatting; deliberately outside `GameState`.
 
 ## Current implementation slice
 
-### Phase 6C — Personal Borrowing / Bankruptcy / Recovery (predeployment candidate)
+### Player Feedback / Issue Reporting (predeployment candidate)
 
-- Built only on certified Run #103 / `7f1f58099fe5e8528dc8ec3c70c0ed340a2e8294`.
-- Personal-loan offers consume CreditSystem underwriting/inquiry limits; accepted contracts remain authoritative FinanceSystem liabilities. PaymentSystem projects their bills, auto-pay, paid-ahead payments, delinquency, and cure.
-- Voluntary bankruptcy is serious-distress gated, preserves secured/student debt, discharges eligible unsecured personal/card debt, and retains the existing multi-year credit recovery consequences.
-- Save schema remains 12; optional loan provenance/lender metadata is normalized deterministically without RNG.
-- Local TypeScript gates and the complete wall pass; Personal Borrowing & Recovery is 31/31 and Integrated Long-Life remains 105/105. Standalone production build passes at 155 modules. GitHub Actions remains final certification authority.
+- Built only on certified Run #108 expanded source `1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`; package remains 0.12.0 and save schema remains 12.
+- Settings gains a mobile Help & Feedback center with interface-specific action selection, Technical / Experience / Suggestion kinds, specific report categories, free-text description, and optional safe diagnostics.
+- Reports persist in a bounded device-local `localStorage` queue outside `GameState`, saves, rewind, descendants, event scheduling, and gameplay RNG.
+- Players can Share, Copy, export the structured inbox as JSON, cancel an unsubmitted draft, or mark a queued report withdrawn. Withdrawn reports remain explicit so reviewers can stop work without silently losing provenance.
+- Production build emits `dist/build-info.json` from the actual checked-out Git commit so deployed reports can identify the expanded source that produced the issue.
+- `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` makes feedback review part of fresh-chat/context-reset procedure and explicitly requires UI/experience investigation when backend tests are green.
+- No centralized feedback backend or embedded repository credential is introduced. Secure remote submission remains separate future infrastructure.
+- Local verification: both canonical TypeScript gates plus full app TypeScript pass; Activity Feedback Reporting is 20/20; production build passes at 162 transformed modules. The combined local regression command reached the host execution timeout after Core 82/82 with no recorded failure; GitHub Actions remains final certification authority.
 
-## Current corrective slice
+## Recent corrective history
 
 ### Post-6B3 Credit History live-reactivity correction (predeployment candidate)
 

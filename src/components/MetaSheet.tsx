@@ -12,6 +12,7 @@ import { netWorth } from '../systems/FinanceSystem';
 import { formatMoney } from '../core/format';
 import { buildSaveExportFilename } from '../core/exportFilename';
 import { EVERTHREAD_DEFAULT_ACCENT, EVERTHREAD_FONT_OPTIONS, normalizeEverthreadFont } from '../core/visualIdentity';
+import { FeedbackCenter } from './FeedbackCenter';
 
 export function MetaSheet({open,onClose,onNewLife,onLifeOpened}:{open:boolean;onClose:()=>void;onNewLife:()=>void;onLifeOpened:()=>void}){
   const state=gameEngine.getState();
@@ -76,6 +77,7 @@ function Settings({state,download,upload,onNewLife}:{state:GameState;download:()
     <label className="form-field"><span>Text color</span><div className="color-setting-row"><input type="color" value={previewTextColor} onChange={e=>set({textColor:e.target.value})}/><button type="button" className={!state.settings.textColor?'active':''} onClick={()=>set({textColor:null})}>{state.settings.textColor?'Use automatic':'Automatic'}</button></div><small>Automatic follows the selected light/dark appearance.</small></label>
     <label className="form-field"><span>Text size · {Math.round(state.settings.textScale*100)}%</span><input type="range" min="0.9" max="1.3" step="0.05" value={state.settings.textScale} onChange={e=>set({textScale:Number(e.target.value)})}/></label>
     {([['sound','Sound'],['haptics','Haptics'],['animations','Animations'],['minigames','Minigames'],['profanityFilter','Profanity filter'],['autoSave','Auto-save'],['highContrast','High contrast'],['reducedMotion','Reduced motion'],['notifications','Optional notifications']] as const).map(([key,label])=><label className="toggle-row" key={key}><span><strong>{label}</strong></span><input type="checkbox" checked={state.settings[key]} onChange={e=>set({[key]:e.target.checked})}/></label>)}
+    <FeedbackCenter state={state}/>
     <div className="sheet-section"><h3>Data</h3><div className="action-grid"><button onClick={download}>Export current life JSON</button><button onClick={upload}>Import as new life save</button><button onClick={onNewLife}>Create another life</button></div></div>
   </div>;
 }

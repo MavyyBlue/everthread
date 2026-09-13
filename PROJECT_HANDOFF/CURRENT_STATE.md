@@ -1,28 +1,44 @@
 # Everthread — Current State
 
-## Live continuation note — Phase 7A ready
+## Live continuation note — Run #108 certified; feedback reporting candidate
 
-Phase 6 is closed. The authoritative certified baseline is GitHub Actions **Run #106** (`34730041125`) on expanded source commit `5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`. Package remains `everthread-life-unwritten@0.12.0`; save schema remains **12** until Phase 7A intentionally introduces persistent consequence state.
+Phase 6 remains closed. The authoritative certified baseline is GitHub Actions **Run #108** (`34766405911`) on expanded source commit `1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`. Package remains `everthread-life-unwritten@0.12.0`; save schema remains **12**.
 
-Run #106 is the first valid certification of the post-6C household-finance / crisis-agency correction. The earlier Run #105 was a false green against old code because the uploaded bundle had the wrong filename and was not imported; it must never be promoted as a gameplay baseline.
+Run #108 imported the playtest-driven activity-specific minigame overlay, certified Pixel Overtake racing and Strike Sequence combat memory, and deployed Pages successfully. Activity-specific Minigame regression is 19/19; Core remains 82/82; Racing Career 86/86; Combat-career World 51/51; Integrated Long-Life 105/105; every established suite passed in canonical preflight.
 
-Last handoff preparation: 2026-09-12  
-Repository: `MavyyBlue/everthread`  
-Default branch: `main`  
-Public build line: `0.12.0 pre-release`  
+Last handoff preparation: 2026-09-13
+Repository: `MavyyBlue/everthread`
+Default branch: `main`
+Public build line: `0.12.0 pre-release`
 Certified save schema: `12`
 
-## Last fully verified repository baseline — Run #106
+## Last fully verified repository baseline — Run #108
 
-- Expanded certified source: `5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`.
-- Run #106 passed Engine TypeScript, Test TypeScript, the complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
-- Core 82/82; Credit & Banking 75/75; Asset Financing 77/77; Asset Delinquency 82/82; Payment & Asset Management 81/81; Personal Borrowing & Recovery 31/31; Household Finance & Crisis 21/21; Integrated Long-Life 105/105; every established suite green.
-- Vite 7.3.6 transformed 155 modules. Main application chunk: 1,083.05 kB / 305.21 kB gzip; the existing >700 kB warning remains nonblocking technical debt.
-- Certified source SHA-256: `2a8e80c410f2380457ab5570ddddc4b90a3cf2e8bccf16c66937766e45527a11`.
-- Certified dependency SHA-256: `f786e21c424dff48bb96b1f709d0e27de9c88c58409252ba51ee78bd82142c41`.
+- Expanded certified source: `1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`.
+- Run #108 passed Engine TypeScript, Test TypeScript, the complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
+- Core 82/82; Racing Career 86/86; Combat-career World 51/51; Activity-specific Minigame 19/19; Integrated Long-Life 105/105; every established suite green.
+- Vite 7.3.6 transformed 158 modules. Main application chunk: 1,089.20 kB / 307.16 kB gzip; the existing >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `586bb49d984f57160b806c8376dc9d8094d8b3f8567d5c168477f90c87cf2576`.
+- Certified dependency SHA-256: `5c3efa11bf4c775aa9e78478b2c766564b340cc0e1657f399193a3c1ec5322d9`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact: `everthread-certified-preflight-5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`, artifact ID `10308609501`, digest `5fd595b3bee7a719596d21507827dcd66253c8ab20e3a0f40e3618644fd669d1`.
-- Pages artifact ID `10308624326`, digest `d57b5145b00b455cb45fcb8aee2984075ed01a01666fd23fe0951a827d594c41`; deployment reported success.
+- Certified artifact: `everthread-certified-preflight-1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`, artifact ID `10320163460`, digest `51fa22aa5fff133c545b7680c7a3018c56c51b81954a66d3b9b986e1b12c7329`.
+- Pages artifact ID `10320044256`, digest `99cb3f4fd339acce5569966b2943810673b4ef62756a1f29c63356b0272714d8`; deployment reported success.
+
+## Player Feedback / Issue Reporting candidate
+
+Mavyy has prioritized player feedback as a first-class development input. The current candidate adds a Settings → Help & Feedback reporting center with interface-specific/action-specific classification, Technical / Experience / Suggestion report kinds, safe bounded diagnostics, device-local report history outside `GameState`, Share/Copy/JSON export, and player cancellation/withdrawal. A production build also emits `dist/build-info.json` so reports can record the exact expanded source commit that produced the deployed bundle.
+
+The report queue deliberately remains outside save schema, rewind, descendants, gameplay RNG, and simulation mutation. There is **no centralized submission backend yet** and no GitHub credential is embedded in the public client. Reports live on the player's device until shared/exported. Read `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` for the mandatory future-Yuki review and triage protocol.
+
+Candidate local verification: Engine TypeScript, Test TypeScript, full app TypeScript, dedicated Activity Feedback Reporting **20/20**, and the 162-module production build pass. The combined local `npm test` hit the host timeout after Core 82/82 without recording a failure, so only the next canonical GitHub Actions run may certify this candidate.
+
+### Feedback queue snapshot reviewed against Run #108 / `1d8bb066…`
+
+- Active technical reports supplied/imported into the development context: **0**
+- Active experience reports supplied/imported into the development context: **0**
+- Active suggestions supplied/imported into the development context: **0**
+- Withdrawn reports supplied/imported into the development context: **0**
+- Device-local reports on player devices are not remotely visible; inspect supplied `everthread-feedback-inbox-*.json` exports or pasted `ET-*` reports before beginning new work.
 
 ## Phase 6 closeout guarantees
 

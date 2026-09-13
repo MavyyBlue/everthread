@@ -4,7 +4,7 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 ## Current macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, and 6 are closed. Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #106 (`5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`) is the current certified source baseline on save schema 12. Phase 7 begins by strengthening consequence persistence and scheduling before expanding story/world-event breadth.
+Phases 4, 5, and 6 are closed. Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #108 (`1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`) is the current certified source baseline on save schema 12. Phase 7 begins by strengthening consequence persistence and scheduling before expanding story/world-event breadth.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -148,6 +148,12 @@ Compatibility requirements: Credit Available is never cash/net worth; browsing o
 3. **Phase 7C — Persistent world conditions:** after scheduler/story foundations are stable. Add national/world conditions whose effects flow through existing systems such as employment, business demand, investments, housing, travel, fame/media, and finance rather than existing as flavor-only popups.
 
 Phase 7 compatibility requirements: scheduler priority is centralized; one feature cannot overwrite another feature's due consequence; exact NPC/asset/world targets survive across years; invalid targets cancel deterministically; random-event library counts/RNG behavior do not change merely because system-owned stories are added; history stays bounded; and save migrations consume no simulation RNG.
+
+## Cross-cutting player-feedback gate
+
+Player feedback/issue reporting is a playtest-driven cross-cutting priority and does not replace Phase 7 sequencing. The current candidate adds a device-local structured report queue, exact interface/action classification, Technical / Experience / Suggestion categories, player withdrawal, safe diagnostics, build/source identity, Share/Copy/export, and a future-Yuki handoff review protocol. A secure centralized submission backend remains a later infrastructure step; never expose GitHub or other write credentials in the public Pages client.
+
+Future feature work should review active supplied/exported reports before starting, with data-loss/crash/accounting/state-integrity/blocking defects taking priority. A backend-green test result redirects technical triage into UI/experience investigation rather than invalidating the report.
 
 ## Cross-cutting later gates
 

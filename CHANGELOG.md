@@ -1,5 +1,23 @@
 # Everthread Changelog
 
+## Player Feedback / Issue Reporting candidate — 2026-09-13
+
+### Added
+
+- Added Settings → Help & Feedback with interface-specific/action-specific report classification across Life, People, Activities, Career, Assets & Money, Minigames, Progress & Life Saves, Settings, and Other.
+- Added Technical issue, Experience issue, and Suggestion report kinds with focused subcategories and bounded free-text context.
+- Added optional safe diagnostic capture containing deployed build/source identity, save schema, game seed/RNG position, age/year/generation, current career, bounded system counts, pending-event identity, relevant settings, and recent timeline IDs without exporting the complete save.
+- Added a bounded device-local report queue outside `GameState`, plus Share, Copy, structured JSON inbox export, draft cancellation, and queued-report withdrawal.
+- Added deterministic production `build-info.json` generation from the actual checked-out Git commit so reports can identify the expanded source used by the deployed bundle.
+- Added `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` and a current-state feedback queue snapshot so future Yuki reviews active supplied/exported reports before new work and does not dismiss player-facing defects merely because backend regressions are green.
+- Added Activity Feedback Reporting regression: 20/20 locally.
+
+### Local validation
+
+- Engine TypeScript, Test TypeScript, full app TypeScript, and the dedicated feedback regression pass.
+- Production build succeeds at 162 transformed modules and emits build identity successfully.
+- The combined local regression wall hit the host execution ceiling after Core 82/82 with no recorded test failure, so this slice remains a candidate until canonical GitHub Actions certifies it.
+
 ## Phase 6C — Personal Borrowing / Bankruptcy / Recovery candidate — 2026-09-12
 
 - Built only from certified Run #103 / `7f1f58099fe5e8528dc8ec3c70c0ed340a2e8294`.
