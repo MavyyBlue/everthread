@@ -21,7 +21,15 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `13`
 
-## Last fully verified repository baseline — Run #112
+## Newest certified expanded repository source — Run #113
+
+- GitHub Actions Run #113 (`34779594024`) certified expanded source `3d38dec97b0e3eb01eff4756e78dda9319eb323b` and Pages deployment.
+- Run #113 was a documentation/handoff synchronization overlay on top of the Run #112 gameplay build; it changed no simulation/gameplay code.
+- Canonical preflight remained green: both TypeScript gates, complete regression wall, 165-module production build, certified artifact restore smoke, and deployment.
+- Certified source SHA-256: `ee3c187d3a5fcd8b0ace6af38bd7ed8ac18313f8aaa1026fbcd1a9baeda8d5aa`; certified artifact ID `10324790435`.
+- Therefore use `3d38dec...` as the source baseline for new work while treating Run #112 / `536c102e...` as the last gameplay-changing certification.
+
+## Last gameplay-changing certified baseline — Run #112
 
 - Expanded certified source: `536c102e10f27694caa89a8b1d9c473953ca6e76`.
 - Upload wrapper: `e461dd9d202a1d1cde6d11416c19f7f05ae56703`.
@@ -49,14 +57,13 @@ Certified save schema: `13`
 
 Do not reopen scheduler ownership casually. Any change to queue ownership, migration, Age Up gating, or consequence arbitration requires dedicated regression coverage and full CI certification.
 
-## Feedback queue snapshot reviewed against Run #112 / `536c102e…`
+## Feedback queue snapshot reviewed against Run #113 / `3d38dec…`
 
-- Active technical reports requiring immediate action: **0**.
-- Active experience reports requiring immediate action: **0**.
-- Active normal-priority suggestion backlog: **1** — `ET-20260913-BE8649B9`, requesting that unavailable early-life actions/career paths be hidden or progressively disclosed to reduce interface clutter.
-- Test reports `ET-20260913-A527E2A6` and `ET-20260913-55F088C9` are resolved as successful pipeline tests.
-- Central review checkpoint has been advanced to Run #112 / `536c102e10f27694caa89a8b1d9c473953ca6e76` with **3 reviewed reports**.
-- The early-life visibility suggestion is intentionally retained for a later UX/polish slice and does not block Phase 7B1.
+- `ET-20260913-0AA876B7`: **triaged · normal priority · reproduced**. Procedural random-event descriptions can be grammatically incoherent even when their choices are coherent. Root cause is the generic `makeFamilyEvents()` description composer, not EventSystem choice/target authority. A narrow local correction candidate is green and awaiting canonical certification.
+- `ET-20260913-BE8649B9`: **triaged · normal priority suggestion**, requesting progressive disclosure of unavailable early-life actions/career paths. Preserve for a later UX/polish slice; it does not block Phase 7B1.
+- Test reports `ET-20260913-A527E2A6` and `ET-20260913-55F088C9` remain resolved as successful pipeline tests.
+- Central review checkpoint has **4 reviewed reports** and is advanced to Run #113 source `3d38dec97b0e3eb01eff4756e78dda9319eb323b`.
+- Do not mark `ET-20260913-0AA876B7` resolved until a fixing expanded-source commit and canonical Actions run are known.
 
 ## Phase 6 closeout guarantees
 
@@ -71,9 +78,13 @@ Phase 6A–6C plus the post-6C household-finance correction are now certified fo
 - Due delayed stories retain priority over a newly created financial-pressure notice; finance consequences must not overwrite unrelated story continuity.
 - System-owned milestone/crisis events remain outside the established 691-event random library.
 
-## Active implementation — Phase 7B1: Family, Parenting, School & Relationship systemic delayed stories
+## Active corrective candidate — procedural random-event narrative composition
 
-Phase 7A is certified infrastructure. The next gameplay slice should use that scheduler to make earlier player choices resurface years later through the exact real NPCs and authoritative systems.
+Before starting Phase 7B1, certify the narrow correction for reproduced report `ET-20260913-0AA876B7`. It changes only procedural description composition in `src/data/events.ts` plus focused regression coverage. Preserve the 691-event pool, 664 procedural variants, 80 dilemma families, exact three-description RNG shape, event IDs, choices, targets, save schema 13, and all scheduler behavior. Local regression wall and production build are green; CI certification is pending.
+
+## Next gameplay implementation — Phase 7B1: Family, Parenting, School & Relationship systemic delayed stories
+
+Phase 7A is certified infrastructure. Immediately after the narrative correction is certified, the next gameplay slice should use that scheduler to make earlier player choices resurface years later through the exact real NPCs and authoritative systems.
 
 Start with family/parenting, school, friendships, and romance because those domains already have persistent NPC identity, relationship state, education history, memories, family topology, and exact-target consequence support. Good first chains include parenting choices that affect later child/adult-child relationships, school conduct that resurfaces in admissions or early work, and friendship/romance choices that carry promises, trust, conflict, reconciliation, or long-memory consequences across years.
 

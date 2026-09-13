@@ -145,6 +145,8 @@ Compatibility requirements: Credit Available is never cash/net worth; browsing o
 
 **Current. Start with architecture, then expand consequence breadth.**
 
+A narrow post-4G corrective candidate currently precedes 7B1 because live report `ET-20260913-0AA876B7` reproduced a deterministic procedural-description composition defect. The correction must preserve the random library/counts/RNG shape and certify through canonical CI; after that, sequencing returns immediately to 7B1 rather than opening a new broad Phase 4 slice.
+
 1. **Phase 7A — Persistent Consequence Foundation:** **green; certified in Run #112** on expanded source `536c102e10f27694caa89a8b1d9c473953ca6e76`, save schema 13. One authoritative bounded scheduler now owns exact cooldown ages, stable chain/consequence identity, origin context, exact targets, due windows, priority, cancellation/validity, dedupe, bounded completion/cancellation history, deterministic ordering, and migration while preserving `DelayedEvent` compatibility. Dedicated regression: 36/36.
 2. **Phase 7B — Systemic delayed stories:** **next.** Begin with **7B1 family, parenting, school, friendships/romance**, then expand property, business, employment, and special-career long-tail stories. Use real NPC/asset/world authorities rather than copied story state.
 3. **Phase 7C — Persistent world conditions:** after scheduler/story foundations are stable. Add national/world conditions whose effects flow through existing systems such as employment, business demand, investments, housing, travel, fame/media, and finance rather than existing as flavor-only popups.

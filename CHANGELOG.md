@@ -1,5 +1,21 @@
 # Everthread Changelog
 
+## Post-4G random-event narrative-composition correction candidate — 2026-09-13
+
+### Corrected
+
+- Reproduced live feedback report `ET-20260913-0AA876B7`: procedural event choices were coherent, but generic description templates could produce invalid scene grammar such as `While the playground...`, `You are the playground when...`, duplicated setting conjunctions, or unrelated eye-contact filler.
+- Kept EventSystem/coherence ownership unchanged. The correction only normalizes childhood scene settings and replaces the three procedural description frames with context-safe composition across all 664 procedural variants.
+- Preserved all 691 random-event definitions, 664 procedural variants, 80 dilemma families, event IDs, probabilities, cooldowns, exact-target behavior, choices/effects, save schema 13, and exactly three descriptions per procedural event so RNG selection shape does not change.
+- Existing saved `pendingEvent.description` text is not rewritten; already-open choices remain compatible.
+
+### Regression / local candidate validation
+
+- Expanded `eventCoherenceRegression.ts` from 72 to **77/77** checks with aggregate narrative-composition coverage.
+- Built from the certified Run #113 artifact / expanded source `3d38dec97b0e3eb01eff4756e78dda9319eb323b`.
+- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Integrated Long-Life 105/105; Phase 7A Persistent Consequence 36/36; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23; production build PASS at **165 modules**.
+- Canonical GitHub Actions certification is still pending. Phase 7B1 remains next immediately after this narrow corrective slice is certified.
+
 ## Phase 7A — Persistent Consequence Foundation — CI Green Run #112 — 2026-09-13
 
 ### Certification

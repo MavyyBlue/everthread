@@ -1,6 +1,7 @@
 import type { EventChoice, GameEventDefinition } from '../types/game';
 
 const slug = (s:string) => s.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+const capitalizeFirst = (s:string) => s.length ? `${s[0]!.toUpperCase()}${s.slice(1)}` : s;
 
 type ScenarioFamily = {
   category: string;
@@ -113,7 +114,7 @@ const familyChoices = (i:number): EventChoice[] => [
 const families: ScenarioFamily[] = [
   {
     category:'childhood',minAge:3,maxAge:10,probability:.12,cooldown:2,tags:['childhood'],
-    settings:['the playground','a rainy afternoon indoors','a neighbor’s yard','a family gathering','the school bus','a birthday party','the local park','a cluttered kitchen'],
+    settings:['at the playground','during a rainy afternoon indoors','in a neighbor’s yard','at a family gathering','on the school bus','at a birthday party','at the local park','in a cluttered kitchen'],
     dilemmas:[
       {title:'The Missing Toy',text:'another child insists a favorite toy disappeared after you were nearby'},
       {title:'The Unfair Rule',text:'an adult announces a rule that feels spectacularly unfair'},
@@ -269,10 +270,12 @@ function makeFamilyEvents(family:ScenarioFamily): GameEventDefinition[] {
   return family.settings.flatMap((setting, sIndex) => family.dilemmas.map((dilemma,dIndex) => {
     const index = sIndex * family.dilemmas.length + dIndex;
     const id = `${family.category}_${slug(dilemma.title)}_${sIndex+1}`;
+    const settingLead = capitalizeFirst(setting);
+    const dilemmaLead = capitalizeFirst(dilemma.text);
     const descriptionVariants = [
-      `While ${setting}, ${dilemma.text}.`,
-      `${setting[0]!.toUpperCase()}${setting.slice(1)}, ${dilemma.text}. The moment is now very much yours to deal with.`,
-      `You are ${setting} when ${dilemma.text}. There is an uncomfortable amount of eye contact.`,
+      `${settingLead}, ${dilemma.text}.`,
+      `${dilemmaLead} ${setting}.`,
+      `The situation unfolds ${setting}: ${dilemma.text}.`,
     ];
     return {
       id, category:family.category, title:dilemma.title, descriptions:descriptionVariants,
