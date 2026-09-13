@@ -1,46 +1,60 @@
 # Everthread — Current State
 
-## Live continuation note — Phase 6C candidate
+## Live continuation note — Phase 7A ready
 
-Certified starting baseline is Run #103 / `7f1f58099fe5e8528dc8ec3c70c0ed340a2e8294`. Phase 6C is now a predeployment candidate on save schema 12: shared-underwriting personal loans, centralized personal-loan payment/delinquency/cure, and voluntary bankruptcy with serious-distress and recovery gates. Local TypeScript, complete regressions, and the standalone 155-module build pass; dedicated Phase 6C regression is 31/31. GitHub Actions remains final certification authority.
+Phase 6 is closed. The authoritative certified baseline is GitHub Actions **Run #106** (`34730041125`) on expanded source commit `5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`. Package remains `everthread-life-unwritten@0.12.0`; save schema remains **12** until Phase 7A intentionally introduces persistent consequence state.
 
+Run #106 is the first valid certification of the post-6C household-finance / crisis-agency correction. The earlier Run #105 was a false green against old code because the uploaded bundle had the wrong filename and was not imported; it must never be promoted as a gameplay baseline.
 
 Last handoff preparation: 2026-09-12  
 Repository: `MavyyBlue/everthread`  
 Default branch: `main`  
 Public build line: `0.12.0 pre-release`  
-Current candidate save schema: `12`
+Certified save schema: `12`
 
-## Last fully verified repository baseline
+## Last fully verified repository baseline — Run #106
 
-The latest fully green repository baseline is expanded source commit `8b2a49fe76c5429cf55228a00a15b6103211a25b` from GitHub Actions Run #102 (`34707368374`).
+- Expanded certified source: `5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`.
+- Run #106 passed Engine TypeScript, Test TypeScript, the complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
+- Core 82/82; Credit & Banking 75/75; Asset Financing 77/77; Asset Delinquency 82/82; Payment & Asset Management 81/81; Personal Borrowing & Recovery 31/31; Household Finance & Crisis 21/21; Integrated Long-Life 105/105; every established suite green.
+- Vite 7.3.6 transformed 155 modules. Main application chunk: 1,083.05 kB / 305.21 kB gzip; the existing >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `2a8e80c410f2380457ab5570ddddc4b90a3cf2e8bccf16c66937766e45527a11`.
+- Certified dependency SHA-256: `f786e21c424dff48bb96b1f709d0e27de9c88c58409252ba51ee78bd82142c41`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact: `everthread-certified-preflight-5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`, artifact ID `10308609501`, digest `5fd595b3bee7a719596d21507827dcd66253c8ab20e3a0f40e3618644fd669d1`.
+- Pages artifact ID `10308624326`, digest `d57b5145b00b455cb45fcb8aee2984075ed01a01666fd23fe0951a827d594c41`; deployment reported success.
 
-- Phase 6B3 Payments & Asset Management UX is CI Green on save schema 12.
-- Core 82/82, Credit & Banking 74/74, Asset Financing 77/77, Asset Delinquency 82/82, Payment & Asset Management 79/79, Integrated Long-Life 105/105, and every established regression suite are green.
-- Run #102 passed both TypeScript gates, the complete regression wall, 153-module production build, certified-baseline artifact creation (`10302905490`), and Pages deployment.
-- Certified source SHA-256: `4e53a059c3209eef41af07c9a82830f575d57332e4939b2d6202343884c5d9e1`. Package remains `0.12.0`.
-- GitHub Actions remains the final certification authority for every subsequent overlay.
+## Phase 6 closeout guarantees
 
-### Current predeployment candidate — post-6B3 Credit History live-reactivity correction
+Phase 6A–6C plus the post-6C household-finance correction are now certified foundations. Preserve these behaviors while Phase 7 expands consequences:
 
-Playtest/code review confirmed that Credit & Banking Overview, Accounts, and Bills & Payments recalculate from current state on each engine revision. The History transaction slices were the exception: they used `useMemo` dependencies keyed to the mutable credit transaction array reference, while CreditSystem appends transactions in place.
+- Cash, revolving credit, assets, debt, and estate value remain distinct accounting concepts.
+- Personal borrowing uses shared underwriting and real FinanceSystem liabilities; bankruptcy is an explicit guarded player decision, never a silent score reset.
+- New generated lives begin with $0 personally owned cash. Ordinary supported-child costs belong to the supporting household rather than becoming hidden player debt.
+- Financial independence is explicit state. Age 18 surfaces a player decision before ordinary independent living costs begin; home ownership establishes independence.
+- Independent annual shortfalls may create labeled hardship debt and a player-facing Financial Pressure event. The player may reduce debt, review bankruptcy options, or carry the debt.
+- Severe hardship never silently liquidates investments or automatically files bankruptcy.
+- Due delayed stories retain priority over a newly created financial-pressure notice; finance consequences must not overwrite unrelated story continuity.
+- System-owned milestone/crisis events remain outside the established 691-event random library.
 
-- Remove the History transaction memoization and derive current/prior bounded lists directly on render.
-- Preserve every CreditSystem/PaymentSystem/FinanceSystem authority and all schema-12 behavior; this is presentation reactivity only.
-- Route History through one read-only CreditSystem projection and regression-test that newly posted transactions appear immediately.
-- Local Engine/Test TypeScript, the complete regression wall, and the standalone 153-module production build pass; Payment & Asset Management is 81/81. The local all-in-one wrapper is host-time-limited during its repeated build stage, so GitHub remains final integrated certification.
-- Do not begin Phase 6C until this exact correction is reproduced CI Green.
+## Next implementation — Phase 7A: Persistent Consequence Foundation
 
-### Next implementation after this correction is Green
+Do not begin Phase 7 by adding large event counts. First create one bounded, authoritative persistent consequence scheduler that later systems can safely consume.
 
-Phase 6C — Personal Borrowing / Bankruptcy / Recovery: personal-loan offers through shared underwriting, voluntary bankruptcy/player agency, durable hardship/default consequences, and longer recovery/rehabilitation paths.
+Phase 7A should provide exact event cooldown ages, stable consequence/chain IDs, origin event and origin age, exact target references, due-age windows, explicit priority, cancellation/validity conditions, deduplication, completion/cancellation history, deterministic ordering, bounded retention, and save migration. Existing `DelayedEvent` callers must remain compatible while migrating toward the new authority.
+
+Priority belongs to the scheduler rather than individual feature systems. Finance, parenting, school, property, business, relationships, and special careers should schedule consequences without independently deciding whether they may steal the pending-event slot.
+
+Phase 7A is expected to advance save schema **12 → 13** because durable consequence/cooldown metadata is real persistent state. Migration must be deterministic, RNG-neutral, idempotent, and preserve old pending/delayed event completion. New-game save version initialization must not drift from the SaveSystem authority.
+
+Read `PROJECT_HANDOFF/PHASE7_PERSISTENT_CONSEQUENCES.md` before implementation, then inspect `src/types/game.ts`, `src/systems/EventSystem.ts`, `src/systems/AgingSystem.ts`, `src/services/SaveSystem.ts`, `src/systems/SpecialCareerStorySystem.ts`, and all existing delayed-event call sites before editing.
 
 ## Green systems immediately relevant to current work
 
 - Phase 4 remains closed; persistent career ecosystems, coherence closeout, random-event consequences, AI Interaction Testbench, and People Threadspace are green.
 - Phase 5A estate/family-continuity foundation is green and must be extended rather than replaced.
 - Phase 5B estate administration is CI Green in Run #92: fictional country-sensitive administration/levy rules, one-authority obligation settlement, preview breakdown, named-bequest protection, and five-generation anti-duplication stress are now baseline behavior.
-- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, Phase 5C NPC-owned assets/businesses, Phase 5D broader family topology, Phase 5E dynasty transition, and Phase 6B3 remain certified foundations. The current corrective candidate is built only on certified Run #102.
+- Universal derived consequence VFX, the Run #96 timeline/VFX playtest hotfix, Phase 5C NPC-owned assets/businesses, Phase 5D broader family topology, Phase 5E dynasty transition, and the complete Phase 6 stack remain certified foundations through Run #106.
 - Run #69 visual identity is green; supplied player crest art remains authoritative and must not be regenerated/restyled without Mavyy's request.
 - Runs #70–#72 established reproductive compatibility, NPC gender/reproductive identity, Family Planning profile ownership, immediate Threadspace invalidation, Activities → Social Meet Someone, uniform standalone adoption control, and expanded regional name pools.
 - Run #74 established the Sandbox-only secret-code system. Code `9426` creates one persistent Yuki Aster friend through normal NPC/relationship authority, supports ordinary romance/family progression, preserves age gates and reproductive compatibility, consumes no simulation RNG, and is idempotent per life.
@@ -246,6 +260,6 @@ GitHub installs the committed lock with `npm ci`, calls the same canonical prefl
 - The production application chunk remains above the preferred size threshold; broader code splitting remains future work.
 - GitHub Actions Node-20-targeted action warnings remain nonblocking technical debt.
 
-## Post-Run #104 correction candidate
+## Post-Run #104 household-finance correction — certified Run #106
 
-Certified baseline before this candidate: Run #104 / expanded commit `0799142af839976d9031a17ece7e03b892c063c3`. The local correction fixes player-reported childhood/support debt semantics and financial-crisis visibility: $0 newborn personal cash, household-supported living costs, explicit adulthood independence, player-facing hardship events, no silent automatic bankruptcy, and delayed-story priority protection. Save schema remains 12. Local full regression and production build are green; do not promote this candidate until CI certifies the uploaded overlay.
+The player-reported childhood/support-debt and financial-crisis visibility correction is certified in Run #106 / expanded commit `5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`. Newborn personal cash is $0; household-supported living costs do not become protagonist debt; adulthood financial independence is explicit; hardship is surfaced through player-facing choices; silent automatic bankruptcy is removed; and due delayed stories retain priority. Save schema remains 12. Run #105 is excluded because its incorrectly named bundle was never imported.

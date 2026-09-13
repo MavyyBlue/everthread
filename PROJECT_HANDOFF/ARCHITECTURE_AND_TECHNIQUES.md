@@ -163,3 +163,14 @@ The existing workflow already runs `npm test` before production build. Keeping t
 ## Mobile-first technique
 
 Primary widths remain 360 / 390 / 412 / 430px. Favor bottom navigation/sheets, 44px+ meaningful touch controls, compact readable cards, safe-area padding, and explanatory disabled states for locked commitments. The growing main application chunk remains a future code-splitting target.
+
+## Phase 7 persistent-consequence architecture
+
+Run #106 is the certified starting point for Phase 7. Existing `DelayedEvent` entries already prove exact event IDs, due ages, payload context, and exact NPC targeting, but `recentEventIds` is not sufficient as a durable exact-age cooldown authority. Phase 7A should add one bounded persistent consequence/cooldown authority rather than scattering more flags or queue-priority checks across feature systems.
+
+Scheduler responsibilities: stable consequence/chain IDs, origin event/age, exact typed target references, due-age windows, explicit priority, deterministic tie-breaking, cancellation/validity conditions, deduplication, completion/cancellation history, bounded retention, and compatibility normalization for legacy `DelayedEvent` entries. Feature systems schedule consequences; the scheduler alone decides which due consequence may occupy the single unresolved `pendingEvent` slot.
+
+System-owned and dedicated story definitions remain outside the ordinary random-event pool unless intentionally authored as random content. Scheduling/cooldown bookkeeping must not consume the main simulation RNG. Invalid/dead/missing targets cancel through deterministic validation rather than silently retargeting to a different entity.
+
+Phase 7A is expected to move save schema 12 → 13. Migration must be deterministic, RNG-neutral, idempotent, preserve old pending/delayed event completion, and initialize missing scheduler state without rewriting established life history. New-game save-version initialization must stay synchronized with the SaveSystem authority.
+

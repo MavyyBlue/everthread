@@ -1,5 +1,15 @@
 # Everthread — Phase 6 Credit / Debt
 
+## Phase 6 closeout — CI Green Run #106
+
+Phase 6 is **closed**. The authoritative certified baseline is Run #106 (`34730041125`) on expanded source `5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`, package `0.12.0`, save schema 12. Run #106 passed both TypeScript gates, Core 82/82, Credit & Banking 75/75, Asset Financing 77/77, Asset Delinquency 82/82, Payment & Asset Management 81/81, Personal Borrowing & Recovery 31/31, Household Finance & Crisis 21/21, Integrated Long-Life 105/105, every established suite, the 155-module production build, certified artifact publication/restore smoke, and Pages deployment.
+
+The post-6C correction establishes $0 newborn personal cash, household-supported childhood ordinary costs, explicit financial independence, visible hardship/crisis choices, and removal of silent automatic bankruptcy. Existing due delayed stories retain priority over newly created financial-pressure notices. Run #105 is not a valid correction baseline because its wrongly named bundle was not imported; it exercised old code.
+
+Certified source SHA-256: `2a8e80c410f2380457ab5570ddddc4b90a3cf2e8bccf16c66937766e45527a11`. Certified artifact ID: `10308609501`.
+
+The historical notes below document how Phase 6 reached this state; any references to a “current candidate” below are superseded by this closeout.
+
 Phase 6 now builds from certified Run #102 expanded source `8b2a49fe76c5429cf55228a00a15b6103211a25b`. Phase 6A Credit & Banking, Phase 6B1 Asset Financing, Phase 6B2 Secured Delinquency/Collateral Consequences, and Phase 6B3 Payments & Asset Management UX are CI Green. Save schema is 12. The current candidate is a bounded post-6B3 Credit History live-reactivity correction before Phase 6C.
 
 ## Product intent

@@ -2,9 +2,9 @@
 
 This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
 
-## Current macro phase — Phase 6: Credit / Debt
+## Current macro phase — Phase 7: Persistent World Consequences
 
-Phase 4 and Phase 5 are closed. People Threadspace and the post-Run-74 corrective closeout are green, Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #102 (`8b2a49fe76c5429cf55228a00a15b6103211a25b`) is the latest certified source baseline. Phase 6 deepens credit/debt while consuming the existing Finance/Asset/Estate authorities rather than replacing them.
+Phases 4, 5, and 6 are closed. Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #106 (`5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`) is the current certified source baseline on save schema 12. Phase 7 begins by strengthening consequence persistence and scheduling before expanding story/world-event breadth.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -125,20 +125,29 @@ Existing three-/eight-generation regression behavior, specific-bequest guarantee
 
 ## Phase 6 — Credit / debt
 
-**Current. Credit/debt must remain a visible player system and one accounting authority, not a collection of purchase-screen shortcuts.**
+**Closed; certified through Run #106. Preserve these guarantees while later systems consume finance state.**
 
-1. **Phase 6A — Credit & Banking Foundation:** CI Green Run #99. Save schema 11 adds bounded revolving-credit state, six fictional institutions/products, age-16 secured starter cards, deterministic underwriting/inquiries, visible contract terms, payments/statements/interest/fees, refundable deposits, transaction history, derived creditworthiness, evolving offers, bankruptcy/estate integration, and the Life-page Cash + Credit Available / Credit & Banking surfaces. Credit & Banking is 74/74.
-2. **Phase 6B1 — Asset Financing Foundation:** CI Green Run #100 on expanded source `819d223aa9a0d5f9109c705f16213c43ddcaeb31`. Adds **Buy Outright** and **Finance** paths for eligible vehicles/homes through one reusable `AssetFinancingSystem` that consumes CreditSystem underwriting truth. Contracts expose lender, approval/decline reason, down payment, principal, APR, term, payment, finance charge, full-term cost, and projected burden; signing re-underwrites and creates the exact real `car`/`mortgage` liability. Asset Financing is 77/77.
-3. **Phase 6B2 — Secured delinquency / collateral consequences:** CI Green Run #101 on expanded source `c498753acb67bbb0aa930e5f8bdb7b411b1e874c`. Missed secured payments become persistent arrears rather than fake amortization; the player gets a one-Age-Up cure window; uncured cars can be repossessed and uncured mortgages foreclosed; surplus/deficiency settlement stays in the real finance/asset/credit authorities; underwater voluntary home sales cannot erase debt. Asset Delinquency is 82/82.
-4. **Phase 6B3 — Payments & Asset Management UX:** CI Green Run #102 on expanded source `8b2a49fe76c5429cf55228a00a15b6103211a25b`. Save schema 12 adds durable annual auto-pay preference, explicit card past-due state, and secured paid-ahead state. Credit & Banking centralizes Bills & Payments; Property consolidates home/vehicle Browse + Owned views; vehicle selling performs real payoff/equity/deficiency accounting. Payment & Asset Management is 79/79 in Run #102.
-5. **Post-6B3 Credit History live-reactivity correction:** current predeployment candidate. Remove History-tab transaction memoization that can retain stale projections when CreditSystem appends to its bounded transaction array in place. No schema/content/math change.
-6. **Phase 6C — Personal borrowing + recovery:** only after the post-6B3 correction is CI Green. Add personal-loan offers where useful, voluntary bankruptcy/player decision flow, longer recovery/derogatory consequences, hardship events, and recovery pathways. Existing automatic severe-insolvency protection remains compatible until intentionally replaced/extended.
+1. **Phase 6A — Credit & Banking Foundation:** CI Green Run #99; schema 11 foundation, fictional institutions/products, bounded revolving state, shared creditworthiness, Cash + Credit Available presentation.
+2. **Phase 6B1 — Asset Financing Foundation:** CI Green Run #100; reusable financing authority for homes/vehicles using CreditSystem underwriting.
+3. **Phase 6B2 — Secured delinquency / collateral consequences:** CI Green Run #101; real arrears, cure windows, repossession/foreclosure, surplus/deficiency settlement.
+4. **Phase 6B3 — Payments & Asset Management UX:** CI Green Run #102; schema 12 payment preferences/past-due/paid-ahead state and centralized Bills & Payments.
+5. **Post-6B3 Credit History reactivity:** CI Green Run #103; History projections update from current authoritative state.
+6. **Phase 6C — Personal borrowing / bankruptcy / recovery:** CI Green Run #104; shared-underwriting personal loans, personal-loan payment/delinquency/cure, voluntary bankruptcy, recovery gates, and hardship behavior.
+7. **Post-6C household finance / crisis agency correction:** CI Green Run #106 on `5e8fd2cd51199b66e1239ecdd0fecf527f49c6c6`; $0 newborn personal cash, household-supported childhood costs, explicit financial independence, visible Financial Pressure choices, no silent auto-bankruptcy, and delayed-story priority protection. Household Finance & Crisis is 21/21; Credit & Banking is 75/75; Personal Borrowing & Recovery is 31/31.
 
-Compatibility requirements: Credit Available is never cash/net worth; browsing offers never rerolls outcomes or creates inquiries; formal applications are bounded; signed terms remain inspectable; secured deposits stay represented value; liabilities survive into estate settlement; history storage stays bounded; and material approvals/declines/delinquency/default consequences remain player-visible.
+Run #105 is explicitly excluded from certification history for this correction: the wrongly named upload was not imported, so its green result exercised the old Run #104 code.
+
+Compatibility requirements: Credit Available is never cash/net worth; browsing offers never rerolls outcomes or creates inquiries; formal applications are bounded; signed terms remain inspectable; secured deposits stay represented value; liabilities survive into estate settlement; history storage stays bounded; supported-child expenses do not become protagonist debt; and material approvals/declines/delinquency/default/crisis/bankruptcy consequences remain player-visible.
 
 ## Phase 7 — Persistent world consequences
 
-Planned: exact event cooldown tracking, expanded delayed consequence chains, more persistent target-aware follow-ups, parenting/property/business/school/special-career delayed consequences, and deeper national/world events.
+**Current. Start with architecture, then expand consequence breadth.**
+
+1. **Phase 7A — Persistent Consequence Foundation:** next. Introduce one authoritative bounded scheduler/state for exact cooldown ages, stable chain/consequence identity, origin context, exact targets, due windows, priority, cancellation/validity, dedupe, completion/cancellation history, deterministic ordering, and migration. Preserve compatibility for current `DelayedEvent` callers and old pending events. Expected save schema 13.
+2. **Phase 7B — Systemic delayed stories:** after 7A is CI Green. Extend multi-year consequences across parenting/family, school, relationships, property, business, employment, and special careers using real NPC/asset/world authorities rather than copied story state.
+3. **Phase 7C — Persistent world conditions:** after scheduler/story foundations are stable. Add national/world conditions whose effects flow through existing systems such as employment, business demand, investments, housing, travel, fame/media, and finance rather than existing as flavor-only popups.
+
+Phase 7 compatibility requirements: scheduler priority is centralized; one feature cannot overwrite another feature's due consequence; exact NPC/asset/world targets survive across years; invalid targets cancel deterministically; random-event library counts/RNG behavior do not change merely because system-owned stories are added; history stays bounded; and save migrations consume no simulation RNG.
 
 ## Cross-cutting later gates
 
