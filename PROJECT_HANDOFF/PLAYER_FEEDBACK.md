@@ -1,60 +1,68 @@
 # Everthread — Player Feedback & Issue Review
 
-This file defines the durable handoff protocol for player-reported technical defects, experience problems, and suggestions. Player feedback is a first-class development input alongside GitHub Actions, regression suites, and direct playtesting.
+Player feedback is a first-class development input alongside GitHub Actions, regression suites, and direct playtesting.
 
 ## Authority boundary
 
-Player reports are **QA/development metadata**, not simulation state.
+Player reports are QA/development metadata, never simulation truth.
 
-- Never store report queues inside `GameState`, life saves, rewind snapshots, descendants, event queues, or gameplay history.
-- Creating, viewing, exporting, sharing, or withdrawing a report must not consume gameplay RNG or mutate simulation state.
-- The reporting client may read a bounded diagnostic projection from the current life solely to help reproduction.
-- Do not include the complete save by default. The v1 diagnostic packet captures build/source identity, save schema, game seed/RNG position, age/year/generation, current career, bounded system counts, selected settings, pending event identity, and recent timeline IDs.
+- Never store report queues or delivery metadata inside `GameState`, life saves, rewind snapshots, descendants, event queues, or gameplay history.
+- Creating, viewing, submitting, retrying, exporting, sharing, or withdrawing a report must not consume gameplay RNG or mutate simulation state.
+- Diagnostic capture is a bounded read-only projection. Never attach a complete save automatically.
+- A green backend regression does **not** invalidate a player report. If backend authority is correct, continue into action binding, stale projections, render invalidation, navigation, disabled state, touch behavior, accessibility, presentation timing, and unclear UX.
 
-The first implementation uses device-local `localStorage` under `everthread-feedback-reports-v1`, capped at 100 reports. It deliberately does **not** embed a GitHub token or other repository credential in the public GitHub Pages client. A future secure feedback service may replace or supplement the local/share/export path, but must preserve this report schema or provide an explicit migration.
+## Current architecture
+
+Certified local-report foundation: Run #109 / expanded source `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`.
+
+Central Feedback Inbox infrastructure:
+
+- Supabase project: **Everthread**
+- Project ref: `oyzcwkirqivbauqfqhbk`
+- Region: `us-east-2`
+- Public Edge Function: `everthread-feedback`
+- Reports table: `public.everthread_feedback_reports`
+- Review checkpoint: `public.everthread_feedback_review_state`, key `main`
+- Rate-limit table: `public.everthread_feedback_rate_limits`
+- Device report storage: `everthread-feedback-reports-v1`
+- Device delivery metadata: `everthread-feedback-sync-v1`
+
+The public game never receives database read access or a service-role/secret key. `anon` and `authenticated` have explicit deny policies and revoked table grants. The public Edge Function validates origin, report schema, interface/action/category IDs, payload size, and a bounded per-client submission rate before using server-side credentials. Supabase security advisors were clean after setup.
+
+Each device creates a 32-byte cancellation secret for a report. The raw secret remains only in device-local delivery metadata; the database stores only its SHA-256 hash. Retried submissions are idempotent by report ID + secret. Withdrawal requires the same secret.
 
 ## Player lifecycle
 
-A player can:
+1. Open **Settings → Help & Feedback → Report issue or suggestion**.
+2. Choose interface, action, report kind, and category.
+3. Describe what happened and optionally include safe diagnostics.
+4. Everthread saves the report locally first.
+5. When online, the client submits it automatically to the central Feedback Inbox.
+6. Failed deliveries remain local and retry on app startup, when the Feedback Center opens, and when the browser returns online. Startup retries are bounded to 10 reports per pass.
+7. The player may Share/Copy/Export a JSON backup at any time.
+8. **Cancel report** marks the local report withdrawn and propagates withdrawal to the central inbox when reachable.
 
-1. open **Settings → Help & Feedback → Report issue or suggestion**;
-2. choose the affected interface;
-3. choose an action specific to that interface;
-4. classify the report as **Technical issue**, **Experience issue**, or **Suggestion**;
-5. choose a more specific category;
-6. describe what happened or what they would change;
-7. optionally include the safe diagnostic packet;
-8. save the report to the device queue;
-9. Share, Copy, or Export the report/inbox for review;
-10. cancel a queued report, which marks it `withdrawn` rather than silently erasing review history.
+A cancelled draft is discarded. A queued report that was never successfully delivered may resolve its remote withdrawal as “not found”; that is valid because no central report existed. A report that may have reached the server before a lost response is still safely withdrawable because retries reuse the same private cancellation secret.
 
-Cancelling an unsubmitted draft simply discards the draft. Cancelling a queued report records a withdrawal timestamp/reason. If the player already shared/exported the original report, they should share/export the updated inbox so reviewers can see the withdrawal.
+## Future-Yuki mandatory review protocol
 
-## Future-Yuki review protocol
+Before beginning a new implementation slice or after identifying a newly certified expanded source:
 
-On every context reset or before beginning a new implementation slice:
+1. Identify the newest genuinely certified Everthread source and canonical Actions run first.
+2. Read this file and `CURRENT_STATE.md`.
+3. Query Supabase project `oyzcwkirqivbauqfqhbk` directly. Do **not** ask Mavyy to export JSON first when the connector is available.
+4. Read `public.everthread_feedback_review_state` for key `main`.
+5. Query active reports from `public.everthread_feedback_reports` where `status='queued'`, prioritizing `triage_status='new'` and reports received after the previous checkpoint.
+6. Compare each report's `source_commit` with the newest certified baseline. A report from an older build may already be fixed, but it still requires verification before closure.
+7. Group obvious duplicates while preserving every original report ID. Never overwrite one player's report with another.
+8. Triage technical reports through backend authority first, then the actual interface path if backend checks are green.
+9. Mark reviewed reports with `reviewed_at`, `reviewed_against_commit`, appropriate `triage_status`, priority, and notes. Use `duplicate_of` only when the duplicate relationship is clear.
+10. After the review pass, update `everthread_feedback_review_state` with the certified commit used for review, the check time, the newest report receipt time seen, and reviewed-count snapshot.
+11. Summarize the actionable queue in `CURRENT_STATE.md`; do not copy the entire database into the handoff.
 
-1. Identify the newest genuinely certified expanded source and canonical GitHub Actions run first.
-2. Read this file and the **Feedback queue snapshot** in `CURRENT_STATE.md`.
-3. Check the current conversation / Project files for any `everthread-feedback-inbox-*.json` exports or pasted `ET-YYYYMMDD-*` reports supplied by Mavyy or testers.
-4. If a future secure feedback backend is documented here, query that authoritative inbox too. Do not invent one or assume a local device queue is remotely accessible.
-5. Ignore reports marked `withdrawn` for active work unless another independent active report identifies the same problem.
-6. Group obvious duplicates by interface, action, category, build/source commit, and symptom, while preserving the original report IDs.
-7. Maintain an actionable list in `CURRENT_STATE.md` keyed to the certified commit against which the inbox was last reviewed.
-8. Prioritize reproducible data-loss/save-integrity, crash, accounting, family/relationship corruption, determinism, Age Up duplication, and blocked-primary-action defects ahead of cosmetic suggestions.
+If Supabase access is unavailable, say so explicitly and fall back to any supplied `everthread-feedback-inbox-*.json` files or pasted `ET-*` reports. Never conclude that there are no reports merely because the device-local queue is inaccessible remotely.
 
-## Triage rule: backend green does not invalidate a player report
-
-For a technical report, use this order:
-
-1. Reproduce the reported player path on the reported build when practical.
-2. Identify the authoritative owning system and run the relevant backend/testbench/regression checks.
-3. If the backend is wrong, classify **Backend defect** and fix the authority/root cause.
-4. If the backend is correct, continue into the actual UI path: action binding, stale projection, render invalidation, navigation, disabled state, sheet/overlay state, touch interaction, focus/accessibility, presentation timing, or unclear result communication.
-5. If mechanics and UI are correct but the player reasonably believed the feature was broken, classify **Expected behavior / unclear presentation** and improve the UX/copy rather than dismissing the report.
-6. If technically correct but frustrating/confusing/repetitive/awkward, classify **Experience/design issue**.
-7. If reproduction is inconclusive, classify **Unable to reproduce**; keep the report searchable so matching future reports can reopen it.
-8. Suggestions are creative/product input, not failed tests.
+## Triage classes
 
 Valid resolution classes:
 
@@ -66,24 +74,28 @@ Valid resolution classes:
 - `unable_to_reproduce`
 - `withdrawn_by_player`
 
-## Fix workflow
-
-For a real defect:
+For a real defect use:
 
 `report → reproduce → locate authority → root cause → inspect dependencies → narrow fix → regression → connected suites → full wall → production build → canonical CI certification → resolution note`
 
-A resolved report should be traceable to the fixing expanded-source commit, the regression/suite that now protects it, and the canonical Actions run that certified it. Do not mark a report fixed merely because a local build works.
+A report is not resolved merely because a local patch works. Resolution should point to the fixing expanded-source commit, protecting regression, and canonical Actions run.
 
-Repeated experience reports should be treated as design evidence even when no backend defect exists. Repeated technical reports that escaped CI should inform new regression or player-journey coverage.
+## Privacy / security rules
 
-## Feedback queue snapshot
+- Never expose Supabase service-role or secret credentials in Everthread source, Pages assets, reports, handoff docs, or player-visible UI.
+- Do not add unrestricted Data API policies to make client code easier.
+- Do not store raw IP addresses in the feedback database. The Edge Function uses a one-way request fingerprint only for short-window rate limiting.
+- Do not put the cancellation secret inside exported report JSON or the report database row in plaintext.
+- Do not accept arbitrary diagnostics blobs beyond the bounded report contract.
+- Preserve RLS, explicit deny policies, server-side validation, body limits, and rate limiting when editing the feedback endpoint.
 
-Last reviewed certified baseline: **Run #108**, expanded source `1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`.
+## Current queue snapshot
 
-- Active technical reports known to the repository/handoff: **0**
-- Active experience reports known to the repository/handoff: **0**
-- Active suggestions known to the repository/handoff: **0**
-- Withdrawn reports known to the repository/handoff: **0**
-- Secure centralized submission backend: **not yet present**
+Last central review checkpoint before Feedback v2 client deployment: certified Run #109 / `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`.
 
-This snapshot only means no reports have been imported or supplied to the development context as of the listed certified baseline. Device-local queues on players' phones are not remotely visible. Update this snapshot whenever a newer certified commit is reviewed together with newly supplied/exported feedback.
+- Central active reports: **0**
+- Central withdrawn reports: **0**
+- Central new/untriaged reports: **0**
+- Previously supplied device-export test report: `ET-20260913-76FA01` (a deliberate test suggestion; not yet centrally imported)
+
+Once the Feedback v2 client is deployed and that same browser opens Everthread, existing queued v1 device reports will be eligible for automatic central synchronization.

@@ -1,10 +1,10 @@
 # Everthread — Current State
 
-## Live continuation note — Run #108 certified; feedback reporting candidate
+## Live continuation note — Run #109 certified; Central Feedback Inbox v2 candidate
 
-Phase 6 remains closed. The authoritative certified baseline is GitHub Actions **Run #108** (`34766405911`) on expanded source commit `1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`. Package remains `everthread-life-unwritten@0.12.0`; save schema remains **12**.
+Phase 6 remains closed. The authoritative certified baseline is GitHub Actions **Run #109** (`34771397516`) on expanded source commit `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`. Package remains `everthread-life-unwritten@0.12.0`; save schema remains **12**. Phase 7A remains the next macro gameplay implementation after this cross-cutting feedback-infrastructure slice is certified.
 
-Run #108 imported the playtest-driven activity-specific minigame overlay, certified Pixel Overtake racing and Strike Sequence combat memory, and deployed Pages successfully. Activity-specific Minigame regression is 19/19; Core remains 82/82; Racing Career 86/86; Combat-career World 51/51; Integrated Long-Life 105/105; every established suite passed in canonical preflight.
+Run #109 certified the Settings → Help & Feedback v1 foundation, device-local report/withdrawal history, exact deployed build identity, and Activity Feedback Reporting 20/20. The current candidate upgrades delivery to a secure Supabase-backed central inbox while preserving local-first/offline behavior.
 
 Last handoff preparation: 2026-09-13
 Repository: `MavyyBlue/everthread`
@@ -12,33 +12,34 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `12`
 
-## Last fully verified repository baseline — Run #108
+## Last fully verified repository baseline — Run #109
 
-- Expanded certified source: `1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`.
-- Run #108 passed Engine TypeScript, Test TypeScript, the complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
-- Core 82/82; Racing Career 86/86; Combat-career World 51/51; Activity-specific Minigame 19/19; Integrated Long-Life 105/105; every established suite green.
-- Vite 7.3.6 transformed 158 modules. Main application chunk: 1,089.20 kB / 307.16 kB gzip; the existing >700 kB warning remains nonblocking technical debt.
-- Certified source SHA-256: `586bb49d984f57160b806c8376dc9d8094d8b3f8567d5c168477f90c87cf2576`.
-- Certified dependency SHA-256: `5c3efa11bf4c775aa9e78478b2c766564b340cc0e1657f399193a3c1ec5322d9`.
+- Expanded certified source: `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`.
+- Upload wrapper: `bda64853543bd12265d51629bda4d09d4cc4d23d`.
+- Run #109 passed Engine TypeScript, Test TypeScript, complete regression wall, production build, certified-baseline restore smoke, artifact publication, and Pages deployment.
+- Core 82/82; AI Interaction Testbench 41/41; Integrated Long-Life 105/105; Activity-specific Minigame 19/19; Activity Feedback Reporting 20/20; every established suite green.
+- Vite 7.3.6 transformed 162 modules. The existing >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `a7441e17a5d02930d36b0e264ad2f6187d2ee930b2a2b2d07c014b4c54b50953`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact: `everthread-certified-preflight-1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`, artifact ID `10320163460`, digest `51fa22aa5fff133c545b7680c7a3018c56c51b81954a66d3b9b986e1b12c7329`.
-- Pages artifact ID `10320044256`, digest `99cb3f4fd339acce5569966b2943810673b4ef62756a1f29c63356b0272714d8`; deployment reported success.
+- Certified artifact: `everthread-certified-preflight-d73bbfa6fdf8afb430f2604a09c9ac3053d60962`, artifact ID `10321624066`, digest `dedc615a7ef008b2f7be936706c7a6c3c70c3982cf0f2032ed8ca72aff59d643`.
+- Pages artifact ID `10321973415`, digest `dd03548ecc1e056a700da2ae5d95061daf79e64226f479a5a7e93891cc917d9a`; deployment reported success.
 
-## Player Feedback / Issue Reporting candidate
+## Central Feedback Inbox v2 candidate
 
-Mavyy has prioritized player feedback as a first-class development input. The current candidate adds a Settings → Help & Feedback reporting center with interface-specific/action-specific classification, Technical / Experience / Suggestion report kinds, safe bounded diagnostics, device-local report history outside `GameState`, Share/Copy/JSON export, and player cancellation/withdrawal. A production build also emits `dist/build-info.json` so reports can record the exact expanded source commit that produced the deployed bundle.
+- Supabase project **Everthread** is active in `us-east-2`, project ref `oyzcwkirqivbauqfqhbk`, currently $0/month.
+- `everthread-feedback` Edge Function is deployed as the narrow public submission/withdrawal endpoint. The browser receives no database read access and no service-role/secret key.
+- Database owns `everthread_feedback_reports`, `everthread_feedback_review_state`, and a bounded rate-limit table. RLS plus revoked grants and explicit deny policies block `anon`/`authenticated` table access; the post-setup Supabase security advisor is clean.
+- Report delivery is local-first. `src/feedback/remoteInbox.ts` stores only transport metadata/cancellation secret outside `GameState`, submits automatically when online, retries on startup/Feedback Center open/online return, and caps startup retry batches at 10.
+- Existing v1 device reports remain valid and can auto-sync after the v2 client reaches the same browser. Report exports remain a backup path, not the primary Yuki workflow.
+- Cancellation uses a 32-byte device secret; only its SHA-256 hash reaches the database. Submission is idempotent and withdrawal reuses the same secret.
+- Future Yuki must query the Supabase central inbox before new implementation work; exact procedure is in `PROJECT_HANDOFF/PLAYER_FEEDBACK.md`.
+- Central queue at candidate preparation: 0 active, 0 withdrawn, 0 new/untriaged. The earlier exported `ET-20260913-76FA01` remains a known deliberate test report outside the central inbox until the originating browser syncs it.
+- No `GameState`, save-schema, rewind, descendant, event-scheduler, finance, or gameplay-RNG authority changes.
+- Local verification before packaging: Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Activity Feedback Reporting 20/20, Feedback Central Inbox 17/17, and a 163-module production build all pass. Canonical GitHub Actions remains certification authority.
 
-The report queue deliberately remains outside save schema, rewind, descendants, gameplay RNG, and simulation mutation. There is **no centralized submission backend yet** and no GitHub credential is embedded in the public client. Reports live on the player's device until shared/exported. Read `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` for the mandatory future-Yuki review and triage protocol.
+### Mandatory feedback check before future feature work
 
-Candidate local verification: Engine TypeScript, Test TypeScript, full app TypeScript, dedicated Activity Feedback Reporting **20/20**, and the 162-module production build pass. The combined local `npm test` hit the host timeout after Core 82/82 without recording a failure, so only the next canonical GitHub Actions run may certify this candidate.
-
-### Feedback queue snapshot reviewed against Run #108 / `1d8bb066…`
-
-- Active technical reports supplied/imported into the development context: **0**
-- Active experience reports supplied/imported into the development context: **0**
-- Active suggestions supplied/imported into the development context: **0**
-- Withdrawn reports supplied/imported into the development context: **0**
-- Device-local reports on player devices are not remotely visible; inspect supplied `everthread-feedback-inbox-*.json` exports or pasted `ET-*` reports before beginning new work.
+At every fresh development context, identify the newest certified source first, then query Supabase project `oyzcwkirqivbauqfqhbk` for active/new reports and the `main` review checkpoint before choosing the next slice. Backend-green reports continue into UI/experience investigation rather than being dismissed.
 
 ## Phase 6 closeout guarantees
 

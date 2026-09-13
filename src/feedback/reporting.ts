@@ -212,7 +212,7 @@ export function captureFeedbackDiagnostics(state:GameState,buildInfo?:Partial<Fe
 
 function randomToken(){
   if(typeof crypto!=='undefined'&&typeof crypto.getRandomValues==='function'){
-    const bytes=new Uint8Array(4);crypto.getRandomValues(bytes);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase().slice(0,6);
+    const bytes=new Uint8Array(5);crypto.getRandomValues(bytes);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
   }
   return Math.random().toString(36).slice(2,8).toUpperCase().padEnd(6,'0');
 }

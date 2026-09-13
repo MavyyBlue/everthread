@@ -1,0 +1,4 @@
+project_id = "oyzcwkirqivbauqfqhbk"
+
+[functions.everthread-feedback]
+verify_jwt = false

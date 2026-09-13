@@ -21,20 +21,23 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/screens/` and `src/components/` — mobile UI only; critical state is not intended to be mutated here.
 - `src/tests/` — deterministic regression suite, content audit, and multi-life simulation harness.
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
-- `src/feedback/` — report catalog/schema, bounded device-local QA queue, safe diagnostic projection, withdrawal, copy/share/export formatting; deliberately outside `GameState`.
+- `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
+- `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
 ## Current implementation slice
 
-### Player Feedback / Issue Reporting (predeployment candidate)
+### Central Feedback Inbox v2 (predeployment candidate)
 
-- Built only on certified Run #108 expanded source `1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`; package remains 0.12.0 and save schema remains 12.
-- Settings gains a mobile Help & Feedback center with interface-specific action selection, Technical / Experience / Suggestion kinds, specific report categories, free-text description, and optional safe diagnostics.
-- Reports persist in a bounded device-local `localStorage` queue outside `GameState`, saves, rewind, descendants, event scheduling, and gameplay RNG.
-- Players can Share, Copy, export the structured inbox as JSON, cancel an unsubmitted draft, or mark a queued report withdrawn. Withdrawn reports remain explicit so reviewers can stop work without silently losing provenance.
-- Production build emits `dist/build-info.json` from the actual checked-out Git commit so deployed reports can identify the expanded source that produced the issue.
-- `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` makes feedback review part of fresh-chat/context-reset procedure and explicitly requires UI/experience investigation when backend tests are green.
-- No centralized feedback backend or embedded repository credential is introduced. Secure remote submission remains separate future infrastructure.
-- Local verification: both canonical TypeScript gates plus full app TypeScript pass; Activity Feedback Reporting is 20/20; production build passes at 162 transformed modules. The combined local regression command reached the host execution timeout after Core 82/82 with no recorded failure; GitHub Actions remains final certification authority.
+- Built only on certified Run #109 expanded source `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`; package remains 0.12.0 and save schema remains 12.
+- A dedicated free Supabase **Everthread** project now owns the central feedback service (`oyzcwkirqivbauqfqhbk`, `us-east-2`).
+- The public `everthread-feedback` Edge Function accepts only bounded submit/withdraw operations from the Everthread Pages origin (plus localhost development), validates the report catalog/schema, limits payload size, and applies a per-client submission rate limit.
+- `anon` and `authenticated` have revoked table grants plus explicit deny RLS policies. Server-side credentials never enter the browser. Supabase security advisors are clean.
+- `src/feedback/remoteInbox.ts` adds device-local transport metadata outside `GameState`, cryptographic cancellation secrets, idempotent submit, secure withdrawal, offline/error retention, startup/online retry, and a 10-report retry batch cap.
+- Feedback Center now communicates central delivery status. JSON export remains a backup rather than the normal Yuki handoff.
+- App startup and browser `online` transitions retry stored reports automatically; opening Feedback Center also retries. Existing v1 queued reports can migrate naturally without changing report schema.
+- `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` now makes direct Supabase inbox review mandatory before new implementation slices and defines the central review checkpoint workflow.
+- No simulation/save authority changes and no main gameplay RNG use.
+- Local validation: Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Activity Feedback Reporting 20/20, Feedback Central Inbox 17/17, and production build at 163 transformed modules all pass. GitHub Actions remains final certification authority.
 
 ## Recent corrective history
 

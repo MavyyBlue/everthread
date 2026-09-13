@@ -1,6 +1,28 @@
 # Everthread Changelog
 
-## Player Feedback / Issue Reporting candidate — 2026-09-13
+## Central Feedback Inbox v2 candidate — 2026-09-13
+
+### Added
+
+- Created a dedicated free Supabase **Everthread** project in `us-east-2` and deployed the `everthread-feedback` Edge Function for central report submission/withdrawal.
+- Added RLS-protected central report, rate-limit, and review-checkpoint tables with revoked public grants, explicit deny policies, triage metadata, source-commit indexing, duplicate linkage, and future-Yuki review state.
+- Added local-first remote transport in `src/feedback/remoteInbox.ts`: 32-byte device cancellation secrets, hash-only server storage, idempotent submission, secure withdrawal, offline retry, startup/online retry, and bounded retry batches.
+- Feedback Center now automatically submits reports when online and displays central delivery state; Share/Copy/JSON export remain fallback/backup options.
+- Versioned the applied Supabase migrations and deployed Edge Function under `supabase/`.
+- Added Feedback Central Inbox regression: 17/17 locally.
+
+### Security / architecture
+
+- No Supabase secret/service-role credential is present in the public client. Public database roles cannot read or mutate feedback tables.
+- Supabase security advisor is clean after setup. Performance advisor findings were reduced to expected unused-index notices on the empty new database.
+- Feedback remains entirely outside `GameState`, save schema, rewind, descendants, simulation RNG, and gameplay authorities.
+
+### Local validation
+
+- Engine TypeScript, Test TypeScript, full app TypeScript, the complete regression wall, Activity Feedback Reporting 20/20, Feedback Central Inbox 17/17, and the 163-module production build pass.
+- Canonical GitHub Actions remains final certification authority for the client/repository candidate.
+
+## Player Feedback / Issue Reporting — CI Green Run #109 — 2026-09-13
 
 ### Added
 
@@ -12,11 +34,11 @@
 - Added `PROJECT_HANDOFF/PLAYER_FEEDBACK.md` and a current-state feedback queue snapshot so future Yuki reviews active supplied/exported reports before new work and does not dismiss player-facing defects merely because backend regressions are green.
 - Added Activity Feedback Reporting regression: 20/20 locally.
 
-### Local validation
+### CI validation
 
-- Engine TypeScript, Test TypeScript, full app TypeScript, and the dedicated feedback regression pass.
-- Production build succeeds at 162 transformed modules and emits build identity successfully.
-- The combined local regression wall hit the host execution ceiling after Core 82/82 with no recorded test failure, so this slice remains a candidate until canonical GitHub Actions certifies it.
+- GitHub Actions Run #109 (`34771397516`) certified expanded source `d73bbfa6fdf8afb430f2604a09c9ac3053d60962`.
+- Canonical preflight passed 4/4 with Activity Feedback Reporting 20/20, Activity-specific Minigame 19/19, Core 82/82, AI Interaction Testbench 41/41, Integrated Long-Life 105/105, the complete established wall, and the 162-module production build.
+- Certified artifact ID `10321624066`; Pages deployment succeeded.
 
 ## Phase 6C — Personal Borrowing / Bankruptcy / Recovery candidate — 2026-09-12
 

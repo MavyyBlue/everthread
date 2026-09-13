@@ -4,7 +4,7 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 ## Current macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, and 6 are closed. Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #108 (`1d8bb06619f6f5fb1ed8254edba4623dfdd9c406`) is the current certified source baseline on save schema 12. Phase 7 begins by strengthening consequence persistence and scheduling before expanding story/world-event breadth.
+Phases 4, 5, and 6 are closed. Run #91 established the canonical pre-deployment QA/certified-baseline infrastructure, and Run #109 (`d73bbfa6fdf8afb430f2604a09c9ac3053d60962`) is the current certified source baseline on save schema 12. Phase 7 begins by strengthening consequence persistence and scheduling before expanding story/world-event breadth.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -89,6 +89,8 @@ After 4H is green, Phase 4 closes again. Do not add another planned Phase 4 poli
 **4Q1 AI Interaction Testbench:** green baseline; verified at 41/41 through run #62. The regression-only semantic interface uses real `GameEngine` actions, exact entity inspection, deterministic transcripts, diffs, invariant watches, and isolated in-memory persistence. It adds no player UI, player-save metadata, save schema, or parallel gameplay implementation.
 
 4H extends the People semantic surface in the same testbench as part of the real People redesign rather than creating a separate QA feature phase.
+
+**4Q2 Player Feedback Reporting:** device-local report/withdrawal foundation is CI Green in Run #109 with Activity Feedback Reporting 20/20. A secure Supabase central-inbox v2 is the current cross-cutting candidate so future development contexts can query new player reports automatically before choosing the next slice. It remains outside `GameState` and does not displace Phase 7A as the next macro gameplay phase.
 
 ### Current compatibility rules
 
