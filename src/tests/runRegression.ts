@@ -57,6 +57,7 @@ import { runPhase8BTownMapRegression } from './phase8BTownMapRegression';
 import { runPhase8CInstitutionRoutingRegression } from './phase8CInstitutionRoutingRegression';
 import { runPhase8DPlayerProfileInventoryRegression } from './phase8DPlayerProfileInventoryRegression';
 import { runThreadspaceLoadRecoveryRegression } from './threadspaceLoadRecoveryRegression';
+import { runPhase8ECloseoutRegression } from './phase8ECloseoutRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -118,5 +119,6 @@ try{const checks=runPhase8BTownMapRegression();console.log(`Phase 8B town-map re
 try{const checks=runPhase8CInstitutionRoutingRegression();console.log(`Phase 8C institution-routing regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase8DPlayerProfileInventoryRegression();console.log(`Phase 8D player-profile/inventory regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runThreadspaceLoadRecoveryRegression();console.log(`Threadspace load recovery regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=await runPhase8ECloseoutRegression();console.log(`Phase 8E closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

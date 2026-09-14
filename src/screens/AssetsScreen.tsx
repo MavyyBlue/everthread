@@ -11,11 +11,12 @@ import { exactMoney, formatMoney } from '../core/format';
 import { actionAllowed } from '../core/actionEconomy';
 import { InstitutionRouteBanner } from '../components/InstitutionRouteBanner';
 import type { InstitutionRouteRequest } from '../core/institutionRouting';
+import { ASSET_SECTION_NAVIGATION, type AssetSectionTab } from '../core/navigation';
 
 export function AssetsScreen({state,onResult,routeRequest,onReturnToMap}:{state:GameState;onResult:(r:EngineResult)=>void;routeRequest?:InstitutionRouteRequest;onReturnToMap?:()=>void}){
   const routed=routeRequest?.resolved.tab==='assets'?routeRequest:undefined;
   const routeView=routed?.resolved.tab==='assets'?routed.resolved:undefined;
-  const[tab,setTab]=useState<'money'|'property'|'invest'|'business'|'estate'|'more'>(routeView?.assetsTab??'money');
+  const[tab,setTab]=useState<AssetSectionTab>(routeView?.assetsTab??'money');
   const[propertyView,setPropertyView]=useState<'browse'|'owned'>(routeView?.propertyView??'browse');
   const[q,setQ]=useState('');
   const[amount,setAmount]=useState(1000);
@@ -33,7 +34,7 @@ export function AssetsScreen({state,onResult,routeRequest,onReturnToMap}:{state:
   return <main className="screen">
     <div className="screen-title"><div><p className="eyebrow">Money & things</p><h1>Assets</h1></div><strong className="net-worth" title={exactMoney(netWorth(state))}>{formatMoney(netWorth(state))}</strong></div>
     <InstitutionRouteBanner request={routed} onBackToMap={onReturnToMap}/>
-    <div className="segmented segmented--scroll"><button className={tab==='money'?'active':''} onClick={()=>setTab('money')}>Money</button><button className={tab==='property'?'active':''} onClick={()=>setTab('property')}>Property</button><button className={tab==='invest'?'active':''} onClick={()=>setTab('invest')}>Invest</button><button className={tab==='business'?'active':''} onClick={()=>setTab('business')}>Business</button><button className={tab==='estate'?'active':''} onClick={()=>setTab('estate')}>Estate</button><button className={tab==='more'?'active':''} onClick={()=>setTab('more')}>More</button></div>
+    <div className="segmented segmented--scroll">{ASSET_SECTION_NAVIGATION.map(section=><button key={section.id} className={tab===section.id?'active':''} onClick={()=>setTab(section.id)}>{section.label}</button>)}</div>
 
     {tab==='money'&&<MoneyView state={state} portfolio={portfolio}/>}
     {tab==='property'&&<PropertyView state={state} view={propertyView} setView={setPropertyView} q={q} setQ={setQ} props={props} vehicles={vehicles} onResult={onResult} onPurchase={setPurchaseTarget} onSell={setSaleTarget}/>}
