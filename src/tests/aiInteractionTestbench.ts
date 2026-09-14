@@ -18,6 +18,7 @@ import { peopleWorkspaceSemanticView } from '../systems/PeopleWorkspaceSystem';
 import { projectYouthSocialPlans } from '../systems/YouthSocialSystem';
 import { projectRomanticDateOptions } from '../systems/RomanticDateSystem';
 import { projectPersonalGiftOptions } from '../systems/GiftSystem';
+import { projectCrossWorldChemistryPlans } from '../systems/CrossWorldChemistrySystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -139,6 +140,9 @@ function relationshipActions(state:GameState):AiActionView[]{
     }
     for(const plan of projectYouthSocialPlans(state,npc.id)){
       actions.push(boolGate('people.shared_experience',`${plan.label} with ${target} · ${plan.placeLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','placeId','activityId'],npc.id));
+    }
+    for(const plan of projectCrossWorldChemistryPlans(state,npc.id)){
+      actions.push(boolGate('people.cross_world_experience',`${plan.label} with ${target} · ${plan.context.roleLabel} · ${plan.placeLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','planId'],npc.id));
     }
     if(canAskNpcOnDate(state,npc.id)){
       const inviteGate=actionGateStatus(state,{policy:'relationship.date.invite',target:npc.id});
@@ -360,6 +364,7 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     case'people.interact.argue':return engine.interactWithCharacter(argString(command,'npcId'),'argue');
     case'people.interact.insult':return engine.interactWithCharacter(argString(command,'npcId'),'insult');
     case'people.shared_experience':return engine.shareExperience(argString(command,'npcId'),argString(command,'placeId'),argString(command,'activityId'));
+    case'people.cross_world_experience':return engine.crossWorldExperience(argString(command,'npcId'),argString(command,'planId'));
     case'people.meet':return engine.performActivity('meet_date');
     case'people.report_workplace':return engine.reportCoworker(argString(command,'npcId'));
     case'people.have_child':{

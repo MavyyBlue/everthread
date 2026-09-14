@@ -18,6 +18,7 @@ import { ROMANTIC_CANDIDATE_TYPES, datingAgesCompatible, romanticDateMomentum, r
 import { sharedExperienceActivityById } from '../data/sharedExperiences';
 import { evaluatePersonalGift, personalGiftAvailability } from './GiftSystem';
 import { takePersonalItemInstance } from './PersonalInventorySystem';
+import { crossWorldChemistryPlanFor } from './CrossWorldChemistrySystem';
 
 export const DATING_MIN_AGE=14;
 
@@ -245,6 +246,19 @@ function commitSharedExperience(state:GameState,npcId:string,placeId:string,acti
 
 export function shareExperienceWithNpc(state:GameState,npcId:string,placeId:string,activityId:string):SharedExperienceActionResult {
   return commitSharedExperience(state,npcId,placeId,activityId);
+}
+
+export function shareCrossWorldExperienceWithNpc(state:GameState,npcId:string,planId:string):SharedExperienceActionResult {
+  const plan=crossWorldChemistryPlanFor(state,npcId,planId);
+  if(!plan)return{success:false,messages:[{text:'That shared-world plan is not available for this person.'}]};
+  if(!plan.allowed)return{success:false,messages:[{text:plan.reason??'That shared-world plan is not available right now.'}]};
+  const result=commitSharedExperience(state,npcId,plan.placeId,plan.activityId,{
+    actionKey:`chemistry:${plan.id}`,
+    context:{preferenceTags:plan.preferenceTags,enjoymentModifier:plan.enjoymentModifier??0},
+    memoryKind:`cross_world:${plan.context.kind}:${plan.id}`,
+  });
+  if(result.experience)result.experience.activityLabel=plan.label;
+  return result;
 }
 
 export function givePersonalItemGift(state:GameState,npcId:string,instanceId:string):PersonalGiftActionResult {

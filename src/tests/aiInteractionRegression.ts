@@ -2,8 +2,9 @@ import { createNewGame } from '../systems/CharacterSystem';
 import { ensureSpecialCareerRelationships } from '../systems/SpecialCareerRelationshipSystem';
 import { ensureSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
+import { specialCareerWorldView } from '../systems/SpecialCareerEcosystemSystem';
 import { personalItemById } from '../data/personalItems';
-import type { Npc } from '../types/game';
+import type { Npc, SocialWorld } from '../types/game';
 import { EverthreadAiTestbench, withEverthreadAiTestbench } from './aiInteractionTestbench';
 
 export async function runAiInteractionRegression(){
@@ -126,6 +127,21 @@ export async function runAiInteractionRegression(){
     verify(giftStep.result.success&&giftBench.getState().personalInventory.items.every(item=>item.id!=='ai-gift-instance'),'56 semantic real gifting must execute through GameEngine and transfer/remove the exact owned item once');
     verify(giftStep.diff.some(diff=>diff.path.includes('personalInventory'))&&giftStep.diff.some(diff=>diff.path.includes('relationships')),'57 AI gift execution must expose authoritative inventory plus relationship mutation rather than a synthetic UI-only result');
     verify(giftStep.invariantIssues.length===0,'58 AI exact-item gifting must leave the shared GameState invariant-clean');
+  });
+
+  const chemistryState=createNewGame({seed:'ai-test-cross-world'});chemistryState.character.age=24;chemistryState.currentYear=2064;chemistryState.education=[];chemistryState.rngCounter=0;
+  const chemistryNpc:Npc={id:'ai-music-peer',firstName:'Avery',lastName:'Thread',age:24,alive:true,health:95,happiness:95,wealth:4500,countryId:chemistryState.character.countryId,city:chemistryState.character.city,sexuality:'pansexual',fertility:65,maritalStatus:'single',traits:['creative','loyal'],hiddenOpinion:90,memories:[],parentIds:[],childIds:[],simulationTier:'full',preferences:{version:1,likes:['music','creative','cozy','social'],dislikes:[],aversions:[]}};chemistryState.npcs[chemistryNpc.id]=chemistryNpc;chemistryState.relationships.push({id:'ai-music-rel',npcId:chemistryNpc.id,type:'coworker',score:84,attraction:10,compatibility:92,yearsKnown:3});ensureNpcLife(chemistryState,chemistryNpc);
+  const chemistryWorld:SocialWorld={id:'special-music-ai-world',kind:'organization',name:'AI Session Crew',countryId:chemistryState.character.countryId,city:chemistryState.character.city,startedAge:22,active:true,members:[{npcId:chemistryNpc.id,role:'member',joinedAge:22,groupIds:['special-music-ai-world:creative']}],groups:[{id:'special-music-ai-world:creative',name:'Creative circle',kind:'music:creative',minAge:14,memberNpcIds:[chemistryNpc.id],playerJoinedAge:22,playerRole:'member',prestige:62}]};chemistryState.socialWorlds.push(chemistryWorld);
+  await withEverthreadAiTestbench({state:chemistryState,screen:'people'},async chemistryBench=>{
+    const people=chemistryBench.observe('people');const action=people.actions.find(item=>item.id==='people.cross_world_experience'&&item.targetId===chemistryNpc.id&&item.label.includes('Jam together'));
+    verify(Boolean(action?.enabled&&action.label.includes('Creative partner')),'59 AI People parity must expose the exact active professional-world plan and role for the exact NPC');
+    verify(action?.args?.join(',')==='npcId,planId','60 cross-world semantic actions must require exact NPC and authored plan ids rather than location coordinates');
+    const beforeRel=chemistryBench.getState().relationships.find(rel=>rel.npcId===chemistryNpc.id)!.score;const beforeChem=specialCareerWorldView(chemistryBench.getState(),chemistryBench.getState().socialWorlds.find(world=>world.id===chemistryWorld.id)!)!.chemistry;
+    const step=chemistryBench.execute({id:'people.cross_world_experience',args:{npcId:chemistryNpc.id,planId:'music-home-session'}});const afterState=chemistryBench.getState();const afterRel=afterState.relationships.find(rel=>rel.npcId===chemistryNpc.id)!.score;const afterChem=specialCareerWorldView(afterState,afterState.socialWorlds.find(world=>world.id===chemistryWorld.id)!)!.chemistry;
+    verify(step.result.success&&afterRel>beforeRel,'61 semantic cross-world execution must call the real GameEngine/RelationshipSystem path and improve the exact relationship when the outing lands well');
+    verify(afterChem>beforeChem,'62 AI cross-world execution must be observed by the existing career-world chemistry projection through that same relationship, with no parallel score');
+    verify(step.diff.some(diff=>diff.path.includes('relationships'))&&step.invariantIssues.length===0,'63 AI cross-world execution must expose authoritative relationship mutation and leave shared state invariant-clean');
+    verify(afterState.npcs[chemistryNpc.id]?.memories.some(memory=>memory.kind==='cross_world:music:music-home-session')===true,'64 the AI path must write the same bounded exact-context NPC memory as the player path');
   });
 
   return checks;
