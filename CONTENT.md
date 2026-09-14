@@ -1,7 +1,11 @@
 # Everthread — Content Inventory
 
-Last audited: 2026-09-13  
+Last audited: 2026-09-14
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
+
+## Phase 8B place/content note
+
+Certified Phase 8B adds **24 authored Everthread town-place definitions across 6 districts**. These are stable map/navigation definitions—identity, category, district, layout, activity tags, visibility, importance, and optional mature-screen routing metadata—not random events or parallel gameplay authorities. The ordinary/random event library remains **691**; no career, education, health, asset, achievement, challenge, systemic-story, country, or regional-name-pool count changes in 8B.
 
 ## Phase 8A setting/content note
 
@@ -70,6 +74,7 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Business product lines | 80 | 50+ products/industries | Met combined target |
 | Collectible definitions | 40 | — | Needs expansion |
 | Countries / home jurisdictions | 33 | 30+ | Met; Everthread + 32 travel/emigration definitions |
+| Everthread town places | 24 | — | Phase 8B authored registry across 6 districts |
 | Regional name pools | 7 | hundreds of names per region | Expanded; country/subregion depth still useful |
 | First names per regional pool | 120 | hundreds/region | 6× increase; 840 total active first-name entries |
 | Last names per regional pool | 120 | hundreds/region | 6× increase; 840 total surname entries |

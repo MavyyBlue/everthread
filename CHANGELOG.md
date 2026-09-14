@@ -1,5 +1,28 @@
 # Everthread Changelog
 
+## Phase 8B — Town Place Registry & 2D Flat Map — CI Green Run #127 — 2026-09-14
+
+### Added / changed
+
+- Added one authored Everthread town registry with **24 stable places across 6 districts**, covering the complete Phase 8B location-family contract without creating a second simulation/location ledger.
+- Added `TownMapSystem` as a deterministic read-only projection/math layer for discovery, filtering, semantic view, fit/constrained camera calculations, viewport culling, and zoom-based progressive disclosure. Map browsing consumes no gameplay RNG, allocates no runtime IDs, and mutates no `GameState`.
+- Added a lazy-loaded sixth primary **Map** tab with mobile-first touch pan, pinch/wheel zoom, Fit Map, large markers, search/category filters, progressive labels/pins, viewport culling, and place-detail bottom sheets. No hover interaction is required.
+- Added public institutions/landmarks for banking, vehicles, realty, residential life, shopping/food, parks/groceries, school/college, hospital/gym, film/modeling, racing/sports/military, City Hall, justice/public safety/prison, air travel, and business. Added Blackline Freight Yard as an underworld location whose visibility derives from existing organized-crime/legal state.
+- Added optional place routing metadata that points only to mature existing screens. Phase 8B deliberately does not execute bank/property/career/etc. mechanics; those existing systems remain authoritative until Phase 8C routing.
+- Existing residence authority remains `countryId/city`. Emigrated characters can browse Everthread without being relocated. Save schema remains **15** and no migration is required.
+- Content audit now reports **24 Everthread town places**; the ordinary random-event library remains exactly **691**.
+
+### Certification
+
+- Added `phase8BTownMapRegression.ts`: **41/41** checks covering registry uniqueness/coverage, district bounds, routing ownership, schema stability, deterministic/RNG-neutral projection, underworld discovery, filtering/search, 360/390/412/430px fit math, camera constraints, viewport culling, progressive disclosure, semantic view stability, and post-emigration browsing.
+- Phase 8A remains **25/25**; base suite remains **82/82**; Integrated Long-Life remains **105/105**; every established career/family/NPC/estate/finance/credit/world-condition/minigame/feedback suite remained Green.
+- Both TypeScript gates PASS; canonical Everthread preflight PASS **4/4**; production build PASS with Vite 7.3.6 at **175 modules**. `TownMapScreen` is code-split at ~19.53 kB JS / 6.24 kB gzip plus ~8.20 kB CSS / 2.03 kB gzip. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- GitHub Actions Run #127 (`34809167604`) certified expanded gameplay/source `f3fcb537545c2a454d98db22600346baf54e194e` from upload wrapper `e1becf6912c9af6d92533d98f374a3a05976e408` on package `0.12.0`, save schema **15**.
+- Certified source SHA-256: `e33c5ca44ec685fd41684f53a5f95a3aa67ea71341b33064fac54eccc665ba3e`; dependency SHA-256: `382c6da9eade13f2d2a3f31692de0ee35f4864808786d116968031dd046f47f6`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10334276556`, digest `5cc080d07a3246045e6004857ea158f00b16af30af28ee90463be4552d1f4a1f`; Pages artifact ID `10334057076`, digest `dcec92a7398f2ab09dd9d5d18268c47561878db6443b3153f52b95fab8b7f92c`; deployment reported success.
+- Post-certification Feedback Inbox sweep found four total reports and zero unresolved reports; stored review checkpoint successfully advanced to `f3fcb537545c2a454d98db22600346baf54e194e`.
+- **Next slice:** Phase 8C — Institution Routing.
+
 ## Phase 8A — Everthread Setting Foundation — CI Green Run #125 — 2026-09-13
 
 ### Added / changed

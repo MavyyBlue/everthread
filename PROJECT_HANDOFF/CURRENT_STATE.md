@@ -2,42 +2,43 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #125** (`34807854189`) on expanded source **`2596084575dd4288a0b549dc1a618736280f135b`**. This is the certified Phase 8A gameplay baseline.
+The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #127** (`34809167604`) on expanded source **`f3fcb537545c2a454d98db22600346baf54e194e`**. This is the certified Phase 8B gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **15**
 - Phase 7 — Persistent World Consequences: **CLOSED**
 - Current approved macro program: **Living World Program**
 - Phase 8A — Everthread Setting Foundation: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 8B — Town Place Registry & 2D Flat Map**
+- Phase 8B — Town Place Registry & 2D Flat Map: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 8C — Institution Routing**
 - Planned Phase 9: **Shared Lives**
 - Planned Phase 10: **Living Everthread**
-- Supabase Feedback Inbox: **4 total reports, all 4 reviewed/resolved; no new reports since 2026-09-13 19:51:36 UTC**
-- Stored feedback review checkpoint now points to certified gameplay source `2596084575dd4288a0b549dc1a618736280f135b`.
+- Supabase Feedback Inbox: **4 total reports, 0 unresolved; no new reports since 2026-09-13 19:51:36 UTC**
+- Stored feedback review checkpoint points to certified gameplay source `f3fcb537545c2a454d98db22600346baf54e194e`.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
-Last handoff synchronization: 2026-09-13
+Last handoff synchronization: 2026-09-14
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `15`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #125 — Phase 8A
+## Newest certified gameplay/source — Run #127 — Phase 8B
 
-- Upload wrapper: `36b8ce0863d8a6ddd69e20a85b99ed6ec216cb2a`.
-- Expanded certified source: `2596084575dd4288a0b549dc1a618736280f135b`.
-- GitHub Actions Run #125: `34807854189`.
-- Workflow imported the intended overlay as `38 files changed, 241 insertions(+), 70 deletions(-)`, including new `SettingSystem.ts` and `phase8ASettingFoundationRegression.ts`, then pushed the expanded source before verification.
+- Upload wrapper: `e1becf6912c9af6d92533d98f374a3a05976e408`.
+- Expanded certified source: `f3fcb537545c2a454d98db22600346baf54e194e`.
+- GitHub Actions Run #127: `34809167604`.
+- Workflow imported the intended overlay, then pushed the expanded source before verification. Net diff from the prior certified repository source is exactly the 10 intended gameplay/test files; no docs, save-schema file, workflow, package, or gameplay asset drift.
 - Canonical preflight passed **4/4** stages: Engine TypeScript, Test TypeScript, complete regression wall, and production build.
-- Dedicated Phase 8A regression: **25/25**. Established suites remained green, including Phase 7C 42/42 and Integrated Long-Life 105/105.
-- Production build: Vite 7.3.6, **171 modules transformed**. The established >700 kB main-chunk warning remains nonblocking technical debt.
-- Certified source SHA-256: `46efef3174bb53984b67fcf1c1512fdb8a741a65edb37006654e602b21a8253c`.
-- Certified dependency SHA-256: `7c1e03244499adf494b2bb986797e603270624d047eee8bc52e3c48b68364eab`.
+- Dedicated Phase 8B regression: **41/41**. Phase 8A remains **25/25**; Integrated Long-Life remains **105/105**; all established suites remained Green.
+- Production build: Vite 7.3.6, **175 modules transformed**. The map is code-split as `TownMapScreen` (~19.53 kB JS / 6.24 kB gzip plus ~8.20 kB CSS / 2.03 kB gzip). The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `e33c5ca44ec685fd41684f53a5f95a3aa67ea71341b33064fac54eccc665ba3e`.
+- Certified dependency SHA-256: `382c6da9eade13f2d2a3f31692de0ee35f4864808786d116968031dd046f47f6`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified preflight artifact ID `10333602478`, digest `6e65d5df2511792614c00b9e50b5db70e2953e2d5f4fc7964e6fc191a880b77d`.
-- Pages artifact ID `10333582525`, digest `f519a783f900fc860dfb70168b7277d0b65b4c77cb83624ef1d83a0a7162cd02`; Pages deployment reported success.
+- Certified preflight artifact ID `10334276556`, digest `5cc080d07a3246045e6004857ea158f00b16af30af28ee90463be4552d1f4a1f`.
+- Pages artifact ID `10334057076`, digest `dcec92a7398f2ab09dd9d5d18268c47561878db6443b3153f52b95fab8b7f92c`; Pages deployment reported success.
 
 ## Certified Phase 8A — Everthread Setting Foundation
 
@@ -53,22 +54,34 @@ Phase 8A establishes Everthread as the canonical home setting without rewriting 
 - Travel/location copy uses one `locationLabel` projection so Everthread is not rendered as `Everthread, Everthread`.
 - Executable country definitions increase **32 → 33**: Everthread plus the existing 32 real-world travel/emigration destinations and hidden naming-profile sources. Regional name-pool count remains 7.
 
-This is intentionally a foundation, not the map implementation. Do not turn `namePoolCountryId` into a second residence field and do not replace `countryId/city` with a parallel town-state ledger in Phase 8B.
+This setting ownership split remains a compatibility boundary beneath Phase 8B. Do not turn `namePoolCountryId` into a second residence field and do not replace `countryId/city` with a parallel town-state ledger in later map/routing work.
 
-## Approved next slice — Phase 8B: Town Place Registry & 2D Flat Map
+## Certified Phase 8B — Town Place Registry & 2D Flat Map
 
-Create one data-driven place registry and original mobile-first interactive flat map over existing authorities. Place definitions may own stable place IDs, labels/categories, map/layout metadata, visibility/unlock rules, activity tags, and routing metadata. They must **not** own finance, property, careers, relationships, school truth, or action results.
+Phase 8B makes Everthread a first-class, mobile navigation surface without creating a second simulation.
 
-Design first for 360/390/412/430px phones with touch pan, pinch zoom, large targets, bottom sheets, deterministic/RNG-neutral browsing, viewport culling, and progressive disclosure. Keep existing action entry points until later institution-routing parity is proven.
+- `src/data/townPlaces.ts` is the single authored static registry: **24 stable places across 6 districts** on a 1440×1100 map canvas. Every place has a stable ID, label/short label, category, district, description, activity tags, visibility rule, importance, map metadata, and optional routing metadata.
+- Required location families are represented: Central Everthread Bank, dealership, realty/leasing, residential district, mall, diner, park, grocery, school, college, hospital, gym, film studio, modeling agency, speedway, stadium, military base, City Hall, courthouse/public safety/prison, air terminal, business district, and the discoverable Blackline Freight Yard.
+- `TownMapSystem` is a **read-only projection** owner for map discovery/filtering/camera math/culling/semantic view only. It does not mutate simulation truth, consume gameplay RNG, allocate runtime IDs, or persist camera/search/filter/selection state.
+- The Map is a sixth primary mobile tab and `TownMapScreen` lazy-loads separately. Interaction supports touch pan, pinch zoom, wheel zoom, Fit Map, large markers, search/category filters, zoom-based marker/label disclosure, viewport culling, and bottom-sheet place details with no hover dependency.
+- Blackline Freight Yard discovery derives from existing organized-crime participation or meaningful legal state; there is no separate discovered-place ledger.
+- Players who emigrate can still browse Everthread as their hometown projection; the map never rewrites authoritative `countryId/city`.
+- Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
+- Save schema remains **15**. No migration was required.
 
-## Feedback queue snapshot after Run #125 / `25960845…`
+## Approved next slice — Phase 8C: Institution Routing
 
-- Supabase still contains **4 total reports**, matching the 4 already reviewed/resolved reports in the stored checkpoint; no new report row has appeared since the previous review.
-- Newest recorded report receipt remains `2026-09-13 19:51:36.119407+00`.
-- Review checkpoint key `main` was successfully advanced after Run #125 to `2596084575dd4288a0b549dc1a618736280f135b` with reviewed-report count 4.
-- No feedback item currently preempts Phase 8B.
+Route existing mature entry points into believable Everthread places without duplicating mechanics. Bank should route Finance/Credit/Investment; Dealership vehicles/financing; Realty homes/rentals; City Hall civic/company functions; schools Education; Hospital Health; and career landmarks their existing career-world surfaces.
 
-## Phase 7C baseline preserved beneath Phase 8A
+Preserve old/contextual entry points until feature parity is proven. The map remains navigation/projection; engine/system owners remain authoritative for actions and results. Do not begin Player Profile/Personal Inventory (8D) until institution routing is independently certified.
+
+## Feedback queue snapshot after Run #127 / `f3fcb537…`
+
+- Supabase contains **4 total reports and 0 unresolved reports**; no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
+- Review checkpoint key `main` was successfully advanced after Run #127 to `f3fcb537545c2a454d98db22600346baf54e194e` with reviewed-report count 4.
+- No feedback item currently preempts Phase 8C.
+
+## Phase 7C baseline preserved beneath Phase 8B
 
 Phase 7 remains closed. `WorldConditionSystem` remains the sole bounded world-condition owner; ConsequenceSystem remains the sole persistent consequence scheduler; all Phase 6 finance/credit/asset/accounting guarantees and the established family/NPC/career authorities remain intact. Phase 8A changed setting semantics only where required and certified the complete regression wall before becoming baseline.
 

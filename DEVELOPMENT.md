@@ -1,10 +1,10 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-13
+Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 15
-Newest certified expanded gameplay/source: Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`
-Certified gameplay baseline: Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`
+Newest certified expanded gameplay/source: Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`
+Certified gameplay baseline: Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`
 
 ## Product direction
 
@@ -28,23 +28,24 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
-### Phase 8A — Everthread Setting Foundation (CI Green, Run #125)
+### Phase 8B — Town Place Registry & 2D Flat Map (CI Green, Run #127)
 
-Run #125 / `2596084575dd4288a0b549dc1a618736280f135b` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8A regression is **25/25**; the full established wall remains Green; production build transformed **171 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
+Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8B regression is **41/41**; Phase 8A remains 25/25; the full established wall remains Green; production build transformed **175 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
 
 Architecture:
 
-- `countryId/city` remains physical/legal/economic location truth rather than being repurposed as culture or duplicated by a new home ledger.
-- `SettingSystem` owns the schema-14 → 15 setting migration and naming-profile normalization only. It does not own travel, education, finance, careers, estate rules, SocialWorlds, or world-condition domain truth.
-- Everthread is the canonical fictional home jurisdiction/city for player-facing new lives. Real-world country definitions remain available as travel/emigration destinations and hidden naming-profile sources.
-- `namePoolCountryId` is a distinct hidden cultural naming profile for Character/NPC naming semantics. It is not a second residence field.
-- Schema-14 migration moves the protagonist's current local simulation context into Everthread, including NPCs/current active SocialWorlds/current active country conditions tied exactly to that former location, while remote NPCs, archived worlds, resolved condition history, education/career/assets/relationships/timeline history remain intact. Migration is idempotent and consumes no gameplay RNG or runtime IDs.
-- New Life removes player-facing real-country selection. Existing low-level country/name-profile overrides remain available for deterministic scenarios/tests.
-- Travel and dynasty handoff preserve the residence/naming-profile split; later emigration remains durable.
+- `src/data/townPlaces.ts` is the static authored place registry: 24 places across 6 districts. Stable IDs/layout/category/activity metadata live here; simulation results do not.
+- `TownMapSystem` is a read-only map projection/math layer. It derives discovery, search/category filtering, semantic view, camera fitting/constraints, culling, and progressive marker/label visibility without mutating `GameState`, consuming gameplay RNG, or allocating runtime IDs.
+- Map camera, zoom, search, categories, and selection remain component-local UI state and are intentionally absent from save schema 15.
+- `TownMapScreen` is lazy-loaded as the sixth primary tab and provides touch pan, pinch/wheel zoom, Fit Map, large markers, viewport culling, progressive disclosure, and place-detail bottom sheets for 360/390/412/430px-first use.
+- Blackline Freight Yard visibility derives from existing organized-crime/legal state; no parallel discovery ledger exists.
+- A player who emigrates remains physically located by `countryId/city`; browsing the Everthread map does not relocate them.
+- Place routing metadata is descriptive/forward-compatible only in 8B and points to mature existing tabs. It does not execute institution actions or own finance/property/career/education/legal outcomes.
+- Phase 8A remains foundational: Everthread is canonical home and `namePoolCountryId` remains naming culture, never residence.
 
-Post-certification Feedback Inbox review still shows four total reviewed/resolved reports and no new reports. The stored review checkpoint was successfully advanced to the Run #125 expanded source.
+Post-certification Feedback Inbox review shows four total reports and zero unresolved reports, with no new receipts. The stored review checkpoint was advanced to the Run #127 expanded source.
 
-**Exact next slice:** Phase 8B — Town Place Registry & 2D Flat Map. The map/place registry must be a deterministic mobile projection/navigation layer over existing authorities, not a second simulation.
+**Exact next slice:** Phase 8C — Institution Routing. Route existing actions through Everthread places while retaining the existing system owners and contextual/legacy entry points until parity is proven.
 
 ## Closed implementation phase
 

@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`**, save schema **15**. Phase 7 is closed; Phase 8A is certified and Phase 8B is next.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`**, save schema **15**. Phase 7 is closed; Phases 8A and 8B are certified and Phase 8C is next.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last successful stored central review checkpoint: certified **Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`**. The post-certification sweep still found **4 total reports**, matching the **4 already reviewed/resolved** reports; no new report row has appeared since the prior review.
+Last successful stored central review checkpoint: certified **Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`**. The post-certification sweep found **4 total reports and 0 unresolved reports**; no new report row has appeared since the prior review.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
@@ -102,6 +102,6 @@ Last successful stored central review checkpoint: certified **Run #125 / `259608
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
 - Newest recorded report receipt remains **2026-09-13 19:51:36.119407 UTC**.
-- Review-state checkpoint key `main` was successfully advanced on 2026-09-14 UTC to `2596084575dd4288a0b549dc1a618736280f135b` with four reviewed reports.
+- Review-state checkpoint key `main` was successfully advanced on 2026-09-14 UTC to `f3fcb537545c2a454d98db22600346baf54e194e` with four reviewed reports.
 - Player-visible disposition read-back remains certified and deployed.
-- No feedback item currently preempts **Phase 8B — Town Place Registry & 2D Flat Map**.
+- No feedback item currently preempts **Phase 8C — Institution Routing**.

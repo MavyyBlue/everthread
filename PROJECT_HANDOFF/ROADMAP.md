@@ -6,9 +6,9 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 The required post-Phase-7 brainstorm is complete. Mavyy approved the **Living World Program** as the next direction. The detailed authority, player-intent, migration, QA, and slice contract lives in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
 
-Current certified context: **Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`**, save schema **15**. Phase 8A is certified; the exact next slice is **8B Town Place Registry & 2D Flat Map**.
+Current certified context: **Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`**, save schema **15**. Phases 8A and 8B are certified; the exact next slice is **8C Institution Routing**.
 
-1. **Phase 8 — Everthread: Home** — **active.** 8A Everthread Setting Foundation is CI Green in Run #125: Everthread is canonical home, `countryId/city` remains physical/legal/economic truth, and hidden `namePoolCountryId` preserves naming diversity. **Next: 8B Town Place Registry & 2D Flat Map.** Later 8C routes institutions and 8D adds player profile/personal inventory only after their prerequisites certify.
+1. **Phase 8 — Everthread: Home** — **active.** 8A Everthread Setting Foundation is CI Green in Run #125. 8B Town Place Registry & 2D Flat Map is CI Green in Run #127 with 24 places across 6 districts, deterministic read-only projection, mobile pan/zoom/filter/culling, and no save-schema change. **Next: 8C Institution Routing.** 8D Player Profile/Personal Inventory follows only after routing parity certifies.
 2. **Phase 9 — Shared Lives** — persistent NPC interests/preferences; one shared-experience evaluator; childhood/youth social life; dates and romantic momentum; actual inventory gifts; cross-world chemistry through existing authorities.
 3. **Phase 10 — Living Everthread** — residential/workplace projections, bounded generational place memory, and a living map that reflects meaningful current/dynasty context without becoming a second simulation.
 
@@ -16,7 +16,7 @@ Current certified context: **Run #125 / `2596084575dd4288a0b549dc1a618736280f135
 
 ## Closed macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, 6, and **7 are closed** and remain preserved under the active Phase 8 baseline. Run #91 established canonical pre-deployment certification; Run #122 closed Phase 7 on schema 14. Run #125 is now the certified gameplay/repository baseline on schema **15** after Phase 8A. The post-Phase-7 planning pause was honored and the approved Living World Program is active.
+Phases 4, 5, 6, and **7 are closed** and remain preserved under the active Phase 8 baseline. Run #91 established canonical pre-deployment certification; Run #122 closed Phase 7 on schema 14. Run #127 is now the certified gameplay/repository baseline on schema **15** after Phase 8B. The post-Phase-7 planning pause was honored and the approved Living World Program is active.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
