@@ -7,6 +7,10 @@ Source of truth: executable definitions under `src/data/`; use `npm run content:
 
 Certified Phase 9C adds **11 curated youth-social plan definitions** for ages 3–17. These plans are contextual presentation over real existing relationships and the shared-experience evaluator, not new event rows or a parallel youth simulation. The canonical shared-experience activity registry expands **10 → 12** with two genuinely youth-bounded activities: **Sleepover** and **School Social**. The ordinary/random event library remains **691**; town places remain **24**; routed institution services remain **28**; personal inventory items remain **24**; and the shared NPC preference vocabulary remains **38 tags**.
 
+## Phase 9D romantic-date content note
+
+Certified Phase 9D adds **8 authored romantic date plans** spanning Weaver Park, Crossroads Mall, Nightjar Diner, Threadwell Residential, Pulseworks Gym, and Everthread Stadium. These plans reuse the existing shared-experience activity/place registry and 38-tag preference vocabulary; they are not new random events or a second date-outcome system. The shared-experience activity registry remains **12**, youth-social plans remain **11**, town places remain **24**, routed institution services remain **28**, personal inventory items remain **24**, and the ordinary/random event library remains **691**.
+
 ## Phase 9B shared-experience content note
 
 Certified Phase 9B adds **10 authored shared-experience activity definitions** spanning Weaver Park, Crossroads Mall, Nightjar Diner, Threadwell Residential, Pulseworks Gym, and Everthread Stadium. These are reusable activity/context definitions for the single shared-experience evaluator, not random events or duplicate relationship mechanics. The ordinary/random event library remains **691**; town places remain **24**; routed institution services remain **28**; personal inventory items remain **24**; and the shared NPC preference vocabulary remains **38 tags**.
@@ -99,6 +103,8 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Personal inventory item definitions | 24 | — | Phase 8D ordinary non-financial possessions / future giftable items |
 | NPC preference tags | 38 | — | Phase 9A shared vocabulary for intrinsic tastes, gifts, and future shared experiences |
 | Shared experience activity definitions | 12 | — | Phase 9B foundation + Phase 9C youth-bounded Sleepover and School Social |
+| Youth-social plan definitions | 11 | — | Phase 9C contextual plans over existing relationships/shared experiences |
+| Romantic date plan definitions | 8 | — | Phase 9D authored date contexts reusing existing places/activities |
 | Regional name pools | 7 | hundreds of names per region | Expanded; country/subregion depth still useful |
 | First names per regional pool | 120 | hundreds/region | 6× increase; 840 total active first-name entries |
 | Last names per regional pool | 120 | hundreds/region | 6× increase; 840 total surname entries |

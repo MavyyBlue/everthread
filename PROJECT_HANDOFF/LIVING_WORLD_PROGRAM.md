@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A, 9B, and 9C certified and 9D next.**
+Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A, 9B, 9C, and 9D certified and 9E next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`;
+- newest certified gameplay/source: Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -18,7 +18,8 @@ Current certified program baseline:
 - Phase 9A: **certified / closed**;
 - Phase 9B: **certified / closed**;
 - Phase 9C: **certified / closed**;
-- next slice: **Phase 9D — Dating & Romantic Momentum**.
+- Phase 9D: **certified / closed**;
+- next slice: **Phase 9E — Real Gifts**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -132,11 +133,17 @@ The shared activity registry expands **10 → 12** with youth-bounded `sleepover
 
 Childhood now has a real social action surface without weakening adult relationship rules or creating a second social simulation.
 
-### Phase 9D — Dating & Romantic Momentum
+### Phase 9D — Dating & Romantic Momentum — CERTIFIED Run #146
 
-Separate **Ask on Date** from **Ask Out / Become Partners**. An eligible NPC may accept or reject an individual date. If accepted, the player chooses an appropriate location/activity and receives a coherent date result. Successful dates build bounded hidden romantic momentum/history. Roughly three genuinely successful dates can unlock the attempt to become official partners, but never guarantee acceptance. Rejection does not automatically eliminate future possibility.
+Certified in Run #146 on expanded source `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`, save schema **17**, dedicated regression **61/61**, canonical preflight 4/4, local deep preflight 6/6, and a 194-module production build.
 
-Preserve existing age, orientation, commitment, attraction, household, family-planning, breakup/divorce/reconciliation, and exact-NPC rules.
+Dating is now intentionally distinct from partnership. **Ask on Date** may be accepted or rejected; an accepted invitation persists on the existing Relationship until completed or cancelled. The player then chooses among **8 authored date plans** that reuse certified Everthread places, preference tags, and the single shared-experience evaluator. Read-only date planning consumes no gameplay RNG/runtime IDs.
+
+Completed dates append to an **8-entry bounded history on the existing Relationship record**. Hidden romantic momentum is derived from those outcome bands rather than stored as a second score: good/great dates build it, rough/awful dates can reduce it, and reaching 3 momentum only unlocks the attempt to **Become Partners**. The milestone itself remains probabilistic.
+
+`RelationshipSystem` remains authoritative for invitation/date/milestone mutation, relationship score, hidden opinion, attraction, happiness, exact-target timeline, memories, action economy, and RNG. Existing age/orientation/current-commitment rules remain intact, including estranged living commitments; temporary teen age-boundary incompatibility does not trap a pending date, and invariants remove dead-target/malformed ghost plans. People and AI semantic surfaces use the same production actions.
+
+The long-life harness now follows the real multi-date courtship contract without any test-only romance shortcut. Deep preflight's 1,000-life run completed with 0 anomalies and bounded population.
 
 ### Phase 9E — Real Gifts
 
@@ -202,4 +209,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 9D — Dating & Romantic Momentum** from certified Run #144 / schema-17 Phase 9C and the certified documentation baseline that follows it. Preserve the established age, orientation, attraction, commitment, household, family-planning, breakup/divorce/reconciliation, and exact-NPC rules. Separate individual **Ask on Date** attempts from **Ask Out / Become Partners**; accepted dates should reuse the single shared-experience evaluator and build bounded hidden romantic momentum/history through existing relationship authority. Roughly three genuinely successful dates may unlock the attempt to become official partners, but must never guarantee acceptance. Do not fork a second romance score, relationship graph, date-outcome engine, or memory ledger.
+Begin **Phase 9E — Real Gifts** from certified Run #146 / schema-17 Phase 9D and the certified documentation baseline that follows it. Reuse Phase 8D `PersonalInventorySystem` as the sole owner of ordinary owned items, Phase 9A preference knowledge, the Phase 9B shared-experience evaluation path where appropriate, and `RelationshipSystem` for relationship/opinion/memory consequences. The player chooses an exact owned item; transfer/removal must occur exactly once only after a successful committed gift action. Show concise reaction/approval without exposing hidden preference weights. Do not create a parallel financial asset ledger or large durable NPC inventory unless possession later gains independent gameplay value.

@@ -1,3 +1,26 @@
+## Phase 9D — Dating & Romantic Momentum — CI Green Run #146 — 2026-09-14
+
+### Added / changed
+
+- Separated **Ask on Date** from **Become Partners**. Eligible exact NPCs can accept or reject an invitation; accepted plans persist until completed/cancelled, then the player chooses one of **8 authored date plans** that reuse existing Everthread places and the single shared-experience evaluator.
+- Added bounded romance metadata to the existing Relationship record: pending invitation context plus at most **8** completed-date entries. Romantic momentum is derived from real date outcome bands rather than stored as a second score; roughly three genuinely strong dates unlock the partnership attempt, while poor dates can reduce momentum.
+- Preserved established dating/commitment authority: age 14+, teen/adult separation, orientation compatibility, attraction/relationship context, exact-NPC targeting, existing-current-commitment exclusivity (including estranged living commitments), and the existing proposal/marriage/breakup/divorce/reconciliation/family-planning path.
+- Pending dates remain visible/cancellable during temporary age incompatibility; invariant repair removes malformed or dead-target ghost pending plans. Read-only projections consume no gameplay RNG/runtime IDs.
+- People Threadspace now provides the mobile date chooser, approval/prose result, pending-date recovery controls, and gated **Become Partners** action. AI testbench semantics execute the same production actions.
+- Updated the synthetic long-life player to follow the real multi-date courtship contract rather than assuming the old one-click partnership flow; no simulation-only acceptance or momentum shortcut exists.
+- Save schema remains **17**; no second romance score, relationship graph, date outcome engine, or memory ledger was added.
+
+### Certification
+
+- GitHub Actions Run #146 (`34905053500`) certified expanded source `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` from upload wrapper `aa6cd1fc69f4df9430a88baaa9331d5b279e556f`. Net diff from the prior certified repository source is exactly **21 intended Phase 9D source/test/UI files**; workflow import reports 22 changes only because it removes `everthread-source.zip`.
+- Canonical preflight PASS **4/4**; Phase 9D **61/61**; AI testbench **52/52**; base **82/82**; People **57/57**; Relationship Microcopy **66/66**; Phase 9B **53/53**; Phase 9C **40/40**; Dynasty **64/64**; Integrated Long-Life **105/105**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Local deep preflight PASS **6/6** including content audit and a 1,000-life run with **0 anomalies / 0 forced terminal deaths**; marriage 63.0% and children 0.31/life after calibrating the simulation harness to use real date continuation rather than a legacy one-click courtship assumption.
+- Production build PASS with Vite 7.3.6 at **194 modules**. People remains lazy/code-split at ~35.82 kB JS / 11.25 kB gzip; main JS ~1,225.97 kB / 347.09 kB gzip; established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `b2bc71aab5c827f50a8c7b9caab8ebace55b9c567ffd975803ecd99472106be5`; dependency SHA-256 `18baf98fbbf620280e6ef062e85cb695484bf7c03a6fde1df15ea01fa82d9be0`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact `10372681543` (`81a91416305ef0c3b293c7c1dd679319df4d4245ba5f43978f3b80c4e1f17c55`); Pages artifact `10372740361` (`20878aec96f98fcafb45535fbdf206a791f28bd4578583c4f594837240248610`); Pages deployment reported success.
+- Fresh Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` at `2026-09-14 22:39:43.562077+00`.
+- **Phase 9D is CLOSED / CERTIFIED. Next slice:** Phase 9E — Real Gifts.
+
 # Everthread Changelog
 
 ## Phase 9C — Childhood & Youth Social Life — CI Green Run #144 — 2026-09-14

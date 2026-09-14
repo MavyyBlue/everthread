@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`
-Certified gameplay baseline: Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`
+Newest certified expanded gameplay/source: Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`
+Certified gameplay baseline: Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`
 
 ## Product direction
 
@@ -28,6 +28,26 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
+### Phase 9D — Dating & Romantic Momentum (CI Green Run #146)
+
+Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9D**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- Dating is now a real two-step flow: **Ask on Date** may be accepted/rejected; an accepted invitation persists on the existing `Relationship` until the player completes or cancels it. The player then chooses one of **8 authored date plans** across existing Everthread places/activities.
+- `RomanticDateSystem` is projection/eligibility logic over existing NPC, Relationship, orientation, commitment, town-place, and shared-experience truth. `RelationshipSystem` remains the mutation authority for invitations, completed date consequences, relationship score/opinion/happiness, attraction, exact-target timeline, memories, action economy, and gameplay RNG.
+- Bounded romantic history lives on the existing Relationship record: at most **8** date entries. Hidden momentum is derived from outcome bands (great/good help, rough/awful can subtract); **3 momentum** unlocks the *attempt* to **Become Partners**, but acceptance remains probabilistic and never guaranteed.
+- Existing certified romance rules stay intact: minimum dating age 14, teen↔teen/adult↔adult boundaries, orientation compatibility, exact-NPC targeting, current commitment exclusivity including estranged living partners/fiancés/spouses, and the established proposal/marriage/breakup/divorce/reconciliation/family-planning owners.
+- Pending accepted dates survive temporary age incompatibility so the player can still see/cancel them; invariant repair removes malformed/dead-target ghost pending dates. Browsing/options are read-only and RNG/runtime-ID neutral.
+- People Threadspace exposes the new mobile Dating surface, last-date approval/prose, pending-date recovery/cancel controls, and **Become Partners** only when momentum is ready. AI semantic parity uses the same production engine path.
+- Save schema remains **17**; no migration or second romance score/graph/date engine/memory ledger was introduced.
+- Dedicated Phase 9D regression is **61/61**. Phase 9B remains **53/53**, Phase 9C **40/40**, People **57/57**, AI interaction testbench **52/52**, Relationship Microcopy **66/66**, Dynasty **64/64**, Integrated Long-Life **105/105**, base **82/82**, minigames **19/19**, and feedback **20/20 + 23/23**; the complete established wall remained Green.
+- Local deep preflight also passed **6/6**, including content audit and a **1,000-life simulation** with 0 anomalies / 0 forced terminal deaths; average/median lifespan 79.3/82.0, married 63.0%, children 0.31/life, crime 6.8%, convicted 6.1%, fame 25+ 5.1%, and bounded NPC peak population (125 average / 629 max).
+- Production build transformed **194 modules**. People remains lazy/code-split at ~35.82 kB JS / 11.25 kB gzip; main JS is ~1,225.97 kB / 347.09 kB gzip; the established main-chunk warning remains nonblocking.
+- Certified source SHA-256 `b2bc71aab5c827f50a8c7b9caab8ebace55b9c567ffd975803ecd99472106be5`; dependency SHA-256 `18baf98fbbf620280e6ef062e85cb695484bf7c03a6fde1df15ea01fa82d9be0`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact `10372681543` (`81a91416305ef0c3b293c7c1dd679319df4d4245ba5f43978f3b80c4e1f17c55`); Pages artifact `10372740361` (`20878aec96f98fcafb45535fbdf206a791f28bd4578583c4f594837240248610`).
+- Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the review checkpoint to `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` at `2026-09-14 22:39:43.562077+00`.
+
+**Exact next slice:** Phase 9E — Real Gifts. Reuse Phase 8D personal inventory and the certified shared-experience/preference stack; transfer the exact owned item once, evaluate it against the exact NPC, and do not create a parallel NPC inventory unless later gameplay truly needs durable possession.
+
 ### Phase 9C — Childhood & Youth Social Life (CI Green Run #144)
 
 Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9C**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
@@ -44,7 +64,7 @@ Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` is the active certified ga
 - Certified preflight artifact `10365740616` (`21efe389a43afb8950185182edc7ea2e5e2897b2f74aa4617499531f993fa5f7`); Pages artifact `10365790597` (`85d5a26d84d9e086180eaa15c2ea8a1212fee786ce53bd503e9bad49c4729082`).
 - Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and successfully advanced the review checkpoint to `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` at `2026-09-14 19:32:14.421886+00`.
 
-**Exact next slice:** Phase 9D — Dating & Romantic Momentum. Reuse the certified shared-experience evaluator for individual dates while preserving RelationshipSystem as the romance mutation authority; do not create a second romance score or date engine.
+**Historical handoff from 9C:** Phase 9D — Dating & Romantic Momentum, now certified in Run #146.
 
 ### Phase 9B — Shared Experience Foundation (CI Green Run #141)
 

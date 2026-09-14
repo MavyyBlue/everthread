@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #144** (`34887219411`) on expanded source **`5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`**. This is the certified Phase 9C Childhood & Youth Social Life baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #144 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #146** (`34905053500`) on expanded source **`1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`**. This is the certified Phase 9D Dating & Romantic Momentum baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #146 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -17,11 +17,12 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #144**
 - Phase 9A — NPC Interests & Preferences: **CERTIFIED / CLOSED**
 - Phase 9B — Shared Experience Foundation: **CERTIFIED / CLOSED**
 - Phase 9C — Childhood & Youth Social Life: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 9D — Dating & Romantic Momentum**
+- Phase 9D — Dating & Romantic Momentum: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 9E — Real Gifts**
 - Phase 9 — Shared Lives: **ACTIVE**
 - Planned Phase 10: **Living Everthread**
-- Fresh post-Run-#144 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
-- The stored review checkpoint successfully advanced to **`5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`** at **`2026-09-14 19:32:14.421886+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified 9C gameplay baseline.
+- Fresh post-Run-#146 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
+- The stored review checkpoint successfully advanced to **`1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`** at **`2026-09-14 22:39:43.562077+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified 9D gameplay baseline.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -33,7 +34,29 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #144 — Phase 9C Childhood & Youth Social Life
+## Newest certified gameplay/source — Run #146 — Phase 9D Dating & Romantic Momentum
+
+- Upload wrapper: `aa6cd1fc69f4df9430a88baaa9331d5b279e556f`.
+- Expanded certified source: `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`.
+- GitHub Actions Run #146: `34905053500`.
+- Net diff from the prior certified repository source is exactly **21 intended Phase 9D source/test/UI files**. Workflow import reports 22 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, or save-schema drift is part of the committed gameplay diff.
+- Save schema remains **17**. Phase 9D separates **Ask on Date** from **Become Partners** without creating a second romance score or graph.
+- **8 authored date plans** reuse existing Everthread places and shared-experience activities. Accepted invitations persist on the existing Relationship until completion/cancellation. Completed dates write a bounded **8-entry** relationship-owned date history; hidden romantic momentum is derived from outcome bands, with **3 momentum** required before Become Partners can even be attempted. Partnership acceptance remains probabilistic.
+- `RomanticDateSystem` owns projection/availability only. `RelationshipSystem` owns invitations, committed date mutation, score/opinion/happiness/attraction, exact-target timeline, memories, action economy, and gameplay RNG.
+- Existing age/orientation/commitment rules are preserved, including teen↔teen/adult↔adult boundaries and estranged living commitments counting as current commitments. Pending teen dates remain visible/cancellable across temporary age incompatibility; invariant repair removes dead-target/malformed ghost plans.
+- People Threadspace provides the mobile date chooser, approval result, pending recovery/cancel controls, and gated Become Partners action. AI semantics use the same engine actions.
+- Phase 9D regression **61/61**; canonical preflight **4/4**. Base **82/82**; People **57/57**; AI **52/52**; Relationship Microcopy **66/66**; Dynasty **64/64**; Phase 9A **45/45**; Phase 9B **53/53**; Phase 9C **40/40**; Integrated Long-Life **105/105**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Local deep preflight **6/6** included content audit and a 1,000-life simulation with **0 anomalies / 0 forced terminal deaths**; average/median lifespan 79.3/82.0, married 63.0%, children 0.31/life, and bounded NPC population.
+- Production build: Vite 7.3.6, **194 modules transformed**. People remains lazy/code-split at ~35.82 kB JS / 11.25 kB gzip; main JS ~1,225.97 kB / 347.09 kB gzip. Established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `b2bc71aab5c827f50a8c7b9caab8ebace55b9c567ffd975803ecd99472106be5`.
+- Certified dependency SHA-256: `18baf98fbbf620280e6ef062e85cb695484bf7c03a6fde1df15ea01fa82d9be0`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10372681543`, digest `81a91416305ef0c3b293c7c1dd679319df4d4245ba5f43978f3b80c4e1f17c55`.
+- Pages artifact ID `10372740361`, digest `20878aec96f98fcafb45535fbdf206a791f28bd4578583c4f594837240248610`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` at `2026-09-14 22:39:43.562077+00`.
+- **Phase 9D is CLOSED / CERTIFIED. Exact next slice: Phase 9E — Real Gifts.**
+
+## Prior certified gameplay/source — Run #144 — Phase 9C Childhood & Youth Social Life
 
 - Upload wrapper: `ef1d386c5baab2e964f2e8f00cabe8d4e6264ab7`.
 - Expanded certified source: `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`.
@@ -52,7 +75,7 @@ Candidate save schema: none
 - Certified preflight artifact ID `10365740616`, digest `21efe389a43afb8950185182edc7ea2e5e2897b2f74aa4617499531f993fa5f7`.
 - Pages artifact ID `10365790597`, digest `85d5a26d84d9e086180eaa15c2ea8a1212fee786ce53bd503e9bad49c4729082`; Pages deployment reported success.
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and successfully advanced the stored review checkpoint to `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` at `2026-09-14 19:32:14.421886+00`.
-- **Phase 9C is CLOSED / CERTIFIED. Exact next slice: Phase 9D — Dating & Romantic Momentum.**
+- **Phase 9C is CLOSED / CERTIFIED. It was succeeded by certified Phase 9D in Run #146.**
 
 ## Newest certified gameplay/source — Run #141 — Phase 9B Shared Experience Foundation
 
@@ -221,13 +244,19 @@ Phase 8B makes Everthread a first-class, mobile navigation surface without creat
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
 - Save schema remains **15**. No migration was required.
 
-## Approved next slice — Phase 9C: Childhood & Youth Social Life
+## Historical Phase 9C implementation contract — now certified
 
 Phase 9B is certified. Reuse the single shared-experience evaluator for age-appropriate childhood and youth social life: play dates, sleepovers, parks, home visits, mall/game-store/arcade-style outings, school friends, siblings, and related social events. RelationshipSystem stays authoritative for relationship consequences, Phase 9A stays authoritative for learned preferences, NPC memory stays on the NPC, and place/location truth remains with the existing Everthread/location owners.
 
-Do not create a youth-only relationship score, shadow social ledger, duplicate friend state, or a second experience evaluator. Do not jump ahead to Phase 9D dating momentum, Phase 9E inventory gifts, or Phase 9F cross-world chemistry until 9C is independently certified and synchronized.
+Do not create a youth-only relationship score, shadow social ledger, duplicate friend state, or a second experience evaluator. Phase 9C is now certified and closed.
 
-## Feedback queue snapshot after Run #141 / `f1be1e6…`
+### Approved next slice — Phase 9E Real Gifts
+
+Reuse `PersonalInventorySystem` as the sole ordinary-item ownership authority, Phase 9A preference knowledge, and the existing relationship/shared-experience consequence stack. The player must choose an exact owned personal item; a committed gift must remove/transfer that exact instance once and only once. Failed/stale/ineligible gift attempts must not lose or duplicate inventory. Keep valuable collectibles/assets with their existing Assets/Estate authorities. Do not create a broad durable NPC inventory merely to hold gifts unless later gameplay gives NPC possession independent meaning. Test exact-instance transfer, stale/dead NPCs, insufficient/duplicate ownership, preferences/aversions, bounded memories, action economy, rewind/dynasty semantics, determinism, and mobile People/Profile UX before any 9F work.
+
+Do not begin Phase 9F Cross-World Chemistry until 9E is independently certified and synchronized.
+
+## Historical feedback snapshot after Run #141 / `f1be1e6…`
 
 - Fresh Supabase read contains **4 report rows / 0 unresolved by `triage_status`**; no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
 - The attempted post-Run-#141 checkpoint write was blocked by connector safety. `everthread_feedback_review_state.main` therefore still points to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4.
