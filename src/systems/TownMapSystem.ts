@@ -107,7 +107,7 @@ export function townMapSemanticView(state:GameState){
     hiddenPlaceCount:projection.hiddenPlaceCount,
     places:projection.places.map(place=>({
       id:place.id,label:place.label,category:place.category,districtId:place.districtId,
-      x:place.map.x,y:place.map.y,activityTags:[...place.activityTags],route:place.route?{...place.route}:undefined,
+      x:place.map.x,y:place.map.y,activityTags:[...place.activityTags],routes:place.routes?.map(route=>({...route})),
     })),
   };
 }

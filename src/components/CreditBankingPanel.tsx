@@ -8,16 +8,17 @@ import { paymentSummary } from '../systems/PaymentSystem';
 import { getBankruptcyDecision, getPersonalLoanOffers } from '../systems/PersonalBorrowingSystem';
 import { personalLoanProductById } from '../data/personalLoans';
 import { exactMoney, formatMoney } from '../core/format';
+import type { InstitutionBankingView } from '../core/institutionRouting';
 
 const money=(value:number)=>formatMoney(Math.max(0,value));
 const pct=(value:number)=>`${(value*100).toFixed(value*100%1?1:0)}%`;
 
-export function CreditBankingPanel({state,onResult,onClose}:{state:GameState;onResult:(result:EngineResult)=>void;onClose:()=>void}){
+export function CreditBankingPanel({state,onResult,onClose,initialView}:{state:GameState;onResult:(result:EngineResult)=>void;onClose:()=>void;initialView?:InstitutionBankingView}){
   const hasAccounts=state.finances.credit.accounts.some(account=>account.status==='open');
-  const[tab,setTab]=useState<'overview'|'accounts'|'offers'|'borrowing'|'history'>(hasAccounts?'overview':'offers');
+  const[tab,setTab]=useState<'overview'|'accounts'|'offers'|'borrowing'|'history'>(initialView==='overview'?'overview':hasAccounts?'overview':'offers');
   const[selectedProductId,setSelectedProductId]=useState<string>();
   const[selectedAccountId,setSelectedAccountId]=useState<string>();
-  const[showPayments,setShowPayments]=useState(false);
+  const[showPayments,setShowPayments]=useState(initialView==='payments');
   const[amount,setAmount]=useState(50);
   const profile=getCreditProfile(state);const offers=getCreditOffers(state);const selectedOffer=selectedProductId?offers.find(offer=>offer.product.id===selectedProductId):undefined;
   const openAccounts=state.finances.credit.accounts.filter(account=>account.status==='open');const selectedAccount=selectedAccountId?openAccounts.find(account=>account.id===selectedAccountId):undefined;

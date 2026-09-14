@@ -18,7 +18,7 @@ import townMapArtwork from '../assets/everthread-town-map.png';
 import './TownMapScreen.css';
 
 type PointerPoint={x:number;y:number};
-export default function TownMapScreen({state}:{state:GameState}){
+export default function TownMapScreen({state,onNavigate,initialSelectedId}:{state:GameState;onNavigate:(placeId:string,serviceId:string)=>void;initialSelectedId?:string}){
   const viewportRef=useRef<HTMLDivElement|null>(null);
   const pointersRef=useRef(new Map<number,PointerPoint>());
   const gestureRef=useRef<{lastSingle?:PointerPoint;distance?:number;midpoint?:PointerPoint}>({});
@@ -28,7 +28,7 @@ export default function TownMapScreen({state}:{state:GameState}){
   const[panelOpen,setPanelOpen]=useState(false);
   const[query,setQuery]=useState('');
   const[categories,setCategories]=useState<TownPlaceCategory[]>(TOWN_PLACE_CATEGORIES.map(item=>item.id));
-  const[selectedId,setSelectedId]=useState<string|undefined>();
+  const[selectedId,setSelectedId]=useState<string|undefined>(initialSelectedId);
 
   const projection=useMemo(()=>buildTownMapProjection(state,{query,categories}),[state,query,categories]);
   const selected=TOWN_PLACES.find(place=>place.id===selectedId);
@@ -111,8 +111,7 @@ export default function TownMapScreen({state}:{state:GameState}){
         <p className="eyebrow">{TOWN_PLACE_CATEGORIES.find(item=>item.id===selected.category)?.label} · {TOWN_DISTRICTS.find(item=>item.id===selected.districtId)?.label}</p>
         <h2>{selected.label}</h2><p>{selected.description}</p>
         <div className="town-place-tags">{selected.activityTags.map(tag=><span key={tag}>{tag}</span>)}</div>
-        {selected.route&&<div className="town-place-route"><small>Related existing screen</small><strong>{selected.route.legacyLabel}</strong><p>The map is read-only in Phase 8B. Institution routing arrives in Phase 8C, so related actions stay on their established screens for now.</p></div>}
-        {!selected.route&&<div className="town-place-route"><small>Map landmark</small><strong>Place projection only</strong><p>This location does not own simulation state. Later phases can connect experiences here through the systems that already own them.</p></div>}
+        {selected.routes?.length?<div className="town-place-services"><small>Available here</small><div className="town-place-service-list">{selected.routes.map(route=><button key={route.id} onClick={()=>onNavigate(selected.id,route.id)}><span><strong>{route.label}</strong><small>{route.description}</small></span><b aria-hidden="true">›</b></button>)}</div><p>These open established Everthread screens. The destination system still owns eligibility, costs, limits, and outcomes.</p></div>:<div className="town-place-route"><small>Map landmark</small><strong>No routed mechanic yet</strong><p>This place remains part of Everthread without inventing a duplicate or fake system. Later world-life phases can add experiences when an authoritative owner exists.</p></div>}
       </div>}
     </BottomSheet>
   </main>;

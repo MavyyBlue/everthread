@@ -35,8 +35,8 @@ export function runPhase8BTownMapRegression(){
   verify(TOWN_PLACES.filter(place=>place.category==='justice').length>=3,'9 civic justice must include multiple distinct facilities plus prison coverage');
   verify(TOWN_PLACES.some(place=>place.visibility==='underworld_discovery'),'10 the appropriate underworld-career location must be discoverable rather than universally advertised');
   verify(TOWN_PLACES.every(place=>place.activityTags.length>0),'11 every place must expose data-driven activity tags for later shared-experience/routing work');
-  const matureRouteTabs=new Set(['life','people','activities','career','assets']);
-  verify(TOWN_PLACES.filter(place=>place.route).every(place=>Boolean(place.route&&matureRouteTabs.has(place.route.tab))),'12 routing metadata must point only at mature existing screens, never create a map-owned gameplay route');
+  const routedServices=TOWN_PLACES.flatMap(place=>place.routes??[]);
+  verify(routedServices.every(route=>Boolean(route.id&&route.label&&route.description&&route.destination)),'12 routing metadata must remain authored service metadata and never embed map-owned gameplay actions');
 
   const state=createNewGame({seed:'phase8b-map'});
   verify(state.saveVersion===CURRENT_SAVE_VERSION&&CURRENT_SAVE_VERSION===15,'13 Phase 8B must not add durable save state or bump schema 15');
