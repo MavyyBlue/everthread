@@ -2,19 +2,20 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified gameplay/source baseline is **GitHub Actions Run #117** (`34783290659`) on expanded source **`9822a31df84197ea700ebd890bf0f68cb716637b`**.
+The newest certified gameplay/source baseline is **GitHub Actions Run #118** (`34792171294`) on expanded source **`a4d04523e18128044c00f960f6db5fcd306a8237`**.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **13**
 - Current macro phase: **Phase 7 — Persistent World Consequences**
 - Phase 7A — Persistent Consequence Foundation: **CI Green, certified, deployed**
-- Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories: **CI Green, certified, deployed**
+- Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories: **CI Green, certified, deployed in Run #115**
 - Progressive-disclosure feedback correction: **CI Green, certified, deployed in Run #117**
-- Supabase Feedback Inbox: **live; reviewed against Run #117; 0 unresolved reports**
-- Active gameplay candidate: **Phase 7B2 — Ownership & Workplace Echoes**
+- Phase 7B2 — Ownership & Workplace Echoes: **CI Green, certified, deployed in Run #118**
+- Supabase Feedback Inbox: **live; reviewed against Run #118; 0 unresolved reports**
+- Next planned gameplay slice: **Phase 7B special-career long-tail echoes**
 - Activity-specific minigames remain established historical work, not the current implementation target.
 
-If memory or an older handoff conflicts with this status, the certified repository wins. Use Run #117 / `9822a31d…` as the implementation baseline. Phase 7B2 is local candidate work only until canonical GitHub Actions certifies its expanded source.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Use Run #118 / `a4d04523…` as the implementation baseline. Phase 7B2 is certified; the next Phase 7B slice should extend special-career consequences through the same exact-target scheduler pattern rather than adding parallel story or career state.
 
 Last handoff synchronization: 2026-09-13
 Repository: `MavyyBlue/everthread`
@@ -22,46 +23,41 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `13`
 
-## Newest certified expanded source — Run #117
+## Newest certified expanded source — Run #118
 
-- Upload wrapper: `729167619b4ab74056a6b3f9806db6f9b88d6149`.
-- Expanded certified source: `9822a31df84197ea700ebd890bf0f68cb716637b`.
-- Canonical preflight green: both TypeScript gates, complete regression wall, Progressive Disclosure 25/25, Phase 7B1 33/33, Integrated Long-Life 105/105, Phase 7A 36/36, 168-module production build, certified restore smoke, artifact publication, and Pages deployment.
-- Certified source SHA-256: `f2fa8f09e292e46b704e2f2c37a3a1e7b045e28bdfe5a9fcb5e9dcd211213c5f`.
-- Certified dependency SHA-256: `856bae49f4e6b469f4e2d85d031f218c38d6dbdc909ef19fc13bcc23244b9579`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact ID `10325856281`, digest `7c34b453461c5c6286efc44a8a3959e4601691b077be1fe300b96863aadfce0d`.
-- Pages artifact ID `10325846256`, digest `0bedf7dd068fad6ae217142a9cf69c1d8de2d38e53776f764c743cf696373d99`; deployment reported success.
-- `ET-20260913-BE8649B9` is resolved against this exact source/run. Fresh Supabase review: **0 unresolved reports**.
+- Upload wrapper: `84f1814b46df253e1e00520ed21c12e2e0608a43`.
+- Expanded certified source: `a4d04523e18128044c00f960f6db5fcd306a8237`.
+- GitHub Actions Run #118 (`34792171294`) certified Phase 7B2 — Ownership & Workplace Echoes.
+- Canonical preflight passed both TypeScript gates, the complete regression wall, Phase 7B2 35/35, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Progressive Disclosure 25/25, Random-event Coherence 77/77, both feedback suites, and the **168-module** production build.
+- Certified source SHA-256: `bba33e3f10e6d4a81e321acbd9aad5051f9092ac4c68e220e613bb62a4be5075`.
+- Certified dependency SHA-256: `e88590934865025dcb26987fa254cefa18c346f022b94e0378933752e076bee1`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10328692946`, digest `3f49ce6df32cedcb03f20b39ed547bb0e2c5420ebd83498c81306109638b8f58`.
+- Pages artifact ID `10328503412`, digest `6eeb415d39319542a382c563b914390a16071e9e1d3d2cf50e724d55325dc86c`; deployment reported success.
 
-## Phase 7A / 7B1 certified boundaries
+## Phase 7A / 7B1 / 7B2 certified boundaries
 
-`state.delayedEvents` remains the single active consequence queue. `ConsequenceSystem` owns deterministic scheduling, priority, exact target refs, validity/cancellation, dedupe, cooldown ages, and bounded history. `SystemicStorySystem` is stateless request glue only. `pendingEvent` remains the one required player-facing gate. Random event definitions remain exactly **691**. Save schema is **13**.
+- `state.delayedEvents` remains the one active consequence queue; `ConsequenceSystem` owns scheduling, arbitration, dedupe, exact-target validity/cancellation, cooldown ages, and bounded completion/cancellation history.
+- `SystemicStorySystem` is a stateless request bridge only. It owns no relationship, NPC, school, property, business, workplace, or career truth.
+- Phase 7B1 remains certified at 33/33; Phase 7B2 is certified at 35/35.
+- Save schema remains 13 and scheduler/story bookkeeping consumes no gameplay RNG.
+- The ordinary random-event library remains exactly 691 definitions.
 
-Phase 7B1 remains five certified action-driven stories: parenting presence, school conduct, friend argument, reconciliation, and marriage expectations. Exact targets persist; invalid targets cancel rather than retarget. Dedicated 7B1 regression remains **33/33**.
+## Phase 7B2 — Ownership & Workplace Echoes — certified
 
-## Active candidate — Phase 7B2 Ownership & Workplace Echoes
+Five real player actions now request exact multi-year follow-ups through the certified scheduler: property renovation, business founding, business product launch, manager feedback, and a formal coworker concern. Exact property/business/SocialWorld/NPC targets remain owned by their existing systems. Sold or missing properties cancel rather than retarget; archived workplace worlds remain valid history where the exact world/person still exists; dead or missing people cancel deterministically. Property outcomes change exact condition/value, business outcomes change exact demand/reputation, and workplace/NPC outcomes reuse existing authorities.
 
-Five additional action-driven stories extend the same scheduler pattern:
+Canonical validation: Phase 7B2 **35/35**, both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, feedback suites, certified restore smoke, and production build at **168 modules**. Save schema remains 13, scheduling is RNG-neutral, and the random event pool remains 691.
 
-- successful property renovation → two-year exact-property follow-up;
-- business founding → three-year exact-business founder/culture follow-up;
-- business product launch → two-year exact-business launch-reputation follow-up;
-- manager feedback request → two-year exact-workplace + exact-manager professional echo;
-- formal coworker concern → two-year exact-workplace + exact-coworker aftermath.
+Special-career long-tail stories are intentionally reserved for the next 7B slice and should use the same exact-target scheduler pattern.
 
-Property stories cancel if the exact property is sold/missing. Workplace stories may intentionally survive a job change because archived SocialWorlds are persistent professional history; dead/missing people or missing worlds cancel. New property/business effects mutate existing authoritative records only. No new queue/state graph, no schema bump, no gameplay RNG consumption from scheduling, and no random-event count change.
+## Feedback queue snapshot reviewed against Run #118 / `a4d04523…`
 
-Local candidate validation: Phase 7B2 **35/35**, both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, feedback suites, and production build at **168 modules**. Canonical CI is still required before 7B2 is Green.
-
-Special-career long-tail stories are intentionally reserved for the next 7B slice after 7B2 certification.
-
-## Feedback queue snapshot reviewed against Run #117 / `9822a31d…`
-
-- Live Supabase review: **4 reviewed reports, 0 unresolved reports**.
+- Live Supabase review found **4 total reports and 0 unresolved reports**.
 - `ET-20260913-BE8649B9`: resolved/deployed in Run #117; age-ineligible early-life actions/paths are progressively disclosed without changing gameplay eligibility.
-- `ET-20260913-0AA876B7`: resolved/deployed in Run #114; procedural event scene wording corrected without changing event/RNG shape.
-- Two delivery/status test reports remain resolved.
-- Central review checkpoint is advanced to `9822a31df84197ea700ebd890bf0f68cb716637b`.
+- `ET-20260913-0AA876B7`: resolved → backend_defect in Run #114.
+- Test reports `ET-20260913-A527E2A6` and `ET-20260913-55F088C9` remain resolved as successful feedback-pipeline tests.
+- Central review checkpoint is advanced to certified source `a4d04523e18128044c00f960f6db5fcd306a8237` with **4 reviewed reports**; newest report received remains 2026-09-13 19:51:36 UTC.
+- Refresh the live inbox again immediately before beginning the next gameplay slice.
 
 ## Phase 6 closeout guarantees
 
@@ -94,7 +90,7 @@ The new probability-zero `systemicConsequenceEvents` registry stays outside the 
 
 Dedicated 7B1 regression is **33/33** in canonical Run #115. Both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, feedback suites, global invariants, certified artifact restore smoke, and production build at **167 modules** are green. The long-life harness resolves scheduler-required same-age backlog before retrying Age Up, preserving certified Phase 7A gating.
 
-Phase 7B1 is certified baseline behavior. The progressive-disclosure feedback gate subsequently certified in Run #117, the live inbox is clear, and Phase 7B2 is now the active local candidate. Read `PROJECT_HANDOFF/PHASE7B1_SYSTEMIC_STORIES.md` for the certified 7B1 contract.
+Phase 7B1 and Phase 7B2 are certified baseline behavior. The progressive-disclosure feedback gate certified in Run #117, Phase 7B2 certified in Run #118, and the live inbox remains clear. The next planned gameplay slice is special-career long-tail echoes. Read the dedicated Phase 7B handoffs for their contracts.
 
 ## Green systems immediately relevant to current work
 

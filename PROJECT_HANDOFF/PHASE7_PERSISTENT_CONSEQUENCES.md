@@ -2,11 +2,9 @@
 
 ## Status
 
-**Phase 7A and Phase 7B1 are CI Green, certified, and deployed. Run #117 also certified the cross-cutting progressive-disclosure correction; Phase 7B2 is the active local candidate.**
+**Phase 7A, Phase 7B1, and Phase 7B2 are CI Green, certified, and deployed. Run #117 certified the cross-cutting progressive-disclosure correction; Run #118 certified Ownership & Workplace Echoes.**
 
-Newest certified gameplay/source baseline: GitHub Actions **Run #117** (`34783290659`), expanded source `9822a31df84197ea700ebd890bf0f68cb716637b`, package `everthread-life-unwritten@0.12.0`, certified save schema **13**. Run #117 preserved Phase 7B1 33/33 and Phase 7A scheduler authority while certifying the feedback-driven progressive-disclosure correction.
-
-Phase 7A itself was established in Run #112 and remains unchanged as scheduler authority. **Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories** is now certified on top of it without adding another queue.
+Newest certified gameplay/source baseline: GitHub Actions **Run #118** (`34792171294`), expanded source `a4d04523e18128044c00f960f6db5fcd306a8237`, package `everthread-life-unwritten@0.12.0`, certified save schema **13**. Run #118 preserved Phase 7A scheduler authority, Phase 7B1 33/33, and progressive disclosure while certifying Phase 7B2 at 35/35.
 
 ## Why Phase 7A came first
 
@@ -82,9 +80,9 @@ The certified first 7B1 slice turns earlier player actions into exact multi-year
 
 Dedicated `phase7BSystemicStoryRegression.ts` is **33/33 in Run #115**. The complete regression wall, certified artifact restore smoke, 167-module production build, and Pages deployment are green. The required live Feedback Inbox refresh was completed again after Run #117 before Phase 7B2 selection; no unresolved reports were present.
 
-**Active Phase 7B2 candidate — Ownership & Workplace Echoes:** five additional probability-zero stories are action-driven by property renovation, business founding, business product launch, manager feedback, and formal coworker concerns. Exact property/business/SocialWorld/NPC refs are scheduled through the same authority. Sold/missing properties cancel; archived workplace history may still surface through the same persistent world/person; dead/missing people or worlds cancel rather than retarget. Property effects update exact condition/value, business effects update exact demand/reputation, and workplace/NPC effects reuse existing authorities. Dedicated regression is 35/35 locally; save schema remains 13 and the random pool remains 691.
+**Certified Phase 7B2 — Ownership & Workplace Echoes:** five additional probability-zero stories are action-driven by property renovation, business founding, business product launch, manager feedback, and formal coworker concerns. Exact property/business/SocialWorld/NPC refs are scheduled through the same authority. Sold/missing properties cancel; archived workplace history may still surface through the same persistent world/person; dead/missing people or worlds cancel rather than retarget. Property effects update exact condition/value, business effects update exact demand/reputation, and workplace/NPC effects reuse existing authorities. Dedicated regression is **35/35 in Run #118**; save schema remains 13 and the random pool remains 691.
 
-Special-career long-tail stories remain the next planned 7B slice after 7B2 certifies rather than being mixed into this candidate.
+Special-career long-tail stories are the next planned 7B slice. They should bind exact persistent career worlds/projects/contracts/people through existing career authorities and the same scheduler rather than becoming a parallel career-story state machine.
 
 ## Phase 7C — Persistent world conditions
 

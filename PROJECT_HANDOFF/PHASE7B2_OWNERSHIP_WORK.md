@@ -2,9 +2,9 @@
 
 ## Status
 
-**Local candidate. Canonical GitHub Actions certification pending.**
+**CI Green, certified, and deployed in GitHub Actions Run #118.**
 
-Built from certified Run #117 (`34783290659`) / expanded source `9822a31df84197ea700ebd890bf0f68cb716637b` / package `0.12.0` / save schema **13**. The live Supabase inbox was refreshed before implementation and contained **0 unresolved reports**.
+Certified in Run #118 (`34792171294`) / expanded source `a4d04523e18128044c00f960f6db5fcd306a8237` / package `0.12.0` / save schema **13**. The live Supabase inbox was refreshed after certification and contained **0 unresolved reports**.
 
 ## Goal
 
@@ -40,12 +40,23 @@ Scheduling consumes no gameplay RNG. Originating workplace actions keep their ex
 
 ## QA
 
-Dedicated `phase7B2OwnershipWorkRegression.ts`: **35/35 locally**.
+Dedicated `phase7B2OwnershipWorkRegression.ts`: **35/35 in canonical Run #118**.
 
 Coverage: random-pool isolation; action hooks; exact property/business/world/NPC refs; due ages; dedupe without ID consumption; save round-trip; property/business name rendering; exact property condition/value mutation; exact business demand/reputation mutation; semantic state changes; correct asset/business timeline categories; sold/missing target cancellation; normal workplace RNG preservation; archived-workplace persistence; exact manager/coworker relationship and memory effects; dead target cancellation; RNG-neutral direct scheduling; schema 13; global invariants.
 
-Full local wall is green: Core 82/82; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Progressive Disclosure 25/25; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23; all established suites green. Both TypeScript gates and the 168-module production build pass.
+Canonical Run #118 is green: Core 82/82; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Progressive Disclosure 25/25; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23; all established suites green. Both TypeScript gates, certified restore smoke, the 168-module production build, artifact publication, and Pages deployment passed.
+
+## Certification metadata
+
+- Upload wrapper: `84f1814b46df253e1e00520ed21c12e2e0608a43`.
+- Expanded source: `a4d04523e18128044c00f960f6db5fcd306a8237`.
+- Run ID: `34792171294`.
+- Certified source SHA-256: `bba33e3f10e6d4a81e321acbd9aad5051f9092ac4c68e220e613bb62a4be5075`.
+- Certified dependency SHA-256: `e88590934865025dcb26987fa254cefa18c346f022b94e0378933752e076bee1`.
+- Package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact: `10328692946` / `3f49ce6df32cedcb03f20b39ed547bb0e2c5420ebd83498c81306109638b8f58`.
+- Pages artifact: `10328503412` / `6eeb415d39319542a382c563b914390a16071e9e1d3d2cf50e724d55325dc86c`.
 
 ## Next boundary
 
-Do not call 7B2 certified until the uploaded expanded source passes canonical Actions, certified restore artifact creation, and Pages deployment. After certification, refresh live feedback before beginning the planned special-career long-tail Phase 7B slice.
+Phase 7B2 is now certified baseline behavior. Preserve exact-target cancellation, archived-workplace persistence, RNG-neutral scheduling, and schema-13 compatibility. The next planned 7B slice is special-career long-tail echoes, starting only from the certified Run #118 source and after another live feedback review.

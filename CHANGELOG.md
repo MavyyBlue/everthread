@@ -1,6 +1,6 @@
 # Everthread Changelog
 
-## Phase 7B2 — Ownership & Workplace Echoes candidate — 2026-09-13
+## Phase 7B2 — Ownership & Workplace Echoes — CI Green Run #118 — 2026-09-13
 
 ### Added / changed
 
@@ -8,15 +8,18 @@
 - All five use the existing `SystemicStorySystem` request bridge and certified `ConsequenceSystem`; no new narrative queue, graph, or save authority is introduced.
 - Property stories bind the exact owned property and cancel if it is sold/missing before the due age. Business stories bind the exact existing business. Workplace stories bind the exact persistent workplace world plus the exact manager/coworker and may intentionally surface after the workplace archives; dead/missing people or missing worlds cancel rather than retarget.
 - Added data-driven property effects for bounded condition/value-percentage changes and business effects for bounded demand/reputation changes. Event rendering resolves `{PROPERTY_NAME}` / `{BUSINESS_NAME}` / workplace `{WORLD_NAME}` from authoritative state instead of copying names into durable story payloads.
-- Property/business consequence resolutions expose exact semantic state-change keys. Asset and business story outcomes now write to the matching timeline categories.
+- Property/business consequence resolutions expose exact semantic state-change keys. Asset and business story outcomes write to the matching timeline categories.
 - Save schema remains **13**. Scheduling consumes no gameplay RNG and the ordinary random-event library remains exactly **691** definitions.
 
-### Local candidate validation
+### Certification
 
-- New `phase7B2OwnershipWorkRegression.ts`: **35/35** checks covering random-pool isolation, action wiring, exact target refs, due ages, dedupe/no-ID-consumption, save round-trip, rendering, exact property/business mutation, semantic state changes, sold/missing-target cancellation, archived-workplace persistence, exact NPC memory/relationship effects, dead-target cancellation, RNG-neutral direct scheduling, schema stability, and global invariants.
-- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Core 82/82; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Progressive Disclosure 25/25; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
-- Production build PASS with Vite 7.3.6 at **168 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
-- Built from certified Run #117 / expanded source `9822a31df84197ea700ebd890bf0f68cb716637b`. Canonical GitHub Actions remains final certification authority.
+- GitHub Actions Run #118 (`34792171294`) certified expanded source `a4d04523e18128044c00f960f6db5fcd306a8237` from upload wrapper `84f1814b46df253e1e00520ed21c12e2e0608a43` on package `0.12.0`, save schema **13**.
+- `phase7B2OwnershipWorkRegression.ts`: **35/35**; Core 82/82; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Progressive Disclosure 25/25; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23; all established suites remained green.
+- Canonical preflight passed Engine TypeScript, Test TypeScript, the complete regression wall, and production build with Vite 7.3.6 at **168 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `bba33e3f10e6d4a81e321acbd9aad5051f9092ac4c68e220e613bb62a4be5075`.
+- Certified dependency SHA-256: `e88590934865025dcb26987fa254cefa18c346f022b94e0378933752e076bee1`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10328692946`, digest `3f49ce6df32cedcb03f20b39ed547bb0e2c5420ebd83498c81306109638b8f58`; Pages artifact ID `10328503412`, digest `6eeb415d39319542a382c563b914390a16071e9e1d3d2cf50e724d55325dc86c`. Certified restore smoke and Pages deployment reported success.
+- A fresh live Supabase review after Run #118 found **4 total reports and 0 unresolved reports**; the review checkpoint is advanced to `a4d04523e18128044c00f960f6db5fcd306a8237`.
 
 ## Feedback UX — age-appropriate progressive disclosure — CI Green Run #117 — 2026-09-13
 

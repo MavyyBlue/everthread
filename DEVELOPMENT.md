@@ -3,8 +3,8 @@
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
 Certified save schema: 13
-Newest certified expanded source: Run #117 / `9822a31df84197ea700ebd890bf0f68cb716637b`
-Certified gameplay baseline: Run #117 / `9822a31df84197ea700ebd890bf0f68cb716637b`
+Newest certified expanded source: Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`
+Certified gameplay baseline: Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`
 
 ## Product direction
 
@@ -28,17 +28,15 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Phase 7B2 — Ownership & Workplace Echoes (local candidate; CI certification pending)
+### Phase 7B2 — Ownership & Workplace Echoes (CI Green, Run #118)
 
-Certified Run #117 / `9822a31df84197ea700ebd890bf0f68cb716637b` is the active baseline. The feedback-driven progressive-disclosure correction is certified/deployed, `ET-20260913-BE8649B9` is resolved against Run #117, and a fresh live Supabase review found no unresolved reports.
+Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237` is the active certified gameplay/source baseline. Phase 7B2 extends the already-certified systemic-story pattern into property, business, and ordinary workplace history without creating new authorities. Successful property renovation, business founding, product expansion, manager feedback, and formal coworker concerns request exact future consequences through `SystemicStorySystem` → `ConsequenceSystem`. Property targets must still exist; workplace targets preserve the exact persistent SocialWorld and exact NPC even after that workplace archives; invalid/dead targets cancel deterministically.
 
-Phase 7B2 extends the already-certified systemic-story pattern into property, business, and ordinary workplace history without creating new authorities. Successful property renovation, business founding, product expansion, manager feedback, and formal coworker concerns request exact future consequences through `SystemicStorySystem` → `ConsequenceSystem`. Property targets must still exist; workplace targets preserve the exact persistent SocialWorld and exact NPC even after that workplace archives; invalid/dead targets cancel deterministically.
+Save schema remains 13. Scheduling is RNG-neutral and does not alter the 691 ordinary random-event definitions. Property/business effects mutate exact authoritative records; workplace consequences reuse persistent SocialWorld, relationship, NPC opinion/memory, and timeline authorities. No copied names or shadow ownership records are persisted.
 
-`ChoiceEffect.property` applies bounded condition / percentage-value changes to the exact `payload.propertyId`. `ChoiceEffect.business` applies bounded demand/reputation changes to the exact `payload.businessId`. Workplace stories continue through existing `ChoiceEffect.workplace`, Relationship, NPC hidden-opinion/memory, and SocialWorld authorities. Names are rendered from live state rather than persisted duplicates. Save schema remains 13 and scheduling consumes no gameplay RNG.
+Canonical Run #118 passed `phase7B2OwnershipWorkRegression.ts` **35/35**, both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, Feedback Reporting 20/20, Feedback Central Inbox 23/23, certified restore smoke, and the **168-module** production build. Certified source SHA-256 is `bba33e3f10e6d4a81e321acbd9aad5051f9092ac4c68e220e613bb62a4be5075`; certified artifact `10328692946` and Pages artifact `10328503412` both published successfully.
 
-Dedicated `phase7B2OwnershipWorkRegression.ts` is **35/35** locally. Both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, Feedback Reporting 20/20, and Feedback Central Inbox 23/23 all pass. Production build is green at **168 modules**. GitHub Actions remains final certification authority.
-
-Special-career long-tail stories are deliberately deferred to the next Phase 7B slice so this ownership/work slice can certify independently.
+A fresh live feedback review after certification still finds **0 unresolved reports**. The next planned Phase 7B gameplay slice is special-career long-tail echoes, using the same scheduler/target pattern.
 
 ## Recent corrective history
 
