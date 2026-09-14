@@ -60,6 +60,7 @@ import { runThreadspaceLoadRecoveryRegression } from './threadspaceLoadRecoveryR
 import { runPhase8ECloseoutRegression } from './phase8ECloseoutRegression';
 import { runPhase9ANpcPreferencesRegression } from './phase9ANpcPreferencesRegression';
 import { runPhase9BSharedExperienceRegression } from './phase9BSharedExperienceRegression';
+import { runPhase9CYouthSocialRegression } from './phase9CYouthSocialRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -124,5 +125,6 @@ try{const checks=runThreadspaceLoadRecoveryRegression();console.log(`Threadspace
 try{const checks=await runPhase8ECloseoutRegression();console.log(`Phase 8E closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase9ANpcPreferencesRegression();console.log(`Phase 9A NPC-preference regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase9BSharedExperienceRegression();console.log(`Phase 9B shared-experience regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runPhase9CYouthSocialRegression();console.log(`Phase 9C youth-social regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

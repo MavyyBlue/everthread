@@ -12,6 +12,7 @@ export interface SharedExperienceActivityDefinition {
   id:string;
   label:string;
   minAge:number;
+  maxAge?:number;
   placeIds:readonly string[];
   preferenceTags:readonly NpcPreferenceTag[];
   baseEnjoyment:number;

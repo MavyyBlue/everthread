@@ -32,6 +32,7 @@ const memoryReaction:Record<SharedExperienceBand,string>={
 export interface SharedExperienceAvailability {allowed:boolean;reason?:string;npc?:Npc;relationship?:Relationship;place?:TownPlaceDefinition}
 
 function sameEverthreadLocation(countryId:string,city:string){return countryId===EVERTHREAD_COUNTRY_ID&&city===EVERTHREAD_CITY;}
+function activityAgeAppropriate(playerAge:number,npcAge:number,activity:{minAge:number;maxAge?:number}){return playerAge>=activity.minAge&&npcAge>=activity.minAge&&(activity.maxAge===undefined||(playerAge<=activity.maxAge&&npcAge<=activity.maxAge));}
 function distinctPreferenceTags(tags:readonly NpcPreferenceTag[]){return [...new Set(tags.filter(tag=>preferenceTagSet.has(tag)))];}
 function ageAppropriatePreferenceTags(state:GameState,npc:Npc,tags:readonly NpcPreferenceTag[]){
   const participantAge=Math.min(state.character.age,npc.age);
@@ -96,7 +97,7 @@ export function sharedExperienceAvailability(state:GameState,npcId:string,placeI
   if(!townPlaceDiscovered(state,place))return{allowed:false,reason:'That location has not been discovered.'};
   if(!sameEverthreadLocation(state.character.countryId,state.character.city))return{allowed:false,reason:'You need to be in Everthread to make plans at an Everthread location.'};
   if(!sameEverthreadLocation(npc.countryId,npc.city))return{allowed:false,reason:`${npc.firstName} is not currently in Everthread.`};
-  if(state.character.age<activity.minAge||npc.age<activity.minAge)return{allowed:false,reason:`${activity.label} is not age-appropriate for both of you yet.`};
+  if(!activityAgeAppropriate(state.character.age,npc.age,activity))return{allowed:false,reason:activity.maxAge!==undefined&&Math.max(state.character.age,npc.age)>activity.maxAge?`${activity.label} is meant for childhood and the teen years.`:`${activity.label} is not age-appropriate for both of you yet.`};
   const gate=actionGateStatus(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:shared:${activityId}`}]);
   if(!gate.allowed)return{allowed:false,reason:gate.message,npc,relationship,place};
   return{allowed:true,npc,relationship,place};
@@ -112,7 +113,7 @@ export function evaluateSharedExperience(state:GameState,npcId:string,placeId:st
   const relationship=state.relationships.find(rel=>rel.npcId===npcId);
   const place=townPlaceById[placeId];
   const activity=sharedExperienceActivityById[activityId];
-  if(!npc||!relationship||!place||!activity||!activity.placeIds.includes(placeId))return;
+  if(!npc||!relationship||!place||!activity||!activity.placeIds.includes(placeId)||!activityAgeAppropriate(state.character.age,npc.age,activity))return;
   const profile=npc.preferences??generateNpcPreferenceProfile(state,npc);
   const effectivePreferenceTags=ageAppropriatePreferenceTags(state,npc,context.preferenceTags??activity.preferenceTags);
   const preferenceScore=preferenceInfluence(profile,effectivePreferenceTags);

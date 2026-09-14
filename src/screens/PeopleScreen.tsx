@@ -14,12 +14,15 @@ import { orientationLabel } from '../systems/NpcOrientationSystem';
 import { npcCareerProjection } from '../systems/CareerIdentitySystem';
 import { formatMoney } from '../core/format';
 import { projectKnownNpcPreferences } from '../systems/NpcPreferenceSystem';
+import { projectYouthSocialPlans, type YouthSocialPlan } from '../systems/YouthSocialSystem';
+import type { SharedExperienceResult } from '../types/sharedExperiences';
 import type { ActionResultHandler } from '../core/actionVfx';
 
 const CURRENT_ROMANTIC_TYPES=new Set<GameState['relationships'][number]['type']>(['partner','fiance','spouse']);
 
 export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameState;onResult:ActionResultHandler;onOpenPlayerProfile:()=>void}){
   const[selectedNpcId,setSelectedNpcId]=useState<string>();
+  const[lastSharedExperience,setLastSharedExperience]=useState<SharedExperienceResult>();
   const selected=selectedNpcId?state.relationships.find(r=>r.npcId===selectedNpcId):undefined;
   const npc=selected?state.npcs[selected.npcId]:undefined;
   const npcWorlds=npc?state.socialWorlds.filter(world=>world.members.some(member=>member.npcId===npc.id)):[];
@@ -27,6 +30,8 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const lifeSummary=npc?npcLifeSummary(npc):undefined;
   const careerProjection=npc?npcCareerProjection(state,npc):undefined;
   const knownPreferences=npc?projectKnownNpcPreferences(state,npc.id):[];
+  const youthPlans=npc?projectYouthSocialPlans(state,npc.id):[];
+  const youthExperience=lastSharedExperience?.npcId===npc?.id?lastSharedExperience:undefined;
   const currentPartner=state.relationships.find(r=>CURRENT_ROMANTIC_TYPES.has(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive);
   const expecting=state.familyPlanning.pregnancy;
   const canTryChild=actionAllowed(state,{policy:'family.child_attempt'});
@@ -36,6 +41,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const selectedFamilyGate=selectedIsCurrentPartner&&npc?biologicalChildGate(state,npc.id):undefined;
   const selectedGender=npc?npcGender(state,npc):undefined;
   const feedback=(result:EngineResult)=>onResult(result,{derive:true});
+  const shareYouthExperience=(plan:YouthSocialPlan)=>{const result=gameEngine.shareExperience(plan.npcId,plan.placeId,plan.activityId);if(result.experience)setLastSharedExperience(result.experience);feedback(result);};
 
   const personSheet=<BottomSheet open={!!selected} title={npc?`${npc.firstName} ${npc.lastName}`:'Relationship'} onClose={()=>setSelectedNpcId(undefined)}>{selected&&npc&&<>
     <div className="sheet-stat-grid">
@@ -47,6 +53,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
       {npc.age>=14&&<div><small>Orientation</small><strong>{orientationLabel(npc.sexuality)}</strong></div>}
     </div>
     <div className="sheet-section"><h3>Interests</h3>{knownPreferences.length?<div className="npc-preference-list">{knownPreferences.map(pref=><span key={pref.tag} className={`npc-preference npc-preference--${pref.level}`}>{pref.level==='like'?'Likes':pref.level==='neutral'?'Neutral':pref.level==='dislike'?'Dislikes':'Avoids'} · {pref.label}</span>)}</div>:<p className="muted">You haven't learned much about their tastes yet.</p>}</div>
+    {youthPlans.length>0&&<div className="sheet-section youth-social-section"><div className="section-heading"><div><p className="eyebrow">Growing up together</p><h3>Spend time together</h3></div><span>{youthPlans.filter(plan=>plan.allowed).length} available</span></div><p className="muted">{youthPlans[0]?.connection==='school_friend'?'Make plans with a real school friend or classmate.':youthPlans[0]?.connection==='family'?'Make a childhood memory with family.':'Choose something that fits both of you.'}</p><div className="youth-social-grid">{youthPlans.map(plan=><button key={plan.id} disabled={!plan.allowed} onClick={()=>shareYouthExperience(plan)}><strong>{plan.label}</strong><small>{plan.placeLabel}</small><em>{plan.allowed?plan.description:plan.reason??'Unavailable right now.'}</em></button>)}</div>{youthExperience&&<div className={`youth-experience-result youth-experience-result--${youthExperience.band}`}><div className="section-heading"><div><small>Last outing</small><strong>{youthExperience.activityLabel}</strong></div><b>{youthExperience.approval}/100</b></div><div className="youth-approval-meter" role="progressbar" aria-label="Outing approval" aria-valuemin={0} aria-valuemax={100} aria-valuenow={youthExperience.approval}><span style={{width:`${youthExperience.approval}%`}}/></div><p>{youthExperience.prose}</p></div>}</div>}
     <div className="action-grid">{['conversation','compliment','spend_time','gift','apologize','prank','argue','insult'].map(a=><button key={a} disabled={!npc.alive||!actionAllowed(state,[{policy:'social.npc.total',target:npc.id},{policy:'social.npc.action',target:`${npc.id}:${a}`}])} onClick={()=>feedback(gameEngine.interactWithCharacter(npc.id,a))}>{a.replace('_',' ')}</button>)}</div>
     {npc.alive&&<div className="sheet-section"><h3>Relationship</h3><div className="action-grid">{canAskOutNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'ask_out'))}>Ask out</button>}{canHookUpWithNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.interactWithCharacter(npc.id,'hook_up'))}>Hook Up</button>}{selected.type==='partner'&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'propose'))}>Propose</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'marry'))}>Marry</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'break_up'))}>Break up</button>}{selected.type==='spouse'&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'divorce'))}>Divorce</button>}{canReconcileWithNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'reconcile'))}>Reconcile</button>}</div></div>}
     {selectedIsCurrentPartner&&<div className="sheet-section family-planning-section">

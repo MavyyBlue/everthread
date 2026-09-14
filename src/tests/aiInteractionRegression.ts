@@ -1,6 +1,7 @@
 import { createNewGame } from '../systems/CharacterSystem';
 import { ensureSpecialCareerRelationships } from '../systems/SpecialCareerRelationshipSystem';
 import { ensureSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
+import { ensureNpcLife } from '../systems/NpcLifeSystem';
 import { EverthreadAiTestbench, withEverthreadAiTestbench } from './aiInteractionTestbench';
 
 export async function runAiInteractionRegression(){
@@ -83,6 +84,18 @@ export async function runAiInteractionRegression(){
     verify(!unknown.result.success&&unknown.diff.length===0,'39 unknown semantic actions must fail cleanly without mutating game state');
     verify(JSON.stringify(unknownBench.getState())===before,'40 rejected unknown commands must preserve the complete isolated state');
     verify(unknown.invariantIssues.length===0,'41 even rejected commands must report the invariant-watch status');
+  });
+
+  const youthState=createNewGame({seed:'ai-test-youth-social'});youthState.character.age=12;youthState.currentYear=2052;youthState.education=[];
+  const youthNpc={id:'ai-youth-peer',firstName:'Jamie',lastName:'Thread',age:12,alive:true,health:90,happiness:65,wealth:400,countryId:youthState.character.countryId,city:youthState.character.city,sexuality:'bisexual' as const,fertility:60,maritalStatus:'single' as const,traits:['playful','loyal'],hiddenOpinion:10,memories:[],parentIds:[],childIds:[],simulationTier:'full' as const};
+  youthState.npcs[youthNpc.id]=youthNpc;youthState.relationships.push({id:'ai-youth-rel',npcId:youthNpc.id,type:'classmate',score:62,attraction:0,compatibility:72,yearsKnown:2});ensureNpcLife(youthState,youthNpc);
+  await withEverthreadAiTestbench({state:youthState,screen:'people'},async youthBench=>{
+    const people=youthBench.observe('people');const outing=people.actions.find(action=>action.id==='people.shared_experience'&&action.targetId===youthNpc.id&&action.label.includes('Arcade'));
+    verify(Boolean(outing&&outing.enabled),'42 AI People parity must expose an enabled authored youth outing for the exact persistent classmate');
+    verify(outing?.args?.join(',')==='npcId,placeId,activityId','43 shared-experience commands must expose exact semantic arguments rather than screen coordinates');
+    const step=youthBench.execute({id:'people.shared_experience',args:{npcId:youthNpc.id,placeId:'crossroads-mall',activityId:'mall_games'}});
+    verify(step.result.success&&step.diff.some(diff=>diff.path.includes('relationships')),'44 AI youth outings must execute through the real GameEngine and mutate the authoritative relationship');
+    verify(step.invariantIssues.length===0,'45 AI youth-social execution must leave the shared game state invariant-clean');
   });
 
   return checks;

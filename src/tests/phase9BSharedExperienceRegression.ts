@@ -30,12 +30,12 @@ export function runPhase9BSharedExperienceRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9B shared-experience regression failed: ${message}`);}
 
   verify(CURRENT_SAVE_VERSION===17,'01 Shared Experience Foundation must not create a new save schema when it only writes established relationship/memory/timeline authorities');
-  verify(SHARED_EXPERIENCE_ACTIVITIES.length===10,'02 the foundation should expose ten authored reusable activities without inflating Phase 9C/9D content early');
+  verify(SHARED_EXPERIENCE_ACTIVITIES.length===12,'02 the shared registry should preserve the ten Phase 9B activities plus the two Phase 9C youth extensions');
   verify(new Set(SHARED_EXPERIENCE_ACTIVITIES.map(activity=>activity.id)).size===SHARED_EXPERIENCE_ACTIVITIES.length,'03 shared-experience activity ids must be unique');
   const placeIds=new Set(TOWN_PLACES.map(place=>place.id));
   verify(SHARED_EXPERIENCE_ACTIVITIES.every(activity=>activity.placeIds.length>0&&activity.placeIds.every(id=>placeIds.has(id))),'04 every activity must resolve only through canonical Everthread place ids');
   verify(SHARED_EXPERIENCE_ACTIVITIES.every(activity=>activity.preferenceTags.length>0&&activity.preferenceTags.every(tag=>NPC_PREFERENCE_TAG_IDS.includes(tag))),'05 every activity must consume the single Phase 9A preference vocabulary');
-  verify(SHARED_EXPERIENCE_ACTIVITIES.every(activity=>activity.minAge>=0&&activity.minAge<=18&&activity.baseEnjoyment>=-8&&activity.baseEnjoyment<=8),'06 authored activity age gates and base enjoyment must stay bounded');
+  verify(SHARED_EXPERIENCE_ACTIVITIES.every(activity=>activity.minAge>=0&&activity.minAge<=18&&(activity.maxAge===undefined||(activity.maxAge>=activity.minAge&&activity.maxAge<=120))&&activity.baseEnjoyment>=-8&&activity.baseEnjoyment<=8),'06 authored activity age gates and base enjoyment must stay bounded');
   verify(SHARED_EXPERIENCE_ACTIVITIES.every(activity=>sharedExperienceActivityById[activity.id]===activity),'07 the activity registry lookup must resolve the canonical definitions rather than duplicate data');
 
   const pure=adultState('phase9b-pure');pure.npc.preferences=profile(['nature','outdoors','relaxing']);

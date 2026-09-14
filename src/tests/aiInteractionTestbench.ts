@@ -15,6 +15,7 @@ import { specialCareerWorlds } from '../systems/SpecialCareerWorldSystem';
 import { persistentCareerWorlds, PERSISTENT_CAREER_WORLD_KINDS } from '../systems/CareerWorldCatalogSystem';
 import { canReportCoworker } from '../systems/WorkplaceSystem';
 import { peopleWorkspaceSemanticView } from '../systems/PeopleWorkspaceSystem';
+import { projectYouthSocialPlans } from '../systems/YouthSocialSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -130,6 +131,9 @@ function relationshipActions(state:GameState):AiActionView[]{
     const npc=state.npcs[rel.npcId]!;const target=`${npc.firstName} ${npc.lastName}`;
     for(const interaction of PEOPLE_INTERACTIONS){
       actions.push(boolGate(`people.interact.${interaction}`,`${interaction.replace('_',' ')} with ${target}`,!blocked,blocked,['npcId'],npc.id));
+    }
+    for(const plan of projectYouthSocialPlans(state,npc.id)){
+      actions.push(boolGate('people.shared_experience',`${plan.label} with ${target} · ${plan.placeLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','placeId','activityId'],npc.id));
     }
     if(canAskOutNpc(state,npc.id))actions.push(boolGate('people.ask_out',`Ask out ${target}`,!blocked,blocked,['npcId'],npc.id));
     if(canHookUpWithNpc(state,npc.id))actions.push(boolGate('people.hook_up',`Hook up with ${target}`,!blocked,blocked,['npcId'],npc.id));
@@ -342,6 +346,7 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     case'people.interact.prank':return engine.interactWithCharacter(argString(command,'npcId'),'prank');
     case'people.interact.argue':return engine.interactWithCharacter(argString(command,'npcId'),'argue');
     case'people.interact.insult':return engine.interactWithCharacter(argString(command,'npcId'),'insult');
+    case'people.shared_experience':return engine.shareExperience(argString(command,'npcId'),argString(command,'placeId'),argString(command,'activityId'));
     case'people.meet':return engine.performActivity('meet_date');
     case'people.report_workplace':return engine.reportCoworker(argString(command,'npcId'));
     case'people.have_child':{
