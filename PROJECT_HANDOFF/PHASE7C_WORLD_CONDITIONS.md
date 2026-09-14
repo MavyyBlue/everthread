@@ -2,9 +2,18 @@
 
 ## Status
 
-**Local candidate; GitHub Actions certification pending.**
+**CI Green, certified, and deployed in GitHub Actions Run #122.**
 
-Built from newest certified repository source **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`** (docs-only). Certified gameplay baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`** until this candidate clears canonical CI. Package remains `0.12.0`. Certified save schema is 13; this candidate advances to **14**.
+Certification evidence:
+- Expanded source: `0770106f52eea3182e86d120fa38c6b90be589e4`
+- Source SHA-256: `68e4de3efd82b607323dd30077c083712caaa2fad06016a5dd63bce886337338`
+- Dependency SHA-256: `17bbe76f88a9e07edafce170006116f5f23c5ff2c4b9e550d88191e7a617bb13`
+- Package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`
+- Certified artifact: `10330720998`, digest `b51b536835184ad4944631cfe73591cc9964f8d1ec6350c2f06e74220aab61d7`
+- Pages artifact: `10330661334`, digest `03c1a3d1229797859118a26d3a1020638e070e6effc561d20c0f13d0bd720b6e`
+- Canonical preflight: 4/4 Green; production build: 170 modules; Pages deployment: success.
+
+Certified by GitHub Actions **Run #122** (`34797847276`) on expanded source **`0770106f52eea3182e86d120fa38c6b90be589e4`**, imported from upload wrapper `60e5646c274cd36024a778a93a1b8c1af3a401c5`. Package remains `0.12.0`; certified save schema is **14**.
 
 ## Goal
 
@@ -68,18 +77,16 @@ Life screen shows a compact **World around you** card containing only currently 
 
 ## Save migration
 
-Phase 7C advances schema **13 → 14**. Migration creates empty world-condition state for old saves and no retroactive history. It must remain deterministic, idempotent, RNG-neutral, runtime-ID-neutral, rewind-safe, import/export safe, and descendant-safe. `CURRENT_SAVE_VERSION` remains the shared version authority.
+Phase 7C advanced schema **13 → 14**. Migration creates empty world-condition state for old saves and no retroactive history. It is regression-protected as deterministic, idempotent, RNG-neutral, runtime-ID-neutral, rewind-safe, import/export safe, and descendant-safe. `CURRENT_SAVE_VERSION` remains the shared version authority.
 
-## Local QA
+## Certified QA
 
 `phase7CWorldConditionRegression.ts`: **42/42**.
 
 Coverage includes content/pool isolation, migration, deterministic generation, century-scale bounds, cooldown/exclusive-group behavior, expiry/history, country/global relevance through emigration/return, UI cards, Economy/Business/Property/Investment/Travel/Fame/Finance effects, unchanged downstream RNG draw shapes, save round-trip, queue isolation, exact country scope, and invariants.
 
-Both TypeScript gates PASS. Complete regression wall PASS. Integrated Long-Life **105/105**. Phase 7A **36/36**. Phase 7B1 **33/33**. Phase 7B2 **35/35**. Phase 7B3 **36/36**. Production build PASS at **170 modules**. GitHub Actions remains certification authority.
+Canonical Run #122: both TypeScript gates PASS; complete regression wall PASS; Integrated Long-Life **105/105**; Phase 7A **36/36**; Phase 7B1 **33/33**; Phase 7B2 **35/35**; Phase 7B3 **36/36**; Phase 7C **42/42**; production build PASS at **170 modules**; certified restore smoke and Pages deployment PASS.
 
 ## Phase closeout rule
 
-Phase 7 is **not closed merely because local 7C is green**. Required sequence: certify/deploy 7C → refresh player feedback → synchronize Phase 7 closeout docs → certify that closeout. Only then is Phase 7 closed.
-
-After Phase 7 closes, **stop implementation planning**. Do not invent a Phase 8 or queue another feature slice. Mavyy and Yuki brainstorm the future direction together first.
+Run #122 certified/deployed 7C and the final feedback review found all known reports resolved. This documentation-only closeout sync is the final repository synchronization step. Once it is CI-certified, **Phase 7 is closed in both gameplay and tracking state. Stop implementation planning.** Do not invent a Phase 8 or queue another feature slice; Mavyy and Yuki brainstorm the future direction together first.

@@ -1,6 +1,6 @@
 # Everthread Changelog
 
-## Phase 7C — Persistent World Conditions candidate — 2026-09-13
+## Phase 7C — Persistent World Conditions — CI Green Run #122 — 2026-09-13
 
 ### Added / changed
 
@@ -11,14 +11,14 @@
 - Annual condition selection uses an isolated deterministic world-condition RNG stream derived from seed/year/country and does not advance `state.rngCounter`. Existing downstream RNG draw shapes remain unchanged.
 - Save schema advances **13 → 14** for durable `worldConditions`. Migration creates empty world-condition state without retroactive history and is deterministic, idempotent, gameplay-RNG neutral, and runtime-ID neutral. Active conditions are capped at 4 and resolved history at 48.
 
-### Local candidate validation
+### Certification
 
 - New `phase7CWorldConditionRegression.ts`: **42/42** checks covering content isolation/counts, schema-14 migration, migration idempotence/RNG neutrality, deterministic generation, active/history bounds, multi-year expiry/history, exclusive groups/cooldowns, country/global relevance across emigration/return, UI projection, Economy/Business/Property/Investment/Travel/Fame/Finance integration, save round-trip, queue isolation, exact scope, and global invariants.
 - Both TypeScript gates PASS; complete regression wall PASS; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Phase 7B3 36/36; all established career/estate/finance/NPC suites remain green.
 - Production build PASS with Vite 7.3.6 at **170 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
-- Candidate is built from newest certified repository source **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`** (docs-only synchronization). Certified gameplay behavior baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`** until canonical GitHub Actions certifies this 7C candidate.
-- Fresh live Feedback Inbox review before implementation found **0 unresolved reports** and advanced the review checkpoint to Run #121.
-- Phase 7 is **not closed yet**. After Phase 7C certification and explicit Phase 7 closeout synchronization, implementation planning stops until Mavyy and Yuki brainstorm the future direction together.
+- GitHub Actions Run #122 (`34797847276`) certified expanded gameplay/source `0770106f52eea3182e86d120fa38c6b90be589e4` from upload wrapper `60e5646c274cd36024a778a93a1b8c1af3a401c5` on package `0.12.0`, save schema **14**.
+- Fresh live Feedback Inbox review after certification found **4 total reports, all 4 resolved**. The bookkeeping checkpoint write was blocked by connector safety, so no later checkpoint value is claimed.
+- **Phase 7 is closed.** After this closeout synchronization is certified, implementation planning stops until Mavyy and Yuki brainstorm the future direction together.
 
 ## Phase 7B3 — Special-Career Long-Tail Echoes — CI Green Run #120 — 2026-09-13
 

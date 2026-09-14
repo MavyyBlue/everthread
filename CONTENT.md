@@ -5,7 +5,7 @@ Source of truth: executable definitions under `src/data/`; use `npm run content:
 
 ## Phase 7C world-condition content note
 
-The Phase 7C candidate adds **7** data-driven persistent world-condition definitions: **4 country-scoped** conditions (Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze) and **3 global** conditions (Travel Disruption, Media Frenzy, Market Jitters). They are not `GameEventDefinition`s, never enter random-event selection, and do not change the ordinary/random event library count of **691** or the separate 15-definition Phase 7B systemic-story registry / 18-definition older special-career story registry.
+Certified Phase 7C adds **7** data-driven persistent world-condition definitions: **4 country-scoped** conditions (Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze) and **3 global** conditions (Travel Disruption, Media Frenzy, Market Jitters). They are not `GameEventDefinition`s, never enter random-event selection, and do not change the ordinary/random event library count of **691** or the separate 15-definition Phase 7B systemic-story registry / 18-definition older special-career story registry.
 
 ## Phase 7B systemic-story content note
 

@@ -2,9 +2,9 @@
 
 ## Status
 
-**Phase 7A and all three Phase 7B slices are CI Green, certified, and deployed. Phase 7C — Persistent World Conditions is the active local candidate; canonical CI certification is pending.**
+**Phase 7 is CLOSED. Phase 7A, all three Phase 7B slices, and Phase 7C are CI Green, certified, and deployed.**
 
-Newest certified repository source is docs-only GitHub Actions **Run #121** (`34796329373`), expanded source `c163e8d121c75465ec17d17aa54dd725edb05128`; newest gameplay-changing certified baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**, package `everthread-life-unwritten@0.12.0`, save schema **13**. The Phase 7C candidate advances durable state to schema **14**.
+Newest certified gameplay/source baseline is GitHub Actions **Run #122** (`34797847276`), expanded source `0770106f52eea3182e86d120fa38c6b90be589e4`, package `everthread-life-unwritten@0.12.0`, save schema **14**. Run #122 certified Phase 7C at 42/42 while preserving the scheduler, all Phase 7B authority boundaries, and every established regression suite.
 
 ## Why Phase 7A came first
 
@@ -86,38 +86,27 @@ Dedicated `phase7BSystemicStoryRegression.ts` is **33/33 in Run #115**. The comp
 
 This slice deliberately leaves `SpecialCareerStorySystem` unchanged: its annual Phase 4D8 mentor/rival/path scanner remains a separate established content mechanism. Phase 7B3 adds no second scanner. `ChoiceEffect.specialCareer` is narrow and can adjust only bounded `skill`, `reputation`, or `approval`; it cannot author lifecycle outcomes such as fights, championships, contracts, elections, terms, ranks, promotions, projects, or retirements. Dedicated regression is **36/36 in Run #120**; full wall/build, certified restore smoke, artifact publication, and Pages deployment are green. Save schema remains 13 and random pool remains 691.
 
-## Phase 7C — Persistent world conditions — LOCAL CANDIDATE
+## Phase 7C — Persistent world conditions — CERTIFIED
 
-Phase 7C adds one bounded persistent-world context authority instead of another economy, event queue, or shadow simulation. `WorldConditionSystem` owns only condition lifecycle: stable ID, definition ID, exact scope/country, start/end year, intensity, definition start cooldowns, and bounded resolved history. Existing systems remain authoritative for the values they already own.
+Run #122 certified one bounded persistent-world context authority instead of another economy, event queue, or shadow simulation. `WorldConditionSystem` owns only condition lifecycle: stable ID, definition ID, exact scope/country, start/end year, intensity, definition cooldowns, and bounded resolved history. Existing systems remain authoritative for the values they already own.
 
-Seven original data-driven definitions live in `src/data/worldConditions.ts` outside the 691-event random library:
+Seven original data-driven definitions live in `src/data/worldConditions.ts` outside the 691-event random library: four country-scoped conditions (Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze) and three global conditions (Travel Disruption, Media Frenzy, Market Jitters). Country conditions remain bound to their origin country; global conditions follow the player. Active conditions are capped at 4 and resolved history at 48.
 
-- country: **Growth Wave**, **Economic Slowdown**, **Cost Surge**, **Housing Squeeze**;
-- global: **Travel Disruption**, **Media Frenzy**, **Market Jitters**.
+Annual generation/expiry runs before the ordinary economy pass using an isolated deterministic seed/year/country stream and does not advance `state.rngCounter`. Effects flow through existing Economy, Career, Business/Property, Investment, Travel, Fame, and Finance authorities. Phase 7C creates no `DelayedEvent`/`pendingEvent` queue. The Life screen exposes a compact read-only **World around you** projection; starts/expiries use bounded timeline history.
 
-Country conditions stay bound to the country where they started. Leaving that country makes them irrelevant without deleting them; returning before expiry restores their relevance. Global conditions follow the player across countries. Active conditions are capped at **4** and resolved history at **48**. Exclusive groups prevent contradictory same-region cycles; durable per-definition cooldown years prevent immediate repeats.
+Phase 7C advanced save schema **13 → 14** with deterministic, idempotent, RNG-neutral, runtime-ID-neutral migration that initializes empty condition state for old saves and creates no retroactive history. Dedicated regression is **42/42 in Run #122**. Both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, all Phase 7A/B suites, certified restore smoke, artifact publication, the **170-module** production build, and Pages deployment are green.
 
-Annual generation/expiry runs immediately after year/age advancement and before `EconomySystem`. It uses an isolated deterministic RNG stream derived from game seed/year/country and never advances `state.rngCounter`, so Phase 7C does not reshuffle unrelated NPC, career, investment, or event randomness. It creates no `DelayedEvent` or `pendingEvent`; material condition starts/expiry are inspectable through bounded timeline history instead.
+Certification evidence:
+- expanded source `0770106f52eea3182e86d120fa38c6b90be589e4`
+- source SHA-256 `68e4de3efd82b607323dd30077c083712caaa2fad06016a5dd63bce886337338`
+- dependency SHA-256 `17bbe76f88a9e07edafce170006116f5f23c5ff2c4b9e550d88191e7a617bb13`
+- package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`
+- certified artifact `10330720998`, digest `b51b536835184ad4944631cfe73591cc9964f8d1ec6350c2f06e74220aab61d7`
+- Pages artifact `10330661334`, digest `03c1a3d1229797859118a26d3a1020638e070e6effc561d20c0f13d0bd720b6e`
 
-Effects flow through existing authorities:
+**Phase 7 is closed. Stop implementation planning here.** Mavyy and Yuki will brainstorm what comes next before any new macro phase or implementation roadmap is created.
 
-- `EconomySystem`: inflation, salary growth pressure, housing growth, business-demand growth;
-- `CareerSystem`: application score pressure and bounded layoff chance;
-- `BusinessSystem` and `PropertySystem`: consume the already-authoritative economy demand/housing indices;
-- `InvestmentSystem`: regime drift/volatility modifiers without extra draws;
-- `TravelSystem`: trip-cost multiplier;
-- `FameSystem`: organic audience growth, scandal pressure, paid-publicity economics;
-- `FinanceSystem`: ordinary household living-cost pressure only—tax, debt, collateral, bankruptcy, and accounting authorities are not rewritten.
-
-The Life screen includes a compact mobile **World around you** card with relevant condition title, country/global scope, intensity, years remaining, description, and effect summary. This is a read-only projection; React owns no condition state.
-
-Phase 7C advances save schema **13 → 14**. Migration initializes empty world-condition state for old saves, creates no retroactive condition history, consumes no gameplay RNG/runtime ID, and is idempotent. Rewind/import/descendant flows continue through the shared SaveSystem/current-version authority.
-
-Dedicated `phase7CWorldConditionRegression.ts` is **42/42 locally** and covers definition isolation, schema migration, deterministic generation, bounds, expiry/history, exclusive groups/cooldowns, country/global relevance, UI projection, real downstream effects, existing RNG draw shapes, save round-trip, queue isolation, exact country scope, and invariants. Both TypeScript gates and the complete regression wall pass; Integrated Long-Life remains 105/105 and all Phase 7A/B suites remain green. Production build passes at **170 modules**. Canonical GitHub Actions is still the final certification authority.
-
-When Phase 7C is certified/deployed, perform an explicit **Phase 7 closeout synchronization** and verify feedback one last time. Only after that closeout is certified is Phase 7 considered closed. Then **stop implementation planning**: Mavyy and Yuki will brainstorm what comes next before any new macro phase or roadmap exists.
-
-## First files to inspect before Phase 7B implementation
+## Historical Phase 7A/B implementation inspection list
 
 - `src/types/game.ts`
 - `src/systems/EventSystem.ts`
@@ -129,6 +118,6 @@ When Phase 7C is certified/deployed, perform an explicit **Phase 7 closeout sync
 - all call sites that push to or filter `state.delayedEvents`
 - event/coherence/special-career regression suites plus core save/rewind/dynasty tests
 
-## Preserve these 7A boundaries during 7B
+## Preserved 7A boundaries that governed 7B
 
 Do not inflate event counts, redesign the event sheet, add a parallel story graph, rewrite unrelated systems, or begin broad national/world-event content before the scheduler foundation is certified. Phase 7A is infrastructure with observable compatibility behavior, not a content-count milestone.

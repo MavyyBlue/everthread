@@ -2,20 +2,20 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded repository source is **GitHub Actions Run #121** (`34796329373`) on docs-only expanded source **`c163e8d121c75465ec17d17aa54dd725edb05128`**. The newest gameplay-changing certified baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**.
+The newest certified expanded repository source and gameplay baseline is **GitHub Actions Run #122** (`34797847276`) on expanded source **`0770106f52eea3182e86d120fa38c6b90be589e4`**.
 
 - Package: `everthread-life-unwritten@0.12.0`
-- Certified save schema: **13**; active Phase 7C candidate advances to **14**
-- Current macro phase: **Phase 7 — Persistent World Consequences**
+- Certified save schema: **14**
+- Current macro phase: **Phase 7 — Persistent World Consequences: CLOSED**
 - Phase 7A: **CI Green, certified, deployed**
 - Phase 7B1: **CI Green, Run #115**
 - Phase 7B2: **CI Green, Run #118**
 - Phase 7B3: **CI Green, Run #120**
-- Phase 7C — Persistent World Conditions: **local candidate; CI certification pending**
-- Supabase Feedback Inbox: **live; reviewed against Run #121; 0 unresolved reports**
+- Phase 7C — Persistent World Conditions: **CI Green, certified, deployed in Run #122**
+- Supabase Feedback Inbox: **live; post-Run-#122 review found 4 total reports, all 4 resolved; bookkeeping checkpoint write was blocked by connector safety**
 - Activity-specific minigames remain established historical work, not the current implementation target.
 
-If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Use Run #121 / `c163e8d1…` for repository/document truth and Run #120 / `4dd4378e…` for certified gameplay behavior until Phase 7C is certified.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Use Run #122 / `0770106f…` as gameplay/source truth. Phase 7 is closed; do not infer or begin a next implementation phase.
 
 **Post-Phase-7 boundary:** when Phase 7 closes, stop implementation planning. Do not invent a Phase 8 or additional implementation program until Mavyy and Yuki explicitly brainstorm the game's next direction together.
 
@@ -23,26 +23,25 @@ Last handoff synchronization: 2026-09-13
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
-Certified save schema: `13`
-Candidate save schema: `14`
+Certified save schema: `14`
+Candidate save schema: none — Phase 7 is closed
 
-## Newest certified expanded source — Run #121 (documentation-only)
+## Newest certified gameplay/source — Run #122
 
-- Upload wrapper: `3c6a64297b0865a49e7038d683324e7207d633be`.
-- Expanded certified source: `c163e8d121c75465ec17d17aa54dd725edb05128`.
-- GitHub Actions Run #121: `34796329373`.
-- This sync changed tracking/documentation only; gameplay behavior remains Run #120.
-- Canonical preflight reproduced Phase 7B3 36/36, all earlier Phase 7 suites, the full regression wall, and the 168-module production build.
-- Certified source SHA-256: `b80d774aab9b448b936fb84aee1379db7d1093dfddb9ae2c37b321df5e5e22a7`.
-- Certified dependency SHA-256: `41dc83dd8b479fda8366fa457549c2f85d4279686f4a9e29586e15d781abfefe`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact ID `10329971919`, digest `9378c200da3ef7a889afe421c2a43c26300b4eb3ffa36b3c2f5ec62ea6f79cb4`.
-- Pages artifact ID `10330055448`, digest `83e0c87456518ed59c4eef58952d632f9ce76cedf3ce25aeb25eb3b1376afd1a`; deployment reported success.
+- Upload wrapper: `60e5646c274cd36024a778a93a1b8c1af3a401c5`.
+- Expanded certified source: `0770106f52eea3182e86d120fa38c6b90be589e4`.
+- GitHub Actions Run #122: `34797847276`.
+- Canonical preflight passed 4/4 stages, including Phase 7C 42/42, every earlier Phase 7 suite, the complete regression wall, and the 170-module production build.
+- Certified source SHA-256: `68e4de3efd82b607323dd30077c083712caaa2fad06016a5dd63bce886337338`.
+- Certified dependency SHA-256: `17bbe76f88a9e07edafce170006116f5f23c5ff2c4b9e550d88191e7a617bb13`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10330720998`, digest `b51b536835184ad4944631cfe73591cc9964f8d1ec6350c2f06e74220aab61d7`.
+- Pages artifact ID `10330661334`, digest `03c1a3d1229797859118a26d3a1020638e070e6effc561d20c0f13d0bd720b6e`; certified restore smoke and deployment reported success.
 
-## Current gameplay-changing certified baseline — Run #120
+## Current gameplay-changing certified baseline — Run #122
 
-Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b` certified Phase 7B3 at **36/36** on save schema 13. Phase 7A/B authority boundaries remain certified and unchanged by the 7C candidate.
+Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4` certified Phase 7C at **42/42** on save schema 14 while preserving all Phase 7A/B authority boundaries and the complete established regression wall.
 
-## Active candidate — Phase 7C Persistent World Conditions
+## Certified Phase 7C — Persistent World Conditions
 
 - `WorldConditionSystem` is the sole world-condition owner. It persists bounded condition identity/scope/country/duration/intensity/history/cooldowns only; existing systems retain their domain truth.
 - Seven data-driven conditions: Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze, Travel Disruption, Media Frenzy, Market Jitters.
@@ -50,19 +49,18 @@ Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b` certified Phase 7B3 at **3
 - Isolated deterministic world-condition RNG prevents new shared-RNG draws. No delayed-event/pending-event queue is created.
 - Existing owners consume bounded projections: Economy, Career, Investment, Travel, Fame, Finance; Business and Property feel conditions through the existing economy indices.
 - Life exposes inspectable current conditions in a compact mobile card and the timeline records starts/expiry.
-- Save schema candidate **14**; schema-13 migration creates empty condition state deterministically and is RNG/ID neutral. Random-event pool remains 691.
-- Dedicated regression **42/42**; full regression wall and both TypeScript gates pass; production build PASS at **170 modules**. Canonical GitHub Actions certification is still pending.
+- Certified save schema **14**; schema-13 migration creates empty condition state deterministically and is RNG/ID neutral. Random-event pool remains 691.
+- Dedicated regression **42/42**; full regression wall and both TypeScript gates pass; production build PASS at **170 modules**; certified restore smoke, artifact publication, and Pages deployment succeeded in Run #122.
 
-## Feedback queue snapshot reviewed against Run #121 / `c163e8d1…`
+## Feedback queue snapshot reviewed after Run #122 / `0770106f…`
 
-- Central review checkpoint is advanced to `c163e8d121c75465ec17d17aa54dd725edb05128` with **4 reviewed reports**.
-- Fresh pre-Phase-7C review found **0 unresolved reports**.
-- Newest report receipt remains 2026-09-13 19:51:35 UTC.
-- All four known reports remain resolved.
+- Fresh post-Run-#122 review found **4 total reports, all 4 resolved**.
+- Last successful stored checkpoint remains Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`; connector safety blocked the post-Run-#122 bookkeeping write.
+- Newest known report receipt remains 2026-09-13 19:51:35 UTC.
 
 ## Phase 6 closeout guarantees
 
-Phase 6A–6C plus the post-6C household-finance correction are now certified foundations. Preserve these behaviors while Phase 7 expands consequences:
+Phase 6A–6C plus the post-6C household-finance correction remain certified foundations. Preserve these behaviors in the closed Phase 7 baseline and in any future work chosen after brainstorming:
 
 - Cash, revolving credit, assets, debt, and estate value remain distinct accounting concepts.
 - Personal borrowing uses shared underwriting and real FinanceSystem liabilities; bankruptcy is an explicit guarded player decision, never a silent score reset.
@@ -91,7 +89,7 @@ The new probability-zero `systemicConsequenceEvents` registry stays outside the 
 
 Dedicated 7B1 regression is **33/33** in canonical Run #115. Both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, feedback suites, global invariants, certified artifact restore smoke, and production build at **167 modules** are green. The long-life harness resolves scheduler-required same-age backlog before retrying Age Up, preserving certified Phase 7A gating.
 
-Phase 7B1, Phase 7B2, and Phase 7B3 are certified baseline behavior. Phase 7B is stable; Phase 7C Persistent World Conditions is the active local candidate. Read the dedicated Phase 7B handoffs for their contracts and `PHASE7C_WORLD_CONDITIONS.md` for the current candidate contract.
+Phase 7A, all Phase 7B slices, and Phase 7C are certified baseline behavior. **Phase 7 is closed.** Read the dedicated Phase 7 handoffs for their preserved contracts; do not create a next implementation phase until Mavyy and Yuki brainstorm the future direction together.
 
 ## Green systems immediately relevant to current work
 

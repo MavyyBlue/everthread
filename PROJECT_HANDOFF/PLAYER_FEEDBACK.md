@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified repository source is docs-only **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`**; gameplay baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**, save schema 13. Phase 7C is a local schema-14 candidate.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`**, save schema **14**. Phase 7 is closed.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`**.
+Last successful stored central review checkpoint: certified **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`**. A fresh post-Run-#122 review found 4 total reports and all 4 resolved; connector safety blocked the checkpoint write.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
@@ -104,4 +104,4 @@ Last central review checkpoint: certified **Run #121 / `c163e8d121c75465ec17d17a
 - Fresh pre-Phase-7C query found **0 unresolved reports**.
 - Review-state checkpoint is advanced to `c163e8d121c75465ec17d17aa54dd725edb05128` with four reviewed reports; newest received report remains 2026-09-13 19:51:35 UTC.
 - Player-visible disposition read-back remains certified and deployed.
-- Phase 7B is fully certified. Phase 7C Persistent World Conditions is the active local candidate; CI certification is pending.
+- Phase 7 is fully certified and closed through Run #122. No new implementation phase should be selected until Mavyy and Yuki brainstorm the future direction together.

@@ -2,9 +2,9 @@
 
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
-Certified save schema: 13 (Phase 7C candidate advances to schema 14)
-Newest certified expanded source: Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128` (docs-only synchronization)
-Certified gameplay baseline: Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`
+Certified save schema: 14
+Newest certified expanded gameplay/source: Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`
+Certified gameplay baseline: Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`
 
 ## Product direction
 
@@ -26,11 +26,11 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Current implementation slice
+## Closed implementation phase
 
-### Phase 7C — Persistent World Conditions (local candidate; CI certification pending)
+### Phase 7C — Persistent World Conditions (CI Green, Run #122)
 
-Newest certified repository source is docs-only Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`; gameplay behavior baseline remains Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`. A fresh central-feedback review found **0 unresolved reports** and advanced the checkpoint to Run #121 before implementation.
+Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4` is the active certified gameplay/source baseline on save schema 14. A fresh post-certification Feedback Inbox review found **4 total reports, all 4 resolved**; connector safety blocked the bookkeeping checkpoint write, so no newer stored checkpoint is claimed.
 
 Phase 7C adds one bounded `WorldConditionSystem` owner for multi-year national/global context. It persists only condition identity/scope/country/duration/intensity plus bounded resolved history and start cooldowns. It owns no economy balances, career records, investments, assets, business revenue, travel state, fame state, or event queue. Seven data-driven conditions project modifiers into the existing owners: Economy, Career, Business/Property through economy indices, Investment, Travel, Fame, and Finance.
 
@@ -38,11 +38,11 @@ Country conditions remain attached to the exact country where they began; emigra
 
 The Life screen exposes a compact **World around you** card with title/scope/intensity/remaining years/description/effect summary for currently relevant conditions. Start/expiry use timeline history; Phase 7C creates no parallel popup/delayed-event queue.
 
-Candidate save schema is **14**. Schema-13 migration initializes empty world-condition state deterministically with no retroactive conditions, no gameplay RNG consumption, and no runtime-ID consumption. The ordinary random-event pool remains exactly 691.
+Certified save schema is **14**. Schema-13 migration initializes empty world-condition state deterministically with no retroactive conditions, no gameplay RNG consumption, and no runtime-ID consumption. The ordinary random-event pool remains exactly 691.
 
-Dedicated Phase 7C regression is **42/42 locally**. Both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Phase 7B3 36/36, and every established career/finance/family/NPC suite pass. Production build is green at **170 modules**. GitHub Actions remains final certification authority.
+Canonical Run #122 passed Phase 7C **42/42**, both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Phase 7B3 36/36, and every established career/finance/family/NPC suite. Production build is green at **170 modules**; certified restore smoke, artifact publication, and Pages deployment succeeded.
 
-Phase 7 is not closed until this candidate is certified/deployed and the Phase 7 closeout documentation is synchronized. **After Phase 7 closes, stop implementation planning and brainstorm the future direction with Mavyy before defining anything new.**
+**Phase 7 is closed. Stop implementation planning here.** The next product direction must be brainstormed with Mavyy before any new macro phase, feature program, or implementation roadmap is defined.
 
 ## Recent corrective history
 
