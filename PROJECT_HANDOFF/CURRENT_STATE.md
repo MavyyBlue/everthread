@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #127** (`34809167604`) on expanded source **`f3fcb537545c2a454d98db22600346baf54e194e`**. This is the certified Phase 8B gameplay baseline.
+The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #129** (`34813478003`) on expanded source **`109438ec2d50308c62c061a1c6bed7e0849e157b`**. This is the certified Phase 8B gameplay baseline after the map-artwork / flush-Threadspace presentation correction.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **15**
@@ -14,7 +14,7 @@ The newest certified expanded **repository and gameplay** source is **GitHub Act
 - Planned Phase 9: **Shared Lives**
 - Planned Phase 10: **Living Everthread**
 - Supabase Feedback Inbox: **4 total reports, 0 unresolved; no new reports since 2026-09-13 19:51:36 UTC**
-- Stored feedback review checkpoint points to certified gameplay source `f3fcb537545c2a454d98db22600346baf54e194e`.
+- Stored feedback review checkpoint points to certified gameplay source `109438ec2d50308c62c061a1c6bed7e0849e157b`.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
@@ -25,20 +25,23 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `15`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #127 — Phase 8B
+## Newest certified gameplay/source — Run #129 — Phase 8B map artwork / Threadspace presentation correction
 
-- Upload wrapper: `e1becf6912c9af6d92533d98f374a3a05976e408`.
-- Expanded certified source: `f3fcb537545c2a454d98db22600346baf54e194e`.
-- GitHub Actions Run #127: `34809167604`.
-- Workflow imported the intended overlay, then pushed the expanded source before verification. Net diff from the prior certified repository source is exactly the 10 intended gameplay/test files; no docs, save-schema file, workflow, package, or gameplay asset drift.
+- Upload wrapper: `9929dc02a48a92048e724c55c23441f5d1b1384b`.
+- Expanded certified source: `109438ec2d50308c62c061a1c6bed7e0849e157b`.
+- GitHub Actions Run #129: `34813478003`.
+- Net diff from the prior certified repository source is exactly **6 intended map files**: the authored map artwork, recalibrated place coordinates, `TownMapScreen`/CSS, map projection math, and the Phase 8B regression. No save-schema, finance, relationship, career, workflow, package, or unrelated asset drift.
+- The player-supplied authored artwork is bundled as `src/assets/everthread-town-map.png` and is the map's native **1536×961** world-coordinate plane. The prior synthetic road/district rendering is no longer the visual map surface; district definitions remain semantic registry metadata.
+- Map Threadspace now uses the same edge-to-edge workspace model as People Threadspace: the map is flush beneath the header and above the bottom navigation rather than sitting inside an inset bordered card. Initial camera uses cover/fill behavior; **Fit Map** remains available for the complete-town overview.
+- All **24 place markers** were recalibrated against recognizable regions of the authored artwork while retaining the existing place IDs/categories/authority boundaries.
 - Canonical preflight passed **4/4** stages: Engine TypeScript, Test TypeScript, complete regression wall, and production build.
-- Dedicated Phase 8B regression: **41/41**. Phase 8A remains **25/25**; Integrated Long-Life remains **105/105**; all established suites remained Green.
-- Production build: Vite 7.3.6, **175 modules transformed**. The map is code-split as `TownMapScreen` (~19.53 kB JS / 6.24 kB gzip plus ~8.20 kB CSS / 2.03 kB gzip). The established >700 kB main-chunk warning remains nonblocking technical debt.
-- Certified source SHA-256: `e33c5ca44ec685fd41684f53a5f95a3aa67ea71341b33064fac54eccc665ba3e`.
-- Certified dependency SHA-256: `382c6da9eade13f2d2a3f31692de0ee35f4864808786d116968031dd046f47f6`.
+- Dedicated Phase 8B regression expanded to **46/46**. Phase 8A remains **25/25**; Integrated Long-Life remains **105/105**; all established suites remained Green.
+- Production build: Vite 7.3.6, **176 modules transformed**. The bundled map image is ~405.17 kB; `TownMapScreen` remains lazy/code-split at ~18.76 kB JS / 6.06 kB gzip plus ~6.65 kB CSS / 1.75 kB gzip. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `d4af50b0cd89a4903216fa142e6f2e724b63e6f85935dbb4ad503fa47fd995ee`.
+- Certified dependency SHA-256: `d3838ea7d4c36879308e87b144b6eab065387b8c1f1a91540137eeff7935b2dd`.
 - Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified preflight artifact ID `10334276556`, digest `5cc080d07a3246045e6004857ea158f00b16af30af28ee90463be4552d1f4a1f`.
-- Pages artifact ID `10334057076`, digest `dcec92a7398f2ab09dd9d5d18268c47561878db6443b3153f52b95fab8b7f92c`; Pages deployment reported success.
+- Certified preflight artifact ID `10336025996`, digest `ff5ca3e3c5b74469b1f08092ed0e3262155743099f23617f307285272843edb4`.
+- Pages artifact ID `10335706833`, digest `af9836db0812c8a187ad3d2d0fb320fea8809dfc74305b3fbe4567ad9bb009c9`; Pages deployment reported success.
 
 ## Certified Phase 8A — Everthread Setting Foundation
 
@@ -60,10 +63,10 @@ This setting ownership split remains a compatibility boundary beneath Phase 8B. 
 
 Phase 8B makes Everthread a first-class, mobile navigation surface without creating a second simulation.
 
-- `src/data/townPlaces.ts` is the single authored static registry: **24 stable places across 6 districts** on a 1440×1100 map canvas. Every place has a stable ID, label/short label, category, district, description, activity tags, visibility rule, importance, map metadata, and optional routing metadata.
+- `src/data/townPlaces.ts` is the single authored static registry: **24 stable places across 6 districts** on the authored map's native **1536×961** coordinate plane. Every place has a stable ID, label/short label, category, district, description, activity tags, visibility rule, importance, map metadata, and optional routing metadata.
 - Required location families are represented: Central Everthread Bank, dealership, realty/leasing, residential district, mall, diner, park, grocery, school, college, hospital, gym, film studio, modeling agency, speedway, stadium, military base, City Hall, courthouse/public safety/prison, air terminal, business district, and the discoverable Blackline Freight Yard.
 - `TownMapSystem` is a **read-only projection** owner for map discovery/filtering/camera math/culling/semantic view only. It does not mutate simulation truth, consume gameplay RNG, allocate runtime IDs, or persist camera/search/filter/selection state.
-- The Map is a sixth primary mobile tab and `TownMapScreen` lazy-loads separately. Interaction supports touch pan, pinch zoom, wheel zoom, Fit Map, large markers, search/category filters, zoom-based marker/label disclosure, viewport culling, and bottom-sheet place details with no hover dependency.
+- The Map is a sixth primary mobile tab and `TownMapScreen` lazy-loads separately. The player-supplied authored town artwork is the real visual map surface; the Threadspace workspace is edge-to-edge beneath the header and above bottom navigation, with cover/fill on entry plus Fit Map for full-town overview. Interaction supports touch pan, pinch zoom, wheel zoom, large markers, search/category filters, zoom-based marker/label disclosure, viewport culling, and bottom-sheet place details with no hover dependency.
 - Blackline Freight Yard discovery derives from existing organized-crime participation or meaningful legal state; there is no separate discovered-place ledger.
 - Players who emigrate can still browse Everthread as their hometown projection; the map never rewrites authoritative `countryId/city`.
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
@@ -75,10 +78,10 @@ Route existing mature entry points into believable Everthread places without dup
 
 Preserve old/contextual entry points until feature parity is proven. The map remains navigation/projection; engine/system owners remain authoritative for actions and results. Do not begin Player Profile/Personal Inventory (8D) until institution routing is independently certified.
 
-## Feedback queue snapshot after Run #127 / `f3fcb537…`
+## Feedback queue snapshot after Run #129 / `109438ec…`
 
-- Supabase contains **4 total reports and 0 unresolved reports**; no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
-- Review checkpoint key `main` was successfully advanced after Run #127 to `f3fcb537545c2a454d98db22600346baf54e194e` with reviewed-report count 4.
+- Supabase still contains **4 report rows**; no new report row has appeared since the previously recorded `2026-09-13 19:51:36.119407+00` receipt. The prior reviewed queue was 0 unresolved.
+- Review checkpoint key `main` was successfully advanced after Run #129 to `109438ec2d50308c62c061a1c6bed7e0849e157b` at `2026-09-14 06:28:37.844038+00` with reviewed-report count 4.
 - No feedback item currently preempts Phase 8C.
 
 ## Phase 7C baseline preserved beneath Phase 8B

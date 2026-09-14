@@ -1,5 +1,26 @@
 # Everthread Changelog
 
+## Post-8B Map Artwork & Flush Threadspace Presentation — CI Green Run #129 — 2026-09-14
+
+### Changed
+
+- Replaced the synthetic rendered town-map surface with the exact player-supplied authored Everthread artwork, bundled at `src/assets/everthread-town-map.png` and used as the native **1536×961** map coordinate plane.
+- Recalibrated all 24 existing place markers to recognizable regions of that artwork while preserving stable IDs, categories, visibility rules, routing metadata, and all existing simulation ownership.
+- Removed the inset/bordered Map Threadspace presentation. The map workspace now runs edge-to-edge beneath the header and directly above bottom navigation, matching the spatial model established by People Threadspace.
+- Initial map camera now uses cover/fill behavior to avoid letterboxed workspace gaps; **Fit Map** remains the explicit full-town overview. Pan, pinch/wheel zoom, filtering/search, culling, progressive marker/label disclosure, and place sheets remain intact.
+- The old synthetic district/road geometry is no longer rendered as the visual map; six district definitions remain semantic registry metadata. Save schema remains **15** and no migration is required.
+
+### Certification
+
+- GitHub Actions Run #129 (`34813478003`) certified expanded gameplay/source `109438ec2d50308c62c061a1c6bed7e0849e157b` from upload wrapper `9929dc02a48a92048e724c55c23441f5d1b1384b`.
+- Exact source diff from the prior certified repository source is the intended **6 map files** only; no unrelated gameplay/system/package/workflow drift.
+- Both TypeScript gates PASS; canonical preflight PASS **4/4**; base regression remains **82/82**; Phase 8B Town Map expands to **46/46**; Phase 8A remains 25/25; Integrated Long-Life remains 105/105; all established suites remain Green.
+- Production build PASS with Vite 7.3.6 at **176 modules**. Authored map asset ships at ~405.17 kB; lazy `TownMapScreen` is ~18.76 kB JS / 6.06 kB gzip plus ~6.65 kB CSS / 1.75 kB gzip. Established main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `d4af50b0cd89a4903216fa142e6f2e724b63e6f85935dbb4ad503fa47fd995ee`; dependency SHA-256: `d3838ea7d4c36879308e87b144b6eab065387b8c1f1a91540137eeff7935b2dd`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10336025996`, digest `ff5ca3e3c5b74469b1f08092ed0e3262155743099f23617f307285272843edb4`; Pages artifact ID `10335706833`, digest `af9836db0812c8a187ad3d2d0fb320fea8809dfc74305b3fbe4567ad9bb009c9`; Pages deployment reported success.
+- Post-certification feedback sweep found no new report rows; stored review checkpoint advanced to the Run #129 expanded source.
+- **Next slice remains:** Phase 8C — Institution Routing.
+
 ## Phase 8B — Town Place Registry & 2D Flat Map — CI Green Run #127 — 2026-09-14
 
 ### Added / changed

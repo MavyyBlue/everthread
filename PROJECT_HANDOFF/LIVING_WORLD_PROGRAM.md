@@ -5,7 +5,7 @@ Status: **Active Mavyy-approved program. Phases 8A and 8B are certified; Phase 8
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified repository/gameplay source: Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`;
+- newest certified repository/gameplay source: Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **15**;
 - Phase 7: **closed**;
@@ -45,13 +45,13 @@ Certified on expanded source `2596084575dd4288a0b549dc1a618736280f135b`, save sc
 
 Do not reopen this ownership split casually in later slices. Certified Phase 8B projects places over these authorities without a parallel home/location ledger; Phase 8C must preserve that boundary while adding routing.
 
-### Phase 8B — Town Place Registry & 2D Flat Map — CERTIFIED Run #127
+### Phase 8B — Town Place Registry & 2D Flat Map — CERTIFIED Run #127; presentation correction certified Run #129
 
-Certified on expanded source `f3fcb537545c2a454d98db22600346baf54e194e`, save schema **15**, dedicated regression **41/41**, canonical preflight 4/4, and 175-module production build.
+Core 8B certified on expanded source `f3fcb537545c2a454d98db22600346baf54e194e` in Run #127. The player-supplied authored-map / flush-Threadspace correction is certified on expanded source `109438ec2d50308c62c061a1c6bed7e0849e157b` in Run #129, save schema **15**, dedicated regression **46/46**, canonical preflight 4/4, and 176-module production build.
 
 One authored registry now defines **24 stable places across 6 districts** with identity, category, map/layout metadata, visibility, activity tags, importance, and optional routing metadata. `TownMapSystem` projects this data read-only over existing `GameState`; browsing is deterministic, gameplay-RNG neutral, runtime-ID neutral, and adds no durable map/camera/filter/discovery state.
 
-The lazy-loaded Map tab is mobile-first: touch pan, pinch/wheel zoom, Fit Map, large markers, bottom-sheet details, search/category filters, progressive marker/label disclosure, and viewport culling. Blackline Freight Yard discovery derives from existing organized-crime/legal state. Players who have emigrated can still browse Everthread without rewriting their authoritative residence.
+The lazy-loaded Map tab is mobile-first: the authored 1536×961 town artwork is the native coordinate surface; the workspace is edge-to-edge beneath the header and above bottom navigation like People Threadspace; initial view covers/fills the workspace while Fit Map exposes the complete-town overview; touch pan, pinch/wheel zoom, large markers, bottom-sheet details, search/category filters, progressive marker/label disclosure, and viewport culling remain supported. Blackline Freight Yard discovery derives from existing organized-crime/legal state. Players who have emigrated can still browse Everthread without rewriting their authoritative residence.
 
 Place routing metadata points only to mature existing screens; 8B deliberately does **not** execute institution mechanics. Finance, relationships, property, education, career, legal, and other results remain owned by their established systems.
 

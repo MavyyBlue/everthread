@@ -5,7 +5,7 @@ Source of truth: executable definitions under `src/data/`; use `npm run content:
 
 ## Phase 8B place/content note
 
-Certified Phase 8B adds **24 authored Everthread town-place definitions across 6 districts**. These are stable map/navigation definitions—identity, category, district, layout, activity tags, visibility, importance, and optional mature-screen routing metadata—not random events or parallel gameplay authorities. The ordinary/random event library remains **691**; no career, education, health, asset, achievement, challenge, systemic-story, country, or regional-name-pool count changes in 8B.
+Certified Phase 8B has **24 authored Everthread town-place definitions across 6 districts**. Run #129 changes no content counts: it replaces the synthetic rendered map surface with the player-supplied authored **1536×961** town artwork and recalibrates the same 24 stable markers against it. Place identity/category/activity/visibility/routing semantics remain the registry authority, not random events or parallel gameplay state. The ordinary/random event library remains **691**; no career, education, health, asset, achievement, challenge, systemic-story, country, or regional-name-pool count changes result from the presentation correction.
 
 ## Phase 8A setting/content note
 

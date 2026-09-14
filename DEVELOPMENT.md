@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 15
-Newest certified expanded gameplay/source: Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`
-Certified gameplay baseline: Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e`
+Newest certified expanded gameplay/source: Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b`
+Certified gameplay baseline: Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b`
 
 ## Product direction
 
@@ -28,22 +28,22 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
-### Phase 8B — Town Place Registry & 2D Flat Map (CI Green, Run #127)
+### Phase 8B — Town Place Registry & 2D Flat Map (CI Green; presentation correction Run #129)
 
-Run #127 / `f3fcb537545c2a454d98db22600346baf54e194e` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8B regression is **41/41**; Phase 8A remains 25/25; the full established wall remains Green; production build transformed **175 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
+Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8B regression is **46/46**; Phase 8A remains 25/25; the full established wall remains Green; production build transformed **176 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
 
 Architecture:
 
-- `src/data/townPlaces.ts` is the static authored place registry: 24 places across 6 districts. Stable IDs/layout/category/activity metadata live here; simulation results do not.
+- `src/data/townPlaces.ts` is the static authored place registry: 24 places across 6 districts. Stable IDs/layout/category/activity metadata live here; simulation results do not. Marker coordinates now use the supplied map artwork's native 1536×961 plane.
 - `TownMapSystem` is a read-only map projection/math layer. It derives discovery, search/category filtering, semantic view, camera fitting/constraints, culling, and progressive marker/label visibility without mutating `GameState`, consuming gameplay RNG, or allocating runtime IDs.
 - Map camera, zoom, search, categories, and selection remain component-local UI state and are intentionally absent from save schema 15.
-- `TownMapScreen` is lazy-loaded as the sixth primary tab and provides touch pan, pinch/wheel zoom, Fit Map, large markers, viewport culling, progressive disclosure, and place-detail bottom sheets for 360/390/412/430px-first use.
+- `TownMapScreen` is lazy-loaded as the sixth primary tab. It renders the player-supplied authored map artwork as the real visual surface and uses a People-Threadspace-style edge-to-edge workspace beneath the header and above bottom navigation, with cover/fill on entry plus Fit Map for the full-town view. Touch pan, pinch/wheel zoom, large markers, viewport culling, progressive disclosure, and place-detail bottom sheets remain 360/390/412/430px-first.
 - Blackline Freight Yard visibility derives from existing organized-crime/legal state; no parallel discovery ledger exists.
 - A player who emigrates remains physically located by `countryId/city`; browsing the Everthread map does not relocate them.
 - Place routing metadata is descriptive/forward-compatible only in 8B and points to mature existing tabs. It does not execute institution actions or own finance/property/career/education/legal outcomes.
 - Phase 8A remains foundational: Everthread is canonical home and `namePoolCountryId` remains naming culture, never residence.
 
-Post-certification Feedback Inbox review shows four total reports and zero unresolved reports, with no new receipts. The stored review checkpoint was advanced to the Run #127 expanded source.
+Post-certification Feedback Inbox sweep found the report table still at four rows with no new receipts; the previously reviewed queue was zero unresolved. The stored review checkpoint was advanced to the Run #129 expanded source.
 
 **Exact next slice:** Phase 8C — Institution Routing. Route existing actions through Everthread places while retaining the existing system owners and contextual/legacy entry points until parity is proven.
 
