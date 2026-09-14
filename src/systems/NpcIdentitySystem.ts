@@ -2,6 +2,7 @@ import { createRng, type SeededRng } from '../core/rng';
 import { npcGenderForFirstName } from '../data/names';
 import type { GameState, GenderIdentity, Npc, Sex } from '../types/game';
 import type { NpcGender, NpcReproductiveSex } from '../types/reproduction';
+import { ensureNpcNamePoolCountryId, npcNamePoolCountryId } from './SettingSystem';
 
 export const NPC_GENDER_WEIGHTS = Object.freeze({female:50,male:45,nonbinary:5} as const);
 
@@ -23,7 +24,7 @@ export function npcGender(state:GameState,npc:Npc):NpcGender {
   // Preserve the short-lived Run-70 binary reproductive assignment on legacy saves.
   // New NPCs never reach this branch because their generated name and gender agree.
   if(npc.sex==='female'||npc.sex==='male')return npc.sex;
-  const named=npcGenderForFirstName(npc.countryId,npc.firstName);
+  const named=npcGenderForFirstName(npcNamePoolCountryId(state,npc),npc.firstName);
   if(named)return named;
   return weightedGender(createRng(`${state.seed}-npc-gender-${npc.id}`));
 }
@@ -42,6 +43,7 @@ export function npcReproductiveSex(state:GameState,npc:Npc):NpcReproductiveSex {
 }
 
 export function assignNpcIdentity(state:GameState,npc:Npc):NpcIdentity {
+  ensureNpcNamePoolCountryId(state,npc);
   const gender=npcGender(state,npc);
   const reproductiveSex=gender==='female'||gender==='male'?gender:npcReproductiveSex(state,npc);
   npc.gender=gender;

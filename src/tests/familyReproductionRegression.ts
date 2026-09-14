@@ -88,7 +88,7 @@ export function runFamilyReproductionRegression(){
 
   const meeting=adult('new-romantic-identity');const beforeIds=new Set(Object.keys(meeting.npcs));meetPotentialPartner(meeting);const met=Object.values(meeting.npcs).find(npc=>!beforeIds.has(npc.id));
   verify(Boolean(met?.gender&&met?.reproductiveSex),'new potential partners should receive persistent gender and reproductive sex');
-  verify(Boolean(met&&npcGenderForFirstName(met.countryId,met.firstName)===npcGender(meeting,met)),'new potential partner name should match the rolled NPC gender');
+  verify(Boolean(met&&npcGenderForFirstName(met.namePoolCountryId??met.countryId,met.firstName)===npcGender(meeting,met)),'new potential partner name should match the rolled NPC gender');
 
   const autonomous=createNewGame({seed:'same-sex-autonomous-adoption'});autonomous.character.age=35;autonomous.currentYear=2061;
   const familyBase={age:34,alive:true,health:95,happiness:85,wealth:60000,countryId:autonomous.character.countryId,city:autonomous.character.city,sexuality:'bisexual' as const,fertility:100,maritalStatus:'married' as const,gender:'female' as const,reproductiveSex:'female' as const,traits:['loyal','responsible','romantic'],hiddenOpinion:50,childIds:[] as string[]};

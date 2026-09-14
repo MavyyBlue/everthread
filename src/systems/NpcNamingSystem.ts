@@ -2,6 +2,7 @@ import { getNamePool, getNpcFirstNames, npcGenderForFirstName } from '../data/na
 import type { SeededRng } from '../core/rng';
 import type { GameState } from '../types/game';
 import type { NpcGender } from '../types/reproduction';
+import { characterNamePoolCountryId } from './SettingSystem';
 
 export interface CastName {
   firstName:string;
@@ -14,6 +15,9 @@ export interface CollisionAwareNameOptions {
 }
 
 export interface PickNpcNameOptions extends CollisionAwareNameOptions {
+  /** Preferred naming-profile override. */
+  namePoolCountryId?:string;
+  /** Backward-compatible alias for callers that previously conflated naming with residence. */
   countryId?:string;
 }
 
@@ -88,7 +92,7 @@ function stateCastNames(state:GameState):CastName[]{
  * avoidable collision deterministically. No retry RNG is consumed for collisions.
  */
 export function pickCollisionAwareNpcName(state:GameState,rng:SeededRng,options:PickNpcNameOptions={}):CastName{
-  const countryId=options.countryId??state.character.countryId;
+  const countryId=options.namePoolCountryId??options.countryId??characterNamePoolCountryId(state.character);
   const pool=getNamePool(countryId);
   const firstPool=options.gender?getNpcFirstNames(countryId,options.gender):pool.first;
   const initialFirstName=rng.pick(firstPool);

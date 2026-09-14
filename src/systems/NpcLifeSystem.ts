@@ -13,6 +13,7 @@ import { reproductivePairAgeFactor, reproductivePairCanConceive } from './Reprod
 import { ensureNpcAssetPortfolio, npcBusinessValue, npcMortgageDebt, npcNetWorth, processNpcAssetPortfolioYear, syncNpcAssetProjection } from './NpcAssetSystem';
 import { settleNpcEstateOnDeath } from './NpcEstateSystem';
 import { EXTENDED_FAMILY_RELATION_TYPE_SET, FAMILY_RELATIONSHIP_TYPE_SET, LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET } from '../core/familyRelations';
+import { npcNamePoolCountryId } from './SettingSystem';
 import { syncPlayerFamilyTopology } from './FamilyTopologySystem';
 import type {
   GameState,
@@ -310,15 +311,15 @@ function partnershipCompatibility(a:Npc,b:Npc){
 function createPartnerChild(state:GameState,partner:Npc,rng:SeededRng){
   if(partner.age<25||rng.chance(.78))return;
   const maxAge=Math.max(0,Math.min(12,partner.age-18));if(maxAge<=0)return;
-  const id=makeStateId(state,'npc');const {firstName,lastName}=pickCollisionAwareNpcName(state,rng,{countryId:partner.countryId,fixedLastName:partner.lastName});const child:Npc={id,firstName,lastName,age:rng.int(0,maxAge),alive:true,health:rng.int(65,100),happiness:rng.int(48,92),wealth:0,countryId:partner.countryId,city:partner.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:0,memories:[],parentIds:[partner.id],childIds:[],simulationTier:'background'};assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;partner.childIds.push(id);ensureNpcLife(state,child);
+  const id=makeStateId(state,'npc');const namePoolCountryId=npcNamePoolCountryId(state,partner);const {firstName,lastName}=pickCollisionAwareNpcName(state,rng,{namePoolCountryId,fixedLastName:partner.lastName});const child:Npc={id,firstName,lastName,age:rng.int(0,maxAge),alive:true,health:rng.int(65,100),happiness:rng.int(48,92),wealth:0,namePoolCountryId,countryId:partner.countryId,city:partner.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:0,memories:[],parentIds:[partner.id],childIds:[],simulationTier:'background'};assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;partner.childIds.push(id);ensureNpcLife(state,child);
 }
 
 function createAutonomousPartner(state:GameState,npc:Npc,rng:SeededRng){
   if(npc.age<18||npc.partnerId||hasPlayerRomance(state,npc.id))return;
   const age=Math.max(18,npc.age+rng.int(-5,5));const id=makeStateId(state,'npc');
   const npcRomanticGender=npcGender(state,npc);const targetGender=pickRomanticTargetGender(state,npc.sexuality,npcRomanticGender,id);
-  const {firstName,lastName}=pickCollisionAwareNpcName(state,rng,{countryId:npc.countryId,gender:targetGender});
-  const partner:Npc={id,firstName,lastName,age,alive:true,health:rng.int(55,98),happiness:rng.int(42,94),wealth:rng.int(0,120000),countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(20,92),maritalStatus:'dating',traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:0,memories:[],parentIds:[],childIds:[],partnerId:npc.id,simulationTier:npc.simulationTier};
+  const namePoolCountryId=npcNamePoolCountryId(state,npc);const {firstName,lastName}=pickCollisionAwareNpcName(state,rng,{namePoolCountryId,gender:targetGender});
+  const partner:Npc={id,firstName,lastName,age,alive:true,health:rng.int(55,98),happiness:rng.int(42,94),wealth:rng.int(0,120000),namePoolCountryId,countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(20,92),maritalStatus:'dating',traits:rng.shuffle(['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','witty','private']).slice(0,3),hiddenOpinion:0,memories:[],parentIds:[],childIds:[],partnerId:npc.id,simulationTier:npc.simulationTier};
   assignGeneratedNpcOrientation(state,partner,npcRomanticGender);npc.partnerId=id;npc.maritalStatus='dating';state.npcs[id]=partner;ensureNpcLife(state,partner);
   // A distant background descendant may still form a relationship, but seeding a pre-existing
   // partner child would restart an invisible dynasty branch. Direct/meaningful relatives are
@@ -370,14 +371,14 @@ function childRelationshipType(state:GameState,parentIds:string[]):RelationshipT
 }
 
 function createNpcChild(state:GameState,npc:Npc,partner:Npc,rng:SeededRng,adopted=false){
-  const pool=getNamePool(npc.countryId);const id=makeStateId(state,'npc');const initialFirstName=rng.pick(pool.first);const lastName=rng.chance(.65)?npc.lastName:partner.lastName;
-  const {firstName}=resolveCollisionAwareName(npc.countryId,initialFirstName,lastName,[{firstName:state.character.firstName,lastName:state.character.lastName},...Object.values(state.npcs)],{fixedLastName:lastName});
+  const namePoolCountryId=npcNamePoolCountryId(state,npc);const pool=getNamePool(namePoolCountryId);const id=makeStateId(state,'npc');const initialFirstName=rng.pick(pool.first);const lastName=rng.chance(.65)?npc.lastName:partner.lastName;
+  const {firstName}=resolveCollisionAwareName(namePoolCountryId,initialFirstName,lastName,[{firstName:state.character.firstName,lastName:state.character.lastName},...Object.values(state.npcs)],{fixedLastName:lastName});
   const relationType=childRelationshipType(state,[npc.id,partner.id]);
   // Close family retains the existing full-detail behavior. New extended kin (aunts/uncles/cousins)
   // are represented in the player-facing topology without automatically turning large dynasties into
   // hundreds of full yearly simulations. They can still promote later if the relationship becomes close.
   const closeFamilyRelation=Boolean(relationType&&LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET.has(relationType));
-  const child:Npc={id,firstName,lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,96),wealth:0,countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(5,25),memories:[],parentIds:[npc.id,partner.id],childIds:[],simulationTier:closeFamilyRelation?'full':'background'};
+  const child:Npc={id,firstName,lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,96),wealth:0,namePoolCountryId,countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(5,25),memories:[],parentIds:[npc.id,partner.id],childIds:[],simulationTier:closeFamilyRelation?'full':'background'};
   assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;npc.childIds.push(id);partner.childIds.push(id);state.legacy.familyTreeNpcIds.push(id);ensureNpcLife(state,child);
   if(relationType&&!state.relationships.some(rel=>rel.npcId===id))state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:relationType,score:rng.int(42,72),attraction:0,compatibility:rng.int(40,80),yearsKnown:0});
   addNpcMemory(state,npc,adopted?'adoption':'child_birth',10,adopted?`Adopted ${firstName}.`:`${firstName} was born.`,true);addNpcMemory(state,partner,adopted?'adoption':'child_birth',10,adopted?`Adopted ${firstName}.`:`${firstName} was born.`,true);

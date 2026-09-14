@@ -96,7 +96,7 @@ export function runPhase7B3SpecialCareerEchoRegression(){
   const directCombat=adult('phase7b3-direct-combat',22);directCombat.specialCareers.combat={active:true,skill:50,reputation:40};const directCombatRng=directCombat.rngCounter;const fakeWorld='missing-world';const fakeNpc='missing-npc';const directBout=scheduleCombatBoutEcho(directCombat,fakeWorld,fakeNpc);check(directBout.scheduled&&directCombat.rngCounter===directCombatRng,'33 direct Phase 7B3 scheduling itself must consume no gameplay RNG');
   advanceTo(directCombat,24);check(!nextDueConsequence(directCombat)&&directCombat.consequenceScheduler.history.some(item=>item.eventId==='systemic_combat_bout_return'&&item.reason==='missing_target:social_world'),'34 invalid exact world target must cancel deterministically before any retargeting');
 
-  check(combatTrain.saveVersion===14&&military.saveVersion===14&&policy.state.saveVersion===14,'35 Phase 7B3 story state remains compatible with current schema 14');
+  check(combatTrain.saveVersion===15&&military.saveVersion===15&&policy.state.saveVersion===15,'35 Phase 7B3 story state remains compatible with current schema 15');
   const states:Record<string,GameState>={combatTrain,combatFight,military,militaryNoWorld,deadCommander,policy:policy.state,press:press.state,politicsNoWorld,directCombat};const invariantErrors=Object.fromEntries(Object.entries(states).map(([key,state])=>[key,validateState(state)]));check(Object.values(invariantErrors).every(errors=>errors.length===0),`36 Phase 7B3 fixtures must satisfy global state invariants: ${JSON.stringify(invariantErrors)}`);
 
   return checks;

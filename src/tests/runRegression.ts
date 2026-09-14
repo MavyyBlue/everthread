@@ -52,6 +52,7 @@ import { runPhase7B2OwnershipWorkRegression } from './phase7B2OwnershipWorkRegre
 import { runPhase7B3SpecialCareerEchoRegression } from './phase7B3SpecialCareerEchoRegression';
 import { runPhase7CWorldConditionRegression } from './phase7CWorldConditionRegression';
 import { runProgressiveDisclosureRegression } from './progressiveDisclosureRegression';
+import { runPhase8ASettingFoundationRegression } from './phase8ASettingFoundationRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -108,5 +109,6 @@ try{const checks=runPhase7BSystemicStoryRegression();console.log(`Phase 7B1 syst
 try{const checks=runPhase7B2OwnershipWorkRegression();console.log(`Phase 7B2 ownership/work regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase7B3SpecialCareerEchoRegression();console.log(`Phase 7B3 special-career echo regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase7CWorldConditionRegression();console.log(`Phase 7C world-condition regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runPhase8ASettingFoundationRegression();console.log(`Phase 8A setting-foundation regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

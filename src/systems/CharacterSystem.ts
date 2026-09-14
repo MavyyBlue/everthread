@@ -1,4 +1,4 @@
-import { countries } from '../data/countries';
+import { countryById, EVERTHREAD_COUNTRY_ID, locationLabel, namingProfileCountries } from '../data/countries';
 import { getNamePool } from '../data/names';
 import { achievements } from '../data/achievements';
 import type { Character, GameState, Npc, Relationship, Sex, GenderIdentity, Orientation } from '../types/game';
@@ -30,8 +30,11 @@ export interface CharacterCreationOptions {
   sex?: Sex;
   genderIdentity?: GenderIdentity;
   orientation?: Orientation;
+  /** Low-level scenario/test override. The player-facing creator always starts in Everthread. */
   countryId?: string;
   city?: string;
+  /** Low-level deterministic naming-profile override; never presented as residence. */
+  namePoolCountryId?: string;
   advanced?: Partial<{
     intelligence:number; appearance:number; health:number; happiness:number; discipline:number; willpower:number; fertility:number;
     athleticism:number; music:number; acting:number; crime:number; business:number; social:number;
@@ -40,18 +43,18 @@ export interface CharacterCreationOptions {
   rewindEnabled?: boolean;
 }
 
-function npcFromParent(index:number, playerLastName:string, countryId:string, city:string, seed:string, existingNames:readonly CastName[]): Npc {
+function npcFromParent(index:number, playerLastName:string, countryId:string, city:string, namePoolCountryId:string, seed:string, existingNames:readonly CastName[]): Npc {
   const rng = createRng(`${seed}-parent-${index}`);
-  const pool = getNamePool(countryId);
+  const pool = getNamePool(namePoolCountryId);
   const age = rng.int(20,44);
   const initialFirstName=rng.pick(pool.first);
   const sharesPlayerSurname=index===0&&rng.chance(.65);
   const initialLastName=sharesPlayerSurname?playerLastName:rng.pick(pool.last);
-  const {firstName,lastName}=resolveCollisionAwareName(countryId,initialFirstName,initialLastName,existingNames,sharesPlayerSurname?{fixedLastName:playerLastName}:{});
+  const {firstName,lastName}=resolveCollisionAwareName(namePoolCountryId,initialFirstName,initialLastName,existingNames,sharesPlayerSurname?{fixedLastName:playerLastName}:{});
   return {
     id:`parent-${index}-${seed.slice(-6)}`,
     firstName, lastName, age, alive:true,
-    health:rng.int(62,98), happiness:rng.int(45,90), wealth:rng.int(1000,120000), countryId, city,
+    health:rng.int(62,98), happiness:rng.int(45,90), wealth:rng.int(1000,120000), namePoolCountryId, countryId, city,
     sexuality:rng.pick<Orientation>(['straight','straight','straight','bisexual','gay','lesbian']), fertility:rng.int(35,88),
     maritalStatus:'married', traits:rng.shuffle(traits).slice(0,3), hiddenOpinion:rng.int(35,90), memories:[], parentIds:[], childIds:[],
   };
@@ -60,8 +63,10 @@ function npcFromParent(index:number, playerLastName:string, countryId:string, ci
 export function createNewGame(options: CharacterCreationOptions = {}): GameState {
   const seed = options.seed ?? randomSeed();
   const rng = createRng(seed);
-  const country = options.countryId ? countries.find(c => c.id === options.countryId) ?? rng.pick(countries) : rng.pick(countries);
-  const pool = getNamePool(country.id);
+  const country = (options.countryId&&countryById[options.countryId]) || countryById[EVERTHREAD_COUNTRY_ID]!;
+  const requestedNamePool=options.namePoolCountryId&&options.namePoolCountryId!==EVERTHREAD_COUNTRY_ID?countryById[options.namePoolCountryId]:undefined;
+  const namePoolCountry=requestedNamePool??(country.id!==EVERTHREAD_COUNTRY_ID?country:rng.pick(namingProfileCountries));
+  const pool = getNamePool(namePoolCountry.id);
   const firstName = options.firstName?.trim() || rng.pick(pool.first);
   const lastName = options.lastName?.trim() || rng.pick(pool.last);
   const sex = options.sex ?? rng.pick<Sex>(['female','male','female','male','intersex']);
@@ -75,7 +80,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
   const stat = (value:number|undefined,min=28,max=88) => clamp(value ?? rng.int(min,max));
   const character: Character = {
     id:`player-${seed.slice(-10)}`, firstName, middleName:options.middleName, lastName, sex, genderIdentity, orientation,
-    countryId:country.id, city, birthYear:2026, age:0, alive:true,
+    namePoolCountryId:namePoolCountry.id,countryId:country.id, city, birthYear:2026, age:0, alive:true,
     appearance:{skinTone:rng.pick(skinTones),hairColor:rng.pick(hairColors),hairStyle:rng.pick(hairStyles),eyeColor:rng.pick(eyeColors),accessories:[]},
     stats:{health:stat(adv.health,70,100),happiness:stat(adv.happiness,55,95),intelligence:stat(adv.intelligence),appearance:stat(adv.appearance)},
     secondary:{
@@ -87,8 +92,8 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     birthCircumstance:rng.pick(birthCircumstances),familyWealthTier,traits:rng.shuffle(traits).slice(0,3),specialTalents:[],
   };
   const playerName={firstName,lastName};
-  const p1 = npcFromParent(1,lastName,country.id,city,seed,[playerName]);
-  const p2 = npcFromParent(2,lastName,country.id,city,seed,[playerName,p1]);
+  const p1 = npcFromParent(1,lastName,country.id,city,namePoolCountry.id,seed,[playerName]);
+  const p2 = npcFromParent(2,lastName,country.id,city,namePoolCountry.id,seed,[playerName,p1]);
   p1.partnerId=p2.id; p2.partnerId=p1.id; p1.childIds=[character.id]; p2.childIds=[character.id];
   const relationships: Relationship[] = [
     {id:`rel-${p1.id}`,npcId:p1.id,type:'parent',score:rng.int(58,92),attraction:0,compatibility:rng.int(45,88),yearsKnown:0},
@@ -102,10 +107,10 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     assets:{properties:[],vehicles:[],collectibles:[]}, investments:{positions:[],prices:{},marketRegime:'neutral',history:{}}, businesses:[],
     health:{conditions:[],fitness:rng.int(35,70),wellness:rng.int(50,85),addictions:[]}, legal:{criminalRecord:[],investigationHeat:0,imprisoned:false,sentenceRemaining:0,paroleEligible:false},
     fame:{fame:0,publicReputation:50,followers:0,engagement:0,platforms:{},scandals:[]}, specialCareers:{}, pets:[],
-    timeline:[{id:'birth',year:2026,age:0,category:'birth',importance:3,text:`You were born ${character.birthCircumstance} in ${city}, ${country.name}.`}],
+    timeline:[{id:'birth',year:2026,age:0,category:'birth',importance:3,text:`You were born ${character.birthCircumstance} in ${locationLabel(country.id,city)}.`}],
     delayedEvents:[],consequenceScheduler:emptyConsequenceSchedulerState(),recentEventIds:[],achievements:achievements.map(a=>({id:a.id,completed:false,progress:0})),challenges:[],
     legacy:{generation:1,totalFamilyWealth:familyCash,totalYearsSimulated:0,familyTreeNpcIds:[p1.id,p2.id],accountCollectibleIds:[],completedLifeIds:[]},completedLives:[],
-    travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]},familyPlanning:{},actionLedger:{age:character.age,uses:{},lastUsedAge:{},revision:0},
+    travel:{visitedCountries:[country.id],visitedCities:[locationLabel(country.id,city)],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]},familyPlanning:{},actionLedger:{age:character.age,uses:{},lastUsedAge:{},revision:0},
     economy:{inflationIndex:1,housingIndex:1,salaryIndex:1,businessDemandIndex:1,year:2026},worldConditions:createEmptyWorldConditionState(),
     flags:{sandbox:options.sandbox ?? false,rewindEnabled:options.rewindEnabled ?? false,debugEnabled:false,financiallyIndependent:false},
     settings:{theme:'system',accent:EVERTHREAD_DEFAULT_ACCENT,fontFamily:'sans',textColor:null,sound:true,haptics:true,animations:true,textScale:1,notifications:false,minigames:true,profanityFilter:false,autoSave:true,highContrast:false,reducedMotion:false},

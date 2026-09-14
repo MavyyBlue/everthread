@@ -1,7 +1,13 @@
 import type { CountryDefinition } from '../types/content';
 
+export const EVERTHREAD_COUNTRY_ID='everthread';
+export const EVERTHREAD_CITY='Everthread';
+
 // Economic values are intentionally simplified game-balance values, not claims of real-world precision.
+// Everthread is the fictional home jurisdiction used by the life simulation; the remaining
+// entries stay available as travel/emigration destinations and as hidden naming profiles.
 export const countries: CountryDefinition[] = [
+  { id:EVERTHREAD_COUNTRY_ID, name:'Everthread', cities:[EVERTHREAD_CITY], currency:'E$', taxRate:.24, universityCost:16000, healthcareModel:'mixed', salaryMultiplier:1, lifeExpectancyModifier:2, crimeModifier:.85, royalFamily:false, militaryBranches:['Civic Defense Corps','Air Service','Maritime Service'] },
   { id:'us', name:'United States', cities:['Boston','Chicago','Austin','Seattle','Atlanta','Denver'], currency:'$', taxRate:.24, universityCost:28000, healthcareModel:'insurance-heavy', salaryMultiplier:1.12, lifeExpectancyModifier:0, crimeModifier:1.02, royalFamily:false, militaryBranches:['Army','Navy','Air Service','Marine Service','Coast Service'] },
   { id:'ca', name:'Canada', cities:['Toronto','Vancouver','Montreal','Calgary','Halifax'], currency:'C$', taxRate:.27, universityCost:16000, healthcareModel:'public', salaryMultiplier:1.00, lifeExpectancyModifier:2, crimeModifier:.82, royalFamily:false, militaryBranches:['Land Force','Naval Service','Air Service'] },
   { id:'mx', name:'Mexico', cities:['Mexico City','Monterrey','Guadalajara','Mérida'], currency:'MX$', taxRate:.20, universityCost:7000, healthcareModel:'mixed', salaryMultiplier:.62, lifeExpectancyModifier:-1, crimeModifier:1.17, royalFamily:false, militaryBranches:['Army','Navy','Air Force'] },
@@ -37,3 +43,10 @@ export const countries: CountryDefinition[] = [
 ];
 
 export const countryById = Object.fromEntries(countries.map(c => [c.id, c])) as Record<string, CountryDefinition>;
+export const namingProfileCountries = countries.filter(country=>country.id!==EVERTHREAD_COUNTRY_ID);
+
+export function locationLabel(countryId:string,city:string){
+  if(countryId===EVERTHREAD_COUNTRY_ID&&city===EVERTHREAD_CITY)return EVERTHREAD_CITY;
+  const country=countryById[countryId];
+  return country?`${city}, ${country.name}`:city;
+}

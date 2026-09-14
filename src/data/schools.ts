@@ -70,7 +70,7 @@ const laterStart: SchoolProfile = {
 };
 
 const PROFILE_BY_COUNTRY: Record<string, SchoolProfile> = {};
-for (const id of ['us','ca','mx','br','ar','cl']) PROFILE_BY_COUNTRY[id] = northAmerican;
+for (const id of ['everthread','us','ca','mx','br','ar','cl']) PROFILE_BY_COUNTRY[id] = northAmerican;
 for (const id of ['gb','ie','au','nz','za','ng','in','sg','ph']) PROFILE_BY_COUNTRY[id] = commonwealth;
 for (const id of ['fr','de','es','pt','it','nl','be','se','no','dk','pl','gr','tr','eg','ae']) PROFILE_BY_COUNTRY[id] = continental;
 for (const id of ['jp','kr']) PROFILE_BY_COUNTRY[id] = eastAsian;

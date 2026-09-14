@@ -61,6 +61,8 @@ export interface Character {
   sex: Sex;
   genderIdentity: GenderIdentity;
   orientation: Orientation;
+  /** Hidden cultural naming profile, deliberately separate from physical residence. */
+  namePoolCountryId: Id;
   countryId: Id;
   city: string;
   birthYear: number;
@@ -175,6 +177,8 @@ export interface Npc {
   happiness: Percent;
   wealth: Money;
   careerId?: Id;
+  /** Optional for legacy/test fixtures; schema-15 runtime state normalizes this. */
+  namePoolCountryId?: Id;
   countryId: Id;
   city: string;
   sexuality: Orientation;

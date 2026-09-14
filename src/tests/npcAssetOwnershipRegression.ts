@@ -41,12 +41,12 @@ export function runNpcAssetOwnershipRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`NPC asset ownership regression failed: ${message}`);}
 
   const fresh=createNewGame({seed:'npc-assets-schema-fresh'});
-  verify(fresh.saveVersion===14&&SAVE_VERSION===14,'new lives and save service use current schema 14');
+  verify(fresh.saveVersion===15&&SAVE_VERSION===15,'new lives and save service use current schema 15');
   verify(Object.values(fresh.npcs).every(npc=>Boolean(npc.assetPortfolio)),'fresh persistent NPCs initialize an asset portfolio');
 
   const legacy=createNewGame({seed:'npc-assets-v9-migration'});const legacyNpc=npcFixture(legacy,'legacy-owner',44);legacyNpc.life!.finance.propertyValue=180000;legacyNpc.life!.finance.debt=72000;delete legacyNpc.assetPortfolio;legacy.saveVersion=9;const legacyCounter=legacy.rngCounter;
   const migrated=migrateSave(legacy);const migratedNpc=migrated.npcs[legacyNpc.id]!;const migratedPortfolio=migratedNpc.assetPortfolio!;
-  verify(migrated.saveVersion===14,'v9 saves migrate to current schema 14');
+  verify(migrated.saveVersion===15,'v9 saves migrate to current schema 15');
   verify(migrated.rngCounter===legacyCounter,'v9 asset migration consumes no player RNG');
   verify(migratedPortfolio.properties.length===1&&migratedPortfolio.businesses.length===0,'legacy aggregate property becomes one lean explicit holding without inventing a business');
   verify(migratedPortfolio.properties[0]!.id===`npc-property-legacy-${legacyNpc.id}`,'legacy property receives a deterministic stable id');
