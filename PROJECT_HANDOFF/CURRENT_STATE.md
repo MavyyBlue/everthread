@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #133** (`34853113638`) on expanded source **`cf2ede37be5362bc02678a2cc4bec6defa38a837`**. This is the certified Phase 8D Player Profile & Personal Inventory gameplay baseline.
+The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #135** (`34856517423`) on expanded source **`39523787af658a6907cb82ba0e7b94d964fca82d`**. This is the certified critical Threadspace lazy-load recovery hotfix baseline on top of Phase 8D.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **16**
@@ -16,7 +16,7 @@ The newest certified expanded **repository and gameplay** source is **GitHub Act
 - Planned Phase 9: **Shared Lives**
 - Planned Phase 10: **Living Everthread**
 - Supabase Feedback Inbox: **4 total reports; no new report rows since 2026-09-13 19:51:36 UTC; the previously reviewed queue remains clear**.
-- Stored feedback review checkpoint points to certified gameplay source `cf2ede37be5362bc02678a2cc4bec6defa38a837`.
+- Fresh post-Run-#135 feedback sweep found **4 total / 0 unresolved** with no new receipt; the connector blocked the bookkeeping checkpoint write, so the last successfully stored checkpoint remains `cf2ede37be5362bc02678a2cc4bec6defa38a837`.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
@@ -26,6 +26,25 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `16`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #135 — Critical Threadspace lazy-load recovery hotfix
+
+- Upload wrapper: `f454c437a3d1f99691caef0fb1a406666158baee`.
+- Expanded certified source: `39523787af658a6907cb82ba0e7b94d964fca82d`.
+- GitHub Actions Run #135: `34856517423`.
+- Net diff from the prior certified repository source is exactly **7 intended hotfix source/test files**. Workflow import reports 8 changes only because it also removes the uploaded `everthread-source.zip`; no Phase 8E, docs, package, save-schema, or unrelated gameplay drift is part of the committed diff.
+- Root cause: stale/missing lazy dynamic chunks could fail while opening People Threadspace, Town Map, or Player Profile; without a screen-level error boundary the React error could escape to the app root and make the header/navigation appear to disappear.
+- `LazyScreenBoundary` and `lazyScreenRecovery` now contain lazy-screen failures, allow one guarded automatic recovery reload for recoverable dynamic-import failures, prevent reload loops, and preserve explicit **Reload Everthread** / **Return to Life** escape controls if recovery still fails.
+- PWA navigation and JavaScript/CSS code fetches now prefer fresh network responses instead of cache-first stale shell code; the legacy shell cache is purged on activation and an installed replacement worker performs one controlled refresh. People, Map, and Player Profile remain lazy/code-split.
+- Save schema remains **16**. No `GameState`, relationship, map, finance, inventory, routing, RNG, runtime-ID, or simulation authority changed.
+- Canonical preflight passed **4/4**. Base regression **82/82**; People Threadspace **57/57**; Phase 8B Map **46/46**; Phase 8D **63/63**; Threadspace Load Recovery **10/10**; Integrated Long-Life **105/105**; all established suites remained Green.
+- Production build: Vite 7.3.6, **185 modules transformed**. Lazy Map ~8.60 kB JS / 3.50 kB gzip; People ~27.46 kB / 8.93 kB gzip; Player Profile ~8.97 kB / 2.67 kB gzip. Main JS ~1,200.22 kB / 339.43 kB gzip; established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `e9f051d99257edd4c4266c1b4d44665630fff0a012ea9c8a04d5da2bd9971fbf`.
+- Certified dependency SHA-256: `ddfefb540b8d3931fdf83c45d98018e169a5360e2aac8835517f6cff36ff6fb7`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10352906274`, digest `512e12bbcfea517b8066d58410c4070bdd8e89b12b229b9c3fdaf63d4a23f98a`.
+- Pages artifact ID `10352803571`, digest `6f7ce2742ab1b406cf86e030f4269ae70d1e9cecdefc696b0e7abf3963fcd84c`; Pages deployment reported success.
+- Post-certification feedback sweep: 4 total / 0 unresolved, no new receipt. Review-state bookkeeping write was blocked by connector safety, so the last successfully stored checkpoint remains the Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837` checkpoint.
 
 ## Newest certified gameplay/source — Run #133 — Phase 8D Player Profile & Personal Inventory
 

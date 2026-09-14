@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 16
-Newest certified expanded gameplay/source: Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`
-Certified gameplay baseline: Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`
+Newest certified expanded gameplay/source: Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`
+Certified gameplay baseline: Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`
 
 ## Product direction
 
@@ -27,6 +27,20 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
 ## Active implementation phase
+
+### Critical Threadspace lazy-load recovery hotfix (CI Green Run #135)
+
+Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d` is the active certified gameplay/source baseline on save schema **16**. It is a narrow production hotfix after Phase 8D and before Phase 8E; no Phase 8E feature work is included. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- Lazy People/Map/Profile module-load failures are contained below the app shell instead of escaping to the React root.
+- Recoverable dynamic-import failures receive one loop-safe automatic reload; persistent failure preserves header/navigation and exposes Reload Everthread / Return to Life.
+- PWA navigation and JS/CSS code fetches prefer fresh network code and legacy shell cache state is purged on service-worker activation. Lazy screens remain code-split.
+- Dedicated Threadspace Load Recovery regression is **10/10**; People Threadspace remains **57/57**, Map **46/46**, Phase 8D **63/63**, Integrated Long-Life **105/105**, base **82/82**, and all established suites are Green.
+- Production build transformed **185 modules**. Save schema remains **16** and no simulation authority changed.
+- Certified source SHA-256 `e9f051d99257edd4c4266c1b4d44665630fff0a012ea9c8a04d5da2bd9971fbf`; preflight artifact `10352906274` (`512e12bbcfea517b8066d58410c4070bdd8e89b12b229b9c3fdaf63d4a23f98a`); Pages artifact `10352803571` (`6f7ce2742ab1b406cf86e030f4269ae70d1e9cecdefc696b0e7abf3963fcd84c`).
+- Fresh feedback sweep found 4 total / 0 unresolved with no new report. Connector safety blocked the review-state checkpoint write, so the last successfully stored checkpoint remains Run #133.
+
+**Exact next slice:** Phase 8E — Phase 8 Closeout. Resume only after this hotfix documentation sync is certified.
 
 ### Phase 8D — Player Profile & Personal Inventory (CI Green Run #133)
 

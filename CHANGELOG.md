@@ -1,5 +1,24 @@
 # Everthread Changelog
 
+## Critical Threadspace Lazy-Load Recovery Hotfix — CI Green Run #135 — 2026-09-14
+
+### Fixed
+
+- Fixed a production-critical failure where entering lazy **People Threadspace** or the **Everthread Map** could leave the player with a blank application surface after a stale/missing dynamic chunk failed to load. The Threadspace systems themselves were intact; the failure escaped through the React root because lazy screens lacked a containment boundary.
+- Added `LazyScreenBoundary` plus `lazyScreenRecovery` so People, Map, and Player Profile receive one guarded automatic recovery attempt for recoverable dynamic-import failures. Recovery is loop-safe; if loading still fails, the error remains inside the affected screen and preserves the app header/bottom navigation with explicit **Reload Everthread** and **Return to Life** controls.
+- Hardened the PWA update path: navigations and JavaScript/CSS code requests now fetch fresh rather than trusting stale cache-first shell entries, legacy shell cache state is purged on activation, and an installed replacement service worker triggers one controlled refresh. Lazy screens remain code-split.
+- Added dedicated **Threadspace Load Recovery** regression coverage at **10/10** for recoverable error classification, one-shot reload guarding, guard reset, and non-recoverable containment. Save schema remains **16**; no `GameState`, relationship, map, finance, inventory, routing, RNG, or runtime-ID authority changed.
+
+### Certification
+
+- GitHub Actions Run #135 (`34856517423`) certified expanded source `39523787af658a6907cb82ba0e7b94d964fca82d` from upload wrapper `f454c437a3d1f99691caef0fb1a406666158baee`. Net diff from the prior certified repository source is exactly **7 intended hotfix source/test files**; workflow import reports 8 changes only because it removes the uploaded `everthread-source.zip`. No Phase 8E, documentation, package, or unrelated gameplay drift was introduced.
+- Canonical preflight PASS **4/4**; base regression **82/82**; People Threadspace **57/57**; Phase 8B Map **46/46**; Phase 8D **63/63**; Threadspace Load Recovery **10/10**; Integrated Long-Life **105/105**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **185 modules**. People and Map remain lazy/code-split; main JS is ~1,200.22 kB / 339.43 kB gzip and the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `e9f051d99257edd4c4266c1b4d44665630fff0a012ea9c8a04d5da2bd9971fbf`; dependency SHA-256 `ddfefb540b8d3931fdf83c45d98018e169a5360e2aac8835517f6cff36ff6fb7`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10352906274`, digest `512e12bbcfea517b8066d58410c4070bdd8e89b12b229b9c3fdaf63d4a23f98a`; Pages artifact ID `10352803571`, digest `6f7ce2742ab1b406cf86e030f4269ae70d1e9cecdefc696b0e7abf3963fcd84c`; Pages deployment reported success.
+- Post-certification feedback sweep found **4 total reports / 0 unresolved** with no new receipt after `2026-09-13 19:51:36.119407+00`. The connector safety layer blocked the bookkeeping checkpoint write, so the last successfully stored checkpoint remains the Run #133 checkpoint rather than falsely claiming an advance.
+- **Next slice remains:** Phase 8E — Phase 8 Closeout, after this hotfix documentation sync certifies.
+
 ## Phase 8D — Player Profile & Personal Inventory — CI Green Run #133 — 2026-09-14
 
 ### Added / changed

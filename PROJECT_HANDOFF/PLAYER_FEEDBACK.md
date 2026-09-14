@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`**, save schema **16**. Phase 7 is closed; Phases 8A, 8B, 8C, and 8D are certified and Phase 8E closeout is next.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`**, save schema **16**. Phase 7 is closed; Phases 8A, 8B, 8C, and 8D are certified, the critical Threadspace load-recovery hotfix is certified, and Phase 8E closeout is next.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last successful stored central review checkpoint: certified **Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`** at `2026-09-14 14:06:03.077434+00`. The reports table still contains **4 rows / 0 unresolved** and no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
+Last successful stored central review checkpoint: certified **Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`** at `2026-09-14 14:06:03.077434+00`. A fresh post-Run-#135 sweep still found **4 rows / 0 unresolved** and no new report row after `2026-09-13 19:51:36.119407+00`, but the connector safety layer blocked the bookkeeping checkpoint write. Do not claim the stored checkpoint advanced to Run #135 until a later successful write confirms it.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.

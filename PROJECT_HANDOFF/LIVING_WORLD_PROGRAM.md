@@ -5,7 +5,7 @@ Status: **Active Mavyy-approved program. Phases 8A, 8B, 8C, and 8D are certified
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified repository/gameplay source: Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`;
+- newest certified repository/gameplay source: Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **16**;
 - Phase 7: **closed**;
@@ -72,6 +72,12 @@ The player's name is tappable from Life and the **YOU** node in Threadspace, ope
 A new bounded `PersonalInventorySystem` owns only ordinary non-financial possessions. Phase 8D adds **24** original personal-item definitions sold through existing Everthread places. Browsing is deterministic/RNG-neutral; purchases spend Cash once and allocate one runtime ID only on success; inventory is capped at 80 and invariant-repaired. Ordinary items do not count toward net worth or estate value. Valuable collectibles remain solely with Assets/Estate and are projected into the profile exactly once.
 
 Schema-15 saves migrate to schema 16 with an empty personal inventory deterministically and idempotently. Rewind restores inventory normally. Descendant continuation deliberately does not copy ordinary personal items to the successor, while valuable collectible inheritance stays with the existing estate authority. This creates the ownership foundation required for Phase 9 gift transfer without introducing a second asset ledger.
+
+### Post-8D Critical Threadspace Load Recovery Hotfix — CERTIFIED Run #135
+
+Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d` fixes a production-critical deployment/cache failure that could blank the app when a lazy People, Map, or Player Profile chunk failed to load. This is a reliability correction, not a new simulation system. Lazy-screen failures are contained below the app shell, recoverable dynamic-import failures get one guarded reload, and persistent failures preserve navigation with explicit escape controls. PWA code/navigation fetches now avoid stale cache-first JavaScript/CSS and legacy shell cache state is purged during service-worker activation.
+
+Preserve this boundary in later work: People, Map, and Player Profile should remain independently lazy/code-split, but no lazy feature may be able to take down the root app shell. Save schema remains 16; no gameplay authority changed. Dedicated recovery regression is 10/10 and canonical Run #135 preflight/deploy is Green.
 
 ### Phase 8E — Phase 8 Closeout
 
