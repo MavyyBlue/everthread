@@ -63,16 +63,16 @@ export function runPaymentAssetManagementRegression(){
   payCreditCard(historyLive,historyCard.id,25);const historyAfter=getCreditTransactionHistory(historyLive);verify(historyAfter.current.length===1&&historyAfter.current[0]?.kind==='payment'&&historyAfter.current[0]?.amount===25,'credit History projection immediately includes a newly posted in-place transaction');
 
   const fresh=createNewGame({seed:'payment-fresh'});
-  verify(SAVE_VERSION===13&&fresh.saveVersion===13,'Phase 6B3 advances new lives and save service to schema 13');
+  verify(SAVE_VERSION===14&&fresh.saveVersion===14,'Phase 6B3 payment state remains valid under current schema 14');
 
   const legacy=adult('payment-v11');legacy.saveVersion=11;const legacyRng=legacy.rngCounter;const legacyCard=addCard(legacy,{autoPay:true});delete legacyCard.autoPay;delete legacyCard.pastDueAmount;const legacyCar=addCar(legacy,{autoPay:true});delete legacyCar.loan.autoPay;
   const migrated=migrateSave(structuredClone(legacy));const migratedCard=migrated.finances.credit.accounts.find(item=>item.id===legacyCard.id)!;const migratedCar=migrated.finances.liabilities.find(item=>item.id===legacyCar.loan.id)!;
-  verify(migrated.saveVersion===13,'schema-11 saves migrate to schema 13');
+  verify(migrated.saveVersion===14,'schema-11 saves migrate to current schema 14');
   verify(migrated.rngCounter===legacyRng,'payment-state migration is RNG-neutral');
   verify(migratedCard.autoPay===true&&migratedCard.pastDueAmount===0,'legacy card accounts default safely to minimum-payment auto-pay with no invented arrears');
   verify(migratedCar.autoPay===true,'legacy secured loans default safely to annual auto-pay');
   verify(validateState(migrated).length===0,'schema-12 payment migration remains invariant-clean');
-  const remigrated=migrateSave(structuredClone(migrated));verify(JSON.stringify(remigrated)===JSON.stringify(migrated),'schema-13 normalization is idempotent');
+  const remigrated=migrateSave(structuredClone(migrated));verify(JSON.stringify(remigrated)===JSON.stringify(migrated),'current-schema normalization is idempotent');
 
   const preserve=adult('payment-preserve');const preserveCard=addCard(preserve,{autoPay:false,pastDue:40});const preserveCar=addCar(preserve,{autoPay:false}).loan;preserveCar.prepaidThroughAge=preserve.character.age+1;migratePaymentState(preserve);
   verify(preserveCard.autoPay===false&&preserveCard.pastDueAmount===40,'explicit card auto-pay opt-out and arrears survive normalization');
@@ -171,8 +171,8 @@ export function runPaymentAssetManagementRegression(){
   verify(homeQuote.sellingCosts===10500&&homeQuote.loanPayoff===200000&&homeQuote.cashProceeds===89500,'property sale still itemizes costs, payoff, and equity proceeds correctly');const homeCash=homeSale.finances.cash;sellProperty(homeSale,homeAsset.property.id);verify(homeSale.finances.cash===homeCash+89500&&!homeSale.finances.liabilities.some(item=>item.id===homeAsset.loan.id),'property sale preserves established mortgage payoff accounting');
 
   const persisted=adult('payment-persist');const persistedCard=addCard(persisted,{autoPay:false,pastDue:40});const persistedCar=addCar(persisted,{autoPay:false}).loan;persistedCar.prepaidThroughAge=persisted.character.age+1;const persistedVehicleId=persistedCar.assetId!;const restored=migrateSave(JSON.parse(JSON.stringify(persisted)) as unknown);const restoredCard=restored.finances.credit.accounts.find(item=>item.id===persistedCard.id)!;const restoredCar=restored.finances.liabilities.find(item=>item.id===persistedCar.id)!;
-  verify(restored.saveVersion===13&&restoredCard.autoPay===false&&restoredCard.pastDueAmount===40,'schema-13 save roundtrip preserves card payment preferences and arrears');
-  verify(restoredCar.autoPay===false&&restoredCar.prepaidThroughAge===persisted.character.age+1,'schema-13 save roundtrip preserves secured payment preference and paid-ahead state');
+  verify(restored.saveVersion===14&&restoredCard.autoPay===false&&restoredCard.pastDueAmount===40,'current-schema save roundtrip preserves card payment preferences and arrears');
+  verify(restoredCar.autoPay===false&&restoredCar.prepaidThroughAge===persisted.character.age+1,'current-schema save roundtrip preserves secured payment preference and paid-ahead state');
   sellVehicle(restored,persistedVehicleId);const postSale=migrateSave(JSON.parse(JSON.stringify(restored)) as unknown);verify(!postSale.assets.vehicles.some(item=>item.id===persistedVehicleId),'sold vehicles do not resurrect after save normalization');
   verify(validateState(postSale).length===0,'payment-management save roundtrip remains invariant-clean');
 

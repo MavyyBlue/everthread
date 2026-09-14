@@ -3,6 +3,7 @@ import type { EngineResult, GameState, Loan } from '../types/game';
 import { clamp, roundMoney } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { scheduleConsequence } from './ConsequenceSystem';
+import { worldConditionModifiers } from './WorldConditionSystem';
 import { creditCardDebt, dischargeCreditForBankruptcy, processAnnualCredit, recordCreditDerogatory, securedCreditDeposits } from './CreditSystem';
 
 export interface WealthBreakdown {
@@ -331,15 +332,16 @@ export function processAnnualFinance(state:GameState) {
   const age=state.character.age;
   const householdSupported=age<18||(age===18&&state.flags.financiallyIndependent!==true)||(state.flags.financialSupportChoiceMade===true&&state.flags.financiallyIndependent!==true);
   const dependentMinor=age<18;
-  const baseline=householdSupported?0:Math.round((15500+age*90)*state.economy.inflationIndex);
+  const worldCosts=worldConditionModifiers(state).householdCostMultiplier;
+  const baseline=householdSupported?0:Math.round((15500+age*90)*state.economy.inflationIndex*worldCosts);
   const children=state.relationships.filter(r=>r.type==='child'&&state.npcs[r.npcId]?.alive&&state.npcs[r.npcId]!.age<18).length;
-  const childCosts=householdSupported?0:Math.round(children*6500*state.economy.inflationIndex);
+  const childCosts=householdSupported?0:Math.round(children*6500*state.economy.inflationIndex*worldCosts);
   // Ordinary leisure, clothing, local transport, subscriptions and other discretionary consumption rise with means.
   // Explicit player purchases/travel remain separate; this prevents high earners from unrealistically banking every unused salary dollar.
   const afterTaxIncome=Math.max(0,gross-taxes);
   const lifestyleRate=gross<35000?.03:gross<80000?.07:gross<160000?.10:.14;
-  const lifestyleCosts=householdSupported?0:Math.round(afterTaxIncome*lifestyleRate);
-  const petCosts=householdSupported?0:Math.round(state.pets.filter(p=>p.alive).length*900*state.economy.inflationIndex);
+  const lifestyleCosts=householdSupported?0:Math.round(afterTaxIncome*lifestyleRate*worldCosts);
+  const petCosts=householdSupported?0:Math.round(state.pets.filter(p=>p.alive).length*900*state.economy.inflationIndex*worldCosts);
   const propertyCosts=householdSupported?0:Math.round(state.assets.properties.reduce((s,p)=>s+p.marketValue*.018,0));
   const vehicleCosts=householdSupported?0:Math.round(state.assets.vehicles.reduce((s,v)=>s+Math.max(450,v.value*.025),0));
   let debtPayments=0;const loanPayments:AnnualLoanPayment[]=[];

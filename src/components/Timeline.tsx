@@ -3,7 +3,7 @@ import type { TimelineEntry } from '../types/game';
 import { formatMoney } from '../core/format';
 import { TIMELINE_INITIAL_RENDER, TIMELINE_RENDER_STEP, timelineWindow } from '../core/timelineWindow';
 
-const symbols:Record<string,string>={birth:'◉',family:'⌂',school:'▤',relationship:'♡',career:'▣',money:'¤',health:'+',crime:'!',legal:'§',fame:'★',asset:'◆',business:'▦',travel:'✦',achievement:'✹',death:'◇',random:'•'};
+const symbols:Record<string,string>={birth:'◉',family:'⌂',school:'▤',relationship:'♡',career:'▣',money:'¤',health:'+',crime:'!',legal:'§',fame:'★',asset:'◆',business:'▦',travel:'✦',world:'◎',achievement:'✹',death:'◇',random:'•'};
 
 export function Timeline({entries}:{entries:TimelineEntry[]}){
   const [requested,setRequested]=useState(TIMELINE_INITIAL_RENDER);

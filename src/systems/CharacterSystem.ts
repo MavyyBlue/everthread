@@ -11,6 +11,7 @@ import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 import { resolveCollisionAwareName, type CastName } from './NpcNamingSystem';
 import { createEmptyCreditState } from './CreditSystem';
 import { emptyConsequenceSchedulerState } from './ConsequenceSystem';
+import { createEmptyWorldConditionState } from './WorldConditionSystem';
 import { CURRENT_SAVE_VERSION } from '../core/saveVersion';
 
 const traits = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
@@ -105,7 +106,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     delayedEvents:[],consequenceScheduler:emptyConsequenceSchedulerState(),recentEventIds:[],achievements:achievements.map(a=>({id:a.id,completed:false,progress:0})),challenges:[],
     legacy:{generation:1,totalFamilyWealth:familyCash,totalYearsSimulated:0,familyTreeNpcIds:[p1.id,p2.id],accountCollectibleIds:[],completedLifeIds:[]},completedLives:[],
     travel:{visitedCountries:[country.id],visitedCities:[city],emigrations:0,licenses:{driving:false,boating:false,pilot:false}},inheritance:{will:[],inheritBusinesses:true,inheritProperties:true,assetBequests:[]},familyPlanning:{},actionLedger:{age:character.age,uses:{},lastUsedAge:{},revision:0},
-    economy:{inflationIndex:1,housingIndex:1,salaryIndex:1,businessDemandIndex:1,year:2026},
+    economy:{inflationIndex:1,housingIndex:1,salaryIndex:1,businessDemandIndex:1,year:2026},worldConditions:createEmptyWorldConditionState(),
     flags:{sandbox:options.sandbox ?? false,rewindEnabled:options.rewindEnabled ?? false,debugEnabled:false,financiallyIndependent:false},
     settings:{theme:'system',accent:EVERTHREAD_DEFAULT_ACCENT,fontFamily:'sans',textColor:null,sound:true,haptics:true,animations:true,textScale:1,notifications:false,minigames:true,profanityFilter:false,autoSave:true,highContrast:false,reducedMotion:false},
     yearlySnapshots:[],

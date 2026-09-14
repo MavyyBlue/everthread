@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified repository/gameplay source is **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**, save schema 13.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified repository source is docs-only **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`**; gameplay baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**, save schema 13. Phase 7C is a local schema-14 candidate.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,14 +94,14 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**.
+Last central review checkpoint: certified **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`**.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
-- Fresh pre-Phase-7B3 queries found **0 triaged reports and 0 new/untriaged reports**.
-- Review-state checkpoint is advanced to `4dd4378ec8986056fc3348dec5b2c6b1594b236b` with four reviewed reports; newest received report remains 2026-09-13 19:51:36 UTC.
+- Fresh pre-Phase-7C query found **0 unresolved reports**.
+- Review-state checkpoint is advanced to `c163e8d121c75465ec17d17aa54dd725edb05128` with four reviewed reports; newest received report remains 2026-09-13 19:51:35 UTC.
 - Player-visible disposition read-back remains certified and deployed.
-- Phase 7B2 is certified in Run #118; Phase 7B3 Special-Career Long-Tail Echoes is certified/deployed in Run #120. Phase 7C is next.
+- Phase 7B is fully certified. Phase 7C Persistent World Conditions is the active local candidate; CI certification is pending.

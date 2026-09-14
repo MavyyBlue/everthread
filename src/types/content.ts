@@ -1,4 +1,4 @@
-import type { Id, Money, Percent } from './game';
+import type { Id, Money, Percent, WorldConditionModifiers, WorldConditionScope } from './game';
 
 export interface JobDefinition {
   id: Id;
@@ -121,4 +121,18 @@ export interface ChallengeDefinition {
   difficulty: 'easy' | 'medium' | 'hard' | 'legendary';
   requirements: Array<{ metric: string; target: number; comparator?: '>=' | '<=' | '==' }>;
   reward: string;
+}
+
+
+export interface WorldConditionDefinition {
+  id: Id;
+  title: string;
+  description: string;
+  scope: WorldConditionScope;
+  exclusiveGroup: string;
+  durationRange: [number, number];
+  cooldownYears: number;
+  weight: number;
+  effects: Partial<WorldConditionModifiers>;
+  effectSummary: string[];
 }

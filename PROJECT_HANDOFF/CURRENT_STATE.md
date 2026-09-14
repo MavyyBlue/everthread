@@ -2,21 +2,20 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded repository source and gameplay-changing baseline is **GitHub Actions Run #120** (`34796052224`) on expanded source **`4dd4378ec8986056fc3348dec5b2c6b1594b236b`**.
+The newest certified expanded repository source is **GitHub Actions Run #121** (`34796329373`) on docs-only expanded source **`c163e8d121c75465ec17d17aa54dd725edb05128`**. The newest gameplay-changing certified baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**.
 
 - Package: `everthread-life-unwritten@0.12.0`
-- Certified save schema: **13**
+- Certified save schema: **13**; active Phase 7C candidate advances to **14**
 - Current macro phase: **Phase 7 — Persistent World Consequences**
-- Phase 7A — Persistent Consequence Foundation: **CI Green, certified, deployed**
-- Phase 7B1 — Family, Parenting, School & Relationship systemic delayed stories: **CI Green, certified, deployed in Run #115**
-- Progressive-disclosure feedback correction: **CI Green, certified, deployed in Run #117**
-- Phase 7B2 — Ownership & Workplace Echoes: **CI Green, certified, deployed in Run #118**
-- Phase 7B3 — Special-Career Long-Tail Echoes: **CI Green, certified, deployed in Run #120**
-- Supabase Feedback Inbox: **live; reviewed against Run #120; 0 unresolved reports**
-- Next implementation slice: **Phase 7C — Persistent World Conditions**
+- Phase 7A: **CI Green, certified, deployed**
+- Phase 7B1: **CI Green, Run #115**
+- Phase 7B2: **CI Green, Run #118**
+- Phase 7B3: **CI Green, Run #120**
+- Phase 7C — Persistent World Conditions: **local candidate; CI certification pending**
+- Supabase Feedback Inbox: **live; reviewed against Run #121; 0 unresolved reports**
 - Activity-specific minigames remain established historical work, not the current implementation target.
 
-If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Use Run #120 / `4dd4378e…` as source and gameplay truth. Phase 7B3 is certified; Phase 7C is next.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Use Run #121 / `c163e8d1…` for repository/document truth and Run #120 / `4dd4378e…` for certified gameplay behavior until Phase 7C is certified.
 
 **Post-Phase-7 boundary:** when Phase 7 closes, stop implementation planning. Do not invent a Phase 8 or additional implementation program until Mavyy and Yuki explicitly brainstorm the game's next direction together.
 
@@ -25,53 +24,41 @@ Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `13`
+Candidate save schema: `14`
 
-## Newest certified expanded source — Run #120
+## Newest certified expanded source — Run #121 (documentation-only)
 
-- Upload wrapper: `c74078a41340023ab7760378f1fdfe0f77108643`.
-- Expanded certified source: `4dd4378ec8986056fc3348dec5b2c6b1594b236b`.
-- GitHub Actions Run #120: `34796052224`.
-- Phase 7B3 Special-Career Long-Tail Echoes is certified/deployed at **36/36**.
-- Canonical preflight passed both TypeScript gates, complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, Special-career Story 37/37, Path-story 68/68, Phase 7B1 33/33, Phase 7B2 35/35, Phase 7A 36/36, Integrated Long-Life 105/105, Progressive Disclosure 25/25, both feedback suites, and the **168-module** production build.
-- Certified source SHA-256: `b742118c6ce2db92abf774f178d1f067551ced5148268cdaf70de1c70e78f539`.
-- Certified dependency SHA-256: `657e8c495c687e2f4667000052eb2c42461568c5e5bfe970f48e14290bd071dd`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact ID `10329833244`, digest `51b4e4bdc22a9824039f46a20eee603081b66f243e7abd3f70650a7b2df56ef5`.
-- Pages artifact ID `10329833247`, digest `2f00aa0d6b096b3379db5ad80e74b42afbae74a09bf9dfb28544dd99aa2e92a8`; deployment reported success.
+- Upload wrapper: `3c6a64297b0865a49e7038d683324e7207d633be`.
+- Expanded certified source: `c163e8d121c75465ec17d17aa54dd725edb05128`.
+- GitHub Actions Run #121: `34796329373`.
+- This sync changed tracking/documentation only; gameplay behavior remains Run #120.
+- Canonical preflight reproduced Phase 7B3 36/36, all earlier Phase 7 suites, the full regression wall, and the 168-module production build.
+- Certified source SHA-256: `b80d774aab9b448b936fb84aee1379db7d1093dfddb9ae2c37b321df5e5e22a7`.
+- Certified dependency SHA-256: `41dc83dd8b479fda8366fa457549c2f85d4279686f4a9e29586e15d781abfefe`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10329971919`, digest `9378c200da3ef7a889afe421c2a43c26300b4eb3ffa36b3c2f5ec62ea6f79cb4`.
+- Pages artifact ID `10330055448`, digest `83e0c87456518ed59c4eef58952d632f9ce76cedf3ce25aeb25eb3b1376afd1a`; deployment reported success.
 
 ## Current gameplay-changing certified baseline — Run #120
 
-Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b` certified Phase 7B3 — Special-Career Long-Tail Echoes at **36/36** on save schema 13.
+Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b` certified Phase 7B3 at **36/36** on save schema 13. Phase 7A/B authority boundaries remain certified and unchanged by the 7C candidate.
 
-## Phase 7A / 7B1 / 7B2 / 7B3 certified boundaries
+## Active candidate — Phase 7C Persistent World Conditions
 
-- `state.delayedEvents` remains the one active consequence queue; `ConsequenceSystem` owns scheduling, arbitration, dedupe, exact-target validity/cancellation, cooldown ages, and bounded completion/cancellation history.
-- `SystemicStorySystem` is stateless request glue only. It owns no relationship, NPC, school, property, business, workplace, or career truth.
-- Phase 7B1 remains certified at 33/33; Phase 7B2 at 35/35; Phase 7B3 at 36/36.
-- Save schema remains 13 and scheduler/story bookkeeping consumes no gameplay RNG.
-- The ordinary random-event library remains exactly 691 definitions.
+- `WorldConditionSystem` is the sole world-condition owner. It persists bounded condition identity/scope/country/duration/intensity/history/cooldowns only; existing systems retain their domain truth.
+- Seven data-driven conditions: Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze, Travel Disruption, Media Frenzy, Market Jitters.
+- Country conditions bind exact country; global conditions remain global. Active cap 4; resolved-history cap 48.
+- Isolated deterministic world-condition RNG prevents new shared-RNG draws. No delayed-event/pending-event queue is created.
+- Existing owners consume bounded projections: Economy, Career, Investment, Travel, Fame, Finance; Business and Property feel conditions through the existing economy indices.
+- Life exposes inspectable current conditions in a compact mobile card and the timeline records starts/expiry.
+- Save schema candidate **14**; schema-13 migration creates empty condition state deterministically and is RNG/ID neutral. Random-event pool remains 691.
+- Dedicated regression **42/42**; full regression wall and both TypeScript gates pass; production build PASS at **170 modules**. Canonical GitHub Actions certification is still pending.
 
-## Certified Phase 7B3 — Special-Career Long-Tail Echoes
+## Feedback queue snapshot reviewed against Run #121 / `c163e8d1…`
 
-Phase 7B3 does **not** extend or replace the old Phase 4D8 `SpecialCareerStorySystem` annual scanner. It adds guaranteed future echoes only after five explicit player actions in persistent 4E ecosystems: combat training, a sanctioned combat bout, military training, a political policy action, and a political press action.
-
-- Combat training → three-year exact coach/world/career echo.
-- Sanctioned bout → two-year exact rival/world/career echo, regardless of win/loss.
-- Military training → three-year service echo; exact posting/commander are retained when already created, otherwise career-only scheduling preserves the existing rule that enlistment does not create a world before annual processing.
-- Policy push → two-year political record echo; exact office/chief of staff when available.
-- Press confrontation → two-year political rivalry echo; exact office/opposition leader when available.
-- Archived worlds remain valid history; dead/missing exact targets cancel and never retarget.
-- `ChoiceEffect.specialCareer` can change only bounded `skill`, `reputation`, or `approval` on the exact career track. Career results/lifecycle authority remains untouched.
-
-Canonical Run #120 validation: Phase 7B3 **36/36**, both TypeScript gates, complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, old Special-career Story 37/37, Path-story 68/68, Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, both feedback suites, certified restore smoke, Pages deployment, and the **168-module** production build. Save schema remains 13; random pool remains 691.
-
-## Feedback queue snapshot reviewed against Run #120 / `4dd4378e…`
-
-- Central review checkpoint is advanced to `4dd4378ec8986056fc3348dec5b2c6b1594b236b` with **4 reviewed reports**.
-- Fresh post-certification review found **0 unresolved reports**.
-- `ET-20260913-BE8649B9`: resolved/deployed in Run #117.
-- `ET-20260913-0AA876B7`: resolved → backend_defect in Run #114.
-- Pipeline test reports remain resolved.
-- Newest report receipt remains 2026-09-13 19:51:36 UTC.
+- Central review checkpoint is advanced to `c163e8d121c75465ec17d17aa54dd725edb05128` with **4 reviewed reports**.
+- Fresh pre-Phase-7C review found **0 unresolved reports**.
+- Newest report receipt remains 2026-09-13 19:51:35 UTC.
+- All four known reports remain resolved.
 
 ## Phase 6 closeout guarantees
 
@@ -104,7 +91,7 @@ The new probability-zero `systemicConsequenceEvents` registry stays outside the 
 
 Dedicated 7B1 regression is **33/33** in canonical Run #115. Both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, feedback suites, global invariants, certified artifact restore smoke, and production build at **167 modules** are green. The long-life harness resolves scheduler-required same-age backlog before retrying Age Up, preserving certified Phase 7A gating.
 
-Phase 7B1, Phase 7B2, and Phase 7B3 are certified baseline behavior. Phase 7B is stable; Phase 7C Persistent World Conditions is next. Read the dedicated Phase 7B handoffs for their contracts.
+Phase 7B1, Phase 7B2, and Phase 7B3 are certified baseline behavior. Phase 7B is stable; Phase 7C Persistent World Conditions is the active local candidate. Read the dedicated Phase 7B handoffs for their contracts and `PHASE7C_WORLD_CONDITIONS.md` for the current candidate contract.
 
 ## Green systems immediately relevant to current work
 

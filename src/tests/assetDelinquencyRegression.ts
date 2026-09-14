@@ -44,7 +44,7 @@ export function runAssetDelinquencyRegression(){
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Asset delinquency regression failed: ${message}`);}
   function verifyApprox(actual:number,expected:number,tolerance:number,message:string){checks+=1;approx(actual,expected,tolerance,message);}
 
-  verify(SAVE_VERSION===13,'Phase 6B2 delinquency state remains valid under current schema 13');
+  verify(SAVE_VERSION===14,'Phase 6B2 delinquency state remains valid under current schema 14');
 
   const legacy=adult('secured-status-legacy');const {loan:legacyCar}=addCar(legacy);
   const legacyStatus=getSecuredLoanStatus(legacy,legacyCar);
@@ -176,8 +176,8 @@ export function runAssetDelinquencyRegression(){
 
   const saveState=adult('secured-save-roundtrip');const {loan:saveLoan}=addCar(saveState);saveLoan.delinquency={status:'delinquent',arrears:5000,missedPayments:1,lastMissedPaymentAge:30};
   const restored=migrateSave(structuredClone(saveState));const restoredLoan=restored.finances.liabilities.find(item=>item.id==='car-loan')!;
-  verify(restored.saveVersion===13,'secured delinquency persists through current schema normalization');
-  verify(restoredLoan.delinquency?.status==='delinquent'&&restoredLoan.delinquency.arrears===5000,'schema-13 save roundtrip preserves secured delinquency state');
+  verify(restored.saveVersion===14,'secured delinquency persists through current schema normalization');
+  verify(restoredLoan.delinquency?.status==='delinquent'&&restoredLoan.delinquency.arrears===5000,'current-schema save roundtrip preserves secured delinquency state');
   verify(getSecuredLoanStatus(restored,restoredLoan)?.consequence==='repossession','restored delinquency still resolves its collateral consequence');
 
   const legacySave=adult('secured-old-save');const {loan:legacySaveLoan}=addCar(legacySave);delete legacySaveLoan.delinquency;

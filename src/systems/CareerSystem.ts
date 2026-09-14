@@ -8,6 +8,7 @@ import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import { actionGateStatus, consumeAction } from '../core/actionEconomy';
 import { currentWorkplaceWorld, syncWorkplaceWorlds } from './WorkplaceSystem';
+import { worldConditionModifiers } from './WorldConditionSystem';
 
 export const FREELANCE_MIN_AGE=14;
 export const MINIMUM_FULL_TIME_JOB_AGE=Math.min(...jobs.map(job=>job.minAge));
@@ -63,7 +64,7 @@ export function applyForJob(state:GameState,jobId:string):EngineResult {
   if(!qualifiesForJob(state,job)) return {success:false,messages:[{text:`You do not currently meet the requirements for ${job.title}.`}]};
   const applicationGate=consumeAction(state,[{policy:'career.application.total'},{policy:'career.application.job',target:job.id}]);if(!applicationGate.allowed)return{success:false,messages:[{text:applicationGate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
-  const interviewScore=state.character.secondary.charisma*.25+state.character.secondary.discipline*.15+state.character.stats.intelligence*.2+state.character.secondary.reputation*.15+rng.int(0,35);
+  const interviewScore=state.character.secondary.charisma*.25+state.character.secondary.discipline*.15+state.character.stats.intelligence*.2+state.character.secondary.reputation*.15+rng.int(0,35)+worldConditionModifiers(state).jobApplicationScoreDelta;
   const legalPenalty=state.legal.criminalRecord.filter(r=>r.convicted).length*8;
   const success=interviewScore-legalPenalty >= 46 + Math.min(28,job.experienceRequirement*3);
   state.rngCounter=rng.counter();
@@ -105,7 +106,7 @@ export function processCareerYear(state:GameState) {
   const years=state.character.age-current.startAge;
 
   const demandPressure=Math.max(0,1-state.economy.businessDemandIndex);
-  const layoffChance=Math.min(.085,.007+demandPressure*.06+(workplaceState?Math.max(0,42-workplaceState.morale)*.00035:0));
+  const layoffChance=clamp(.007+demandPressure*.06+(workplaceState?Math.max(0,42-workplaceState.morale)*.00035:0)+worldConditionModifiers(state).layoffChanceDelta,0,.16);
   if(years>=1&&rng.chance(layoffChance)){
     if(workplaceState)workplaceState.layoffs+=1;
     state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`A restructuring eliminated your ${current.title} position at ${current.company}.`});

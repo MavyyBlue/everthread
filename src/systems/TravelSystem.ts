@@ -4,6 +4,7 @@ import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { consumeAction } from '../core/actionEconomy';
+import { worldConditionModifiers } from './WorldConditionSystem';
 
 export const FAMILY_TRAVEL_MIN_AGE=5;
 export const INDEPENDENT_TRAVEL_MIN_AGE=18;
@@ -13,7 +14,7 @@ export function travel(state:GameState,countryId:string,city?:string,withFamily=
   const minimumAge=withFamily?FAMILY_TRAVEL_MIN_AGE:INDEPENDENT_TRAVEL_MIN_AGE;
   if(state.character.age<minimumAge)return{success:false,messages:[{text:withFamily?'Family trips become available later in childhood.':'Independent vacations become available at age 18.'}]};
   const country=countryById[countryId];if(!country)return{success:false,messages:[{text:'Destination not found.'}]};
-  const destination=city&&country.cities.includes(city)?city:country.cities[0]!;const distancePremium=countryId===state.character.countryId?1:2.3;const cost=Math.round((700+state.character.age*8)*distancePremium*(withFamily?1.8:1));
+  const destination=city&&country.cities.includes(city)?city:country.cities[0]!;const distancePremium=countryId===state.character.countryId?1:2.3;const cost=Math.round((700+state.character.age*8)*distancePremium*(withFamily?1.8:1)*worldConditionModifiers(state).travelCostMultiplier);
   let guardian:GameState['npcs'][string]|undefined;
   if(withFamily&&state.character.age<18){
     guardian=state.relationships.map(rel=>({rel,npc:state.npcs[rel.npcId]})).filter(({rel,npc})=>['parent','stepparent','grandparent'].includes(rel.type)&&npc?.alive).map(({npc})=>npc!).sort((a,b)=>b.wealth-a.wealth)[0];

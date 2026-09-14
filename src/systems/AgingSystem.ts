@@ -4,6 +4,7 @@ import { makeStateId } from '../core/ids';
 import { captureRewindSnapshot, normalizeRewindSnapshots } from './RewindSystem';
 import { migrateSave } from '../services/SaveSystem';
 import { processEconomyYear } from './EconomySystem';
+import { processWorldConditionsYear } from './WorldConditionSystem';
 import { processHealthYear } from './HealthSystem';
 import { processFamilyPlanningYear } from './RelationshipSystem';
 import { initializeMissingNpcLives, processNpcLives } from './NpcLifeSystem';
@@ -38,6 +39,7 @@ export function ageUp(state:GameState):EngineResult {
   state.flags.ageUpLocked=true;captureRewindSnapshot(state);
   try{
     state.character.age+=1;state.currentYear+=1;
+    processWorldConditionsYear(state);
     processEconomyYear(state);
     releaseMatureInheritanceTrust(state);
     processHealthYear(state);

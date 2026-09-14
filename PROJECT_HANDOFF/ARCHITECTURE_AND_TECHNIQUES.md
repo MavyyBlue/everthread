@@ -14,7 +14,7 @@ Phase 7B1 follows that boundary with a stateless `SystemicStorySystem` request b
 
 ## Determinism, saves, and yearly processors
 
-Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current **certified** save schema is **13** on Run #114 / expanded source `60bfa3eaecb574df5a74920cbc64f513055bae46`. Phase 7A introduced durable consequence-scheduler cooldown/history authority through shared `CURRENT_SAVE_VERSION` and is now certified/deployed. Phase 6A advanced to schema 11 for durable revolving-credit account/history authority; Phase 6B3 advanced to schema 12 for durable auto-pay, card past-due, and secured paid-ahead payment state. Schema increments are justified by new durable authority, not by presentation-only projections or bounded primitive flags.
+Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current **certified** save schema is **13** on gameplay Run #120 / expanded source `4dd4378ec8986056fc3348dec5b2c6b1594b236b`; docs-only Run #121 is the newest certified repository source. The active Phase 7C candidate advances durable world-condition state to schema **14**. Phase 7A introduced durable consequence-scheduler cooldown/history authority through shared `CURRENT_SAVE_VERSION` and is certified/deployed. Phase 6A advanced to schema 11 for durable revolving-credit account/history authority; Phase 6B3 advanced to schema 12 for durable auto-pay, card past-due, and secured paid-ahead payment state. Schema increments are justified by new durable authority, not by presentation-only projections or bounded primitive flags.
 
 Real player saves are diagnostic evidence only. Generalize the failure shape into fabricated deterministic regression fixtures; never ship a tester's seed, IDs, NPCs, or history.
 
@@ -166,17 +166,24 @@ Specialized suites cover core, special-career worlds, music, social affiliation,
 
 The existing workflow already runs `npm test` before production build. Keeping the AI suite inside `runRegression.ts` means a semantic interaction failure stops deployment without changing the mobile upload workflow.
 
+## Phase 7C world-condition architecture
+
+`WorldConditionSystem` is a context authority, not an outcome authority. It owns bounded multi-year condition identity/scope/country/duration/intensity/history/cooldowns and projects modifiers; existing Economy/Career/Investment/Travel/Fame/Finance/Business/Property systems continue to own actual values and outcomes. Country conditions keep exact country identity across emigration; global conditions are location-independent.
+
+Annual condition generation uses an isolated deterministic seed/year/country stream and does not advance `state.rngCounter`. Phase 7C must not create another delayed-event or popup queue; inspectability comes from Life-screen read-only projection plus bounded timeline start/expiry entries. Active condition count and resolved history stay hard-bounded for dynasty-scale saves.
+
+
 ## Mobile-first technique
 
 Primary widths remain 360 / 390 / 412 / 430px. Favor bottom navigation/sheets, 44px+ meaningful touch controls, compact readable cards, safe-area padding, and explanatory disabled states for locked commitments. The growing main application chunk remains a future code-splitting target.
 
 ## Phase 7 persistent-consequence architecture
 
-Run #106 is the certified starting point for Phase 7. Existing `DelayedEvent` entries already prove exact event IDs, due ages, payload context, and exact NPC targeting, but `recentEventIds` is not sufficient as a durable exact-age cooldown authority. Phase 7A should add one bounded persistent consequence/cooldown authority rather than scattering more flags or queue-priority checks across feature systems.
+Run #106 was the certified starting point for Phase 7. Phase 7A is now certified and provides one bounded persistent consequence/cooldown authority rather than scattering flags or queue-priority checks across feature systems.
 
 Scheduler responsibilities: stable consequence/chain IDs, origin event/age, exact typed target references, due-age windows, explicit priority, deterministic tie-breaking, cancellation/validity conditions, deduplication, completion/cancellation history, bounded retention, and compatibility normalization for legacy `DelayedEvent` entries. Feature systems schedule consequences; the scheduler alone decides which due consequence may occupy the single unresolved `pendingEvent` slot.
 
 System-owned and dedicated story definitions remain outside the ordinary random-event pool unless intentionally authored as random content. Scheduling/cooldown bookkeeping must not consume the main simulation RNG. Invalid/dead/missing targets cancel through deterministic validation rather than silently retargeting to a different entity.
 
-Phase 7A is expected to move save schema 12 → 13. Migration must be deterministic, RNG-neutral, idempotent, preserve old pending/delayed event completion, and initialize missing scheduler state without rewriting established life history. New-game save-version initialization must stay synchronized with the SaveSystem authority.
+Phase 7A moved save schema 12 → 13 with deterministic, RNG-neutral, idempotent scheduler migration. Phase 7C now legitimately advances the candidate schema 13 → 14 for bounded durable world-condition lifecycle state. Its migration creates empty condition state for old saves without retroactive history and consumes no gameplay RNG or runtime IDs. New-game save-version initialization remains synchronized with the shared SaveSystem authority.
 

@@ -2,6 +2,7 @@ import { securities } from '../data/assets';
 import type { EngineResult, GameState } from '../types/game';
 import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
+import { worldConditionModifiers } from './WorldConditionSystem';
 
 export function initializeMarket(state:GameState) {
   if(Object.keys(state.investments.prices).length) return;
@@ -13,10 +14,11 @@ export function processMarketYear(state:GameState) {
   const regime=rng.weighted([
     {item:'bull' as const,weight:28},{item:'neutral' as const,weight:45},{item:'bear' as const,weight:18},{item:'bubble' as const,weight:6},{item:'crash' as const,weight:3}
   ]); state.investments.marketRegime=regime;
-  const regimeDrift={bull:.055,neutral:.005,bear:-.07,bubble:.15,crash:-.30}[regime];
+  const world=worldConditionModifiers(state);
+  const regimeDrift={bull:.055,neutral:.005,bear:-.07,bubble:.15,crash:-.30}[regime]+world.investmentDriftDelta;
   for(const s of securities){
     const current=state.investments.prices[s.id]??s.basePrice;
-    const noise=(rng.next()-.5)*2*s.volatility;
+    const noise=(rng.next()-.5)*2*s.volatility*world.investmentVolatilityMultiplier;
     const typeBias=s.type==='bond'?(regime==='crash'?.04:0):s.type==='speculative'?(regime==='bubble'?.35:regime==='crash'?-.25:0):0;
     const ret=Math.max(-.85,Math.min(1.8,s.drift+regimeDrift+noise+typeBias));
     const next=Math.max(.05,current*(1+ret)); state.investments.prices[s.id]=Math.round(next*100)/100;

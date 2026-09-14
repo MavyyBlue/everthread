@@ -2,8 +2,8 @@
 
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
-Certified save schema: 13
-Newest certified expanded source: Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`
+Certified save schema: 13 (Phase 7C candidate advances to schema 14)
+Newest certified expanded source: Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128` (docs-only synchronization)
 Certified gameplay baseline: Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`
 
 ## Product direction
@@ -28,17 +28,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Phase 7B3 — Special-Career Long-Tail Echoes (CI Green, Run #120)
+### Phase 7C — Persistent World Conditions (local candidate; CI certification pending)
 
-Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b` is the active certified gameplay/source baseline. Phase 7B3 fills the delayed-story gap across Combat, Military, and Politics—the persistent 4E ecosystems that are outside the older Phase 4D8 annual `SpecialCareerStorySystem` scanner. Five explicit player actions request future consequences through `SystemicStorySystem` → `ConsequenceSystem`: combat training, a sanctioned bout, military training, a policy push, and a press confrontation. Existing annual special-career story scanning remains untouched.
+Newest certified repository source is docs-only Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`; gameplay behavior baseline remains Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`. A fresh central-feedback review found **0 unresolved reports** and advanced the checkpoint to Run #121 before implementation.
 
-When the relevant world/person already exists, the consequence retains the exact archived-capable `SocialWorld` plus exact NPC and career track. Military and politics safely fall back to career-only targeting if their persistent world has not yet been created; no action creates a world early merely for story presentation. Invalid exact targets cancel rather than retarget. `ChoiceEffect.specialCareer` remains narrow: bounded `skill`, `reputation`, and `approval` only, never lifecycle-result authority.
+Phase 7C adds one bounded `WorldConditionSystem` owner for multi-year national/global context. It persists only condition identity/scope/country/duration/intensity plus bounded resolved history and start cooldowns. It owns no economy balances, career records, investments, assets, business revenue, travel state, fame state, or event queue. Seven data-driven conditions project modifiers into the existing owners: Economy, Career, Business/Property through economy indices, Investment, Travel, Fame, and Finance.
 
-Canonical Run #120 passed Phase 7B3 **36/36**, both TypeScript gates, the complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, Special-career Story 37/37, Path-story 68/68, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, both feedback suites, certified restore smoke, and the **168-module** production build. Save schema remains 13; random events remain 691.
+Country conditions remain attached to the exact country where they began; emigration makes them irrelevant without deleting history, and returning while one is still active makes it visible/relevant again. Global conditions continue across countries. Annual condition generation uses an isolated deterministic world stream and does not advance the shared gameplay RNG counter. Active state is capped at 4 and resolved history at 48.
 
-Phase 7B is now stable across family/school/relationships, ownership/workplace, and special-career echoes. The next implementation slice is **Phase 7C — Persistent World Conditions**.
+The Life screen exposes a compact **World around you** card with title/scope/intensity/remaining years/description/effect summary for currently relevant conditions. Start/expiry use timeline history; Phase 7C creates no parallel popup/delayed-event queue.
 
-Mavyy's sequencing rule remains explicit: **after Phase 7 is complete, do not invent or begin another implementation phase. Stop implementation planning and brainstorm the future direction together first.**
+Candidate save schema is **14**. Schema-13 migration initializes empty world-condition state deterministically with no retroactive conditions, no gameplay RNG consumption, and no runtime-ID consumption. The ordinary random-event pool remains exactly 691.
+
+Dedicated Phase 7C regression is **42/42 locally**. Both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Phase 7B3 36/36, and every established career/finance/family/NPC suite pass. Production build is green at **170 modules**. GitHub Actions remains final certification authority.
+
+Phase 7 is not closed until this candidate is certified/deployed and the Phase 7 closeout documentation is synchronized. **After Phase 7 closes, stop implementation planning and brainstorm the future direction with Mavyy before defining anything new.**
 
 ## Recent corrective history
 

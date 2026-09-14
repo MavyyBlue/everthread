@@ -8,7 +8,7 @@ export type Orientation = 'straight' | 'gay' | 'lesbian' | 'bisexual' | 'pansexu
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type TimelineCategory =
   | 'birth' | 'family' | 'school' | 'relationship' | 'career' | 'money' | 'health' | 'crime'
-  | 'legal' | 'fame' | 'asset' | 'business' | 'travel' | 'achievement' | 'death' | 'random';
+  | 'legal' | 'fame' | 'asset' | 'business' | 'travel' | 'world' | 'achievement' | 'death' | 'random';
 
 export interface PrimaryStats {
   health: Percent;
@@ -665,6 +665,45 @@ export interface EconomyState {
   year: number;
 }
 
+export type WorldConditionScope = 'global' | 'country';
+export type WorldConditionIntensity = 1 | 2 | 3;
+
+export interface WorldConditionRecord {
+  id: Id;
+  definitionId: Id;
+  scope: WorldConditionScope;
+  countryId?: Id;
+  startYear: number;
+  endYear: number;
+  intensity: WorldConditionIntensity;
+}
+
+export interface WorldConditionHistoryEntry extends WorldConditionRecord {
+  resolvedYear: number;
+}
+
+export interface WorldConditionState {
+  active: WorldConditionRecord[];
+  history: WorldConditionHistoryEntry[];
+  lastStartedYearByDefinition: Record<Id, number>;
+}
+
+export interface WorldConditionModifiers {
+  inflationRateDelta: number;
+  salaryGrowthRateDelta: number;
+  housingGrowthRateDelta: number;
+  businessDemandGrowthRateDelta: number;
+  jobApplicationScoreDelta: number;
+  layoffChanceDelta: number;
+  investmentDriftDelta: number;
+  investmentVolatilityMultiplier: number;
+  travelCostMultiplier: number;
+  fameOrganicGrowthMultiplier: number;
+  fameScandalChanceDelta: number;
+  publicityPayMultiplier: number;
+  householdCostMultiplier: number;
+}
+
 
 export interface TravelState {
   visitedCountries: Id[];
@@ -738,6 +777,7 @@ export interface GameState {
   familyPlanning: FamilyPlanningState;
   actionLedger: ActionLedgerState;
   economy: EconomyState;
+  worldConditions: WorldConditionState;
   flags: GameFlags;
   settings: SettingsState;
   yearlySnapshots: Array<{ age: number; state: string }>;

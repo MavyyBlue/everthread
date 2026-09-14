@@ -3,6 +3,10 @@
 Last audited: 2026-09-13  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 7C world-condition content note
+
+The Phase 7C candidate adds **7** data-driven persistent world-condition definitions: **4 country-scoped** conditions (Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze) and **3 global** conditions (Travel Disruption, Media Frenzy, Market Jitters). They are not `GameEventDefinition`s, never enter random-event selection, and do not change the ordinary/random event library count of **691** or the separate 15-definition Phase 7B systemic-story registry / 18-definition older special-career story registry.
+
 ## Phase 7B systemic-story content note
 
 The ordinary/random event library remains exactly **691** definitions. Phase 7B1 contributes **5** probability-zero system-owned delayed story definitions outside that pool; certified Phase 7B2 contributes **5 more**; certified Phase 7B3 adds **5** combat/military/politics echoes, bringing the systemic delayed-story registry to **15** while leaving random-selection counts/RNG shape unchanged. These definitions are invoked only by authoritative player actions through the consequence scheduler. The older dedicated special-career story registry remains separate at **18** definitions and its annual scanner is unchanged.

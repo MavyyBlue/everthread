@@ -1,5 +1,25 @@
 # Everthread Changelog
 
+## Phase 7C — Persistent World Conditions candidate — 2026-09-13
+
+### Added / changed
+
+- Added one bounded `WorldConditionSystem` authority for persistent national/global conditions. It owns condition identity, exact country/global scope, duration, intensity, durable cooldowns, bounded active/history state, deterministic annual start/expiry, and read-only modifier projection; it owns no cash, jobs, housing, investments, fame, business, travel, or event queue truth.
+- Added seven original data-driven conditions outside the 691-event random library: Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze, Travel Disruption, Media Frenzy, and Market Jitters. Country conditions bind the exact country where they started; global conditions remain globally relevant.
+- Existing authorities consume bounded modifiers instead of being bypassed: `EconomySystem` (inflation/salary/housing/business demand), `CareerSystem` (application pressure/layoff risk), `BusinessSystem` through the economy index, `PropertySystem` through housing, `InvestmentSystem` (drift/volatility), `TravelSystem` (trip cost), `FameSystem` (organic growth/scandal/publicity economics), and `FinanceSystem` (ordinary household living-cost pressure).
+- Added a compact mobile Life-screen **World around you** card showing only conditions relevant to the player’s current country plus global conditions, including scope, intensity, remaining years, description, and effect summary. Start/expiry also write bounded timeline entries under the new `world` timeline category; no standalone popup queue is introduced.
+- Annual condition selection uses an isolated deterministic world-condition RNG stream derived from seed/year/country and does not advance `state.rngCounter`. Existing downstream RNG draw shapes remain unchanged.
+- Save schema advances **13 → 14** for durable `worldConditions`. Migration creates empty world-condition state without retroactive history and is deterministic, idempotent, gameplay-RNG neutral, and runtime-ID neutral. Active conditions are capped at 4 and resolved history at 48.
+
+### Local candidate validation
+
+- New `phase7CWorldConditionRegression.ts`: **42/42** checks covering content isolation/counts, schema-14 migration, migration idempotence/RNG neutrality, deterministic generation, active/history bounds, multi-year expiry/history, exclusive groups/cooldowns, country/global relevance across emigration/return, UI projection, Economy/Business/Property/Investment/Travel/Fame/Finance integration, save round-trip, queue isolation, exact scope, and global invariants.
+- Both TypeScript gates PASS; complete regression wall PASS; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Phase 7B3 36/36; all established career/estate/finance/NPC suites remain green.
+- Production build PASS with Vite 7.3.6 at **170 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Candidate is built from newest certified repository source **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`** (docs-only synchronization). Certified gameplay behavior baseline remains **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`** until canonical GitHub Actions certifies this 7C candidate.
+- Fresh live Feedback Inbox review before implementation found **0 unresolved reports** and advanced the review checkpoint to Run #121.
+- Phase 7 is **not closed yet**. After Phase 7C certification and explicit Phase 7 closeout synchronization, implementation planning stops until Mavyy and Yuki brainstorm the future direction together.
+
 ## Phase 7B3 — Special-Career Long-Tail Echoes — CI Green Run #120 — 2026-09-13
 
 ### Added / changed

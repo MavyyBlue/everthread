@@ -3,6 +3,8 @@ import { clamp } from './math';
 import { NPC_ASSET_LIMITS } from '../data/npcAssetRules';
 import { sanitizeCreditState } from '../systems/CreditSystem';
 import { CONSEQUENCE_SCHEDULER_VERSION, MAX_ACTIVE_CONSEQUENCES, MAX_CONSEQUENCE_HISTORY, MAX_EVENT_COOLDOWNS, ensureConsequenceSchedulerState } from '../systems/ConsequenceSystem';
+import { MAX_ACTIVE_WORLD_CONDITIONS, MAX_WORLD_CONDITION_HISTORY, ensureWorldConditionState } from '../systems/WorldConditionSystem';
+import { worldConditionById } from '../data/worldConditions';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -112,6 +114,7 @@ function normalizePhase4CareerWorlds(state:GameState){
 
 export function enforceStateInvariants(state: GameState): GameState {
   ensureConsequenceSchedulerState(state);
+  ensureWorldConditionState(state);
   state.character.age = Math.max(0, Math.floor(state.character.age));
   state.character.stats.health = clamp(state.character.stats.health);
   state.character.stats.happiness = clamp(state.character.stats.happiness);
@@ -271,6 +274,12 @@ export function validateState(state: GameState): string[] {
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
+  if(!state.worldConditions)errors.push('Missing world-condition state');else{
+    if(state.worldConditions.active.length>MAX_ACTIVE_WORLD_CONDITIONS)errors.push('Active world conditions are unbounded');
+    if(state.worldConditions.history.length>MAX_WORLD_CONDITION_HISTORY)errors.push('World-condition history is unbounded');
+    const conditionIds=new Set<string>();
+    for(const condition of state.worldConditions.active){if(conditionIds.has(condition.id))errors.push(`Duplicate world condition id ${condition.id}`);conditionIds.add(condition.id);if(!worldConditionById[condition.definitionId])errors.push(`Unknown world condition ${condition.definitionId}`);if(condition.endYear<condition.startYear)errors.push(`World condition ${condition.id} has invalid duration`);if(condition.scope==='country'&&!condition.countryId)errors.push(`World condition ${condition.id} is missing its country`);}
+  }
   if(!state.consequenceScheduler||state.consequenceScheduler.version!==CONSEQUENCE_SCHEDULER_VERSION)errors.push('Missing or invalid consequence scheduler state');
   else{
     if(state.delayedEvents.length>MAX_ACTIVE_CONSEQUENCES)errors.push('Active consequence queue is unbounded');

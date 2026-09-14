@@ -31,7 +31,7 @@ export function runPersistentConsequenceRegression(){
   let checks=0;const check=(condition:unknown,message:string)=>{verify(condition,message);checks+=1;};
 
   const fresh=createNewGame({seed:'phase7-fresh'});
-  check(fresh.saveVersion===13,'01 new games must initialize save schema 13');
+  check(fresh.saveVersion===14,'01 new games must initialize the current save schema 14');
   check(fresh.consequenceScheduler?.version===1&&fresh.delayedEvents.length===0,'02 new games must initialize one empty scheduler authority');
 
   const cooldown=adult('phase7-cooldown');const refund=eventById['money_unexpected_refund_1'];verify(refund,'missing refund event fixture');
@@ -61,7 +61,7 @@ export function runPersistentConsequenceRegression(){
   const cooldownBound=adult('phase7-cooldown-bound');const rngBeforeCooldowns=cooldownBound.rngCounter;for(let i=0;i<MAX_EVENT_COOLDOWNS+9;i++)recordEventTriggeredAge(cooldownBound,`cooldown-${i}`,i);check(Object.keys(cooldownBound.consequenceScheduler.eventCooldownAges).length===MAX_EVENT_COOLDOWNS&&cooldownBound.rngCounter===rngBeforeCooldowns,'20 exact cooldown ledger must remain bounded and RNG-neutral');
 
   const legacy=adult('phase7-migration',40);legacy.saveVersion=12;const legacyParent=legacy.relationships.find(rel=>rel.type==='parent')!.npcId;legacy.delayedEvents=[{id:'legacy-delay',eventId:'delayed_health_warning_return',dueAge:42,payload:{npcId:legacyParent,originAge:39,requiredRelationshipTypes:['parent']}}];legacy.recentEventIds=['legacy-a','legacy-b','legacy-c'];legacy.pendingEvent={eventId:'midlife_reassessment',title:'Pending legacy event',description:'Keep me intact',choices:[{id:'reflect',label:'Reflect'}]};delete (legacy as Partial<GameState>).consequenceScheduler;const migrationRng=legacy.rngCounter,migrationId=legacy.idCounter;const migrated=migrateSave(structuredClone(legacy));
-  check(migrated.saveVersion===13&&migrated.rngCounter===migrationRng&&migrated.idCounter===migrationId,'21 schema 12→13 migration must be deterministic and RNG/ID neutral');
+  check(migrated.saveVersion===14&&migrated.rngCounter===migrationRng&&migrated.idCounter===migrationId,'21 schema-12 migration through the current schema must be deterministic and RNG/ID neutral');
   const migratedDelay=migrated.delayedEvents.find(item=>item.id==='legacy-delay');check(migratedDelay?.targetRefs?.[0]?.id===legacyParent&&migratedDelay.origin?.age===39&&migratedDelay.validity?.requiredRelationshipTypes?.includes('parent')===true,'22 migration must preserve and normalize legacy delayed target/origin/relationship semantics');
   check(migrated.pendingEvent?.title==='Pending legacy event'&&eventLastTriggeredAge(migrated,'legacy-c')===40&&eventLastTriggeredAge(migrated,'legacy-a')===38,'23 migration must preserve pending event and deterministically reconstruct exact cooldown ages');
   const migratedAgain=migrateSave(structuredClone(migrated));check(JSON.stringify(migratedAgain.consequenceScheduler)===JSON.stringify(migrated.consequenceScheduler)&&JSON.stringify(migratedAgain.delayedEvents)===JSON.stringify(migrated.delayedEvents),'24 schema-13 normalization must be idempotent');

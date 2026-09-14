@@ -35,6 +35,7 @@ A new chat should begin by reading this folder and the root project tracking fil
 Everthread is built as one interconnected simulation, not a collection of isolated feature pages.
 
 - `PHASE6_CREDIT_DEBT.md` — closed Phase 6 credit/debt architecture and the Run #106 household-finance/crisis-agency closeout on schema 12.
-- `PHASE7_PERSISTENT_CONSEQUENCES.md` — active Phase 7 plan. Phase 7A builds the authoritative persistent consequence/cooldown scheduler before 7B systemic delayed stories and 7C persistent world conditions.
+- `PHASE7_PERSISTENT_CONSEQUENCES.md` — active Phase 7 plan and authority boundaries across 7A/7B/7C.
+- `PHASE7C_WORLD_CONDITIONS.md` — active Phase 7C candidate contract, ownership, schema-14 migration, modifiers, UI projection, and QA gates.
 
 - `PLAYER_FEEDBACK.md` — player report schema/lifecycle, future-Yuki inbox review protocol, triage classes, and the rule that backend-green reports still require interface/experience investigation.
