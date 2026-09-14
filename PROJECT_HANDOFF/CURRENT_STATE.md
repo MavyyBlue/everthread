@@ -2,29 +2,53 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded repository source and gameplay baseline is **GitHub Actions Run #122** (`34797847276`) on expanded source **`0770106f52eea3182e86d120fa38c6b90be589e4`**.
+The newest certified expanded **repository** source is **GitHub Actions Run #123** (`34798337980`) on docs-only expanded source **`35f546c14ab29eaddd89a55aa1c628b11caca902`**. The newest gameplay-changing certified baseline remains **Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`**.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **14**
-- Current macro phase: **Phase 7 — Persistent World Consequences: CLOSED**
-- Phase 7A: **CI Green, certified, deployed**
-- Phase 7B1: **CI Green, Run #115**
-- Phase 7B2: **CI Green, Run #118**
-- Phase 7B3: **CI Green, Run #120**
-- Phase 7C — Persistent World Conditions: **CI Green, certified, deployed in Run #122**
-- Supabase Feedback Inbox: **live; post-Run-#122 review found 4 total reports, all 4 resolved; bookkeeping checkpoint write was blocked by connector safety**
+- Phase 7 — Persistent World Consequences: **CLOSED**
+- Current approved macro program: **Living World Program**
+- Planned Phase 8: **Everthread: Home**
+- Planned Phase 9: **Shared Lives**
+- Planned Phase 10: **Living Everthread**
+- First implementation target when Mavyy asks to begin: **Phase 8A — Everthread Setting Foundation**
+- Supabase Feedback Inbox: latest confirmed sweep found **4 total reports, all 4 resolved**
 - Activity-specific minigames remain established historical work, not the current implementation target.
 
-If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Use Run #122 / `0770106f…` as gameplay/source truth. Phase 7 is closed; do not infer or begin a next implementation phase.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing post-Phase-7 work.
 
-**Post-Phase-7 boundary:** when Phase 7 closes, stop implementation planning. Do not invent a Phase 8 or additional implementation program until Mavyy and Yuki explicitly brainstorm the game's next direction together.
+**Post-Phase-7 boundary satisfied:** Mavyy and Yuki explicitly brainstormed the next direction after Phase 7 closed. The approved result is the Living World Program documented in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`; do not substitute an unrelated Phase 8 or redesign its intent without Mavyy's direction.
 
 Last handoff synchronization: 2026-09-13
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `14`
-Candidate save schema: none — Phase 7 is closed
+Candidate save schema: none — Living World implementation has not begun
+
+## Newest certified repository source — Run #123 (documentation-only Phase 7 closeout)
+
+- Upload wrapper: `138263b0bee4fe6876db6cd32af5fe581e1cd478`.
+- Expanded certified repository source: `35f546c14ab29eaddd89a55aa1c628b11caca902`.
+- GitHub Actions Run #123: `34798337980`.
+- Diff against Run #122 gameplay source contained the intended tracking/documentation changes only; no `src/`, tests, package, workflow, or gameplay assets changed.
+- Canonical preflight remained Green, including Phase 7C 42/42 and the complete established wall; production build remained 170 modules.
+- Certified source SHA-256: `b2abba6d10ecfb2ebf34cbad6847bd4f5aeb80b9ae69cef2f3a8ac05ca9511a0`.
+- Certified dependency SHA-256: `12c0eacdbb06842c0c65840c264bed678530a96c36327fc76cecde7e4ff87d43`; package-lock SHA-256 remains `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10329489927`, digest `f8da2bc17150ee8cf927452ec146403346226f567b5a01a82ab715f4ead0a3d7`.
+- Pages artifact ID `10329559997`, digest `0c6e6db5bdbec9e0eebced324650f841693bda62b107276e56bee47bfa314973`; deployment succeeded.
+
+## Approved next direction — Living World Program
+
+Mavyy chose a three-phase program after the required post-Phase-7 brainstorm:
+
+1. **Phase 8 — Everthread: Home:** make Everthread the canonical setting, establish the town/place registry and 2D map, route mature systems through believable institutions, and create the player profile/personal inventory without parallel truth.
+2. **Phase 9 — Shared Lives:** procedural NPC interests, shared experiences, youth social life, dates/romantic momentum, real inventory gifts, and cross-world chemistry through existing relationship/social/career authorities.
+3. **Phase 10 — Living Everthread:** residential/workplace projections, generational place memory, and a bounded living-map layer that lets the town remember meaningful lives without becoming a city-management simulator.
+
+The exact intent, slices, player-intent rules, authority boundaries, and certification discipline live in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
+
+**New operating rule:** after every certified gameplay/feature/fix/migration/architecture commit, synchronize all materially affected handoff/root tracking documents before beginning the next implementation slice. Docs-only sync commits are recursion-exempt unless their certification changes a material fact.
 
 ## Newest certified gameplay/source — Run #122
 
@@ -89,7 +113,7 @@ The new probability-zero `systemicConsequenceEvents` registry stays outside the 
 
 Dedicated 7B1 regression is **33/33** in canonical Run #115. Both TypeScript gates, complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Random-event Coherence 77/77, minigame 19/19, feedback suites, global invariants, certified artifact restore smoke, and production build at **167 modules** are green. The long-life harness resolves scheduler-required same-age backlog before retrying Age Up, preserving certified Phase 7A gating.
 
-Phase 7A, all Phase 7B slices, and Phase 7C are certified baseline behavior. **Phase 7 is closed.** Read the dedicated Phase 7 handoffs for their preserved contracts; do not create a next implementation phase until Mavyy and Yuki brainstorm the future direction together.
+Phase 7A, all Phase 7B slices, and Phase 7C are certified baseline behavior. **Phase 7 is closed.** The required brainstorm has now occurred; post-Phase-7 implementation must follow the Mavyy-approved `LIVING_WORLD_PROGRAM.md` unless he changes direction.
 
 ## Green systems immediately relevant to current work
 

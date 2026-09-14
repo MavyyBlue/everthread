@@ -2,9 +2,21 @@
 
 This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
 
+## Active macro program — Living World Program
+
+The required post-Phase-7 brainstorm is complete. Mavyy approved the **Living World Program** as the next direction. The detailed authority, player-intent, migration, QA, and slice contract lives in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
+
+Certified context at approval: newest repository source **Run #123 / `35f546c14ab29eaddd89a55aa1c628b11caca902`** (docs-only); gameplay baseline **Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`**; save schema **14**.
+
+1. **Phase 8 — Everthread: Home** — make Everthread the canonical setting; safely migrate country/city assumptions; create the data-driven town/map; route existing systems through institutions; add player profile/personal inventory. First slice: **8A Everthread Setting Foundation**.
+2. **Phase 9 — Shared Lives** — persistent NPC interests/preferences; one shared-experience evaluator; childhood/youth social life; dates and romantic momentum; actual inventory gifts; cross-world chemistry through existing authorities.
+3. **Phase 10 — Living Everthread** — residential/workplace projections, bounded generational place memory, and a living map that reflects meaningful current/dynasty context without becoming a second simulation.
+
+**Sequencing rule:** one certified slice at a time. After every certified gameplay/feature/fix/migration/architecture commit, complete the mandatory documentation synchronization before beginning the next slice.
+
 ## Closed macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, 6, and **7 are closed**. Run #91 established canonical pre-deployment certification. **Run #122** (`34797847276`) / `0770106f52eea3182e86d120fa38c6b90be589e4` is the newest certified gameplay/source baseline on save schema **14**. Phase 7A remains the scheduler foundation; Phase 7B and Phase 7C are certified/deployed. Implementation planning is intentionally paused until Mavyy and Yuki brainstorm the future direction together.
+Phases 4, 5, 6, and **7 are closed**. Run #91 established canonical pre-deployment certification. **Run #122** (`34797847276`) / `0770106f52eea3182e86d120fa38c6b90be589e4` remains the newest gameplay-changing certified baseline on save schema **14**; docs-only Run #123 / `35f546c14ab29eaddd89a55aa1c628b11caca902` is the newest certified repository source. The post-Phase-7 planning pause was honored and is now satisfied by Mavyy's explicit approval of the Living World Program.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -151,13 +163,13 @@ Run #122 certified Phase 7C and closes Phase 7 on save schema 14. Phase 7A remai
 2. **Phase 7B — Systemic delayed stories:** **green and stable.** 7B1 family/school/relationships is certified in Run #115 at 33/33; 7B2 Ownership & Workplace Echoes is certified in Run #118 at 35/35; 7B3 Special-Career Long-Tail Echoes is certified in Run #120 at 36/36, adding action-driven delayed consequences for combat, military, and politics while leaving the older annual special-career story scanner and career lifecycle authorities intact.
 3. **Phase 7C — Persistent world conditions:** **green; certified in Run #122 at 42/42.** Seven bounded multi-year country/global conditions flow through existing employment, business, investment, housing, travel, fame/media, and finance authorities rather than flavor-only popups. One bounded `WorldConditionSystem` owns condition lifecycle only; certified save schema is 14 with RNG-neutral migration.
 
-**Phase 7 is closed. Implementation planning is paused. Do not define or begin a new macro phase until Mavyy and Yuki brainstorm the future direction together. Existing later-quality notes are not an automatic post-Phase-7 implementation queue.**
+**Phase 7 is closed. The required brainstorm happened before any new macro plan was defined. The approved continuation is `LIVING_WORLD_PROGRAM.md`; existing older later-quality notes are not an alternative automatic queue.**
 
 Phase 7 compatibility requirements: scheduler priority is centralized; one feature cannot overwrite another feature's due consequence; exact NPC/asset/world targets survive across years; invalid targets cancel deterministically; random-event library counts/RNG behavior do not change merely because system-owned stories are added; history stays bounded; and save migrations consume no simulation RNG.
 
 ## Cross-cutting player-feedback gate
 
-Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Phase 7 sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The inbox was refreshed after Phase 7C certification in Run #122: there are **4 total reports and all 4 are resolved**. The stored review checkpoint remains Run #121 because connector safety blocked the post-Run-#122 bookkeeping write; no newer stored checkpoint is claimed. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
+Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Living World sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The inbox was refreshed after Phase 7C certification in Run #122: there are **4 total reports and all 4 are resolved**. The stored review checkpoint remains Run #121 because connector safety blocked the post-Run-#122 bookkeeping write; no newer stored checkpoint is claimed. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
 
 Future feature work should review active supplied/exported reports before starting, with data-loss/crash/accounting/state-integrity/blocking defects taking priority, followed by explicitly prioritized triaged experience/UX reports. A backend-green test result redirects technical triage into UI/experience investigation rather than invalidating the report.
 
