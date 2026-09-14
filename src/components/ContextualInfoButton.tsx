@@ -5,7 +5,7 @@ import { specialCareerInfluenceView } from '../systems/SpecialCareerInfluenceSys
 import { specialCareerLifecycleViews } from '../systems/SpecialCareerLifecycleSystem';
 import { specialCareerWorlds, type SpecialCareerWorldKind } from '../systems/SpecialCareerWorldSystem';
 
-export type MainInfoTab='life'|'people'|'activities'|'career'|'assets';
+export type MainInfoTab='life'|'people'|'map'|'activities'|'career'|'assets';
 type Track=Record<string,number|string|boolean>;
 
 type InfoEntry={title:string;summary:string;notes:string[]};
@@ -21,6 +21,16 @@ const TAB_INFO:Record<MainInfoTab,InfoEntry>={
       'The timeline is persistent history, not just flavor text. Important entries can reference relationships, money, careers, health, legal state, fame, and delayed consequences.',
       'Primary and secondary stats are inputs to many systems rather than independent meters. A choice can improve one area while creating pressure somewhere else.',
       'Age Up is protected against double activation. If a required event is open, the next year cannot begin until that event is resolved.',
+    ],
+  },
+  map:{
+    title:'How the Everthread map works',
+    summary:'The map is a deterministic navigation projection of Everthread. Places describe where systems can live without owning money, careers, relationships, property, school records, or outcomes.',
+    notes:[
+      'Drag the town to pan, pinch or use the Explore controls to zoom, and tap a place for its read-only detail sheet.',
+      'Map camera, filters, search, and selection are local interface state. Browsing the map does not consume gameplay RNG and is not saved into your life.',
+      'Existing gameplay entry points remain authoritative during Phase 8B. Place-to-system routing is intentionally deferred until Phase 8C proves parity before anything old is retired.',
+      'Some locations can be discovered through the life you lead. Discovery is derived from existing state rather than stored in a second town ledger.',
     ],
   },
   people:{

@@ -1,0 +1,127 @@
+import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
+import { BottomSheet } from '../components/BottomSheet';
+import { TOWN_DISTRICTS, TOWN_MAP_HEIGHT, TOWN_MAP_WIDTH, TOWN_PLACE_CATEGORIES, TOWN_PLACES, type TownPlaceCategory } from '../data/townPlaces';
+import {
+  buildTownMapProjection,
+  clampTownMapScale,
+  constrainTownMapCamera,
+  fitTownMapCamera,
+  townMapLabelVisible,
+  townMapMarkerVisible,
+  townMapPlacesInBounds,
+  townMapWorldBounds,
+  type TownMapCamera,
+} from '../systems/TownMapSystem';
+import type { GameState } from '../types/game';
+import './TownMapScreen.css';
+
+type PointerPoint={x:number;y:number};
+const districtClass=(index:number)=>`town-map-district town-map-district--${(index%4)+1}`;
+
+export default function TownMapScreen({state}:{state:GameState}){
+  const viewportRef=useRef<HTMLDivElement|null>(null);
+  const pointersRef=useRef(new Map<number,PointerPoint>());
+  const gestureRef=useRef<{lastSingle?:PointerPoint;distance?:number;midpoint?:PointerPoint}>({});
+  const initialized=useRef(false);
+  const[viewport,setViewport]=useState({width:390,height:560});
+  const[camera,setCamera]=useState<TownMapCamera>({x:0,y:0,scale:.28});
+  const[panelOpen,setPanelOpen]=useState(false);
+  const[query,setQuery]=useState('');
+  const[categories,setCategories]=useState<TownPlaceCategory[]>(TOWN_PLACE_CATEGORIES.map(item=>item.id));
+  const[selectedId,setSelectedId]=useState<string|undefined>();
+
+  const projection=useMemo(()=>buildTownMapProjection(state,{query,categories}),[state,query,categories]);
+  const selected=TOWN_PLACES.find(place=>place.id===selectedId);
+
+  useLayoutEffect(()=>{
+    const element=viewportRef.current;if(!element)return;
+    const read=()=>{
+      const rect=element.getBoundingClientRect();const next={width:Math.max(1,rect.width),height:Math.max(1,rect.height)};setViewport(next);
+      if(!initialized.current){initialized.current=true;setCamera(fitTownMapCamera(next));}
+      else setCamera(current=>constrainTownMapCamera(current,next));
+    };
+    read();const observer=new ResizeObserver(read);observer.observe(element);return()=>observer.disconnect();
+  },[]);
+
+  const worldBounds=useMemo(()=>townMapWorldBounds(camera,viewport,150),[camera,viewport]);
+  const renderedPlaces=useMemo(()=>{
+    const inBounds=townMapPlacesInBounds(projection.places,worldBounds);
+    if(query.trim())return inBounds;
+    return inBounds.filter(place=>place.id===selectedId||townMapMarkerVisible(place,camera.scale));
+  },[projection.places,worldBounds,query,selectedId,camera.scale]);
+
+  const applyCamera=(next:TownMapCamera)=>setCamera(constrainTownMapCamera(next,viewport));
+  const fitMap=()=>applyCamera(fitTownMapCamera(viewport));
+  const zoomAt=(screenX:number,screenY:number,nextScale:number)=>{
+    const rect=viewportRef.current?.getBoundingClientRect();if(!rect)return;
+    setCamera(current=>{
+      const scale=clampTownMapScale(nextScale);
+      const localX=screenX-rect.left,localY=screenY-rect.top;
+      const worldX=(localX-current.x)/current.scale,worldY=(localY-current.y)/current.scale;
+      return constrainTownMapCamera({x:localX-worldX*scale,y:localY-worldY*scale,scale},viewport);
+    });
+  };
+  const zoomCenter=(factor:number)=>{const rect=viewportRef.current?.getBoundingClientRect();if(rect)zoomAt(rect.left+rect.width/2,rect.top+rect.height/2,camera.scale*factor);};
+  const onWheel=(event:ReactWheelEvent<HTMLDivElement>)=>{event.preventDefault();zoomAt(event.clientX,event.clientY,camera.scale*(event.deltaY>0?.9:1.1));};
+  const interactiveTarget=(target:EventTarget|null)=>target instanceof Element&&Boolean(target.closest('button,input,label'));
+  const point=(event:ReactPointerEvent<HTMLDivElement>)=>({x:event.clientX,y:event.clientY});
+  const distance=(a:PointerPoint,b:PointerPoint)=>Math.hypot(a.x-b.x,a.y-b.y);
+  const midpoint=(a:PointerPoint,b:PointerPoint)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
+  const onPointerDown=(event:ReactPointerEvent<HTMLDivElement>)=>{
+    if(interactiveTarget(event.target))return;event.currentTarget.setPointerCapture(event.pointerId);pointersRef.current.set(event.pointerId,point(event));
+    const values=[...pointersRef.current.values()];gestureRef.current=values.length===1?{lastSingle:values[0]}:values.length>=2?{distance:distance(values[0]!,values[1]!),midpoint:midpoint(values[0]!,values[1]!)}:{};
+  };
+  const onPointerMove=(event:ReactPointerEvent<HTMLDivElement>)=>{
+    if(!pointersRef.current.has(event.pointerId))return;pointersRef.current.set(event.pointerId,point(event));const values=[...pointersRef.current.values()];
+    if(values.length===1){const previous=gestureRef.current.lastSingle,next=values[0]!;if(previous)setCamera(current=>constrainTownMapCamera({...current,x:current.x+next.x-previous.x,y:current.y+next.y-previous.y},viewport));gestureRef.current={lastSingle:next};return;}
+    if(values.length>=2){const a=values[0]!,b=values[1]!,nextDistance=distance(a,b),nextMidpoint=midpoint(a,b);const previousDistance=gestureRef.current.distance,previousMidpoint=gestureRef.current.midpoint;const rect=viewportRef.current?.getBoundingClientRect();
+      if(previousDistance&&previousMidpoint&&rect)setCamera(current=>{const scale=clampTownMapScale(current.scale*(nextDistance/previousDistance));const oldLocal={x:previousMidpoint.x-rect.left,y:previousMidpoint.y-rect.top};const newLocal={x:nextMidpoint.x-rect.left,y:nextMidpoint.y-rect.top};const world={x:(oldLocal.x-current.x)/current.scale,y:(oldLocal.y-current.y)/current.scale};return constrainTownMapCamera({x:newLocal.x-world.x*scale,y:newLocal.y-world.y*scale,scale},viewport);});
+      gestureRef.current={distance:nextDistance,midpoint:nextMidpoint};
+    }
+  };
+  const endPointer=(event:ReactPointerEvent<HTMLDivElement>)=>{pointersRef.current.delete(event.pointerId);const values=[...pointersRef.current.values()];gestureRef.current=values.length===1?{lastSingle:values[0]}:values.length>=2?{distance:distance(values[0]!,values[1]!),midpoint:midpoint(values[0]!,values[1]!)}:{};};
+  const toggleCategory=(category:TownPlaceCategory)=>setCategories(current=>current.includes(category)?current.filter(item=>item!==category):[...current,category]);
+  const resetFilters=()=>{setQuery('');setCategories(TOWN_PLACE_CATEGORIES.map(item=>item.id));};
+  const placeScale=1/camera.scale;
+
+  return <main className="town-map-screen" aria-label="Everthread town map">
+    <div className="town-map-status" aria-live="polite"><strong>Everthread</strong><small>{projection.playerInEverthread?'You currently live in Everthread.':`Hometown map · you currently live in ${projection.playerLocationLabel}.`}</small></div>
+    <button className={`town-map-explore-toggle ${panelOpen?'active':''}`} onClick={()=>setPanelOpen(value=>!value)} aria-expanded={panelOpen} aria-controls="town-map-explore-panel">Explore</button>
+    {panelOpen&&<aside id="town-map-explore-panel" className="town-map-explore-panel" aria-label="Map filters and view controls">
+      <div className="town-map-panel-heading"><strong>Explore Everthread</strong><small>{projection.places.length} places</small></div>
+      <div className="town-map-view-controls"><button onClick={fitMap}>Fit Map</button><button onClick={()=>zoomCenter(.84)}>−</button><span>{Math.round(camera.scale*100)}%</span><button onClick={()=>zoomCenter(1.18)}>+</button></div>
+      <label className="town-map-search"><span>Find a place or activity</span><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="Bank, park, racing…"/></label>
+      <div className="town-map-category-grid"><strong>Show categories</strong>{TOWN_PLACE_CATEGORIES.map(item=><label key={item.id}><input type="checkbox" checked={categories.includes(item.id)} onChange={()=>toggleCategory(item.id)}/><span>{item.label}</span></label>)}</div>
+      <button className="town-map-reset" onClick={resetFilters}>Reset filters</button>
+      {projection.hiddenPlaceCount>0&&<p className="town-map-panel-note">Some places are discovered through the life you lead.</p>}
+    </aside>}
+    <div className="town-map-viewport" ref={viewportRef} onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer}>
+      <div className="town-map-world" style={{width:TOWN_MAP_WIDTH,height:TOWN_MAP_HEIGHT,transform:`translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`}}>
+        {TOWN_DISTRICTS.map((district,index)=><section key={district.id} className={districtClass(index)} style={{left:district.map.x,top:district.map.y,width:district.map.width,height:district.map.height}} aria-hidden="true"><strong>{district.label}</strong><small>{district.description}</small></section>)}
+        <svg className="town-map-roads" width={TOWN_MAP_WIDTH} height={TOWN_MAP_HEIGHT} viewBox={`0 0 ${TOWN_MAP_WIDTH} ${TOWN_MAP_HEIGHT}`} aria-hidden="true">
+          <path className="town-map-road town-map-road--major" d="M 40 375 C 330 350, 640 380, 1010 365 S 1320 350, 1410 385"/>
+          <path className="town-map-road town-map-road--major" d="M 485 30 C 475 290, 485 520, 500 760 S 515 980, 520 1070"/>
+          <path className="town-map-road town-map-road--major" d="M 985 40 C 965 300, 980 530, 995 760 S 1005 960, 1015 1070"/>
+          <path className="town-map-road" d="M 45 770 C 350 755, 710 770, 1030 760 S 1290 750, 1400 770"/>
+          <path className="town-map-road" d="M 55 105 C 300 125, 560 115, 960 110 S 1230 115, 1390 150"/>
+          <path className="town-map-road" d="M 55 1040 C 420 1010, 820 1035, 1390 1015"/>
+        </svg>
+        {renderedPlaces.map(place=><button key={place.id} className={`town-map-place town-map-place--${place.category} ${selectedId===place.id?'selected':''}`} style={{left:place.map.x,top:place.map.y,transform:`translate(-50%,-50%) scale(${placeScale})`}} onClick={()=>setSelectedId(place.id)} aria-label={`Open ${place.label}`}>
+          <span className="town-map-place-glyph" aria-hidden="true">{place.map.glyph}</span>
+          {townMapLabelVisible(place,camera.scale)&&<span className="town-map-place-label">{place.shortLabel}</span>}
+        </button>)}
+      </div>
+      {!projection.places.length&&<div className="town-map-empty">No places match these filters.</div>}
+      <div className="town-map-gesture-hint">Drag to move · pinch to zoom · tap a place</div>
+    </div>
+    <BottomSheet open={Boolean(selected)} title={selected?.label??'Place'} onClose={()=>setSelectedId(undefined)}>
+      {selected&&<div className="town-place-sheet">
+        <p className="eyebrow">{TOWN_PLACE_CATEGORIES.find(item=>item.id===selected.category)?.label} · {TOWN_DISTRICTS.find(item=>item.id===selected.districtId)?.label}</p>
+        <h2>{selected.label}</h2><p>{selected.description}</p>
+        <div className="town-place-tags">{selected.activityTags.map(tag=><span key={tag}>{tag}</span>)}</div>
+        {selected.route&&<div className="town-place-route"><small>Related existing screen</small><strong>{selected.route.legacyLabel}</strong><p>The map is read-only in Phase 8B. Institution routing arrives in Phase 8C, so related actions stay on their established screens for now.</p></div>}
+        {!selected.route&&<div className="town-place-route"><small>Map landmark</small><strong>Place projection only</strong><p>This location does not own simulation state. Later phases can connect experiences here through the systems that already own them.</p></div>}
+      </div>}
+    </BottomSheet>
+  </main>;
+}

@@ -53,6 +53,7 @@ import { runPhase7B3SpecialCareerEchoRegression } from './phase7B3SpecialCareerE
 import { runPhase7CWorldConditionRegression } from './phase7CWorldConditionRegression';
 import { runProgressiveDisclosureRegression } from './progressiveDisclosureRegression';
 import { runPhase8ASettingFoundationRegression } from './phase8ASettingFoundationRegression';
+import { runPhase8BTownMapRegression } from './phase8BTownMapRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -110,5 +111,6 @@ try{const checks=runPhase7B2OwnershipWorkRegression();console.log(`Phase 7B2 own
 try{const checks=runPhase7B3SpecialCareerEchoRegression();console.log(`Phase 7B3 special-career echo regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase7CWorldConditionRegression();console.log(`Phase 7C world-condition regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase8ASettingFoundationRegression();console.log(`Phase 8A setting-foundation regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runPhase8BTownMapRegression();console.log(`Phase 8B town-map regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

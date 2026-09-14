@@ -6,6 +6,7 @@ import { crimes } from '../data/crimes';
 import { achievements, challenges } from '../data/achievements';
 import { countries } from '../data/countries';
 import { propertyDefinitions, securities, businessIndustries, petVariants, vehicleDefinitions, luxuryVehicleDefinitions, collectibleDefinitions } from '../data/assets';
+import { TOWN_PLACES } from '../data/townPlaces';
 
 export interface ContentAudit {
   events:number;
@@ -27,6 +28,7 @@ export interface ContentAudit {
   businessProducts:number;
   collectibles:number;
   countries:number;
+  townPlaces:number;
   regionalNamePools:number;
   firstNamesPerPool:number;
   lastNamesPerPool:number;
@@ -40,7 +42,7 @@ export function auditContent():ContentAudit{
     relationshipEvents:(eventCategories.friends??0)+(eventCategories.family??0)+(eventCategories.romance??0)+(eventCategories.relationships??0),careerEvents:eventCategories.work??0,
     crimes:crimes.length,achievements:achievements.length,challenges:challenges.length,properties:propertyDefinitions.length,pets:petVariants.length,
     vehicles:vehicleDefinitions.length+luxuryVehicleDefinitions.length,securities:securities.length,businessIndustries:businessIndustries.length,
-    businessProducts:businessIndustries.reduce((sum,industry)=>sum+industry.productNames.length,0),collectibles:collectibleDefinitions.length,countries:countries.length,
+    businessProducts:businessIndustries.reduce((sum,industry)=>sum+industry.productNames.length,0),collectibles:collectibleDefinitions.length,countries:countries.length,townPlaces:TOWN_PLACES.length,
     regionalNamePools:7,firstNamesPerPool:20,lastNamesPerPool:20,
   };
 }
@@ -64,6 +66,7 @@ export function formatContentAudit(audit:ContentAudit){
     `Business industries/products: ${audit.businessIndustries}/${audit.businessProducts}`,
     `Collectibles: ${audit.collectibles}`,
     `Countries: ${audit.countries}`,
+    `Everthread town places: ${audit.townPlaces}`,
     `Regional name pools: ${audit.regionalNamePools}; ${audit.firstNamesPerPool} first + ${audit.lastNamesPerPool} last names each`,
   ];
   return lines.join('\n');
