@@ -17,6 +17,7 @@ import { canReportCoworker } from '../systems/WorkplaceSystem';
 import { peopleWorkspaceSemanticView } from '../systems/PeopleWorkspaceSystem';
 import { projectYouthSocialPlans } from '../systems/YouthSocialSystem';
 import { projectRomanticDateOptions } from '../systems/RomanticDateSystem';
+import { projectPersonalGiftOptions } from '../systems/GiftSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -121,7 +122,7 @@ function primaryAction(id:string,label:string,state:GameState,args?:string[]):Ai
 }
 
 const DEEP_PATHS:DeepCareerPath[]=['acting','music','sports','modeling','racing','directing'];
-const PEOPLE_INTERACTIONS=['conversation','compliment','spend_time','gift','apologize','prank','argue','insult'] as const;
+const PEOPLE_INTERACTIONS=['conversation','compliment','spend_time','apologize','prank','argue','insult'] as const;
 
 function relationshipActions(state:GameState):AiActionView[]{
   const blocked=unresolvedReason(state);const actions:AiActionView[]=[];
@@ -132,6 +133,9 @@ function relationshipActions(state:GameState):AiActionView[]{
     const npc=state.npcs[rel.npcId]!;const target=`${npc.firstName} ${npc.lastName}`;
     for(const interaction of PEOPLE_INTERACTIONS){
       actions.push(boolGate(`people.interact.${interaction}`,`${interaction.replace('_',' ')} with ${target}`,!blocked,blocked,['npcId'],npc.id));
+    }
+    for(const gift of projectPersonalGiftOptions(state,npc.id)){
+      actions.push(boolGate('people.gift',`Give ${gift.itemName} to ${target}`,Boolean(!blocked&&gift.allowed),blocked??gift.reason,['npcId','itemInstanceId'],npc.id));
     }
     for(const plan of projectYouthSocialPlans(state,npc.id)){
       actions.push(boolGate('people.shared_experience',`${plan.label} with ${target} · ${plan.placeLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','placeId','activityId'],npc.id));
@@ -292,7 +296,7 @@ function comparableState(state:GameState){
     employment:structuredClone(state.employment),relationships:structuredClone(state.relationships),
     npcs:Object.fromEntries(Object.entries(state.npcs).map(([id,npc])=>[id,{age:npc.age,alive:npc.alive,health:npc.health,happiness:npc.happiness,wealth:npc.wealth,careerId:npc.careerId,hiddenOpinion:npc.hiddenOpinion,memories:npc.memories.slice(-6)}])),
     specialCareers:structuredClone(state.specialCareers),socialWorlds:state.socialWorlds.map(world=>({id:world.id,name:world.name,kind:world.kind,active:world.active,startedAge:world.startedAge,endedAge:world.endedAge,members:world.members.map(member=>({...member}))})),
-    assets:structuredClone(state.assets),investments:structuredClone(state.investments),businesses:structuredClone(state.businesses),
+    assets:structuredClone(state.assets),personalInventory:structuredClone(state.personalInventory),investments:structuredClone(state.investments),businesses:structuredClone(state.businesses),
     pendingEvent:state.pendingEvent?structuredClone(state.pendingEvent):undefined,delayedEvents:structuredClone(state.delayedEvents),
     timelineCount:state.timeline.length,timelineTail:state.timeline.slice(-8).map(entry=>structuredClone(entry)),
     rngCounter:state.rngCounter,idCounter:state.idCounter,actionRevision:state.actionLedger.revision,
@@ -350,6 +354,7 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     case'people.interact.compliment':return engine.interactWithCharacter(argString(command,'npcId'),'compliment');
     case'people.interact.spend_time':return engine.interactWithCharacter(argString(command,'npcId'),'spend_time');
     case'people.interact.gift':return engine.interactWithCharacter(argString(command,'npcId'),'gift');
+    case'people.gift':return engine.giftPersonalItem(argString(command,'npcId'),argString(command,'itemInstanceId'));
     case'people.interact.apologize':return engine.interactWithCharacter(argString(command,'npcId'),'apologize');
     case'people.interact.prank':return engine.interactWithCharacter(argString(command,'npcId'),'prank');
     case'people.interact.argue':return engine.interactWithCharacter(argString(command,'npcId'),'argue');

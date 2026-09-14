@@ -26,22 +26,25 @@ export interface SharedExperienceEvaluationContext {
   enjoymentModifier?:number;
 }
 
-export interface SharedExperienceResult {
+export interface SharedPreferenceEvaluation {
+  approval:number;
+  band:SharedExperienceBand;
+  relationshipDelta:number;
+  opinionDelta:number;
+  happinessDelta:number;
+  meaningfulMemory:boolean;
+  preferenceSignalTag?:NpcPreferenceTag;
+}
+
+export interface SharedExperienceResult extends SharedPreferenceEvaluation {
   npcId:string;
   relationshipId:string;
   placeId:string;
   placeLabel:string;
   activityId:string;
   activityLabel:string;
-  approval:number;
-  band:SharedExperienceBand;
-  relationshipDelta:number;
-  opinionDelta:number;
-  happinessDelta:number;
   prose:string;
   memorySummary:string;
-  meaningfulMemory:boolean;
-  preferenceSignalTag?:NpcPreferenceTag;
   discoveredPreferenceTag?:NpcPreferenceTag;
 }
 

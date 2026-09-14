@@ -1,6 +1,7 @@
 import type { RelationshipInteractionAction } from '../systems/RelationshipSystem';
-import { interactWithNpc, relationshipInteractionText } from '../systems/RelationshipSystem';
+import { givePersonalItemGift, interactWithNpc, relationshipInteractionText } from '../systems/RelationshipSystem';
 import { createNewGame } from '../systems/CharacterSystem';
+import { personalItemById } from '../data/personalItems';
 
 const cases:Array<{action:RelationshipInteractionAction;timeline:string;memory:string}>=[
   {action:'conversation',timeline:'You had a conversation with Nora.',memory:'Alex had a conversation with you.'},
@@ -33,10 +34,26 @@ export function runRelationshipMicrocopyRegression(){
     npc.firstName='Nora';npc.age=50;npc.alive=true;npc.wealth=10000;npc.hiddenOpinion=70;rel.score=70;
     const beforeTimeline=state.timeline.length;const beforeMemories=npc.memories.length;
     const result=interactWithNpc(state,npc.id,item.action);
-    verify(result.success,`${item.action} should preserve the existing successful interaction path`);
-    verify(state.timeline.length===beforeTimeline+1&&state.timeline.at(-1)?.text===item.timeline,`${item.action} should write the polished timeline copy`);
-    verify(npc.memories.length===beforeMemories+1&&npc.memories.at(-1)?.summary===item.memory,`${item.action} should write the polished NPC-memory copy`);
+    if(item.action==='gift'){
+      verify(!result.success&&result.messages.some(message=>message.text.includes('owned item')),`generic gift should redirect to the authoritative owned-item gift path`);
+      verify(state.timeline.length===beforeTimeline,`generic gift should not fabricate a gift timeline entry`);
+      verify(npc.memories.length===beforeMemories,`generic gift should not fabricate an NPC gift memory`);
+    }else{
+      verify(result.success,`${item.action} should preserve the existing successful interaction path`);
+      verify(state.timeline.length===beforeTimeline+1&&state.timeline.at(-1)?.text===item.timeline,`${item.action} should write the polished timeline copy`);
+      verify(npc.memories.length===beforeMemories+1&&npc.memories.at(-1)?.summary===item.memory,`${item.action} should write the polished NPC-memory copy`);
+    }
   }
+
+
+  const giftState=createNewGame({seed:'microcopy-real-gift',countryId:'us'});
+  giftState.character.firstName='Alex';giftState.character.age=30;giftState.currentYear=2056;giftState.finances.cash=10000;
+  const giftRel=giftState.relationships[0]!;const giftNpc=giftState.npcs[giftRel.npcId]!;giftNpc.firstName='Nora';giftNpc.age=50;giftNpc.alive=true;giftNpc.hiddenOpinion=80;giftRel.score=85;giftNpc.preferences={version:1,likes:['cozy','food','romance'],dislikes:[],aversions:[]};
+  const giftDef=personalItemById.late_night_cocoa_set!;giftState.personalInventory.items.push({id:'microcopy-gift-instance',itemId:giftDef.id,acquiredAge:30,acquiredYear:2056,sourcePlaceId:giftDef.vendorPlaceId,purchasePrice:giftDef.price});
+  const giftTimelineBefore=giftState.timeline.length;const realGift=givePersonalItemGift(giftState,giftNpc.id,'microcopy-gift-instance');
+  verify(realGift.success&&realGift.gift?.itemName===giftDef.name,'real gift should preserve exact owned-item identity in the committed result');
+  verify(giftState.timeline.length===giftTimelineBefore+1&&giftState.timeline.at(-1)?.text.includes(`You gave Nora ${giftDef.name}`),'real gift should write natural exact-item timeline copy');
+  verify(realGift.messages.some(message=>message.text.includes(giftDef.name)),'real gift should surface concise exact-item reaction copy');
 
   const broken=cases.flatMap(item=>[item.timeline,item.memory]).some(text=>/You (conversation|compliment|spend time|gift|apologize|prank|argue|insult) with /.test(text)||/chose to (conversation|compliment|spend time|gift|apologize|prank|argue|insult)/.test(text));
   verify(!broken,'polished copy set should not contain the old verb-template grammar defects');

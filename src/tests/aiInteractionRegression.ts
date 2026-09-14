@@ -2,6 +2,7 @@ import { createNewGame } from '../systems/CharacterSystem';
 import { ensureSpecialCareerRelationships } from '../systems/SpecialCareerRelationshipSystem';
 import { ensureSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
+import { personalItemById } from '../data/personalItems';
 import type { Npc } from '../types/game';
 import { EverthreadAiTestbench, withEverthreadAiTestbench } from './aiInteractionTestbench';
 
@@ -112,6 +113,19 @@ export async function runAiInteractionRegression(){
     verify(Boolean(date2?.result.success&&date3?.result.success&&datingBench.getState().relationships.find(rel=>rel.npcId===datingNpc.id)?.romance?.dateHistory?.length===3),'50 three successful semantic dates must build the same bounded hidden romantic history as the player UI');
     verify(datingBench.observe('people').actions.some(action=>action.id==='people.become_partners'&&action.targetId===datingNpc.id&&action.enabled),'51 AI parity must expose Become Partners only after sufficient real date momentum exists');
     const partners=datingBench.execute({id:'people.become_partners',args:{npcId:datingNpc.id}});verify(partners.result.success&&datingBench.getState().relationships.find(rel=>rel.npcId===datingNpc.id)?.type==='partner'&&partners.invariantIssues.length===0,'52 semantic Become Partners must call the same bounded milestone path and leave authoritative state invariant-clean');
+  });
+
+  const giftState=createNewGame({seed:'ai-test-real-gift'});giftState.character.age=24;giftState.currentYear=2064;giftState.education=[];const giftDef=personalItemById.threadfox_plush!;giftState.personalInventory.items.push({id:'ai-gift-instance',itemId:giftDef.id,acquiredAge:24,acquiredYear:2064,sourcePlaceId:giftDef.vendorPlaceId,purchasePrice:giftDef.price});
+  const giftNpc:Npc={id:'ai-gift-peer',firstName:'Casey',lastName:'Thread',age:24,alive:true,health:92,happiness:85,wealth:4000,countryId:giftState.character.countryId,city:giftState.character.city,sexuality:'pansexual',fertility:65,maritalStatus:'single',traits:['generous','loyal'],hiddenOpinion:70,memories:[],parentIds:[],childIds:[],simulationTier:'full',preferences:{version:1,likes:['cute','cozy','playful'],dislikes:[],aversions:[]}};giftState.npcs[giftNpc.id]=giftNpc;giftState.relationships.push({id:'ai-gift-rel',npcId:giftNpc.id,type:'friend',score:80,attraction:20,compatibility:82,yearsKnown:3});ensureNpcLife(giftState,giftNpc);
+  await withEverthreadAiTestbench({state:giftState,screen:'people'},async giftBench=>{
+    const people=giftBench.observe('people');const giftAction=people.actions.find(action=>action.id==='people.gift'&&action.targetId===giftNpc.id&&action.label.includes(giftDef.name));
+    verify(Boolean(giftAction?.enabled),'53 AI People parity must expose the exact owned personal-item gift for the exact persistent NPC');
+    verify(giftAction?.args?.join(',')==='npcId,itemInstanceId','54 real-gift semantic actions must require exact NPC and exact owned item-instance ids rather than a generic Gift button');
+    verify(!people.actions.some(action=>action.id==='people.interact.gift'),'55 AI People parity must stop advertising the obsolete cash-funded generic Gift action');
+    const giftStep=giftBench.execute({id:'people.gift',args:{npcId:giftNpc.id,itemInstanceId:'ai-gift-instance'}});
+    verify(giftStep.result.success&&giftBench.getState().personalInventory.items.every(item=>item.id!=='ai-gift-instance'),'56 semantic real gifting must execute through GameEngine and transfer/remove the exact owned item once');
+    verify(giftStep.diff.some(diff=>diff.path.includes('personalInventory'))&&giftStep.diff.some(diff=>diff.path.includes('relationships')),'57 AI gift execution must expose authoritative inventory plus relationship mutation rather than a synthetic UI-only result');
+    verify(giftStep.invariantIssues.length===0,'58 AI exact-item gifting must leave the shared GameState invariant-clean');
   });
 
   return checks;

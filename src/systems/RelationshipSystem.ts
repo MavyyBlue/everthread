@@ -1,6 +1,7 @@
 import type { EngineResult, GameState, Npc, Orientation, Relationship, RelationshipType } from '../types/game';
 import type { SharedExperienceActionResult, SharedExperienceEvaluationContext, SharedExperienceResult } from '../types/sharedExperiences';
 import type { DateInvitationResult, RomanticDateActionResult } from '../types/romanticDates';
+import type { PersonalGiftActionResult } from '../types/gifts';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
@@ -15,6 +16,8 @@ import { ensureNpcPreferenceProfile, revealNpcPreference } from './NpcPreference
 import { evaluateSharedExperience, sharedExperienceAvailability } from './SharedExperienceSystem';
 import { ROMANTIC_CANDIDATE_TYPES, datingAgesCompatible, romanticDateMomentum, romanticDatePlanFor, romanticDateTargetAvailability, romanticMomentumReady, recordRomanticDate } from './RomanticDateSystem';
 import { sharedExperienceActivityById } from '../data/sharedExperiences';
+import { evaluatePersonalGift, personalGiftAvailability } from './GiftSystem';
+import { takePersonalItemInstance } from './PersonalInventorySystem';
 
 export const DATING_MIN_AGE=14;
 
@@ -180,16 +183,16 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   if (!npc || !rel) return {success:false,messages:[{text:'That relationship no longer exists.'}]};
   if (!npc.alive) return {success:false,messages:[{text:`You cannot interact with ${npc.firstName}; they have died.`}]};
   if(action==='hook_up')return hookUpWithNpc(state,npcId);
+  if(action==='gift')return{success:false,messages:[{text:'Choose an owned item from your personal inventory to give as a gift.'}]};
   const interactionAction=action as RelationshipInteractionAction;
   const spec=interactionEffects[interactionAction];
   if (!spec) return {success:false,messages:[{text:'That interaction is not available.'}]};
-  if((action==='give_money'||action==='gift')&&state.finances.cash<(action==='give_money'?500:150))return{success:false,messages:[{text:'You do not have enough cash for that.'}]};
+  if(action==='give_money'&&state.finances.cash<500)return{success:false,messages:[{text:'You do not have enough cash for that.'}]};
   const gate=consumeAction(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:${action}`}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   let delta=spec.base+personalityMultiplier(npc,action)+rng.int(-3,3);
-  if (action==='give_money' || action==='gift') {
-    const cost=action==='give_money'?500:150;
-    state.finances.cash-=cost; npc.wealth+=cost;
+  if (action==='give_money') {
+    state.finances.cash-=500; npc.wealth+=500;
   }
   if (action==='ask_money') {
     if (npc.wealth < 250 || !rng.chance(clamp(rel.score+npc.hiddenOpinion,0,180)/200)) delta-=4;
@@ -242,6 +245,30 @@ function commitSharedExperience(state:GameState,npcId:string,placeId:string,acti
 
 export function shareExperienceWithNpc(state:GameState,npcId:string,placeId:string,activityId:string):SharedExperienceActionResult {
   return commitSharedExperience(state,npcId,placeId,activityId);
+}
+
+export function givePersonalItemGift(state:GameState,npcId:string,instanceId:string):PersonalGiftActionResult {
+  const availability=personalGiftAvailability(state,npcId,instanceId);
+  if(!availability.allowed)return{success:false,messages:[{text:availability.reason??'That gift is not available.'}]};
+  const npc=availability.npc!,rel=availability.relationship!;
+  const rng=createRng(state.seed,state.rngCounter);
+  const gift=evaluatePersonalGift(state,npcId,instanceId,rng.int(-8,8));
+  if(!gift)return{success:false,messages:[{text:'That gift could not be evaluated.'}]};
+  const gate=consumeAction(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:gift`}]);
+  if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  ensureNpcPreferenceProfile(state,npc);
+  const transferred=takePersonalItemInstance(state,instanceId);
+  if(!transferred)return{success:false,messages:[{text:'That personal item is no longer in your inventory.'}]};
+  rel.score=clamp(rel.score+gift.relationshipDelta);
+  npc.hiddenOpinion=clamp(npc.hiddenOpinion+gift.opinionDelta,-100,100);
+  state.character.stats.happiness=clamp(state.character.stats.happiness+gift.happinessDelta);
+  const signal=gift.preferenceSignalTag;
+  const alreadyKnown=signal?Boolean(rel.knownPreferenceTags?.includes(signal)):true;
+  if(signal&&revealNpcPreference(state,npcId,signal)&&!alreadyKnown)gift.discoveredPreferenceTag=signal;
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:gift.meaningfulMemory?2:1,text:gift.prose,npcIds:[npcId],relationshipDelta:gift.relationshipDelta});
+  if(gift.meaningfulMemory)addRelationshipMemory(state,npc,`gift:${gift.itemId}`,gift.relationshipDelta,gift.memorySummary,gift.band==='awful'||gift.band==='great');
+  state.rngCounter=rng.counter();
+  return{success:true,stateChanges:['personalInventory','relationship'],messages:[{text:gift.prose}],gift};
 }
 
 function dateReaction(experience:SharedExperienceResult){

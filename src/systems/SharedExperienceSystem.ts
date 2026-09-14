@@ -6,7 +6,7 @@ import { SHARED_EXPERIENCE_ACTIVITIES, sharedExperienceActivityById } from '../d
 import { TOWN_PLACES, type TownPlaceDefinition } from '../data/townPlaces';
 import type { GameState, Npc, Relationship } from '../types/game';
 import type { NpcPreferenceProfile, NpcPreferenceTag } from '../types/npcPreferences';
-import type { SharedExperienceBand, SharedExperienceEvaluationContext, SharedExperienceOption, SharedExperienceResult } from '../types/sharedExperiences';
+import type { SharedExperienceBand, SharedExperienceEvaluationContext, SharedExperienceOption, SharedExperienceResult, SharedPreferenceEvaluation } from '../types/sharedExperiences';
 import { generateNpcPreferenceProfile, npcPreferenceLevel } from './NpcPreferenceSystem';
 import { townPlaceDiscovered } from './TownMapSystem';
 
@@ -108,26 +108,36 @@ export function sharedExperienceAvailability(state:GameState,npcId:string,placeI
  * never consumes gameplay RNG, runtime IDs, action economy, or save state. The caller supplies
  * a bounded variation only when committing a real experience.
  */
+export function evaluateSharedPreferenceContext(
+  state:GameState,npcId:string,preferenceTags:readonly NpcPreferenceTag[],baseEnjoyment=0,variation=0,enjoymentModifier=0,
+):SharedPreferenceEvaluation|undefined{
+  const npc=state.npcs[npcId];
+  const relationship=state.relationships.find(rel=>rel.npcId===npcId);
+  if(!npc||!relationship)return;
+  const profile=npc.preferences??generateNpcPreferenceProfile(state,npc);
+  const effectivePreferenceTags=ageAppropriatePreferenceTags(state,npc,preferenceTags);
+  const preferenceScore=preferenceInfluence(profile,effectivePreferenceTags);
+  const contextScore=relationshipInfluence(relationship)+wellbeingInfluence(state,npc);
+  const boundedVariation=clamp(Math.round(variation),-8,8);
+  const contextualEnjoyment=clamp(Math.round(enjoymentModifier),-12,12);
+  const approval=clamp(Math.round(50+baseEnjoyment+contextualEnjoyment+preferenceScore+contextScore+boundedVariation),0,100);
+  const band=bandForApproval(approval);
+  return{approval,band,...consequencesForBand(band),preferenceSignalTag:preferenceSignalTag(profile,effectivePreferenceTags)};
+}
+
 export function evaluateSharedExperience(state:GameState,npcId:string,placeId:string,activityId:string,variation=0,context:SharedExperienceEvaluationContext={}):SharedExperienceResult|undefined{
   const npc=state.npcs[npcId];
   const relationship=state.relationships.find(rel=>rel.npcId===npcId);
   const place=townPlaceById[placeId];
   const activity=sharedExperienceActivityById[activityId];
   if(!npc||!relationship||!place||!activity||!activity.placeIds.includes(placeId)||!activityAgeAppropriate(state.character.age,npc.age,activity))return;
-  const profile=npc.preferences??generateNpcPreferenceProfile(state,npc);
-  const effectivePreferenceTags=ageAppropriatePreferenceTags(state,npc,context.preferenceTags??activity.preferenceTags);
-  const preferenceScore=preferenceInfluence(profile,effectivePreferenceTags);
-  const contextScore=relationshipInfluence(relationship)+wellbeingInfluence(state,npc);
-  const boundedVariation=clamp(Math.round(variation),-8,8);
-  const contextualEnjoyment=clamp(Math.round(context.enjoymentModifier??0),-12,12);
-  const approval=clamp(Math.round(50+activity.baseEnjoyment+contextualEnjoyment+preferenceScore+contextScore+boundedVariation),0,100);
-  const band=bandForApproval(approval);
-  const consequences=consequencesForBand(band);
-  const prose=`You and ${npc.firstName} ${activity.copy.lead} ${place.label}. ${bandReaction[band](npc.firstName)}`;
-  const memorySummary=`${state.character.firstName} and you ${activity.copy.memoryLead} ${place.label}. ${memoryReaction[band]}`;
+  const evaluation=evaluateSharedPreferenceContext(state,npcId,context.preferenceTags??activity.preferenceTags,activity.baseEnjoyment,variation,context.enjoymentModifier??0);
+  if(!evaluation)return;
+  const prose=`You and ${npc.firstName} ${activity.copy.lead} ${place.label}. ${bandReaction[evaluation.band](npc.firstName)}`;
+  const memorySummary=`${state.character.firstName} and you ${activity.copy.memoryLead} ${place.label}. ${memoryReaction[evaluation.band]}`;
   return{
     npcId:npc.id,relationshipId:relationship.id,placeId:place.id,placeLabel:place.label,activityId:activity.id,activityLabel:activity.label,
-    approval,band,...consequences,prose,memorySummary,preferenceSignalTag:preferenceSignalTag(profile,effectivePreferenceTags),
+    ...evaluation,prose,memorySummary,
   };
 }
 

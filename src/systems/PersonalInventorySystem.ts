@@ -55,10 +55,16 @@ export function purchasePersonalItem(state:GameState,itemId:string):EngineResult
   return{success:true,stateChanges:['cash','personalInventory'],messages:[{text:`Added ${def.name} to your personal inventory for ${def.price.toLocaleString()}.`}]};
 }
 
-export function discardPersonalItem(state:GameState,instanceId:string):EngineResult{
+export function takePersonalItemInstance(state:GameState,instanceId:string){
   ensurePersonalInventoryState(state);
-  const index=state.personalInventory.items.findIndex(item=>item.id===instanceId);if(index<0)return{success:false,messages:[{text:'That personal item is no longer in your inventory.'}]};
-  const item=state.personalInventory.items[index]!;const def=personalItemById[item.itemId];state.personalInventory.items.splice(index,1);
+  const index=state.personalInventory.items.findIndex(item=>item.id===instanceId);
+  if(index<0)return undefined;
+  return state.personalInventory.items.splice(index,1)[0];
+}
+
+export function discardPersonalItem(state:GameState,instanceId:string):EngineResult{
+  const item=takePersonalItemInstance(state,instanceId);if(!item)return{success:false,messages:[{text:'That personal item is no longer in your inventory.'}]};
+  const def=personalItemById[item.itemId];
   return{success:true,stateChanges:['personalInventory'],messages:[{text:`Removed ${def?.name??'the item'} from your personal inventory. No cash value was returned.`}]};
 }
 

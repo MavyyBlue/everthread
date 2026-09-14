@@ -62,6 +62,7 @@ import { runPhase9ANpcPreferencesRegression } from './phase9ANpcPreferencesRegre
 import { runPhase9BSharedExperienceRegression } from './phase9BSharedExperienceRegression';
 import { runPhase9CYouthSocialRegression } from './phase9CYouthSocialRegression';
 import { runPhase9DDatingMomentumRegression } from './phase9DDatingMomentumRegression';
+import { runPhase9ERealGiftsRegression } from './phase9ERealGiftsRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -128,5 +129,6 @@ try{const checks=runPhase9ANpcPreferencesRegression();console.log(`Phase 9A NPC-
 try{const checks=runPhase9BSharedExperienceRegression();console.log(`Phase 9B shared-experience regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase9CYouthSocialRegression();console.log(`Phase 9C youth-social regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase9DDatingMomentumRegression();console.log(`Phase 9D dating/momentum regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runPhase9ERealGiftsRegression();console.log(`Phase 9E real-gifts regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
