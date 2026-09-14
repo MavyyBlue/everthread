@@ -3,6 +3,10 @@
 Last audited: 2026-09-13  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 8A setting/content note
+
+Certified Phase 8A adds **1** fictional home-jurisdiction definition, **Everthread**, increasing executable country definitions from **32 → 33**. The prior 32 real-world definitions remain available for travel/emigration and as hidden procedural naming-profile sources. The regional naming dataset remains **7 pools**; `namePoolCountryId` separates cultural naming semantics from physical residence without duplicating the name data. No random-event, career, education, health, asset, achievement, challenge, or systemic-story definition counts changed.
+
 ## Phase 7C world-condition content note
 
 Certified Phase 7C adds **7** data-driven persistent world-condition definitions: **4 country-scoped** conditions (Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze) and **3 global** conditions (Travel Disruption, Media Frenzy, Market Jitters). They are not `GameEventDefinition`s, never enter random-event selection, and do not change the ordinary/random event library count of **691** or the separate 15-definition Phase 7B systemic-story registry / 18-definition older special-career story registry.
@@ -65,7 +69,7 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Business industries | 20 | — | Functional base |
 | Business product lines | 80 | 50+ products/industries | Met combined target |
 | Collectible definitions | 40 | — | Needs expansion |
-| Countries | 32 | 30+ | Met |
+| Countries / home jurisdictions | 33 | 30+ | Met; Everthread + 32 travel/emigration definitions |
 | Regional name pools | 7 | hundreds of names per region | Expanded; country/subregion depth still useful |
 | First names per regional pool | 120 | hundreds/region | 6× increase; 840 total active first-name entries |
 | Last names per regional pool | 120 | hundreds/region | 6× increase; 840 total surname entries |

@@ -1,5 +1,30 @@
 # Everthread Changelog
 
+## Phase 8A — Everthread Setting Foundation — CI Green Run #125 — 2026-09-13
+
+### Added / changed
+
+- Established **Everthread** as the canonical home setting for player-facing new lives while retaining `countryId/city` as the single physical/legal/economic location authority used by mature systems.
+- Added fictional Everthread jurisdiction/city definitions and a shared `locationLabel` projection; executable country definitions increase **32 → 33**.
+- Added hidden `namePoolCountryId` to separate cultural procedural naming from physical residence. Character/NPC naming, name-based identity inference, autonomous family naming, and dynasty continuation now preserve this profile independently from travel/emigration.
+- Removed the real-country selector from the New Life player UI. Low-level scenario/test country overrides remain supported without becoming player-facing home selection.
+- Added `SettingSystem` with safe naming-profile normalization and schema-14 → 15 setting migration. The migration moves only the protagonist's current local simulation context into Everthread, preserves remote/historical state, retains prior travel history, is idempotent, and consumes no gameplay RNG or runtime IDs.
+- Active country-scoped world conditions and active SocialWorlds tied to the former local context follow the migration; archived SocialWorlds and resolved world-condition history remain historical. Later schema-15 emigration remains durable on load.
+- Everthread uses the established North-American-style school profile as the current education compatibility bridge. Travel copy and initial birth/location copy avoid duplicate `Everthread, Everthread` labels.
+- Travel destination UI defaults away from the current location and labels location economics generically.
+- Save schema advances **14 → 15**.
+
+### Certification
+
+- Added `phase8ASettingFoundationRegression.ts`: **25/25** checks covering default Everthread residence, separate cultural naming profiles, legacy migration preservation, local-vs-remote NPC/world semantics, active-vs-historical world conditions, travel history, RNG/ID neutrality, idempotence, invariants, and post-migration emigration durability.
+- Dynasty transition regression is **64/64** with naming-profile preservation; all established family/estate/credit/asset/NPC/world-condition and other suites remain Green. Base regression suite is **82/82** and Integrated Long-Life remains **105/105**.
+- Both TypeScript gates PASS; canonical Everthread preflight PASS **4/4**; production build PASS with Vite 7.3.6 at **171 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- GitHub Actions Run #125 (`34807854189`) certified expanded gameplay/source `2596084575dd4288a0b549dc1a618736280f135b` from upload wrapper `36b8ce0863d8a6ddd69e20a85b99ed6ec216cb2a` on package `0.12.0`, save schema **15**.
+- Certified source SHA-256: `46efef3174bb53984b67fcf1c1512fdb8a741a65edb37006654e602b21a8253c`; dependency SHA-256: `7c1e03244499adf494b2bb986797e603270624d047eee8bc52e3c48b68364eab`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10333602478`, digest `6e65d5df2511792614c00b9e50b5db70e2953e2d5f4fc7964e6fc191a880b77d`; Pages artifact ID `10333582525`, digest `f519a783f900fc860dfb70168b7277d0b65b4c77cb83624ef1d83a0a7162cd02`; deployment reported success.
+- Post-certification Feedback Inbox sweep still found four total reviewed/resolved reports and no new report rows; stored review checkpoint successfully advanced to `2596084575dd4288a0b549dc1a618736280f135b`.
+- **Next slice:** Phase 8B — Town Place Registry & 2D Flat Map.
+
 ## Phase 7C — Persistent World Conditions — CI Green Run #122 — 2026-09-13
 
 ### Added / changed

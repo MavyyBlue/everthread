@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`**, save schema **14**. Phase 7 is closed.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`**, save schema **15**. Phase 7 is closed; Phase 8A is certified and Phase 8B is next.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,14 +94,14 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last successful stored central review checkpoint: certified **Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`**. A fresh post-Run-#122 review found 4 total reports and all 4 resolved; connector safety blocked the checkpoint write.
+Last successful stored central review checkpoint: certified **Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`**. The post-certification sweep still found **4 total reports**, matching the **4 already reviewed/resolved** reports; no new report row has appeared since the prior review.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
-- Fresh pre-Phase-7C query found **0 unresolved reports**.
-- Review-state checkpoint is advanced to `c163e8d121c75465ec17d17aa54dd725edb05128` with four reviewed reports; newest received report remains 2026-09-13 19:51:35 UTC.
+- Newest recorded report receipt remains **2026-09-13 19:51:36.119407 UTC**.
+- Review-state checkpoint key `main` was successfully advanced on 2026-09-14 UTC to `2596084575dd4288a0b549dc1a618736280f135b` with four reviewed reports.
 - Player-visible disposition read-back remains certified and deployed.
-- Phase 7 is fully certified and closed through Run #122. No new implementation phase should be selected until Mavyy and Yuki brainstorm the future direction together.
+- No feedback item currently preempts **Phase 8B — Town Place Registry & 2D Flat Map**.

@@ -2,9 +2,9 @@
 
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
-Certified save schema: 14
-Newest certified expanded gameplay/source: Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`
-Certified gameplay baseline: Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`
+Certified save schema: 15
+Newest certified expanded gameplay/source: Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`
+Certified gameplay baseline: Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`
 
 ## Product direction
 
@@ -25,6 +25,26 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
+
+## Active implementation phase
+
+### Phase 8A — Everthread Setting Foundation (CI Green, Run #125)
+
+Run #125 / `2596084575dd4288a0b549dc1a618736280f135b` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8A regression is **25/25**; the full established wall remains Green; production build transformed **171 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
+
+Architecture:
+
+- `countryId/city` remains physical/legal/economic location truth rather than being repurposed as culture or duplicated by a new home ledger.
+- `SettingSystem` owns the schema-14 → 15 setting migration and naming-profile normalization only. It does not own travel, education, finance, careers, estate rules, SocialWorlds, or world-condition domain truth.
+- Everthread is the canonical fictional home jurisdiction/city for player-facing new lives. Real-world country definitions remain available as travel/emigration destinations and hidden naming-profile sources.
+- `namePoolCountryId` is a distinct hidden cultural naming profile for Character/NPC naming semantics. It is not a second residence field.
+- Schema-14 migration moves the protagonist's current local simulation context into Everthread, including NPCs/current active SocialWorlds/current active country conditions tied exactly to that former location, while remote NPCs, archived worlds, resolved condition history, education/career/assets/relationships/timeline history remain intact. Migration is idempotent and consumes no gameplay RNG or runtime IDs.
+- New Life removes player-facing real-country selection. Existing low-level country/name-profile overrides remain available for deterministic scenarios/tests.
+- Travel and dynasty handoff preserve the residence/naming-profile split; later emigration remains durable.
+
+Post-certification Feedback Inbox review still shows four total reviewed/resolved reports and no new reports. The stored review checkpoint was successfully advanced to the Run #125 expanded source.
+
+**Exact next slice:** Phase 8B — Town Place Registry & 2D Flat Map. The map/place registry must be a deterministic mobile projection/navigation layer over existing authorities, not a second simulation.
 
 ## Closed implementation phase
 

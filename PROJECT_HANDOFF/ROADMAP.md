@@ -6,9 +6,9 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 The required post-Phase-7 brainstorm is complete. Mavyy approved the **Living World Program** as the next direction. The detailed authority, player-intent, migration, QA, and slice contract lives in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
 
-Certified context at approval: newest repository source **Run #123 / `35f546c14ab29eaddd89a55aa1c628b11caca902`** (docs-only); gameplay baseline **Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`**; save schema **14**.
+Current certified context: **Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`**, save schema **15**. Phase 8A is certified; the exact next slice is **8B Town Place Registry & 2D Flat Map**.
 
-1. **Phase 8 — Everthread: Home** — make Everthread the canonical setting; safely migrate country/city assumptions; create the data-driven town/map; route existing systems through institutions; add player profile/personal inventory. First slice: **8A Everthread Setting Foundation**.
+1. **Phase 8 — Everthread: Home** — **active.** 8A Everthread Setting Foundation is CI Green in Run #125: Everthread is canonical home, `countryId/city` remains physical/legal/economic truth, and hidden `namePoolCountryId` preserves naming diversity. **Next: 8B Town Place Registry & 2D Flat Map.** Later 8C routes institutions and 8D adds player profile/personal inventory only after their prerequisites certify.
 2. **Phase 9 — Shared Lives** — persistent NPC interests/preferences; one shared-experience evaluator; childhood/youth social life; dates and romantic momentum; actual inventory gifts; cross-world chemistry through existing authorities.
 3. **Phase 10 — Living Everthread** — residential/workplace projections, bounded generational place memory, and a living map that reflects meaningful current/dynasty context without becoming a second simulation.
 
@@ -16,7 +16,7 @@ Certified context at approval: newest repository source **Run #123 / `35f546c14a
 
 ## Closed macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, 6, and **7 are closed**. Run #91 established canonical pre-deployment certification. **Run #122** (`34797847276`) / `0770106f52eea3182e86d120fa38c6b90be589e4` remains the newest gameplay-changing certified baseline on save schema **14**; docs-only Run #123 / `35f546c14ab29eaddd89a55aa1c628b11caca902` is the newest certified repository source. The post-Phase-7 planning pause was honored and is now satisfied by Mavyy's explicit approval of the Living World Program.
+Phases 4, 5, 6, and **7 are closed** and remain preserved under the active Phase 8 baseline. Run #91 established canonical pre-deployment certification; Run #122 closed Phase 7 on schema 14. Run #125 is now the certified gameplay/repository baseline on schema **15** after Phase 8A. The post-Phase-7 planning pause was honored and the approved Living World Program is active.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -169,7 +169,7 @@ Phase 7 compatibility requirements: scheduler priority is centralized; one featu
 
 ## Cross-cutting player-feedback gate
 
-Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Living World sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The inbox was refreshed after Phase 7C certification in Run #122: there are **4 total reports and all 4 are resolved**. The stored review checkpoint remains Run #121 because connector safety blocked the post-Run-#122 bookkeeping write; no newer stored checkpoint is claimed. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
+Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Living World sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The post-Run-#125 sweep still found **4 total reports, all 4 already reviewed/resolved, and no new report rows**. The stored review checkpoint now successfully points to certified source `2596084575dd4288a0b549dc1a618736280f135b` with reviewed count 4. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
 
 Future feature work should review active supplied/exported reports before starting, with data-loss/crash/accounting/state-integrity/blocking defects taking priority, followed by explicitly prioritized triaged experience/UX reports. A backend-green test result redirects technical triage into UI/experience investigation rather than invalidating the report.
 

@@ -1,15 +1,16 @@
 # Everthread — Living World Program
 
-Status: **Mavyy-approved post-Phase-7 direction; implementation has not begun.**
+Status: **Active Mavyy-approved program. Phase 8A is certified; Phase 8B is next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
-Approval baseline:
-- newest certified repository source: Run #123 / `35f546c14ab29eaddd89a55aa1c628b11caca902` (documentation-only Phase 7 closeout);
-- newest gameplay-changing certified baseline: Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`;
+Current certified program baseline:
+- newest certified repository/gameplay source: Run #125 / `2596084575dd4288a0b549dc1a618736280f135b`;
 - package: `everthread-life-unwritten@0.12.0`;
-- certified save schema: **14**;
-- Phase 7: **closed**.
+- certified save schema: **15**;
+- Phase 7: **closed**;
+- Phase 8A: **certified / closed**;
+- next slice: **Phase 8B — Town Place Registry & 2D Flat Map**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -35,11 +36,13 @@ Everthread should become the fictional town where the player's life takes place.
 
 Turn Everthread from the title of the game into the canonical setting, then make the town a first-class mobile navigation surface over the mature simulation. Phase 8 is about **place, access, identity, and migration safety**. It must not simultaneously attempt the entire social-experience redesign.
 
-### Phase 8A — Everthread Setting Foundation
+### Phase 8A — Everthread Setting Foundation — CERTIFIED Run #125
 
-Country/city semantics are architectural today, not cosmetic. Before removing country selection, inventory every consumer: character/NPC identity, naming, education, SocialWorlds, travel, estate administration, world conditions, dynasty continuation, diagnostics, and related systems.
+Certified on expanded source `2596084575dd4288a0b549dc1a618736280f135b`, save schema **15**, dedicated regression **25/25**, canonical preflight 4/4, and 171-module production build.
 
-New lives should begin in Everthread. Existing saves must migrate deterministically without regenerating names, NPCs, family, school history, careers, assets, relationships, or world history. Migration must be idempotent and gameplay-RNG/runtime-ID neutral. Preserve cultural/name diversity without requiring a player-selected real-world home country.
+`countryId/city` remain the single physical/legal/economic location authority. New player-facing lives begin in Everthread. Hidden `namePoolCountryId` separately preserves procedural cultural/name diversity without becoming a second residence field. Schema-14 saves migrate current local context into Everthread deterministically while preserving remote NPCs and historical records; migration is idempotent, gameplay-RNG neutral, and runtime-ID neutral. Later emigration remains durable.
+
+Do not reopen this ownership split casually in later slices. Phase 8B should project places over these authorities, not create a parallel home/location ledger.
 
 ### Phase 8B — Town Place Registry & 2D Flat Map
 
@@ -155,6 +158,6 @@ The sync records the certified run/expanded commit, schema, relevant tests, auth
 
 This replaces the older practice of waiting for the next meaningful bundle to catch documentation up.
 
-# First implementation target
+# Next implementation target
 
-When Mavyy asks to begin, start with **Phase 8A — Everthread Setting Foundation**. Do not begin by drawing the map or removing Assets. The country/city ownership migration must be understood and made safe first because every later Living World layer depends on it.
+Begin **Phase 8B — Town Place Registry & 2D Flat Map** from the certified Run #125 / schema-15 foundation. Create the place registry and map as deterministic projection/navigation over existing authorities. Do not begin Phase 8C institution routing or remove mature Assets/action entry points until map/place ownership is independently certified.

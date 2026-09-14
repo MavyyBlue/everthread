@@ -2,85 +2,75 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository** source is **GitHub Actions Run #123** (`34798337980`) on docs-only expanded source **`35f546c14ab29eaddd89a55aa1c628b11caca902`**. The newest gameplay-changing certified baseline remains **Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4`**.
+The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #125** (`34807854189`) on expanded source **`2596084575dd4288a0b549dc1a618736280f135b`**. This is the certified Phase 8A gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
-- Certified save schema: **14**
+- Certified save schema: **15**
 - Phase 7 — Persistent World Consequences: **CLOSED**
 - Current approved macro program: **Living World Program**
-- Planned Phase 8: **Everthread: Home**
+- Phase 8A — Everthread Setting Foundation: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 8B — Town Place Registry & 2D Flat Map**
 - Planned Phase 9: **Shared Lives**
 - Planned Phase 10: **Living Everthread**
-- First implementation target when Mavyy asks to begin: **Phase 8A — Everthread Setting Foundation**
-- Supabase Feedback Inbox: latest confirmed sweep found **4 total reports, all 4 resolved**
-- Activity-specific minigames remain established historical work, not the current implementation target.
+- Supabase Feedback Inbox: **4 total reports, all 4 reviewed/resolved; no new reports since 2026-09-13 19:51:36 UTC**
+- Stored feedback review checkpoint now points to certified gameplay source `2596084575dd4288a0b549dc1a618736280f135b`.
 
-If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing post-Phase-7 work.
-
-**Post-Phase-7 boundary satisfied:** Mavyy and Yuki explicitly brainstormed the next direction after Phase 7 closed. The approved result is the Living World Program documented in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`; do not substitute an unrelated Phase 8 or redesign its intent without Mavyy's direction.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
 Last handoff synchronization: 2026-09-13
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
-Certified save schema: `14`
-Candidate save schema: none — Living World implementation has not begun
+Certified save schema: `15`
+Candidate save schema: none
 
-## Newest certified repository source — Run #123 (documentation-only Phase 7 closeout)
+## Newest certified gameplay/source — Run #125 — Phase 8A
 
-- Upload wrapper: `138263b0bee4fe6876db6cd32af5fe581e1cd478`.
-- Expanded certified repository source: `35f546c14ab29eaddd89a55aa1c628b11caca902`.
-- GitHub Actions Run #123: `34798337980`.
-- Diff against Run #122 gameplay source contained the intended tracking/documentation changes only; no `src/`, tests, package, workflow, or gameplay assets changed.
-- Canonical preflight remained Green, including Phase 7C 42/42 and the complete established wall; production build remained 170 modules.
-- Certified source SHA-256: `b2abba6d10ecfb2ebf34cbad6847bd4f5aeb80b9ae69cef2f3a8ac05ca9511a0`.
-- Certified dependency SHA-256: `12c0eacdbb06842c0c65840c264bed678530a96c36327fc76cecde7e4ff87d43`; package-lock SHA-256 remains `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact ID `10329489927`, digest `f8da2bc17150ee8cf927452ec146403346226f567b5a01a82ab715f4ead0a3d7`.
-- Pages artifact ID `10329559997`, digest `0c6e6db5bdbec9e0eebced324650f841693bda62b107276e56bee47bfa314973`; deployment succeeded.
+- Upload wrapper: `36b8ce0863d8a6ddd69e20a85b99ed6ec216cb2a`.
+- Expanded certified source: `2596084575dd4288a0b549dc1a618736280f135b`.
+- GitHub Actions Run #125: `34807854189`.
+- Workflow imported the intended overlay as `38 files changed, 241 insertions(+), 70 deletions(-)`, including new `SettingSystem.ts` and `phase8ASettingFoundationRegression.ts`, then pushed the expanded source before verification.
+- Canonical preflight passed **4/4** stages: Engine TypeScript, Test TypeScript, complete regression wall, and production build.
+- Dedicated Phase 8A regression: **25/25**. Established suites remained green, including Phase 7C 42/42 and Integrated Long-Life 105/105.
+- Production build: Vite 7.3.6, **171 modules transformed**. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `46efef3174bb53984b67fcf1c1512fdb8a741a65edb37006654e602b21a8253c`.
+- Certified dependency SHA-256: `7c1e03244499adf494b2bb986797e603270624d047eee8bc52e3c48b68364eab`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10333602478`, digest `6e65d5df2511792614c00b9e50b5db70e2953e2d5f4fc7964e6fc191a880b77d`.
+- Pages artifact ID `10333582525`, digest `f519a783f900fc860dfb70168b7277d0b65b4c77cb83624ef1d83a0a7162cd02`; Pages deployment reported success.
 
-## Approved next direction — Living World Program
+## Certified Phase 8A — Everthread Setting Foundation
 
-Mavyy chose a three-phase program after the required post-Phase-7 brainstorm:
+Phase 8A establishes Everthread as the canonical home setting without rewriting mature location-dependent systems or creating parallel truth.
 
-1. **Phase 8 — Everthread: Home:** make Everthread the canonical setting, establish the town/place registry and 2D map, route mature systems through believable institutions, and create the player profile/personal inventory without parallel truth.
-2. **Phase 9 — Shared Lives:** procedural NPC interests, shared experiences, youth social life, dates/romantic momentum, real inventory gifts, and cross-world chemistry through existing relationship/social/career authorities.
-3. **Phase 10 — Living Everthread:** residential/workplace projections, generational place memory, and a bounded living-map layer that lets the town remember meaningful lives without becoming a city-management simulator.
+- `countryId` / `city` remain the single physical/legal/economic location authority used by travel, education, finance/economics, estate rules, world conditions, SocialWorlds, careers, and other location consumers.
+- Everthread is a fictional `CountryDefinition` compatibility jurisdiction with canonical city label `Everthread`. New player-facing lives begin there; the New Life UI no longer asks the player to select a real-world country.
+- Cultural naming origin is now represented separately by hidden `namePoolCountryId`. It drives procedural name/gender-name inference where appropriate and is not presented as residence.
+- Existing saves migrate **14 → 15** deterministically: the protagonist's current local context moves to Everthread, local NPCs/current active SocialWorlds/current active country conditions follow that context, remote NPCs and archived/historical records remain historical, and old travel history is retained.
+- Migration and every-load naming normalization consume no gameplay RNG and allocate no runtime IDs. Remigration is idempotent; later emigration survives subsequent loads instead of being forced back to Everthread.
+- Dynasty continuation preserves the successor's naming profile separately from physical location.
+- Everthread uses the established North-American-style school profile as a compatibility bridge for current education rules.
+- Travel/location copy uses one `locationLabel` projection so Everthread is not rendered as `Everthread, Everthread`.
+- Executable country definitions increase **32 → 33**: Everthread plus the existing 32 real-world travel/emigration destinations and hidden naming-profile sources. Regional name-pool count remains 7.
 
-The exact intent, slices, player-intent rules, authority boundaries, and certification discipline live in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
+This is intentionally a foundation, not the map implementation. Do not turn `namePoolCountryId` into a second residence field and do not replace `countryId/city` with a parallel town-state ledger in Phase 8B.
 
-**New operating rule:** after every certified gameplay/feature/fix/migration/architecture commit, synchronize all materially affected handoff/root tracking documents before beginning the next implementation slice. Docs-only sync commits are recursion-exempt unless their certification changes a material fact.
+## Approved next slice — Phase 8B: Town Place Registry & 2D Flat Map
 
-## Newest certified gameplay/source — Run #122
+Create one data-driven place registry and original mobile-first interactive flat map over existing authorities. Place definitions may own stable place IDs, labels/categories, map/layout metadata, visibility/unlock rules, activity tags, and routing metadata. They must **not** own finance, property, careers, relationships, school truth, or action results.
 
-- Upload wrapper: `60e5646c274cd36024a778a93a1b8c1af3a401c5`.
-- Expanded certified source: `0770106f52eea3182e86d120fa38c6b90be589e4`.
-- GitHub Actions Run #122: `34797847276`.
-- Canonical preflight passed 4/4 stages, including Phase 7C 42/42, every earlier Phase 7 suite, the complete regression wall, and the 170-module production build.
-- Certified source SHA-256: `68e4de3efd82b607323dd30077c083712caaa2fad06016a5dd63bce886337338`.
-- Certified dependency SHA-256: `17bbe76f88a9e07edafce170006116f5f23c5ff2c4b9e550d88191e7a617bb13`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
-- Certified artifact ID `10330720998`, digest `b51b536835184ad4944631cfe73591cc9964f8d1ec6350c2f06e74220aab61d7`.
-- Pages artifact ID `10330661334`, digest `03c1a3d1229797859118a26d3a1020638e070e6effc561d20c0f13d0bd720b6e`; certified restore smoke and deployment reported success.
+Design first for 360/390/412/430px phones with touch pan, pinch zoom, large targets, bottom sheets, deterministic/RNG-neutral browsing, viewport culling, and progressive disclosure. Keep existing action entry points until later institution-routing parity is proven.
 
-## Current gameplay-changing certified baseline — Run #122
+## Feedback queue snapshot after Run #125 / `25960845…`
 
-Run #122 / `0770106f52eea3182e86d120fa38c6b90be589e4` certified Phase 7C at **42/42** on save schema 14 while preserving all Phase 7A/B authority boundaries and the complete established regression wall.
+- Supabase still contains **4 total reports**, matching the 4 already reviewed/resolved reports in the stored checkpoint; no new report row has appeared since the previous review.
+- Newest recorded report receipt remains `2026-09-13 19:51:36.119407+00`.
+- Review checkpoint key `main` was successfully advanced after Run #125 to `2596084575dd4288a0b549dc1a618736280f135b` with reviewed-report count 4.
+- No feedback item currently preempts Phase 8B.
 
-## Certified Phase 7C — Persistent World Conditions
+## Phase 7C baseline preserved beneath Phase 8A
 
-- `WorldConditionSystem` is the sole world-condition owner. It persists bounded condition identity/scope/country/duration/intensity/history/cooldowns only; existing systems retain their domain truth.
-- Seven data-driven conditions: Growth Wave, Economic Slowdown, Cost Surge, Housing Squeeze, Travel Disruption, Media Frenzy, Market Jitters.
-- Country conditions bind exact country; global conditions remain global. Active cap 4; resolved-history cap 48.
-- Isolated deterministic world-condition RNG prevents new shared-RNG draws. No delayed-event/pending-event queue is created.
-- Existing owners consume bounded projections: Economy, Career, Investment, Travel, Fame, Finance; Business and Property feel conditions through the existing economy indices.
-- Life exposes inspectable current conditions in a compact mobile card and the timeline records starts/expiry.
-- Certified save schema **14**; schema-13 migration creates empty condition state deterministically and is RNG/ID neutral. Random-event pool remains 691.
-- Dedicated regression **42/42**; full regression wall and both TypeScript gates pass; production build PASS at **170 modules**; certified restore smoke, artifact publication, and Pages deployment succeeded in Run #122.
-
-## Feedback queue snapshot reviewed after Run #122 / `0770106f…`
-
-- Fresh post-Run-#122 review found **4 total reports, all 4 resolved**.
-- Last successful stored checkpoint remains Run #121 / `c163e8d121c75465ec17d17aa54dd725edb05128`; connector safety blocked the post-Run-#122 bookkeeping write.
-- Newest known report receipt remains 2026-09-13 19:51:35 UTC.
+Phase 7 remains closed. `WorldConditionSystem` remains the sole bounded world-condition owner; ConsequenceSystem remains the sole persistent consequence scheduler; all Phase 6 finance/credit/asset/accounting guarantees and the established family/NPC/career authorities remain intact. Phase 8A changed setting semantics only where required and certified the complete regression wall before becoming baseline.
 
 ## Phase 6 closeout guarantees
 
