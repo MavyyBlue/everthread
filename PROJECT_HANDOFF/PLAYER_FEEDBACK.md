@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`**, save schema **17**. Phases 7 and 8 are closed; **Phase 9A — NPC Interests & Preferences is certified/closed**; Phase 9B — Shared Experience Foundation is next.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`**, save schema **17**. Phases 7 and 8 are closed; **Phase 9A — NPC Interests & Preferences** and **Phase 9B — Shared Experience Foundation** are certified/closed; Phase 9C — Childhood & Youth Social Life is next.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last successful stored central review checkpoint: certified **Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`** at `2026-09-14 15:07:04.320301+00`. That sweep found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. Post-Run-#139 live read attempts were blocked by connector safety, so no newer inbox result or checkpoint advance is claimed.
+Fresh post-Run-#141 live central-inbox read found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. The stored checkpoint update was blocked by connector safety, so `everthread_feedback_review_state.main` still points to certified **Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`** at `2026-09-14 15:07:04.320301+00`. The inbox snapshot is current; only checkpoint persistence is stale.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
@@ -102,6 +102,6 @@ Last successful stored central review checkpoint: certified **Run #137 / `e1aa21
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
 - Newest recorded report receipt remains **2026-09-13 19:51:36.119407 UTC**.
-- Review-state checkpoint key `main` is currently `e1aa213fac4e03ab9a4af3039d9605852289b899`, checked at `2026-09-14 15:07:04.320301+00`, with four reviewed reports.
+- Review-state checkpoint key `main` is still `e1aa213fac4e03ab9a4af3039d9605852289b899`, checked at `2026-09-14 15:07:04.320301+00`, with four reviewed reports; the attempted post-Run-#141 checkpoint write was blocked.
 - Player-visible disposition read-back remains certified and deployed.
-- No feedback item in the last successfully reviewed queue preempted **Phase 9A — NPC Interests & Preferences**. Before beginning 9B implementation, retry the live central-inbox read when connector safety permits.
+- The fresh post-Run-#141 inbox read contains no actionable item that preempts **Phase 9C — Childhood & Youth Social Life**.

@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A certified and 9B next.**
+Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A and 9B certified and 9C next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`;
+- newest certified gameplay/source: Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -16,7 +16,8 @@ Current certified program baseline:
 - Phase 8E: **certified / closed**;
 - Phase 8: **CLOSED**;
 - Phase 9A: **certified / closed**;
-- next slice: **Phase 9B — Shared Experience Foundation**.
+- Phase 9B: **certified / closed**;
+- next slice: **Phase 9C — Childhood & Youth Social Life**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -106,13 +107,17 @@ Protagonist-specific knowledge belongs to the existing Relationship record and i
 
 People profiles reveal only plausibly known preference labels; raw weights remain hidden. The shared tag vocabulary intentionally aligns with Phase 8D personal-item tags so later outings/dates/gifts can consume one taxonomy rather than creating parallel definitions.
 
-### Phase 9B — Shared Experience Foundation
+### Phase 9B — Shared Experience Foundation — CERTIFIED Run #141
 
-Use one evaluation path conceptually shaped as:
+Certified in Run #141 on expanded source `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`, save schema **17**, dedicated regression **53/53**, canonical preflight 4/4, and a 190-module production build.
+
+One reusable evaluation path now follows the intended shape:
 
 `player + exact NPC + relationship context + place + activity + preferences/context -> experience result`
 
-Return concise coherent prose plus a bounded enjoyment/approval score for the visual meter. RelationshipSystem remains authoritative for relationship changes; NPC memories remain authoritative for meaningful remembered history.
+`SharedExperienceSystem` is a pure evaluator/projection layer. It returns concise coherent prose, bounded 0–100 approval, outcome band, exact target/place/activity identity, consequence suggestions, preference-signal context, and meaningful-memory signaling without mutating `GameState`, consuming gameplay RNG, or allocating runtime IDs. The initial authored registry contains **10** age-aware activities across six canonical Everthread places.
+
+`RelationshipSystem` remains authoritative for committed social mutation: action-economy use, relationship score, hidden opinion, player happiness, exact-target timeline history, the single committed gameplay-RNG draw, preference reveal through the existing Phase 9A authority, and bounded NPC memory writes. No parallel relationship score, experience ledger, or memory authority exists. The evaluator already accepts explicit preference/context overrides so Phase 9C youth social life, Phase 9D dates, Phase 9E gifts, and Phase 9F cross-world chemistry can reuse one path instead of forking scoring logic.
 
 ### Phase 9C — Childhood & Youth Social Life
 

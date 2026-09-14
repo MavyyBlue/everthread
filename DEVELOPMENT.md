@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`
-Certified gameplay baseline: Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`
+Newest certified expanded gameplay/source: Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`
+Certified gameplay baseline: Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`
 
 ## Product direction
 
@@ -28,9 +28,26 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
+### Phase 9B — Shared Experience Foundation (CI Green Run #141)
+
+Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9B**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- `SharedExperienceSystem` owns one pure reusable evaluation path over exact player/NPC/relationship/place/activity/preference context. Read-only evaluation and option projection consume no gameplay RNG, allocate no runtime IDs, and create no durable parallel state.
+- The initial registry contains **10** age-aware shared-experience activities across Weaver Park, Crossroads Mall, Nightjar Diner, Threadwell Residential, Pulseworks Gym, and Everthread Stadium. Results expose bounded 0–100 approval plus coherent prose/outcome semantics while raw preference weights stay hidden.
+- `RelationshipSystem` remains the committed-action authority. It consumes the existing social action economy, draws exactly one gameplay-RNG variation, applies relationship/opinion/happiness consequences, records the exact target once, reveals at most one relevant preference through Phase 9A knowledge, and writes only meaningful bounded NPC memories.
+- Availability rejects stale/dead NPCs, bad place/activity pairs, undiscovered places, remote participants, and underage participants without mutation. Age-inappropriate taste tags do not influence younger participants.
+- No save migration is required; schema remains **17**. The evaluator accepts explicit preference/context inputs so later dates, gifts, childhood social life, and cross-world chemistry reuse this path rather than creating parallel scoring systems.
+- Dedicated Phase 9B regression is **53/53**. Relationship Microcopy remains **66/66**, Phase 9A **45/45**, Integrated Long-Life **105/105**, base **82/82**, minigames **19/19**, and feedback **20/20 + 23/23**; the complete established wall remained Green.
+- Production build transformed **190 modules**. People remains lazy/code-split at ~27.94 kB JS / 9.10 kB gzip; main JS is ~1,216.41 kB / 344.59 kB gzip; established main-chunk warning remains nonblocking.
+- Certified source SHA-256 `495b4f0e1c47705e3f822ce86df46cb989412eec7f43cbde9307ebff2e0a8553`; dependency SHA-256 `7c80fdb1e14b0edf35dd2c29b67b1ee9a6ff5ed26e687cea52b5ea00297572d2`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact `10362674376` (`ba43c8f5039be7053dc38cf4dc0a99b5f40a25110a63e24ba0444971cdc5ad8b`); Pages artifact `10362614619` (`72fb456e5085132b2565ddf7727e82d7743ab24622b583edb6e1e2c39e00c9e7`).
+- Fresh post-certification Feedback Inbox read found **4 total / 0 unresolved** and no new receipt. The checkpoint write was blocked by connector safety, so the stored review checkpoint remains Run #137 even though the live read is current.
+
+**Exact next slice:** Phase 9C — Childhood & Youth Social Life. Reuse the certified shared-experience evaluator and existing relationship/preference authorities; do not fork a youth-only social ledger.
+
 ### Phase 9A — NPC Interests & Preferences (CI Green Run #139)
 
-Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9A**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01` certified **Phase 9A** on save schema **17**. Canonical preflight passed 4/4 stages and Pages deployment succeeded; this historical baseline has since been superseded by certified Phase 9B.
 
 - `NpcPreferenceSystem` owns compact intrinsic preference profiles on existing NPC records only; Relationship remains the owner of protagonist-specific learned preference tags. Traits bias profile generation but do not replace preference identity.
 - The shared catalog contains **38** age-aware tags. Stored NPC profiles are capped at 4 likes / 3 dislikes / 1 aversion; relationship knowledge is capped at 8 tags, with passive knowledge capped at 6.
@@ -42,7 +59,7 @@ Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01` is the active certified ga
 - Certified source SHA-256 `7ecc001e4c79f113e2f3ac52071fdd1c8d3256ea2eb7cd25720adb19c8cfaca7`; preflight artifact `10359137007` (`60ef75dd3105118723f0af12bcffa173d85c439e55c69c49edbc81f6a7614005`); Pages artifact `10359321568` (`e0234fa05dc501106535fc9694644150181c9203bc48d00fabbeb1734bfb3e1d`).
 - Post-certification feedback read attempts were blocked by connector safety. No new inbox result or review-checkpoint advance is claimed; the last successfully reviewed state remains Run #137 / 4 resolved reports.
 
-**Exact next slice:** Phase 9B — Shared Experience Foundation. Build one reusable evaluator over exact player/NPC/relationship/place/activity/preference context while preserving RelationshipSystem and NPC-memory ownership.
+**Historical handoff from 9A:** Phase 9B — Shared Experience Foundation, now certified in Run #141.
 
 ### Phase 8E — Phase 8 Closeout (CI Green Run #137)
 

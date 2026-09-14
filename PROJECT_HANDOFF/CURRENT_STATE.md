@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #139** (`34870897923`) on expanded source **`f8ddfe5db0995dceb07969765b34b78f18740e01`**. This is the certified Phase 9A NPC Interests & Preferences baseline on schema 17. The documentation-only synchronization based on it changes no gameplay; after that sync certifies, its expanded docs commit becomes the newest repository source while Run #139 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #141** (`34880935501`) on expanded source **`f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`**. This is the certified Phase 9B Shared Experience Foundation baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #141 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -15,11 +15,12 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #139**
 - Phase 8D — Player Profile & Personal Inventory: **CERTIFIED / CLOSED**
 - Phase 8E — Phase 8 Closeout: **CERTIFIED / CLOSED**
 - Phase 9A — NPC Interests & Preferences: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 9B — Shared Experience Foundation**
+- Phase 9B — Shared Experience Foundation: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 9C — Childhood & Youth Social Life**
 - Phase 9 — Shared Lives: **ACTIVE**
 - Planned Phase 10: **Living Everthread**
-- Last successfully reviewed Supabase Feedback Inbox state: **4 total reports; all 4 triage-resolved; no new report rows since 2026-09-13 19:51:36 UTC**.
-- Last successful stored review checkpoint remains `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4. Post-Run-#139 read attempts were blocked by connector safety, so no newer inbox/checkpoint state is claimed.
+- Fresh post-Run-#141 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407 UTC**.
+- The stored review-checkpoint write was blocked by connector safety, so `everthread_feedback_review_state.main` still remains at `e1aa213fac4e03ab9a4af3039d9605852289b899` / `2026-09-14 15:07:04.320301+00` with reviewed-report count 4. The inbox read is current; only checkpoint persistence is stale.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -31,7 +32,28 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #139 — Phase 9A NPC Interests & Preferences
+## Newest certified gameplay/source — Run #141 — Phase 9B Shared Experience Foundation
+
+- Upload wrapper: `c2beb60a91b1869993f83412fd63f084f26e0b98`.
+- Expanded certified source: `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`.
+- GitHub Actions Run #141: `34880935501`.
+- Net diff from the prior certified repository source is exactly **7 intended Phase 9B source/test files**. Workflow import reports 8 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, save-schema, or Phase 9C drift is part of the committed gameplay diff.
+- Save schema remains **17**. Phase 9B adds one reusable pure shared-experience evaluator shaped around exact player + NPC + relationship + place + activity + preference/context inputs; it introduces no second relationship score, memory ledger, location authority, or durable experience ledger.
+- `RelationshipSystem` remains the mutation authority for relationship score, hidden opinion, player happiness, exact-target timeline history, bounded NPC memories, action-economy consumption, and the committed gameplay-RNG draw. `SharedExperienceSystem` evaluates only; read-only projections/previews consume no gameplay RNG or runtime IDs.
+- The foundation ships **10 authored shared-experience activities** across Weaver Park, Crossroads Mall, Nightjar Diner, Threadwell Residential, Pulseworks Gym, and Everthread Stadium. Evaluation returns bounded 0–100 approval, coherent result prose, consequence suggestions, and meaningful-memory signaling while keeping raw preference weights hidden.
+- Age-inappropriate preference tags cannot influence younger participants. Availability rejects stale/dead targets, wrong place/activity pairs, undiscovered places, remote participants, and underage participants before mutation. Existing social opportunity limits still cap substantial per-NPC interactions and repeated same-activity use.
+- Meaningful lived experiences may reveal at most one relevant preference through the existing Phase 9A knowledge authority. Rough/awful/great outcomes can become bounded NPC memories; ordinary mixed/good outcomes do not spam memory history.
+- Phase 9B regression **53/53**; canonical preflight **4/4**. Base **82/82**; Relationship Microcopy **66/66**; Phase 9A **45/45**; Integrated Long-Life **105/105**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build: Vite 7.3.6, **190 modules transformed**. People remains lazy/code-split at ~27.94 kB JS / 9.10 kB gzip; main JS ~1,216.41 kB / 344.59 kB gzip. Established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `495b4f0e1c47705e3f822ce86df46cb989412eec7f43cbde9307ebff2e0a8553`.
+- Certified dependency SHA-256: `7c80fdb1e14b0edf35dd2c29b67b1ee9a6ff5ed26e687cea52b5ea00297572d2`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10362674376`, digest `ba43c8f5039be7053dc38cf4dc0a99b5f40a25110a63e24ba0444971cdc5ad8b`.
+- Pages artifact ID `10362614619`, digest `72fb456e5085132b2565ddf7727e82d7743ab24622b583edb6e1e2c39e00c9e7`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox read found **4 total / 0 unresolved**, with no new receipt after `2026-09-13 19:51:36.119407+00`. Connector safety blocked the review-state checkpoint write, so the stored checkpoint remains Run #137 even though the live inbox read is current.
+- **Phase 9B is CLOSED / CERTIFIED. Exact next slice: Phase 9C — Childhood & Youth Social Life.**
+
+## Prior certified gameplay/source — Run #139 — Phase 9A NPC Interests & Preferences
 
 - Upload wrapper: `8245a89f919086fcebc82e12880282076a13e5ef`.
 - Expanded certified source: `f8ddfe5db0995dceb07969765b34b78f18740e01`.
@@ -50,7 +72,7 @@ Candidate save schema: none
 - Certified preflight artifact ID `10359137007`, digest `60ef75dd3105118723f0af12bcffa173d85c439e55c69c49edbc81f6a7614005`.
 - Pages artifact ID `10359321568`, digest `e0234fa05dc501106535fc9694644150181c9203bc48d00fabbeb1734bfb3e1d`; Pages deployment reported success.
 - Post-certification feedback read attempts were blocked by connector safety, so the last successfully reviewed state/checkpoint remains the Run #137 snapshot (4 total / 0 unresolved by `triage_status`).
-- **Phase 9A is CLOSED / CERTIFIED. Exact next slice: Phase 9B — Shared Experience Foundation.**
+- **Phase 9A is CLOSED / CERTIFIED. It was succeeded by certified Phase 9B in Run #141.**
 
 ## Newest certified gameplay/source — Run #137 — Phase 8E Closeout
 
@@ -177,17 +199,17 @@ Phase 8B makes Everthread a first-class, mobile navigation surface without creat
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
 - Save schema remains **15**. No migration was required.
 
-## Approved next slice — Phase 9B: Shared Experience Foundation
+## Approved next slice — Phase 9C: Childhood & Youth Social Life
 
-Phase 9A is certified. Build one reusable shared-experience evaluator shaped around the exact player, exact NPC, relationship context, place, activity, and the 9A preference vocabulary. RelationshipSystem remains authoritative for relationship changes; NPC memories remain authoritative for meaningful remembered history.
+Phase 9B is certified. Reuse the single shared-experience evaluator for age-appropriate childhood and youth social life: play dates, sleepovers, parks, home visits, mall/game-store/arcade-style outings, school friends, siblings, and related social events. RelationshipSystem stays authoritative for relationship consequences, Phase 9A stays authoritative for learned preferences, NPC memory stays on the NPC, and place/location truth remains with the existing Everthread/location owners.
 
-Do not jump ahead to childhood/youth social expansion, dating momentum, inventory gifts, or cross-world chemistry until 9B is independently certified and synchronized.
+Do not create a youth-only relationship score, shadow social ledger, duplicate friend state, or a second experience evaluator. Do not jump ahead to Phase 9D dating momentum, Phase 9E inventory gifts, or Phase 9F cross-world chemistry until 9C is independently certified and synchronized.
 
-## Feedback queue snapshot after Run #139 / `f8ddfe5d…`
+## Feedback queue snapshot after Run #141 / `f1be1e6…`
 
-- Supabase contains **4 report rows**; all 4 are triage-resolved and no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
-- Review checkpoint key `main` successfully advanced to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4.
-- The post-Run-#139 live read attempt was blocked by connector safety, so no newer queue state is claimed. Last successfully reviewed state remains four triage-resolved reports and no known item preempted Phase 9A. Before 9B implementation, retry the live inbox read if the connector permits.
+- Fresh Supabase read contains **4 report rows / 0 unresolved by `triage_status`**; no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
+- The attempted post-Run-#141 checkpoint write was blocked by connector safety. `everthread_feedback_review_state.main` therefore still points to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4.
+- The live inbox snapshot is current even though checkpoint persistence is stale. No feedback item preempts Phase 9C.
 
 ## Phase 7C baseline preserved beneath Phase 8B
 

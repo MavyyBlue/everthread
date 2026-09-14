@@ -6,10 +6,10 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 The required post-Phase-7 brainstorm is complete. Mavyy approved the **Living World Program** as the next direction. The detailed authority, player-intent, migration, QA, and slice contract lives in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
 
-Current certified context: **Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`**, save schema **17**. **Phase 8 — Everthread: Home is closed/certified** and **Phase 9A — NPC Interests & Preferences is certified/closed**. The exact next slice is **9B Shared Experience Foundation**.
+Current certified context: **Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`**, save schema **17**. **Phase 8 — Everthread: Home is closed/certified**; **Phase 9A — NPC Interests & Preferences** and **Phase 9B — Shared Experience Foundation** are certified/closed. The exact next slice is **9C Childhood & Youth Social Life**.
 
 1. **Phase 8 — Everthread: Home** — **CLOSED / CERTIFIED.** 8A Everthread Setting Foundation is CI Green in Run #125. 8B Town Place Registry & 2D Flat Map is CI Green in Run #127, with the authored-map presentation correction certified in Run #129. 8C Institution Routing is CI Green in Run #131. 8D Player Profile & Personal Inventory is CI Green in Run #133 on schema 16. Run #135 certified the critical lazy People/Map/Profile load-recovery hotfix, and Run #137 certified 8E access/migration/mobile closeout at 34/34 with no authority or schema change.
-2. **Phase 9 — Shared Lives** — **active; 9A certified, next 9B Shared Experience Foundation.** Then childhood/youth social life; dates and romantic momentum; actual inventory gifts; cross-world chemistry through existing authorities.
+2. **Phase 9 — Shared Lives** — **active; 9A and 9B certified, next 9C Childhood & Youth Social Life.** Then dates and romantic momentum; actual inventory gifts; cross-world chemistry through existing authorities.
 3. **Phase 10 — Living Everthread** — residential/workplace projections, bounded generational place memory, and a living map that reflects meaningful current/dynasty context without becoming a second simulation.
 
 **Sequencing rule:** one certified slice at a time. After every certified gameplay/feature/fix/migration/architecture commit, complete the mandatory documentation synchronization before beginning the next slice.

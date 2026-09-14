@@ -1,5 +1,26 @@
 # Everthread Changelog
 
+## Phase 9B — Shared Experience Foundation — CI Green Run #141 — 2026-09-14
+
+### Added / changed
+
+- Added one reusable `SharedExperienceSystem` evaluation path over exact player + NPC + relationship + place + activity + preference/context inputs. It is deliberately pure/read-only: evaluation and option projection do not mutate `GameState`, consume gameplay RNG, allocate runtime IDs, or create a second relationship/memory/location authority.
+- Added **10 authored age-aware shared-experience activities** across Weaver Park, Crossroads Mall, Nightjar Diner, Threadwell Residential, Pulseworks Gym, and Everthread Stadium. Activities reuse the existing 38-tag preference vocabulary and return concise coherent prose plus bounded **0–100 approval** / outcome-band semantics while hidden weights remain private.
+- Preserved `RelationshipSystem` as the committed social-action authority. Shared experiences reuse the established per-NPC social action economy, consume exactly one gameplay-RNG variation only on a committed action, apply relationship score / hidden opinion / player happiness, write one exact-target timeline entry, reveal at most one relevant known preference, and create NPC memories only for meaningful rough/awful/great outcomes.
+- Bounded relationship-authored NPC memories to 36 while preserving permanent records and recent nonpermanent history. Existing hook-up/ordinary-interaction memory writes now use the same bounded helper without changing their player-facing semantics.
+- Added availability hardening for stale/dead NPC IDs, invalid or undiscovered place/activity pairs, remote participants, and age gating. Age-inappropriate preference tags cannot bias young-child shared experiences.
+- No save migration or durable shared-experience ledger was added; save schema remains **17**. The evaluator accepts explicit preference/context overrides so Phase 9C youth social life, Phase 9D dates, Phase 9E inventory gifts, and Phase 9F cross-world chemistry can reuse the same foundation rather than fork scoring logic.
+
+### Certification
+
+- GitHub Actions Run #141 (`34880935501`) certified expanded source `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298` from upload wrapper `c2beb60a91b1869993f83412fd63f084f26e0b98`. Net source diff from the prior certified repository source is exactly **7 intended Phase 9B source/test files**; workflow import reports 8 changes only because it removes `everthread-source.zip`. No docs, package, workflow, asset, schema, or Phase 9C drift was introduced.
+- Canonical preflight PASS **4/4**; Phase 9B **53/53**; base **82/82**; Relationship Microcopy **66/66**; Phase 9A **45/45**; Integrated Long-Life **105/105**; minigames **19/19**; feedback suites **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **190 modules**. People remains lazy/code-split at ~27.94 kB JS / 9.10 kB gzip; main JS is ~1,216.41 kB / 344.59 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `495b4f0e1c47705e3f822ce86df46cb989412eec7f43cbde9307ebff2e0a8553`; dependency SHA-256 `7c80fdb1e14b0edf35dd2c29b67b1ee9a6ff5ed26e687cea52b5ea00297572d2`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10362674376`, digest `ba43c8f5039be7053dc38cf4dc0a99b5f40a25110a63e24ba0444971cdc5ad8b`; Pages artifact ID `10362614619`, digest `72fb456e5085132b2565ddf7727e82d7743ab24622b583edb6e1e2c39e00c9e7`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox read found **4 total / 0 unresolved by `triage_status`**, with no new report after `2026-09-13 19:51:36.119407+00`. Connector safety blocked the review-checkpoint write, so the stored checkpoint still points to Run #137; no false advance is claimed.
+- **Phase 9B is CLOSED / CERTIFIED. Next slice:** Phase 9C — Childhood & Youth Social Life.
+
 ## Phase 9A — NPC Interests & Preferences — CI Green Run #139 — 2026-09-14
 
 ### Added / changed
