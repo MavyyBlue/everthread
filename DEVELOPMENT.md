@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 15
-Newest certified expanded gameplay/source: Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b`
-Certified gameplay baseline: Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b`
+Newest certified expanded gameplay/source: Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`
+Certified gameplay baseline: Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`
 
 ## Product direction
 
@@ -28,6 +28,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
+### Phase 8C — Institution Routing (CI Green Run #131)
+
+Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8C regression is **41/41**; Phase 8B remains 46/46; Phase 8A remains 25/25; Integrated Long-Life remains 105/105; all established suites are Green; production build transformed **178 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
+
+- The existing 24-place registry now exposes **28 real service doorways** without inventing mechanics for landmark-only locations.
+- `institutionRouting.ts` is a UI-only resolver from place service metadata to the four mature owner screens: Life, Assets, Activities, and Career.
+- Owner screens consume ephemeral route intent for the appropriate view/anchor and remain authoritative for eligibility, progressive disclosure, actions, money, cooldowns, consequences, RNG, and durable state.
+- Bank, vehicle, property, school/college, hospital/gym, airport, civic/business, justice, ordinary-work, special-career, and organized-crime locations now route into their established systems.
+- Routing adds no `GameState` field, no alternate location ledger, no runtime-ID/RNG consumption, and no save migration. Save schema remains **15**.
+- Certified source SHA-256 `5615d7382b8170be942c825f2c5d8def3a3a2855ce5411e389a4ae9782884db7`; preflight artifact `10336258752` (`c0ce8f6248bcdc113cc6f89c5f38b7c228265c39b6b60c607cb76768a59a6a65`); Pages artifact `10336585276` (`574d8f039938b3b3c46fb161d531b046f16d637515c9312c10016c7bb872d38f`).
+
+**Exact next slice:** Phase 8D — Player Profile & Personal Inventory. Build one player-facing identity/inventory projection over existing ownership authorities; do not create a parallel asset/collectible/economy ledger.
+
 ### Phase 8B — Town Place Registry & 2D Flat Map (CI Green; presentation correction Run #129)
 
 Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8B regression is **46/46**; Phase 8A remains 25/25; the full established wall remains Green; production build transformed **176 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
@@ -45,7 +58,7 @@ Architecture:
 
 Post-certification Feedback Inbox sweep found the report table still at four rows with no new receipts; the previously reviewed queue was zero unresolved. The stored review checkpoint was advanced to the Run #129 expanded source.
 
-**Exact next slice:** Phase 8C — Institution Routing. Route existing actions through Everthread places while retaining the existing system owners and contextual/legacy entry points until parity is proven.
+**Historical next slice after 8B:** Phase 8C — Institution Routing, now certified in Run #131.
 
 ## Closed implementation phase
 

@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #129** (`34813478003`) on expanded source **`109438ec2d50308c62c061a1c6bed7e0849e157b`**. This is the certified Phase 8B gameplay baseline after the map-artwork / flush-Threadspace presentation correction.
+The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #131** (`34815580108`) on expanded source **`5eca77206c61f7af67d1c12f101fd5c986369e0c`**. This is the certified Phase 8C Institution Routing gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **15**
@@ -10,11 +10,12 @@ The newest certified expanded **repository and gameplay** source is **GitHub Act
 - Current approved macro program: **Living World Program**
 - Phase 8A — Everthread Setting Foundation: **CERTIFIED / CLOSED**
 - Phase 8B — Town Place Registry & 2D Flat Map: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 8C — Institution Routing**
+- Phase 8C — Institution Routing: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 8D — Player Profile & Personal Inventory**
 - Planned Phase 9: **Shared Lives**
 - Planned Phase 10: **Living Everthread**
-- Supabase Feedback Inbox: **4 total reports, 0 unresolved; no new reports since 2026-09-13 19:51:36 UTC**
-- Stored feedback review checkpoint points to certified gameplay source `109438ec2d50308c62c061a1c6bed7e0849e157b`.
+- Supabase Feedback Inbox: **4 total reports; no new report rows since 2026-09-13 19:51:36 UTC; the previously reviewed queue remains clear**.
+- Stored feedback review checkpoint points to certified gameplay source `5eca77206c61f7af67d1c12f101fd5c986369e0c`.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
@@ -24,6 +25,26 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `15`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #131 — Phase 8C Institution Routing
+
+- Upload wrapper: `85a6449e6878c174586f5f61351654bb0b1ff877`.
+- Expanded certified source: `5eca77206c61f7af67d1c12f101fd5c986369e0c`.
+- GitHub Actions Run #131: `34815580108`.
+- Net diff from the prior certified repository source is exactly **17 intended source/test files**. Workflow import reports 18 changed files only because it also removes the uploaded `everthread-source.zip`; the committed gameplay diff contains the intended 17 files and no docs, save-schema, workflow, package, or unrelated asset drift.
+- The authored town registry now exposes **28 meaningful institution service doorways across the existing 24 places**. Landmark-only places remain landmarks rather than receiving fake mechanics.
+- `src/core/institutionRouting.ts` is the centralized UI routing projection. It resolves place services only into the four mature owner screens — **Life, Assets, Activities, Career** — and never performs bank, property, vehicle, education, healthcare, travel, legal, business, or career actions itself.
+- Existing owner screens accept ephemeral route intent and show contextual institution banners/anchors while preserving their own eligibility, progressive disclosure, costs, cooldowns, accounting, consequences, and RNG semantics. Seeing a building never grants permission to bypass the owning system.
+- Central Everthread Bank routes established money, credit/banking, bills/payments, and investments; Loomline Motors routes vehicle marketplace/ownership; Hearthline Realty routes home marketplace/ownership; schools/college route Education; Hospital/Gym route existing health/wellness; Airport routes travel; City Hall routes Politics/business; justice facilities route the existing legal/corrections surface; career venues route their established special-career worlds; Loomworks routes ordinary employment/business; Blackline routes organized crime only after its existing discovery rule exposes the place.
+- Routing requests, banners, selection, and anchors remain UI-only. `GameState`, physical `countryId/city` authority, map camera state, runtime IDs, RNG counters, and save format are unchanged. Save schema remains **15**.
+- Canonical preflight passed **4/4** stages. Base regression remains **82/82**; Phase 8A **25/25**; Phase 8B **46/46**; new Phase 8C Institution Routing regression **41/41**; Integrated Long-Life **105/105**; every established suite remained Green.
+- Production build: Vite 7.3.6, **178 modules transformed**. Authored map remains bundled at ~405.17 kB. `TownMapScreen` remains code-split at ~8.60 kB JS / 3.50 kB gzip plus ~7.69 kB CSS / 1.91 kB gzip. Main JS is ~1,187.72 kB / 335.72 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `5615d7382b8170be942c825f2c5d8def3a3a2855ce5411e389a4ae9782884db7`.
+- Certified dependency SHA-256: `2473833386b3e3c4e26825181751dfe3352f4787117e0780806fb27e91ad4e7e`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10336258752`, digest `c0ce8f6248bcdc113cc6f89c5f38b7c228265c39b6b60c607cb76768a59a6a65`.
+- Pages artifact ID `10336585276`, digest `574d8f039938b3b3c46fb161d531b046f16d637515c9312c10016c7bb872d38f`; Pages deployment reported success.
+- Post-certification feedback sweep found no new report rows; stored review checkpoint advanced to `5eca77206c61f7af67d1c12f101fd5c986369e0c` at `2026-09-14 06:58:41.568166+00` with reviewed-report count 4.
 
 ## Newest certified gameplay/source — Run #129 — Phase 8B map artwork / Threadspace presentation correction
 
@@ -72,17 +93,17 @@ Phase 8B makes Everthread a first-class, mobile navigation surface without creat
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
 - Save schema remains **15**. No migration was required.
 
-## Approved next slice — Phase 8C: Institution Routing
+## Approved next slice — Phase 8D: Player Profile & Personal Inventory
 
-Route existing mature entry points into believable Everthread places without duplicating mechanics. Bank should route Finance/Credit/Investment; Dealership vehicles/financing; Realty homes/rentals; City Hall civic/company functions; schools Education; Hospital Health; and career landmarks their existing career-world surfaces.
+Build one player-facing identity/inventory surface that projects durable player possessions and profile context without creating a second asset, collectible, relationship, or economy authority. Inventory/giftable-item work must integrate with existing ownership records and prepare Phase 9 Shared Lives rather than duplicating mature ledgers.
 
-Preserve old/contextual entry points until feature parity is proven. The map remains navigation/projection; engine/system owners remain authoritative for actions and results. Do not begin Player Profile/Personal Inventory (8D) until institution routing is independently certified.
+Preserve certified Phase 8C routing and all contextual shortcuts. Do not begin Phase 8E closeout or Phase 9 Shared Lives until the 8D ownership model is independently certified.
 
-## Feedback queue snapshot after Run #129 / `109438ec…`
+## Feedback queue snapshot after Run #131 / `5eca7720…`
 
-- Supabase still contains **4 report rows**; no new report row has appeared since the previously recorded `2026-09-13 19:51:36.119407+00` receipt. The prior reviewed queue was 0 unresolved.
-- Review checkpoint key `main` was successfully advanced after Run #129 to `109438ec2d50308c62c061a1c6bed7e0849e157b` at `2026-09-14 06:28:37.844038+00` with reviewed-report count 4.
-- No feedback item currently preempts Phase 8C.
+- Supabase still contains **4 report rows**; no new report row has appeared since the previously recorded `2026-09-13 19:51:36.119407+00` receipt. The prior reviewed queue remains clear.
+- Review checkpoint key `main` was successfully advanced after Run #131 to `5eca77206c61f7af67d1c12f101fd5c986369e0c` at `2026-09-14 06:58:41.568166+00` with reviewed-report count 4.
+- No feedback item currently preempts Phase 8D.
 
 ## Phase 7C baseline preserved beneath Phase 8B
 

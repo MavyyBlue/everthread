@@ -1,5 +1,26 @@
 # Everthread Changelog
 
+## Phase 8C — Institution Routing — CI Green Run #131 — 2026-09-14
+
+### Added / changed
+
+- Added **28 meaningful institution service doorways** across the existing 24-place Everthread registry while leaving landmark-only places unrouted rather than inventing fake mechanics.
+- Added centralized `institutionRouting.ts` projection from place services into the mature **Life, Assets, Activities, and Career** owner screens. The map performs navigation only; it does not execute gameplay actions or own results.
+- Routed Central Everthread Bank to existing money/credit/payments/investments, Loomline Motors to vehicle marketplace/ownership, Hearthline Realty to home marketplace/ownership, schools/college to Education, Hospital/Gym to health/wellness, Airport to travel, City Hall to Politics/business, justice locations to legal/corrections, Loomworks to work/business, special-career venues to their established worlds, and Blackline Yard to organized crime after existing discovery allows the place.
+- Added ephemeral owner-screen route intent, contextual institution banners/anchors, and locked-context messaging that preserves progressive disclosure. Seeing a building never bypasses age, eligibility, legal, financial, career, or discovery rules.
+- No `GameState` field, save migration, alternate location ledger, gameplay RNG draw, or runtime-ID allocation was added. Save schema remains **15**.
+- Content audit now reports **24 Everthread town places / 28 routed institution services**; the random-event library remains **691**.
+
+### Certification
+
+- GitHub Actions Run #131 (`34815580108`) certified expanded source `5eca77206c61f7af67d1c12f101fd5c986369e0c` from upload wrapper `85a6449e6878c174586f5f61351654bb0b1ff877`.
+- Both TypeScript gates PASS; canonical preflight PASS **4/4**; base regression **82/82**; Phase 8A **25/25**; Phase 8B **46/46**; new Phase 8C routing regression **41/41**; Integrated Long-Life **105/105**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **178 modules**. `TownMapScreen` remains code-split at ~8.60 kB JS / 3.50 kB gzip plus ~7.69 kB CSS / 1.91 kB gzip; main JS is ~1,187.72 kB / 335.72 kB gzip. Existing >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `5615d7382b8170be942c825f2c5d8def3a3a2855ce5411e389a4ae9782884db7`; dependency SHA-256 `2473833386b3e3c4e26825181751dfe3352f4787117e0780806fb27e91ad4e7e`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10336258752`, digest `c0ce8f6248bcdc113cc6f89c5f38b7c228265c39b6b60c607cb76768a59a6a65`; Pages artifact ID `10336585276`, digest `574d8f039938b3b3c46fb161d531b046f16d637515c9312c10016c7bb872d38f`; Pages deployment reported success.
+- Post-certification feedback sweep found no new report rows and advanced the stored review checkpoint to `5eca77206c61f7af67d1c12f101fd5c986369e0c`.
+- **Next slice:** Phase 8D — Player Profile & Personal Inventory.
+
 ## Post-8B Map Artwork & Flush Threadspace Presentation — CI Green Run #129 — 2026-09-14
 
 ### Changed

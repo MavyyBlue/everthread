@@ -3,6 +3,10 @@
 Last audited: 2026-09-14
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 8C institution-routing content note
+
+Certified Phase 8C exposes **28 meaningful institution service doorways across the existing 24 Everthread places**. These are routing/content identities, not duplicate gameplay mechanics: every doorway resolves into an established Life, Assets, Activities, or Career owner, and landmark-only places remain unrouted until a real system exists. No random-event, career-definition, education, health, asset, achievement, challenge, country, or regional-name-pool count changes result from Phase 8C. The ordinary/random event library remains **691**.
+
 ## Phase 8B place/content note
 
 Certified Phase 8B has **24 authored Everthread town-place definitions across 6 districts**. Run #129 changes no content counts: it replaces the synthetic rendered map surface with the player-supplied authored **1536×961** town artwork and recalibrates the same 24 stable markers against it. Place identity/category/activity/visibility/routing semantics remain the registry authority, not random events or parallel gameplay state. The ordinary/random event library remains **691**; no career, education, health, asset, achievement, challenge, systemic-story, country, or regional-name-pool count changes result from the presentation correction.
@@ -75,6 +79,7 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Collectible definitions | 40 | — | Needs expansion |
 | Countries / home jurisdictions | 33 | 30+ | Met; Everthread + 32 travel/emigration definitions |
 | Everthread town places | 24 | — | Phase 8B authored registry across 6 districts |
+| Everthread institution service doorways | 28 | — | Phase 8C routes into existing Life/Assets/Activities/Career owners |
 | Regional name pools | 7 | hundreds of names per region | Expanded; country/subregion depth still useful |
 | First names per regional pool | 120 | hundreds/region | 6× increase; 840 total active first-name entries |
 | Last names per regional pool | 120 | hundreds/region | 6× increase; 840 total surname entries |

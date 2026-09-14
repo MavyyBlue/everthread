@@ -1,17 +1,18 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8A and 8B are certified; Phase 8C is next.**
+Status: **Active Mavyy-approved program. Phases 8A, 8B, and 8C are certified; Phase 8D is next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified repository/gameplay source: Run #129 / `109438ec2d50308c62c061a1c6bed7e0849e157b`;
+- newest certified repository/gameplay source: Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **15**;
 - Phase 7: **closed**;
 - Phase 8A: **certified / closed**;
 - Phase 8B: **certified / closed**;
-- next slice: **Phase 8C — Institution Routing**.
+- Phase 8C: **certified / closed**;
+- next slice: **Phase 8D — Player Profile & Personal Inventory**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -55,11 +56,11 @@ The lazy-loaded Map tab is mobile-first: the authored 1536×961 town artwork is 
 
 Place routing metadata points only to mature existing screens; 8B deliberately does **not** execute institution mechanics. Finance, relationships, property, education, career, legal, and other results remain owned by their established systems.
 
-### Phase 8C — Institution Routing
+### Phase 8C — Institution Routing — CERTIFIED Run #131
 
-Redistribute existing entry points into believable places without duplicating mechanics. Bank routes finance/credit/investment; Dealership routes vehicles/financing; Realty routes homes/rentals; City Hall routes company formation/civic functions; schools route education; Hospital routes health; career locations route existing career-world authorities.
+Certified in Run #131: **28 institution service doorways** now route believable Everthread places into the established Life, Assets, Activities, and Career owners without duplicating mechanics. Bank routes finance/credit/payments/investment; Dealership routes vehicle marketplace/ownership; Realty routes home marketplace/ownership; City Hall routes company/civic functions; schools route Education; Hospital/Gym route health/wellness; Airport routes travel; justice locations route legal/corrections; and career landmarks route existing career-world authorities.
 
-Keep old entry points until feature parity is proven. Never remove the mature Assets access path first and discover later that an existing action became unreachable.
+Old/contextual entry points remain available. Route intent is ephemeral UI state, and every mature owner still decides eligibility, costs, actions, accounting, consequences, and RNG. Save schema remains 15.
 
 ### Phase 8D — Player Profile & Personal Inventory
 
@@ -163,4 +164,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 8C — Institution Routing** from certified Run #127 / schema-15 Phase 8B. Route existing mature actions through believable places while keeping those existing system owners authoritative and retaining legacy/contextual entry points until parity is proven. Do not begin Phase 8D Player Profile & Personal Inventory until 8C is independently certified.
+Begin **Phase 8D — Player Profile & Personal Inventory** from certified Run #131 / schema-15 Phase 8C. Build player identity/inventory as a projection over established ownership authorities, preserve contextual shortcuts and institution routing, and avoid a second asset/collectible/economy ledger. Do not begin Phase 8E or Phase 9 Shared Lives until 8D is independently certified.
