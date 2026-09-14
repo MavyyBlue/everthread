@@ -1,4 +1,5 @@
 import type { EngineResult, GameState, Npc, Orientation, Relationship, RelationshipType } from '../types/game';
+import type { SharedExperienceActionResult } from '../types/sharedExperiences';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
@@ -9,6 +10,8 @@ import { assignNpcIdentity } from './NpcIdentitySystem';
 import { assignGeneratedNpcOrientation, characterRomanticGender, pickRomanticTargetGender, playerNpcRomanticallyCompatible, playerNpcSexuallyCompatible } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 import { scheduleFriendArgumentStory, scheduleMarriageExpectationsStory, scheduleParentingPresenceStory, scheduleReconciliationStory } from './SystemicStorySystem';
+import { ensureNpcPreferenceProfile, revealNpcPreference } from './NpcPreferenceSystem';
+import { evaluateSharedExperience, sharedExperienceAvailability } from './SharedExperienceSystem';
 
 export const DATING_MIN_AGE=14;
 
@@ -43,6 +46,16 @@ const interactionCopy:Record<RelationshipInteractionAction,RelationshipInteracti
 export function relationshipInteractionText(action:RelationshipInteractionAction,playerName:string,npcName:string){
   const copy=interactionCopy[action];
   return{timeline:copy.timeline(npcName),memory:copy.memory(playerName)};
+}
+
+const RELATIONSHIP_MEMORY_LIMIT=36;
+
+function addRelationshipMemory(state:GameState,npc:Npc,kind:string,sentiment:number,summary:string,permanent=false){
+  npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind,sentiment,summary,permanent});
+  if(npc.memories.length<=RELATIONSHIP_MEMORY_LIMIT)return;
+  const permanentMemories=npc.memories.filter(memory=>memory.permanent).slice(-18);
+  const recent=npc.memories.filter(memory=>!memory.permanent).slice(-Math.max(0,RELATIONSHIP_MEMORY_LIMIT-permanentMemories.length));
+  npc.memories=[...permanentMemories,...recent].slice(-RELATIONSHIP_MEMORY_LIMIT);
 }
 
 const ASK_OUT_RELATIONSHIP_TYPES = new Set<RelationshipType>(['friend','best_friend','classmate','coworker','boss','teacher','principal','coach']);
@@ -112,7 +125,7 @@ export function hookUpWithNpc(state:GameState,npcId:string):EngineResult {
   state.flags[countKey]=streak;
   state.flags.hookups=Number(state.flags.hookups??0)+1;
   rel.score=clamp(rel.score+4);rel.attraction=clamp(rel.attraction+2);npc.hiddenOpinion=clamp(npc.hiddenOpinion+3,-100,100);
-  npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:'hookup',sentiment:4,summary:`Hooked up with ${state.character.firstName}.`,permanent:streak>=2});
+  addRelationshipMemory(state,npc,'hookup',4,`Hooked up with ${state.character.firstName}.`,streak>=2);
   state.character.stats.happiness=clamp(state.character.stats.happiness+2);
   state.character.secondary.karma-=4;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:1,text:`You hooked up with ${npc.firstName}.`,npcIds:[npcId],relationshipDelta:4});
@@ -125,7 +138,7 @@ export function hookUpWithNpc(state:GameState,npcId:string):EngineResult {
     const damage=Math.round(clamp(18+(streak-1)*4+(oldType==='spouse'?6:oldType==='fiance'?3:0)+(partner.traits.includes('jealous')?5:0),18,46));
     commitment.score=clamp(commitment.score-damage);
     partner.hiddenOpinion=clamp(partner.hiddenOpinion-damage*.9,-100,100);
-    partner.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:'infidelity_discovery',sentiment:-damage,summary:`Discovered that ${state.character.firstName} hooked up with ${npc.firstName}.`,permanent:true});
+    addRelationshipMemory(state,partner,'infidelity_discovery',-damage,`Discovered that ${state.character.firstName} hooked up with ${npc.firstName}.`,true);
     state.flags.infidelityDiscoveries=Number(state.flags.infidelityDiscoveries??0)+1;
     state.character.secondary.stress=clamp(state.character.secondary.stress+6);
     state.character.stats.happiness=clamp(state.character.stats.happiness-5);
@@ -184,7 +197,7 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   }
   rel.score=clamp(rel.score+delta); npc.hiddenOpinion=clamp(npc.hiddenOpinion+delta*.35,-100,100);
   const copy=relationshipInteractionText(interactionAction,state.character.firstName,npc.firstName);
-  npc.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:action,sentiment:delta,summary:copy.memory,permanent:Math.abs(delta)>=10});
+  addRelationshipMemory(state,npc,action,delta,copy.memory,Math.abs(delta)>=10);
   state.character.stats.happiness=clamp(state.character.stats.happiness+spec.happiness);
   state.character.secondary.karma+=spec.karma??0;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:Math.abs(delta)>10?2:1,text:copy.timeline,npcIds:[npcId],relationshipDelta:delta});
@@ -192,6 +205,28 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   if(interactionAction==='spend_time'&&rel.type==='child')scheduleParentingPresenceStory(state,npcId);
   if(interactionAction==='argue'&&['friend','best_friend'].includes(rel.type))scheduleFriendArgumentStory(state,npcId);
   return {success:true,messages:[{text:`${npc.firstName}'s relationship with you ${delta>=0?'improved':'worsened'} (${delta>=0?'+':''}${Math.round(delta)}).`}]};
+}
+
+export function shareExperienceWithNpc(state:GameState,npcId:string,placeId:string,activityId:string):SharedExperienceActionResult {
+  const availability=sharedExperienceAvailability(state,npcId,placeId,activityId);
+  if(!availability.allowed)return{success:false,messages:[{text:availability.reason??'That shared experience is not available.'}]};
+  const npc=availability.npc!,rel=availability.relationship!;
+  const gate=consumeAction(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:shared:${activityId}`}]);
+  if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  ensureNpcPreferenceProfile(state,npc);
+  const rng=createRng(state.seed,state.rngCounter);
+  const experience=evaluateSharedExperience(state,npcId,placeId,activityId,rng.int(-8,8));
+  if(!experience)return{success:false,messages:[{text:'That shared experience could not be resolved.'}]};
+  rel.score=clamp(rel.score+experience.relationshipDelta);
+  npc.hiddenOpinion=clamp(npc.hiddenOpinion+experience.opinionDelta,-100,100);
+  state.character.stats.happiness=clamp(state.character.stats.happiness+experience.happinessDelta);
+  const signal=experience.preferenceSignalTag;
+  const alreadyKnown=signal?Boolean(rel.knownPreferenceTags?.includes(signal)):true;
+  if(signal&&revealNpcPreference(state,npcId,signal)&&!alreadyKnown)experience.discoveredPreferenceTag=signal;
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:experience.meaningfulMemory?2:1,text:experience.prose,npcIds:[npcId],relationshipDelta:experience.relationshipDelta});
+  if(experience.meaningfulMemory)addRelationshipMemory(state,npc,`shared_experience:${activityId}`,experience.relationshipDelta,experience.memorySummary,experience.band==='awful'||experience.band==='great');
+  state.rngCounter=rng.counter();
+  return{success:true,messages:[{text:experience.prose}],experience};
 }
 
 export function meetPotentialPartner(state:GameState):EngineResult {
