@@ -1,21 +1,38 @@
 # Everthread Changelog
 
-## Feedback UX — age-appropriate progressive disclosure candidate — 2026-09-13
+## Phase 7B2 — Ownership & Workplace Echoes candidate — 2026-09-13
 
-### Corrected
+### Added / changed
 
-- Prioritized and reproduced live report `ET-20260913-BE8649B9`: early-life Activities and Career/Life Paths surfaces could render choices years before they were usable, leaving disabled controls that made the mobile interface feel cluttered and misleading.
-- Added presentation-only progressive disclosure for age-gated activities, licenses, work surfaces, school actions/groups, and special-career paths/actions. The engine still owns eligibility and continues to reject invalid calls; this slice changes visibility, not gameplay permissions.
-- Exported existing age thresholds from their owning systems (Relationship, Stress/therapy, Fame, Health, Travel, Career, Workplace, SchoolWorld, SpecialCareer, and CombatCareerWorld) so UI visibility does not become a second set of magic-number rules.
-- Preserved current/legacy work records, school-group memberships, and special-career histories even if an imported old save would otherwise sit below a modern visibility threshold.
-- Save schema remains **13**; no migration, gameplay RNG, action economy, simulation state, random-event pool, or scheduler authority changes.
+- Added five action-driven systemic delayed stories for property renovation, business founding, business product launches, manager feedback, and formal coworker concerns.
+- All five use the existing `SystemicStorySystem` request bridge and certified `ConsequenceSystem`; no new narrative queue, graph, or save authority is introduced.
+- Property stories bind the exact owned property and cancel if it is sold/missing before the due age. Business stories bind the exact existing business. Workplace stories bind the exact persistent workplace world plus the exact manager/coworker and may intentionally surface after the workplace archives; dead/missing people or missing worlds cancel rather than retarget.
+- Added data-driven property effects for bounded condition/value-percentage changes and business effects for bounded demand/reputation changes. Event rendering resolves `{PROPERTY_NAME}` / `{BUSINESS_NAME}` / workplace `{WORLD_NAME}` from authoritative state instead of copying names into durable story payloads.
+- Property/business consequence resolutions expose exact semantic state-change keys. Asset and business story outcomes now write to the matching timeline categories.
+- Save schema remains **13**. Scheduling consumes no gameplay RNG and the ordinary random-event library remains exactly **691** definitions.
 
 ### Local candidate validation
 
-- New `progressiveDisclosureRegression.ts`: **25/25** checks for age visibility boundaries, legacy-state preservation, school-group disclosure, royalty visibility, and special-path/action thresholds.
-- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Core 82/82; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
+- New `phase7B2OwnershipWorkRegression.ts`: **35/35** checks covering random-pool isolation, action wiring, exact target refs, due ages, dedupe/no-ID-consumption, save round-trip, rendering, exact property/business mutation, semantic state changes, sold/missing-target cancellation, archived-workplace persistence, exact NPC memory/relationship effects, dead-target cancellation, RNG-neutral direct scheduling, schema stability, and global invariants.
+- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Core 82/82; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Progressive Disclosure 25/25; Random-event Coherence 77/77; Activity-specific Minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
 - Production build PASS with Vite 7.3.6 at **168 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
-- Built from newest certified source **Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`** (documentation-only synchronization on top of the Run #115 gameplay baseline). Canonical GitHub Actions certification is still pending; keep `ET-20260913-BE8649B9` open until the fixing expanded-source commit/run are known.
+- Built from certified Run #117 / expanded source `9822a31df84197ea700ebd890bf0f68cb716637b`. Canonical GitHub Actions remains final certification authority.
+
+## Feedback UX — age-appropriate progressive disclosure — CI Green Run #117 — 2026-09-13
+
+### Certification
+
+- GitHub Actions Run #117 (`34783290659`) certified expanded source `9822a31df84197ea700ebd890bf0f68cb716637b` on save schema **13**.
+- Canonical preflight passed Engine TypeScript, Test TypeScript, the complete regression wall, Progressive Disclosure **25/25**, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Random-event Coherence 77/77, both feedback suites, and production build at **168 modules**.
+- Certified source SHA-256: `f2fa8f09e292e46b704e2f2c37a3a1e7b045e28bdfe5a9fcb5e9dcd211213c5f`.
+- Certified dependency SHA-256: `856bae49f4e6b469f4e2d85d031f218c38d6dbdc909ef19fc13bcc23244b9579`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10325856281`, digest `7c34b453461c5c6286efc44a8a3959e4601691b077be1fe300b96863aadfce0d`; Pages artifact ID `10325846256`, digest `0bedf7dd068fad6ae217142a9cf69c1d8de2d38e53776f764c743cf696373d99`. Pages deployment reported success.
+- Resolved `ET-20260913-BE8649B9` as a deployed suggestion/experience correction against that exact source/run. A fresh Supabase review against Run #117 found **0 unresolved reports**.
+
+### Corrected
+
+- Early-life Activities and Career/Life Paths now hide age-ineligible choices until their owning gameplay systems say the threshold has been reached, while legacy/current records stay visible for save compatibility.
+- Engine eligibility remains authoritative; the presentation layer consumes shared owner thresholds rather than maintaining a second set of age rules.
 
 ## Phase 7B1 — Family, School & Relationship systemic stories — CI Green Run #115 — 2026-09-13
 

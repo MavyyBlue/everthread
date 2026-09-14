@@ -32,9 +32,9 @@ export function runPhase7BSystemicStoryRegression(){
   let checks=0;function check(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 7B systemic-story regression failed: ${message}`);}
 
   check(lifeEvents.length===691,'01 random-event pool must remain exactly 691');
-  check(systemicConsequenceEvents.length===5&&systemicConsequenceEvents.every(event=>event.probability===0&&event.tags.includes('phase7b1')),'02 five Phase 7B1 stories must remain system-owned and outside random selection');
+  const phase7b1Events=systemicConsequenceEvents.filter(event=>event.tags.includes('phase7b1'));check(phase7b1Events.length===5&&phase7b1Events.every(event=>event.probability===0),'02 five Phase 7B1 stories must remain system-owned and outside random selection');
   check(systemicConsequenceEvents.every(event=>!lifeEvents.some(random=>random.id===event.id)),'03 systemic story ids must not collide with the random library');
-  check(Object.keys(systemicConsequenceEventById).length===5,'04 systemic event registry must expose exactly the authored 7B1 set');
+  check(phase7b1Events.every(event=>systemicConsequenceEventById[event.id]===event),'04 systemic event registry must preserve every authored 7B1 definition as later slices expand');
 
   const parenting=adult('phase7b-parenting',32);const {child,parentingRel}=(()=>{const made=addChild(parenting);return{child:made.child,parentingRel:made.rel};})();const parentingRngBefore=parenting.rngCounter;
   const parentAction=interactWithNpc(parenting,child.id,'spend_time');const parentStory=parenting.delayedEvents.find(item=>item.eventId==='systemic_parenting_presence_return');

@@ -768,6 +768,8 @@ export interface ChoiceEffect {
   schedule?: { eventId: Id; years: number; npcSelector?: string; requiredRelationshipTypes?: RelationshipType[] };
   workplace?: Partial<Pick<WorkplaceWorldState, 'morale' | 'culture' | 'tension' | 'reputation'>>;
   school?: Partial<Pick<SchoolWorldState, 'attendance' | 'conduct' | 'socialStanding'>>;
+  property?: { condition?: number; marketValuePercent?: number };
+  business?: Partial<Pick<Business, 'demand' | 'reputation'>>;
   health?: number;
   legalHeat?: number;
 }

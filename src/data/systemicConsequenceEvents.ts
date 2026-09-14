@@ -66,6 +66,72 @@ export const systemicConsequenceEvents:GameEventDefinition[]=[
       {id:'brush_off',label:'Say things are fine as they are',effects:{relationship:{npcSelector:'payload',delta:-9},stats:{happiness:-2},secondary:{stress:3}}},
     ],
   },
+  {
+    id:'systemic_property_renovation_return',category:'asset',title:'What the Renovation Changed',
+    descriptions:[
+      'Two years after the work at {PROPERTY_NAME}, the choices behind that renovation are showing in the property itself.',
+      '{PROPERTY_NAME} has had time to live with the renovation you completed at age {ORIGIN_AGE}. Some decisions aged better than others.',
+      'The renovation at {PROPERTY_NAME} is no longer new. Now you can see what actually held up and what needs another decision.',
+    ],
+    minAge:18,maxAge:110,probability:0,cooldown:99,tags:['asset','systemic','delayed','phase7b2'],choices:[
+      {id:'protect_work',label:'Keep protecting the work you did',effects:{property:{condition:8,marketValuePercent:1.5},secondary:{discipline:2,stress:1}}},
+      {id:'refine',label:'Refine the parts that did not age well',effects:{property:{condition:5,marketValuePercent:2},secondary:{creativity:2,stress:2}}},
+      {id:'coast',label:'Leave it alone for now',effects:{property:{condition:-6,marketValuePercent:-1},secondary:{stress:-1}}},
+    ],
+  },
+  {
+    id:'systemic_business_founder_return',category:'business',title:'The Company You Actually Built',
+    descriptions:[
+      'A few years after founding {BUSINESS_NAME}, the company has become something more specific than the idea you started with.',
+      '{BUSINESS_NAME} has survived long enough for people to form an opinion about what kind of company it is—and what kind of founder you are.',
+      'The early improvisation around {BUSINESS_NAME} has hardened into habits. You have a chance to decide which ones become culture.',
+    ],
+    minAge:18,maxAge:110,probability:0,cooldown:99,tags:['business','systemic','delayed','phase7b2'],choices:[
+      {id:'protect_trust',label:'Protect the trust you have built',effects:{business:{reputation:8,demand:2},secondary:{reputation:2,karma:1}}},
+      {id:'focus_market',label:'Focus harder on what customers want',effects:{business:{reputation:3,demand:8},secondary:{confidence:2,stress:2}}},
+      {id:'chase_growth',label:'Push growth even if the culture strains',effects:{business:{reputation:-5,demand:10},secondary:{stress:4,willpower:2}}},
+    ],
+  },
+  {
+    id:'systemic_business_product_return',category:'business',title:'The Launch Has a Reputation Now',
+    descriptions:[
+      'The product expansion at {BUSINESS_NAME} has had time to settle into the market. Customers remember more than the launch-day numbers.',
+      'A product line you launched through {BUSINESS_NAME} is now part of how people describe the company.',
+      '{BUSINESS_NAME} is getting feedback on the direction you chose at age {ORIGIN_AGE}. The launch is old news; its reputation is not.',
+    ],
+    minAge:18,maxAge:110,probability:0,cooldown:99,tags:['business','systemic','delayed','phase7b2'],choices:[
+      {id:'improve',label:'Refine the product around the feedback',effects:{business:{reputation:7,demand:3},secondary:{creativity:2,stress:2}}},
+      {id:'double_down',label:'Double down on the strongest demand',effects:{business:{reputation:2,demand:8},secondary:{confidence:2}}},
+      {id:'move_on',label:'Stop letting one launch define the company',effects:{business:{reputation:1,demand:-5},secondary:{stress:-2}}},
+    ],
+  },
+  {
+    id:'systemic_workplace_feedback_return',category:'work',title:'The Standard You Asked For',
+    descriptions:[
+      'At {WORLD_NAME}, {NPC_FIRST} brings up the feedback conversation you asked for at age {ORIGIN_AGE}. It changed the standard they use when judging your work.',
+      '{NPC_FIRST} remembers that you once asked for direct feedback at {WORLD_NAME}. Now they want to know what you actually did with it.',
+      'A past feedback conversation with {NPC_FIRST} at {WORLD_NAME} has become part of your professional reputation there.',
+    ],
+    minAge:16,maxAge:110,probability:0,cooldown:99,tags:['work','systemic','delayed','phase7b2'],choices:[
+      {id:'show_growth',label:'Show how you acted on the feedback',effects:{relationship:{npcSelector:'payload',delta:6},workplace:{reputation:7,tension:-3},secondary:{reputation:2,confidence:2}}},
+      {id:'ask_again',label:'Ask what they would challenge you on now',effects:{relationship:{npcSelector:'payload',delta:4},workplace:{culture:4,reputation:3},secondary:{charisma:2,stress:2}}},
+      {id:'reject_standard',label:'Say their standard never fit you',effects:{relationship:{npcSelector:'payload',delta:-7},workplace:{tension:6,reputation:-4},secondary:{stress:2,willpower:2}}},
+    ],
+  },
+  {
+    id:'systemic_workplace_concern_return',category:'work',title:'The Concern Did Not Disappear',
+    descriptions:[
+      'The workplace concern involving {NPC_FIRST} at {WORLD_NAME} has had a longer afterlife than the original meeting suggested.',
+      '{WORLD_NAME} circles back to the concern you raised about {NPC_FIRST} at age {ORIGIN_AGE}. The formal process ended; the social consequences did not.',
+      '{NPC_FIRST} wants to address what happened after you raised a workplace concern at {WORLD_NAME}. Time has changed the temperature, not the history.',
+    ],
+    minAge:16,maxAge:110,probability:0,cooldown:99,tags:['work','systemic','delayed','phase7b2'],choices:[
+      {id:'set_boundary',label:'Keep the boundary clear and professional',effects:{relationship:{npcSelector:'payload',delta:-2},workplace:{tension:-5,reputation:4},secondary:{discipline:2}}},
+      {id:'repair',label:'Try to repair the working relationship',effects:{relationship:{npcSelector:'payload',delta:8},workplace:{tension:-4,culture:3},secondary:{charisma:2,stress:1}}},
+      {id:'reignite',label:'Reopen the argument',effects:{relationship:{npcSelector:'payload',delta:-10},workplace:{tension:8,reputation:-3},secondary:{stress:4}}},
+    ],
+  },
+
 ];
 
 export const systemicConsequenceEventById:Record<string,GameEventDefinition>=Object.fromEntries(systemicConsequenceEvents.map(event=>[event.id,event]));

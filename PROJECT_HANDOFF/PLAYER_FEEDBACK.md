@@ -94,13 +94,14 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified **Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`** (documentation-only on top of the Run #115 gameplay baseline).
+Last central review checkpoint: certified **Run #117 / `9822a31df84197ea700ebd890bf0f68cb716637b`**.
 
 - Reviewed reports in checkpoint: **4**.
-- `ET-20260913-A527E2A6`: **resolved → suggestion**, Mavyy automatic-delivery/status test.
+- `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
-- `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114. Procedural life-event descriptions use scene-safe composition while preserving event/choice/RNG shape.
-- `ET-20260913-BE8649B9`: **triaged · normal priority · reproduced · prioritized before the next phase**. Early-life Activities and Career/Life Paths show age-locked choices too early. A presentation-only progressive-disclosure candidate is locally green; the report stays open until canonical CI supplies its fixing source/run.
-- Central new/untriaged reports after the Run #116 review: **0**.
+- `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
+- `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths now hide age-ineligible choices until unlock while gameplay guards remain authoritative.
+- Central unresolved reports after the Run #117 review: **0**.
+- Review-state checkpoint is advanced to `9822a31df84197ea700ebd890bf0f68cb716637b` with four reviewed reports; newest received report remains 2026-09-13 19:51:36 UTC.
 - Player-visible disposition read-back remains certified and deployed.
-- Do not proceed to the next Phase 7 gameplay slice while an active triaged report is being corrected unless Mavyy explicitly changes priority.
+- Phase 7B2 may proceed; refresh the live inbox again before the next gameplay slice after 7B2.

@@ -47,3 +47,68 @@ export function scheduleSchoolConductStory(state:GameState,world:SocialWorld){
     dedupeKey:`phase7b1:school_conduct:${world.id}`,
   });
 }
+
+export function schedulePropertyRenovationStory(state:GameState,propertyId:string){
+  return scheduleConsequence(state,{
+    eventId:'systemic_property_renovation_return',
+    dueAge:state.character.age+2,
+    payload:{propertyId,originAge:state.character.age},
+    priority:'normal',
+    chainId:`phase7b2:property_renovation:${propertyId}:${state.character.age}`,
+    origin:{kind:'system',id:'property_renovation',age:state.character.age},
+    targetRefs:[{kind:'property',id:propertyId}],
+    validity:{targetMustExist:true},
+    dedupeKey:`phase7b2:property_renovation:${propertyId}`,
+  });
+}
+
+export function scheduleBusinessFounderStory(state:GameState,businessId:string){
+  return scheduleConsequence(state,{
+    eventId:'systemic_business_founder_return',
+    dueAge:state.character.age+3,
+    payload:{businessId,originAge:state.character.age},
+    priority:'normal',
+    chainId:`phase7b2:business_founder:${businessId}:${state.character.age}`,
+    origin:{kind:'system',id:'business_founding',age:state.character.age},
+    targetRefs:[{kind:'business',id:businessId}],
+    validity:{targetMustExist:true},
+    dedupeKey:`phase7b2:business_founder:${businessId}`,
+  });
+}
+
+export function scheduleBusinessProductStory(state:GameState,businessId:string){
+  return scheduleConsequence(state,{
+    eventId:'systemic_business_product_return',
+    dueAge:state.character.age+2,
+    payload:{businessId,originAge:state.character.age},
+    priority:'normal',
+    chainId:`phase7b2:business_product:${businessId}:${state.character.age}`,
+    origin:{kind:'system',id:'business_product_launch',age:state.character.age},
+    targetRefs:[{kind:'business',id:businessId}],
+    validity:{targetMustExist:true},
+    dedupeKey:`phase7b2:business_product:${businessId}`,
+  });
+}
+
+function scheduleWorkplaceStory(state:GameState,request:{eventId:string;storyId:string;worldId:string;npcId:string;years:number}){
+  return scheduleConsequence(state,{
+    eventId:request.eventId,
+    dueAge:state.character.age+request.years,
+    payload:{worldId:request.worldId,npcId:request.npcId,originAge:state.character.age},
+    priority:'normal',
+    chainId:`phase7b2:${request.storyId}:${request.worldId}:${request.npcId}:${state.character.age}`,
+    origin:{kind:'system',id:request.storyId,age:state.character.age},
+    targetRefs:[{kind:'social_world',id:request.worldId},{kind:'npc',id:request.npcId}],
+    validity:{targetMustExist:true,targetMustBeAlive:true},
+    dedupeKey:`phase7b2:${request.storyId}:${request.worldId}:${request.npcId}`,
+  });
+}
+
+export function scheduleWorkplaceFeedbackStory(state:GameState,worldId:string,npcId:string){
+  return scheduleWorkplaceStory(state,{eventId:'systemic_workplace_feedback_return',storyId:'workplace_feedback',worldId,npcId,years:2});
+}
+
+export function scheduleWorkplaceConcernStory(state:GameState,worldId:string,npcId:string){
+  return scheduleWorkplaceStory(state,{eventId:'systemic_workplace_concern_return',storyId:'workplace_concern',worldId,npcId,years:2});
+}
+

@@ -4,6 +4,7 @@ import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 import { consumeAction } from '../core/actionEconomy';
+import { scheduleBusinessFounderStory, scheduleBusinessProductStory } from './SystemicStorySystem';
 
 export function startBusiness(state:GameState,industryId:string,name:string):EngineResult {
   if(state.character.age<18)return{success:false,messages:[{text:'You must be an adult to start a company.'}]};
@@ -12,7 +13,7 @@ export function startBusiness(state:GameState,industryId:string,name:string):Eng
   const gate=consumeAction(state,{policy:'business.start'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   state.finances.cash-=industry.startupCapital;
   const business:Business={id:makeStateId(state,'biz'),industryId,name:name.trim()||`New ${industry.name}`,foundedAge:state.character.age,capital:industry.startupCapital,revenue:0,expenses:0,profit:0,employees:Math.max(1,Math.round(industry.startupCapital/50000)),demand:55,reputation:35,valuation:industry.startupCapital,productIds:[`${industryId}_product_1`],priceIndex:1,marketingBudget:Math.round(industry.startupCapital*.05),compensationIndex:1,bankrupt:false};
-  state.businesses.push(business);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'business',importance:3,text:`You founded ${business.name}, a ${industry.name.toLowerCase()} business.`,moneyDelta:-industry.startupCapital});
+  state.businesses.push(business);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'business',importance:3,text:`You founded ${business.name}, a ${industry.name.toLowerCase()} business.`,moneyDelta:-industry.startupCapital});scheduleBusinessFounderStory(state,business.id);
   return{success:true,messages:[{text:`${business.name} is open for business.`}]};
 }
 
@@ -48,5 +49,5 @@ export function addBusinessProduct(state:GameState,businessId:string):EngineResu
   const industry=businessIndustries.find(i=>i.id===b.industryId)!;if(b.productIds.length>=industry.productNames.length)return{success:false,messages:[{text:'This business has already launched every current product line.'}]};
   const cost=Math.round(industry.startupCapital*(.12+b.productIds.length*.05));if(b.capital<cost)return{success:false,messages:[{text:`The company needs ${cost.toLocaleString()} in capital for the next launch.`}]};
   const gate=consumeAction(state,{policy:'business.product',target:businessId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
-  b.capital-=cost;b.productIds.push(`${b.industryId}_product_${b.productIds.length+1}`);b.demand=clamp(b.demand+6);return{success:true,messages:[{text:`${b.name} launched ${industry.productNames[b.productIds.length-1]}.`}]};
+  b.capital-=cost;b.productIds.push(`${b.industryId}_product_${b.productIds.length+1}`);b.demand=clamp(b.demand+6);scheduleBusinessProductStory(state,b.id);return{success:true,messages:[{text:`${b.name} launched ${industry.productNames[b.productIds.length-1]}.`}]};
 }

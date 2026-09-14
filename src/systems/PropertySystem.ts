@@ -6,6 +6,7 @@ import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 import { acceptAssetFinanceOffer, bestAssetFinanceOffer, getAssetFinanceOffers } from './AssetFinancingSystem';
 import { addUnsecuredDebt } from './FinanceSystem';
+import { schedulePropertyRenovationStory } from './SystemicStorySystem';
 
 export interface AssetSaleQuote {
   assetId:string;
@@ -51,7 +52,7 @@ export function processPropertiesYear(state:GameState) {
 
 export function renovateProperty(state:GameState,propertyId:string):EngineResult {
   const p=state.assets.properties.find(p=>p.id===propertyId);if(!p)return{success:false,messages:[{text:'Property not found.'}]};const cost=Math.round(p.marketValue*.04);if(state.finances.cash<cost)return{success:false,messages:[{text:`Renovation requires ${cost.toLocaleString()}.`}]};const gate=consumeAction(state,{policy:'property.renovate',target:propertyId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
-  state.finances.cash-=cost;p.condition=clamp(p.condition+25);p.marketValue=Math.round(p.marketValue*1.025);return{success:true,messages:[{text:`Renovation complete. Condition is now ${p.condition}%.`}]};
+  state.finances.cash-=cost;p.condition=clamp(p.condition+25);p.marketValue=Math.round(p.marketValue*1.025);schedulePropertyRenovationStory(state,p.id);return{success:true,messages:[{text:`Renovation complete. Condition is now ${p.condition}%.`}]};
 }
 
 export function rentOutProperty(state:GameState,propertyId:string):EngineResult {

@@ -3,8 +3,8 @@
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
 Certified save schema: 13
-Newest certified expanded source: Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e` (documentation-only synchronization)
-Certified gameplay baseline: Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`
+Newest certified expanded source: Run #117 / `9822a31df84197ea700ebd890bf0f68cb716637b`
+Certified gameplay baseline: Run #117 / `9822a31df84197ea700ebd890bf0f68cb716637b`
 
 ## Product direction
 
@@ -28,17 +28,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Feedback UX — age-appropriate progressive disclosure (local candidate; CI certification pending)
+### Phase 7B2 — Ownership & Workplace Echoes (local candidate; CI certification pending)
 
-The live Supabase review against certified Run #116 found exactly one active triaged report: `ET-20260913-BE8649B9` (normal-priority interface suggestion). The report is reproduced: Activities and Career/Life Paths can advertise actions years before the player can use them, producing disabled early-life clutter. Per Mavyy's direction, this feedback correction is prioritized before the next Phase 7 gameplay slice.
+Certified Run #117 / `9822a31df84197ea700ebd890bf0f68cb716637b` is the active baseline. The feedback-driven progressive-disclosure correction is certified/deployed, `ET-20260913-BE8649B9` is resolved against Run #117, and a fresh live Supabase review found no unresolved reports.
 
-The candidate is presentation-only. Existing engine guards remain authoritative. Age thresholds are exported from their owning systems and consumed by `src/screens/progressiveDisclosure.ts`; Activities and Career then hide not-yet-age-appropriate choices while preserving already-active/legacy work, school-group, and special-career records from older saves. No save migration, RNG, action-economy, scheduler, random-event, or simulation-state change is introduced.
+Phase 7B2 extends the already-certified systemic-story pattern into property, business, and ordinary workplace history without creating new authorities. Successful property renovation, business founding, product expansion, manager feedback, and formal coworker concerns request exact future consequences through `SystemicStorySystem` → `ConsequenceSystem`. Property targets must still exist; workplace targets preserve the exact persistent SocialWorld and exact NPC even after that workplace archives; invalid/dead targets cancel deterministically.
 
-New `progressiveDisclosureRegression.ts` is **25/25** locally. Both TypeScript gates, the complete regression wall, Core 82/82, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Random-event Coherence 77/77, minigame 19/19, Feedback Reporting 20/20, and Feedback Central Inbox 23/23 all pass. Production build is green at **168 modules**. GitHub Actions remains final certification authority.
+`ChoiceEffect.property` applies bounded condition / percentage-value changes to the exact `payload.propertyId`. `ChoiceEffect.business` applies bounded demand/reputation changes to the exact `payload.businessId`. Workplace stories continue through existing `ChoiceEffect.workplace`, Relationship, NPC hidden-opinion/memory, and SocialWorld authorities. Names are rendered from live state rather than persisted duplicates. Save schema remains 13 and scheduling consumes no gameplay RNG.
 
-Newest certified source remains docs-only Run #116 / `6810b2dcb7edf50a1d7ceb6ce63a2fdfbb455d6e`; last gameplay-changing certification is Run #115 / `f417403ff8a091f92f823c074d6a132dd27b90aa`. Do not mark `ET-20260913-BE8649B9` resolved or resume the next Phase 7 slice until this corrective candidate is canonically certified.
+Dedicated `phase7B2OwnershipWorkRegression.ts` is **35/35** locally. Both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, Feedback Reporting 20/20, and Feedback Central Inbox 23/23 all pass. Production build is green at **168 modules**. GitHub Actions remains final certification authority.
 
-Activity-specific minigame work remains established historical functionality and is not the current implementation slice.
+Special-career long-tail stories are deliberately deferred to the next Phase 7B slice so this ownership/work slice can certify independently.
 
 ## Recent corrective history
 

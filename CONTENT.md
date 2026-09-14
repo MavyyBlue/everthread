@@ -3,6 +3,10 @@
 Last audited: 2026-09-12  
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 7B systemic-story content note
+
+The ordinary/random event library remains exactly **691** definitions. Phase 7B1 contributes **5** probability-zero system-owned delayed story definitions outside that pool; the Phase 7B2 candidate contributes **5 more**, bringing the systemic delayed-story registry to **10** while leaving random-selection counts/RNG shape unchanged. These definitions are invoked only by authoritative player actions through the consequence scheduler.
+
 ## Phase 7A systems/content note
 
 No executable content-database counts change in the Phase 7A candidate. The ordinary/random event library remains **691** definitions and the dedicated special-career story registry remains separate. Phase 7A adds scheduler authority, migration, cooldown/history metadata, target validity, priority, and regression coverage; it does not inflate story counts.
@@ -87,7 +91,7 @@ Not every button should have a cooldown. Investment buy/sell and business tuning
 
 Total ordinary/random event definitions: 691.
 
-Phase 7B1 adds **5 probability-zero system-owned delayed story definitions** outside that random pool: parenting presence, school conduct, friend conflict, reconciliation, and marriage expectations. They are triggered by real player actions through the consequence scheduler and therefore do not change the 691-event random-selection count.
+Phase 7B1 adds **5 probability-zero system-owned delayed story definitions** outside that random pool: parenting presence, school conduct, friend conflict, reconciliation, and marriage expectations. Phase 7B2 adds **5 more** for property renovation, business founding, business product launches, manager feedback, and formal coworker concerns. All are triggered by real player actions through the consequence scheduler and therefore do not change the 691-event random-selection count.
 
 Routine events use multiple description variants and data-defined choices. The 691 count is based on distinct event definitions produced from scenario families rather than copies of identical prose. Five explicit delayed-consequence chains cover romantic secrecy, family favors, ignored health warnings, workplace shortcuts, and broken confidences with persistent context.
 
