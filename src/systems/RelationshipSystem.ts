@@ -1,5 +1,6 @@
 import type { EngineResult, GameState, Npc, Orientation, Relationship, RelationshipType } from '../types/game';
-import type { SharedExperienceActionResult } from '../types/sharedExperiences';
+import type { SharedExperienceActionResult, SharedExperienceEvaluationContext, SharedExperienceResult } from '../types/sharedExperiences';
+import type { DateInvitationResult, RomanticDateActionResult } from '../types/romanticDates';
 import { clamp } from '../core/math';
 import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
@@ -12,6 +13,8 @@ import { pickCollisionAwareNpcName } from './NpcNamingSystem';
 import { scheduleFriendArgumentStory, scheduleMarriageExpectationsStory, scheduleParentingPresenceStory, scheduleReconciliationStory } from './SystemicStorySystem';
 import { ensureNpcPreferenceProfile, revealNpcPreference } from './NpcPreferenceSystem';
 import { evaluateSharedExperience, sharedExperienceAvailability } from './SharedExperienceSystem';
+import { ROMANTIC_CANDIDATE_TYPES, datingAgesCompatible, romanticDateMomentum, romanticDatePlanFor, romanticDateTargetAvailability, romanticMomentumReady, recordRomanticDate } from './RomanticDateSystem';
+import { sharedExperienceActivityById } from '../data/sharedExperiences';
 
 export const DATING_MIN_AGE=14;
 
@@ -58,14 +61,7 @@ function addRelationshipMemory(state:GameState,npc:Npc,kind:string,sentiment:num
   npc.memories=[...permanentMemories,...recent].slice(-RELATIONSHIP_MEMORY_LIMIT);
 }
 
-const ASK_OUT_RELATIONSHIP_TYPES = new Set<RelationshipType>(['friend','best_friend','classmate','coworker','boss','teacher','principal','coach']);
 const CURRENT_ROMANTIC_TYPES = new Set<RelationshipType>(['partner','fiance','spouse']);
-
-function datingAgesCompatible(playerAge:number,npcAge:number){
-  if(playerAge<14||npcAge<14)return false;
-  if(playerAge<18)return npcAge<18;
-  return npcAge>=18;
-}
 
 function currentRomanticCommitments(state:GameState,excludeNpcId?:string){
   return state.relationships.filter(rel=>rel.npcId!==excludeNpcId&&CURRENT_ROMANTIC_TYPES.has(rel.type)&&state.npcs[rel.npcId]?.alive);
@@ -73,10 +69,14 @@ function currentRomanticCommitments(state:GameState,excludeNpcId?:string){
 
 export function hasCurrentRomanticCommitment(state:GameState,excludeNpcId?:string){return currentRomanticCommitments(state,excludeNpcId).length>0;}
 
-export function canAskOutNpc(state:GameState,npcId:string){
-  const npc=state.npcs[npcId];
-  const rel=state.relationships.find(item=>item.npcId===npcId);
-  return Boolean(npc?.alive&&rel&&ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&datingAgesCompatible(state.character.age,npc.age)&&!hasCurrentRomanticCommitment(state,npcId)&&playerNpcRomanticallyCompatible(state,npc));
+export function canAskNpcOnDate(state:GameState,npcId:string){
+  const availability=romanticDateTargetAvailability(state,npcId);
+  return Boolean(availability.allowed&&!availability.relationship?.romance?.pendingDate);
+}
+
+export function canBecomePartners(state:GameState,npcId:string){
+  const availability=romanticDateTargetAvailability(state,npcId);
+  return Boolean(availability.allowed&&!availability.relationship?.romance?.pendingDate&&availability.relationship&&romanticMomentumReady(availability.relationship));
 }
 
 export function canHookUpWithNpc(state:GameState,npcId:string){
@@ -84,7 +84,7 @@ export function canHookUpWithNpc(state:GameState,npcId:string){
   const rel=state.relationships.find(item=>item.npcId===npcId);
   return Boolean(
     npc?.alive&&rel&&state.character.age>=18&&npc.age>=18&&
-    ASK_OUT_RELATIONSHIP_TYPES.has(rel.type)&&currentRomanticCommitments(state,npcId).length>0&&playerNpcSexuallyCompatible(state,npc)
+    ROMANTIC_CANDIDATE_TYPES.has(rel.type)&&currentRomanticCommitments(state,npcId).length>0&&playerNpcSexuallyCompatible(state,npc)
   );
 }
 
@@ -106,10 +106,10 @@ export function hookUpWithNpc(state:GameState,npcId:string):EngineResult {
   const rel=state.relationships.find(item=>item.npcId===npcId);
   if(!npc||!rel||!npc.alive)return{success:false,messages:[{text:'That relationship is unavailable.'}]};
   if(state.character.age<18||npc.age<18)return{success:false,messages:[{text:'Hookups are only available between adults.'}]};
-  if(!ASK_OUT_RELATIONSHIP_TYPES.has(rel.type))return{success:false,messages:[{text:'A hookup is not available from this relationship.'}]};
+  if(!ROMANTIC_CANDIDATE_TYPES.has(rel.type))return{success:false,messages:[{text:'A hookup is not available from this relationship.'}]};
   if(!playerNpcSexuallyCompatible(state,npc))return{success:false,messages:[{text:`You and ${npc.firstName} are not mutually compatible for a hookup.`}]};
   const commitments=currentRomanticCommitments(state,npcId);
-  if(!commitments.length)return{success:false,messages:[{text:'You are not currently in another relationship. Ask this person out instead.'}]};
+  if(!commitments.length)return{success:false,messages:[{text:'You are not currently in another relationship. Ask this person on a date instead.'}]};
   const gate=consumeAction(state,{policy:'relationship.milestone',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const acceptance=clamp(rel.attraction*.50+rel.score*.25+rel.compatibility*.15+clamp(npc.hiddenOpinion,0,100)*.10,5,100)/100;
@@ -207,16 +207,27 @@ export function interactWithNpc(state:GameState,npcId:string,action:string):Engi
   return {success:true,messages:[{text:`${npc.firstName}'s relationship with you ${delta>=0?'improved':'worsened'} (${delta>=0?'+':''}${Math.round(delta)}).`}]};
 }
 
-export function shareExperienceWithNpc(state:GameState,npcId:string,placeId:string,activityId:string):SharedExperienceActionResult {
-  const availability=sharedExperienceAvailability(state,npcId,placeId,activityId);
+interface CommitSharedExperienceOptions {
+  actionKey?:string;
+  context?:SharedExperienceEvaluationContext;
+  memoryKind?:string;
+  formatProse?:(experience:SharedExperienceResult,npc:Npc)=>string;
+  formatMemory?:(experience:SharedExperienceResult,npc:Npc)=>string;
+}
+
+function commitSharedExperience(state:GameState,npcId:string,placeId:string,activityId:string,options:CommitSharedExperienceOptions={}):SharedExperienceActionResult {
+  const actionKey=options.actionKey??`shared:${activityId}`;
+  const availability=sharedExperienceAvailability(state,npcId,placeId,activityId,actionKey);
   if(!availability.allowed)return{success:false,messages:[{text:availability.reason??'That shared experience is not available.'}]};
   const npc=availability.npc!,rel=availability.relationship!;
-  const gate=consumeAction(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:shared:${activityId}`}]);
+  const gate=consumeAction(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:${actionKey}`}]);
   if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   ensureNpcPreferenceProfile(state,npc);
   const rng=createRng(state.seed,state.rngCounter);
-  const experience=evaluateSharedExperience(state,npcId,placeId,activityId,rng.int(-8,8));
+  const experience=evaluateSharedExperience(state,npcId,placeId,activityId,rng.int(-8,8),options.context);
   if(!experience)return{success:false,messages:[{text:'That shared experience could not be resolved.'}]};
+  if(options.formatProse)experience.prose=options.formatProse(experience,npc);
+  if(options.formatMemory)experience.memorySummary=options.formatMemory(experience,npc);
   rel.score=clamp(rel.score+experience.relationshipDelta);
   npc.hiddenOpinion=clamp(npc.hiddenOpinion+experience.opinionDelta,-100,100);
   state.character.stats.happiness=clamp(state.character.stats.happiness+experience.happinessDelta);
@@ -224,9 +235,76 @@ export function shareExperienceWithNpc(state:GameState,npcId:string,placeId:stri
   const alreadyKnown=signal?Boolean(rel.knownPreferenceTags?.includes(signal)):true;
   if(signal&&revealNpcPreference(state,npcId,signal)&&!alreadyKnown)experience.discoveredPreferenceTag=signal;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:experience.meaningfulMemory?2:1,text:experience.prose,npcIds:[npcId],relationshipDelta:experience.relationshipDelta});
-  if(experience.meaningfulMemory)addRelationshipMemory(state,npc,`shared_experience:${activityId}`,experience.relationshipDelta,experience.memorySummary,experience.band==='awful'||experience.band==='great');
+  if(experience.meaningfulMemory)addRelationshipMemory(state,npc,options.memoryKind??`shared_experience:${activityId}`,experience.relationshipDelta,experience.memorySummary,experience.band==='awful'||experience.band==='great');
   state.rngCounter=rng.counter();
   return{success:true,messages:[{text:experience.prose}],experience};
+}
+
+export function shareExperienceWithNpc(state:GameState,npcId:string,placeId:string,activityId:string):SharedExperienceActionResult {
+  return commitSharedExperience(state,npcId,placeId,activityId);
+}
+
+function dateReaction(experience:SharedExperienceResult){
+  if(experience.band==='great')return'The date had unmistakable chemistry.';
+  if(experience.band==='good')return'The date left you both wanting another.';
+  if(experience.band==='mixed')return'The time together was pleasant, but the spark was hard to read.';
+  if(experience.band==='rough')return'The date felt strained and never quite found its rhythm.';
+  return'The date went badly enough to linger afterward.';
+}
+
+function dateMemoryReaction(experience:SharedExperienceResult){
+  if(experience.band==='great')return'The chemistry felt unmistakable.';
+  if(experience.band==='good')return'The date felt warm and promising.';
+  if(experience.band==='mixed')return'The spark was difficult to read.';
+  if(experience.band==='rough')return'The date felt strained.';
+  return'The date went badly.';
+}
+
+export function askNpcOnDate(state:GameState,npcId:string):DateInvitationResult {
+  const availability=romanticDateTargetAvailability(state,npcId);
+  if(!availability.allowed)return{success:false,messages:[{text:availability.reason??'That date invitation is not available.'}]};
+  const npc=availability.npc!,rel=availability.relationship!;
+  if(rel.romance?.pendingDate)return{success:false,messages:[{text:`${npc.firstName} already agreed to a date. Choose where to go first.`}],accepted:true,pendingDate:true};
+  const gate=consumeAction(state,{policy:'relationship.date.invite',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  const rng=createRng(state.seed,state.rngCounter);
+  const chance=clamp(rel.score*.34+rel.compatibility*.24+rel.attraction*.32+npc.hiddenOpinion*.10,8,92)/100;
+  const accepted=rng.chance(chance);
+  const text=accepted?`${npc.firstName} says yes to a date. Choose somewhere to go together.`:`${npc.firstName} is not ready to go on a date with you right now.`;
+  if(accepted){rel.romance??={};rel.romance.pendingDate={acceptedYear:state.currentYear,acceptedAge:state.character.age};}
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:1,text,npcIds:[npcId]});
+  state.rngCounter=rng.counter();
+  return{success:accepted,messages:[{text}],accepted,pendingDate:accepted};
+}
+
+export function cancelPendingDate(state:GameState,npcId:string):EngineResult {
+  const rel=state.relationships.find(item=>item.npcId===npcId);const npc=state.npcs[npcId];
+  if(!rel||!npc?.alive||!rel.romance?.pendingDate)return{success:false,messages:[{text:'There is no pending date to cancel.'}]};
+  delete rel.romance.pendingDate;
+  return{success:true,stateChanges:['relationship.romance.pendingDate'],messages:[{text:`You cancelled the pending date with ${npc.firstName}.`}]};
+}
+
+export function completeRomanticDate(state:GameState,npcId:string,placeId:string,activityId:string):RomanticDateActionResult {
+  const availability=romanticDateTargetAvailability(state,npcId);const rel=availability.relationship;const npc=availability.npc;
+  if(!availability.allowed||!rel||!npc)return{success:false,messages:[{text:availability.reason??'That date is no longer available.'}]};
+  if(!rel.romance?.pendingDate)return{success:false,messages:[{text:`Ask ${npc.firstName} on a date first.`}]};
+  const plan=romanticDatePlanFor(state,npcId,placeId,activityId);
+  if(!plan)return{success:false,messages:[{text:'That is not an available date plan right now.'}]};
+  const activity=sharedExperienceActivityById[activityId];if(!activity)return{success:false,messages:[{text:'That date activity is unavailable.'}]};
+  const context:SharedExperienceEvaluationContext={preferenceTags:['romance',...activity.preferenceTags],enjoymentModifier:plan.enjoymentModifier??0};
+  const result=commitSharedExperience(state,npcId,placeId,activityId,{
+    actionKey:`date:${activityId}`,context,memoryKind:`romantic_date:${activityId}`,
+    formatProse:experience=>`${experience.prose} ${dateReaction(experience)}`,
+    formatMemory:experience=>`${experience.memorySummary} ${dateMemoryReaction(experience)}`,
+  }) as RomanticDateActionResult;
+  if(!result.success||!result.experience)return result;
+  const experience=result.experience;
+  recordRomanticDate(rel,{year:state.currentYear,age:state.character.age,placeId,activityId,approval:experience.approval,band:experience.band});
+  delete rel.romance!.pendingDate;
+  const attractionDelta=experience.band==='great'?5:experience.band==='good'?3:experience.band==='rough'?-2:experience.band==='awful'?-5:0;
+  rel.attraction=clamp(rel.attraction+attractionDelta);
+  result.momentumUnlocked=romanticMomentumReady(rel);
+  if(result.momentumUnlocked)result.messages.push({text:`You and ${npc.firstName} have built enough romantic momentum to talk about becoming partners.`});
+  return result;
 }
 
 export function meetPotentialPartner(state:GameState):EngineResult {
@@ -252,35 +330,44 @@ export function meetPotentialPartner(state:GameState):EngineResult {
   return {success:true,messages:[{text:`You met ${npc.firstName} ${npc.lastName}, age ${age}. Compatibility: ${rel.compatibility}%.`}]};
 }
 
-export function changeRelationshipType(state:GameState,npcId:string,action:'ask_out'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'):EngineResult {
+export function changeRelationshipType(state:GameState,npcId:string,action:'become_partners'|'propose'|'marry'|'break_up'|'divorce'|'reconcile'):EngineResult {
   const npc=state.npcs[npcId]; const rel=state.relationships.find(r=>r.npcId===npcId);
   if(!npc||!rel||!npc.alive) return {success:false,messages:[{text:'That relationship is unavailable.'}]};
-  if(action==='ask_out'||action==='reconcile'){
+  if(action==='become_partners'){
+    const availability=romanticDateTargetAvailability(state,npcId);
+    if(!availability.allowed)return{success:false,messages:[{text:availability.reason??'Becoming partners is not available right now.'}]};
+    if(rel.romance?.pendingDate)return{success:false,messages:[{text:`Finish your pending date with ${npc.firstName} before talking about becoming partners.`}]};
+    if(!romanticMomentumReady(rel))return{success:false,messages:[{text:`You and ${npc.firstName} need more genuinely good dates before becoming partners is an option.`}]};
+  }
+  if(action==='reconcile'){
     if(state.character.age<DATING_MIN_AGE||npc.age<DATING_MIN_AGE)return{success:false,messages:[{text:'Dating becomes available in the teen years.'}]};
     if(state.character.age<18&&npc.age>=18)return{success:false,messages:[{text:'Teen dating is limited to other teens.'}]};
     if(state.character.age>=18&&npc.age<18)return{success:false,messages:[{text:'Adult dating is limited to adults.'}]};
   }
   if((action==='propose'||action==='marry')&&(state.character.age<18||npc.age<18))return{success:false,messages:[{text:'Engagement and marriage are adult relationship milestones.'}]};
-  if((action==='ask_out'||action==='reconcile')&&hasCurrentRomanticCommitment(state,npcId))return{success:false,messages:[{text:'You are already in a relationship with someone else.'}]};
+  if(action==='reconcile'&&hasCurrentRomanticCommitment(state,npcId))return{success:false,messages:[{text:'You are already in a relationship with someone else.'}]};
   if((action==='propose'||action==='marry')&&hasCurrentRomanticCommitment(state,npcId))return{success:false,messages:[{text:'You already have another current romantic commitment.'}]};
-  if(action==='ask_out'&&!ASK_OUT_RELATIONSHIP_TYPES.has(rel.type))return{success:false,messages:[{text:'Dating is not available from this relationship.'}]};
-  if(action==='ask_out'&&!playerNpcRomanticallyCompatible(state,npc))return{success:false,messages:[{text:`You and ${npc.firstName} are not mutually compatible for dating.`}]};
-  if(action==='propose'&&rel.type!=='partner')return{success:false,messages:[{text:'You need to be dating before proposing.'}]};
+  if(action==='propose'&&rel.type!=='partner')return{success:false,messages:[{text:'You need to be partners before proposing.'}]};
   if(action==='marry'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'Marriage is not available in this relationship yet.'}]};
   if(action==='break_up'&&!['partner','fiance'].includes(rel.type))return{success:false,messages:[{text:'There is no dating relationship to end.'}]};
   if(action==='divorce'&&rel.type!=='spouse')return{success:false,messages:[{text:'You are not married to this person.'}]};
   if(action==='reconcile'&&rel.type!=='ex')return{success:false,messages:[{text:'Only an ex can be reconciled with.'}]};
   const gate=consumeAction(state,{policy:'relationship.milestone',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
-  const chance=clamp(rel.score*.55+rel.compatibility*.25+rel.attraction*.2+npc.hiddenOpinion*.15,0,100)/100;
+  const baseChance=clamp(rel.score*.55+rel.compatibility*.25+rel.attraction*.2+npc.hiddenOpinion*.15,0,100)/100;
   let success=true; let newType:RelationshipType=rel.type; let text='';
-  if(action==='ask_out') { success=rng.chance(chance); newType=success?'partner':rel.type; text=success?`${npc.firstName} agrees to date you.`:`${npc.firstName} does not want to date you right now.`; if(success) npc.maritalStatus='dating'; }
+  if(action==='become_partners') {
+    const chance=clamp(baseChance+Math.min(.12,romanticDateMomentum(rel)*.025),.12,.92);
+    success=rng.chance(chance); newType=success?'partner':rel.type;
+    text=success?`${npc.firstName} wants to make the relationship official. You are now partners.`:`${npc.firstName} likes what you have, but is not ready to become partners yet.`;
+    if(success)npc.maritalStatus='dating';
+  }
   if(action==='propose') {
-    success=rng.chance(chance+.08);newType=success?'fiance':rel.type;text=success?`${npc.firstName} says yes.`:`${npc.firstName} is not ready to get engaged.`;if(success)npc.maritalStatus='engaged';
+    success=rng.chance(clamp(baseChance+.08,0,.97));newType=success?'fiance':rel.type;text=success?`${npc.firstName} says yes.`:`${npc.firstName} is not ready to get engaged.`;if(success)npc.maritalStatus='engaged';
   }
   if(action==='marry') {success=true;newType='spouse';text=`You married ${npc.firstName} ${npc.lastName}.`;npc.maritalStatus='married';}
   if(action==='break_up'||action==='divorce') { if(!['partner','fiance','spouse'].includes(rel.type)) success=false; else {newType='ex';npc.maritalStatus=action==='divorce'?'divorced':'single';rel.score=clamp(rel.score-18);text=`You ${action==='divorce'?'divorced':'broke up with'} ${npc.firstName}.`;} }
-  if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,chance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`;if(success)npc.maritalStatus='dating'; }
+  if(action==='reconcile') { if(rel.type!=='ex') success=false; else success=rng.chance(Math.max(.15,baseChance-.1)); newType=success?'partner':'ex';text=success?`You and ${npc.firstName} decided to try again.`:`${npc.firstName} does not want to reopen the relationship.`;if(success)npc.maritalStatus='dating'; }
   if(!success && !text) text='That relationship step is not available right now.';
   if(success){rel.type=newType;if(CURRENT_ROMANTIC_TYPES.has(newType))assignNpcIdentity(state,npc);ensureNpcLife(state,npc);if(action==='marry')state.flags.marriages=Number(state.flags.marriages??0)+1;if(action==='reconcile')state.flags.reconciliations=Number(state.flags.reconciliations??0)+1;}
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:success?3:1,text,npcIds:[npcId]});

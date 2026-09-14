@@ -49,10 +49,12 @@ export function runNpcHouseholdCoherenceRegression(){
 
   const state=adultState('household-player-romance');
   const {npc}=addFriend(state);
+  state.rngCounter=0;
   verify(householdStatus(state,npc.id)==='independent'&&housing(state,npc.id)==='renting','ordinary adult friend should begin in an independent household');
 
-  const ask=changeRelationshipType(state,npc.id,'ask_out');
-  verify(ask.success&&relationshipType(state,npc.id)==='partner'&&maritalStatus(state,npc.id)==='dating','Ask Out should create the normal dating relationship');
+  state.relationships.find(rel=>rel.npcId===npc.id)!.romance={dateHistory:[0,1,2].map(offset=>({year:state.currentYear-offset,age:state.character.age-offset,placeId:'nightjar-diner',activityId:'diner_meal',approval:84,band:'good' as const}))};
+  const ask=changeRelationshipType(state,npc.id,'become_partners');
+  verify(ask.success&&relationshipType(state,npc.id)==='partner'&&maritalStatus(state,npc.id)==='dating','Become Partners should create the normal dating relationship');
   verify(partnerId(state,npc.id)===undefined,'player romance must not be duplicated into NPC partnerId');
   verify(householdStatus(state,npc.id)==='partnered'&&housing(state,npc.id)==='shared','adult player partner should immediately project as partnered/shared');
 

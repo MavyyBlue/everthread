@@ -52,6 +52,7 @@ export const ACTION_POLICIES = {
   'social.npc.total': { maxPerAge: 3, message: 'You have already spent substantial time with this person this year.' },
   'social.npc.action': { maxPerAge: 1, message: 'You already chose that interaction with this person this year.' },
   'relationship.milestone': { maxPerAge: 1, message: 'You already tried that relationship step with this person this year.' },
+  'relationship.date.invite': { maxPerAge: 3, message: 'You have already made enough date invitations to this person this year. Age up before trying again.' },
   'family.child_attempt': { maxPerAge: 1, message: 'You already tried for a child this year.' },
   'family.adoption': { maxPerAge: 1, message: 'You already completed an adoption decision this year.' },
   'fame.post.total': { maxPerAge: 4, message: 'You have already made several major content pushes this year.' },

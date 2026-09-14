@@ -85,7 +85,7 @@ function consequencesForBand(band:SharedExperienceBand){
   return{relationshipDelta:7,opinionDelta:4,happinessDelta:4,meaningfulMemory:true};
 }
 
-export function sharedExperienceAvailability(state:GameState,npcId:string,placeId:string,activityId:string):SharedExperienceAvailability{
+export function sharedExperienceAvailability(state:GameState,npcId:string,placeId:string,activityId:string,actionKey=`shared:${activityId}`):SharedExperienceAvailability{
   const npc=state.npcs[npcId];
   const relationship=state.relationships.find(rel=>rel.npcId===npcId);
   const place=townPlaceById[placeId];
@@ -98,7 +98,7 @@ export function sharedExperienceAvailability(state:GameState,npcId:string,placeI
   if(!sameEverthreadLocation(state.character.countryId,state.character.city))return{allowed:false,reason:'You need to be in Everthread to make plans at an Everthread location.'};
   if(!sameEverthreadLocation(npc.countryId,npc.city))return{allowed:false,reason:`${npc.firstName} is not currently in Everthread.`};
   if(!activityAgeAppropriate(state.character.age,npc.age,activity))return{allowed:false,reason:activity.maxAge!==undefined&&Math.max(state.character.age,npc.age)>activity.maxAge?`${activity.label} is meant for childhood and the teen years.`:`${activity.label} is not age-appropriate for both of you yet.`};
-  const gate=actionGateStatus(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:shared:${activityId}`}]);
+  const gate=actionGateStatus(state,[{policy:'social.npc.total',target:npcId},{policy:'social.npc.action',target:`${npcId}:${actionKey}`}]);
   if(!gate.allowed)return{allowed:false,reason:gate.message,npc,relationship,place};
   return{allowed:true,npc,relationship,place};
 }

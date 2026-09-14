@@ -2,7 +2,7 @@ import type { Npc } from '../types/game';
 import { createNewGame } from '../systems/CharacterSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
 import { npcCareerProjection, npcSpecialCareerOccupation, playerCareerLabel } from '../systems/CareerIdentitySystem';
-import { canAskOutNpc, canHookUpWithNpc, canReconcileWithNpc, changeRelationshipType, hookUpWithNpc, hookupDiscoveryChance } from '../systems/RelationshipSystem';
+import { askNpcOnDate, canAskNpcOnDate, canHookUpWithNpc, canReconcileWithNpc, hookUpWithNpc, hookupDiscoveryChance } from '../systems/RelationshipSystem';
 
 function makeNpc(state:ReturnType<typeof createNewGame>,id:string,firstName:string,age:number,traits:string[]=[]):Npc{
   return {id,firstName,lastName:'Vale',age,alive:true,health:90,happiness:70,wealth:25000,countryId:state.character.countryId,city:state.character.city,sexuality:'bisexual',fertility:60,maritalStatus:'single',traits,hiddenOpinion:50,memories:[],parentIds:[],childIds:[]};
@@ -43,11 +43,11 @@ export function runCareerRelationshipCoherenceRegression(){
     {id:'rel-target',npcId:target.id,type:'friend',score:100,attraction:100,compatibility:100,yearsKnown:2},
     {id:'rel-ex',npcId:ex.id,type:'ex',score:70,attraction:70,compatibility:70,yearsKnown:5},
   );
-  verify(!canAskOutNpc(romance,target.id),'Ask Out must disappear when the player already has a partner, fiance, or spouse');
+  verify(!canAskNpcOnDate(romance,target.id),'Ask on Date must disappear when the player already has a partner, fiance, or spouse');
   verify(canHookUpWithNpc(romance,target.id),'adult committed players must receive Hook Up on an otherwise date-eligible NPC');
   verify(!canReconcileWithNpc(romance,ex.id),'reconciliation must not create a second current partner while another commitment is active');
-  verify(!changeRelationshipType(romance,target.id,'ask_out').success,'engine must reject Ask Out while another romantic commitment exists');
-  verify(romance.relationships.find(rel=>rel.npcId===target.id)?.type==='friend','blocked Ask Out must not mutate the target relationship type');
+  verify(!askNpcOnDate(romance,target.id).success,'engine must reject Ask on Date while another romantic commitment exists');
+  verify(romance.relationships.find(rel=>rel.npcId===target.id)?.type==='friend','blocked Ask on Date must not mutate the target relationship type');
   verify(hookupDiscoveryChance(2,'spouse',spouse)>hookupDiscoveryChance(1,'spouse',spouse),'repeat hookups must increase discovery risk');
   const hookup=hookUpWithNpc(romance,target.id);
   verify(hookup.success,'high-attraction deterministic hookup fixture must succeed');

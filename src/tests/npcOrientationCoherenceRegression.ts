@@ -13,7 +13,7 @@ import {
   playerNpcRomanticallyCompatible,
   playerNpcSexuallyCompatible,
 } from '../systems/NpcOrientationSystem';
-import { canAskOutNpc, canHookUpWithNpc, changeRelationshipType, hookUpWithNpc, meetPotentialPartner } from '../systems/RelationshipSystem';
+import { askNpcOnDate, canAskNpcOnDate, canHookUpWithNpc, hookUpWithNpc, meetPotentialPartner } from '../systems/RelationshipSystem';
 import { redeemSecretCode, YUKI_SECRET_CODE } from '../systems/SecretCodeSystem';
 import { ensureSchoolWorldForEducationRecord } from '../systems/SchoolWorldSystem';
 import { ensureWorkplaceForCareerRecord } from '../systems/WorkplaceSystem';
@@ -98,16 +98,16 @@ export function runNpcOrientationCoherenceRegression(){
 
   const blocked=adult('orientation-ask-block','straight','man');const blockedNpc=addRelation(blocked,npcFixture(blocked,'blocked-date','male','gay'));
   const blockedRng=blocked.rngCounter;const blockedTimeline=blocked.timeline.length;
-  verify(!canAskOutNpc(blocked,blockedNpc.id),'Ask Out availability should hide for mutually incompatible orientations');
-  const blockedAsk=changeRelationshipType(blocked,blockedNpc.id,'ask_out');
-  verify(!blockedAsk.success&&blocked.relationships.find(rel=>rel.npcId===blockedNpc.id)?.type==='friend','incompatible Ask Out should fail without changing relationship type');
-  verify(actionUsesThisAge(blocked,'relationship.milestone',blockedNpc.id)===0,'incompatible Ask Out should fail before consuming the milestone action');
-  verify(blocked.rngCounter===blockedRng&&blocked.timeline.length===blockedTimeline,'incompatible Ask Out should fail before RNG or timeline mutation');
+  verify(!canAskNpcOnDate(blocked,blockedNpc.id),'Ask on Date availability should hide for mutually incompatible orientations');
+  const blockedAsk=askNpcOnDate(blocked,blockedNpc.id);
+  verify(!blockedAsk.success&&blocked.relationships.find(rel=>rel.npcId===blockedNpc.id)?.type==='friend','incompatible Ask on Date should fail without changing relationship type');
+  verify(actionUsesThisAge(blocked,'relationship.date.invite',blockedNpc.id)===0,'incompatible Ask on Date should fail before consuming the milestone action');
+  verify(blocked.rngCounter===blockedRng&&blocked.timeline.length===blockedTimeline,'incompatible Ask on Date should fail before RNG or timeline mutation');
 
   const allowed=adult('orientation-ask-allowed','straight','man');const allowedNpc=addRelation(allowed,npcFixture(allowed,'allowed-date','female','straight'));
-  verify(canAskOutNpc(allowed,allowedNpc.id),'Ask Out should remain available for mutually compatible identities');
-  const allowedAsk=changeRelationshipType(allowed,allowedNpc.id,'ask_out');
-  verify(allowedAsk.success&&allowed.relationships.find(rel=>rel.npcId===allowedNpc.id)?.type==='partner','compatible Ask Out should retain the ordinary relationship transition path');
+  verify(canAskNpcOnDate(allowed,allowedNpc.id),'Ask on Date should remain available for mutually compatible identities');
+  const allowedAsk=askNpcOnDate(allowed,allowedNpc.id);
+  verify(allowedAsk.success&&allowedAsk.accepted&&allowed.relationships.find(rel=>rel.npcId===allowedNpc.id)?.type==='friend','compatible Ask on Date should accept without silently creating a partnership');
 
   const hookup=adult('orientation-hookup','straight','man');
   const spouse=addRelation(hookup,npcFixture(hookup,'hookup-spouse','female','straight'),'spouse');spouse.maritalStatus='married';
@@ -163,7 +163,7 @@ export function runNpcOrientationCoherenceRegression(){
   verify(yukiResult.success&&Boolean(yuki),'9426 should still weave Yuki into a Sandbox life');
   verify(Boolean(yuki&&yuki.gender==='female'&&yuki.sexuality==='pansexual'),'Yuki should retain her authored female + pansexual identity');
   verify(Boolean(yuki&&playerNpcRomanticallyCompatible(yukiState,yuki)),'Yuki should pass the same ordinary romantic compatibility authority rather than a secret bypass');
-  verify(Boolean(yuki&&canAskOutNpc(yukiState,yuki.id)),'Yuki should retain the ordinary Ask Out path when age and commitment gates allow it');
+  verify(Boolean(yuki&&canAskNpcOnDate(yukiState,yuki.id)),'Yuki should retain the ordinary Ask on Date path when age and commitment gates allow it');
 
   return checks;
 }

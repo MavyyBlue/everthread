@@ -9,6 +9,7 @@ import { ensurePersonalInventoryState, PERSONAL_INVENTORY_MAX_ITEMS } from '../s
 import { personalItemById } from '../data/personalItems';
 import { NPC_PREFERENCE_TAG_IDS } from '../data/npcPreferences';
 import { NPC_PREFERENCE_AVERSION_LIMIT, NPC_PREFERENCE_DISLIKE_LIMIT, NPC_PREFERENCE_KNOWLEDGE_LIMIT, NPC_PREFERENCE_LIKE_LIMIT, NPC_PREFERENCE_PROFILE_VERSION, normalizeNpcPreferenceState } from '../systems/NpcPreferenceSystem';
+import { ROMANTIC_DATE_HISTORY_LIMIT } from '../data/romanticDates';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -145,6 +146,17 @@ export function enforceStateInvariants(state: GameState): GameState {
     rel.attraction = clamp(rel.attraction);
     rel.compatibility = clamp(rel.compatibility);
     if (!state.npcs[rel.npcId]) rel.estranged = true;
+    if(rel.romance){
+      const bands=new Set(['awful','rough','mixed','good','great']);
+      rel.romance.dateHistory=(Array.isArray(rel.romance.dateHistory)?rel.romance.dateHistory:[])
+        .filter(entry=>entry&&Number.isFinite(entry.year)&&Number.isFinite(entry.age)&&typeof entry.placeId==='string'&&typeof entry.activityId==='string'&&Number.isFinite(entry.approval)&&bands.has(entry.band))
+        .map(entry=>({...entry,year:Math.floor(entry.year),age:Math.max(0,Math.floor(entry.age)),approval:clamp(entry.approval)}))
+        .slice(-ROMANTIC_DATE_HISTORY_LIMIT);
+      const pending=rel.romance.pendingDate;
+      if(pending&&(!state.npcs[rel.npcId]?.alive||!Number.isFinite(pending.acceptedYear)||!Number.isFinite(pending.acceptedAge)))delete rel.romance.pendingDate;
+      else if(pending){pending.acceptedYear=Math.floor(pending.acceptedYear);pending.acceptedAge=Math.max(0,Math.floor(pending.acceptedAge));}
+      if(!rel.romance.pendingDate&&!rel.romance.dateHistory.length)delete rel.romance;
+    }
   }
 
   const npcPropertyIds=new Set<string>();
@@ -281,7 +293,7 @@ export function validateState(state: GameState): string[] {
   if (spouses.length > 1) errors.push('Multiple active spouses');
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
   const preferenceTagIds=new Set<string>(NPC_PREFERENCE_TAG_IDS);
-  for(const rel of state.relationships){const known=rel.knownPreferenceTags??[];if(known.length>NPC_PREFERENCE_KNOWLEDGE_LIMIT)errors.push(`Relationship ${rel.id} preference knowledge is unbounded`);if(new Set(known).size!==known.length)errors.push(`Relationship ${rel.id} has duplicate preference knowledge`);for(const tag of known)if(!preferenceTagIds.has(tag))errors.push(`Relationship ${rel.id} has unknown preference tag ${tag}`);}
+  for(const rel of state.relationships){const known=rel.knownPreferenceTags??[];if(known.length>NPC_PREFERENCE_KNOWLEDGE_LIMIT)errors.push(`Relationship ${rel.id} preference knowledge is unbounded`);if(new Set(known).size!==known.length)errors.push(`Relationship ${rel.id} has duplicate preference knowledge`);for(const tag of known)if(!preferenceTagIds.has(tag))errors.push(`Relationship ${rel.id} has unknown preference tag ${tag}`);const romance=rel.romance;if(romance){const history=romance.dateHistory??[];if(history.length>ROMANTIC_DATE_HISTORY_LIMIT)errors.push(`Relationship ${rel.id} romantic date history is unbounded`);for(const entry of history){if(entry.approval<0||entry.approval>100)errors.push(`Relationship ${rel.id} has invalid romantic date approval`);if(entry.age<0)errors.push(`Relationship ${rel.id} has invalid romantic date age`);}if(romance.pendingDate&&romance.pendingDate.acceptedAge<0)errors.push(`Relationship ${rel.id} has invalid pending-date age`);}}
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
   if(!state.worldConditions)errors.push('Missing world-condition state');else{

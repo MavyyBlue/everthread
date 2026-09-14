@@ -2,7 +2,7 @@ import type { EngineResult, GameState, RelationshipType } from '../types/game';
 import { GameEngine } from '../engine/GameEngine';
 import { createNewGame } from '../systems/CharacterSystem';
 import { validateState } from '../core/invariants';
-import { canAskOutNpc, canHookUpWithNpc, canReconcileWithNpc } from '../systems/RelationshipSystem';
+import { canAskNpcOnDate, canBecomePartners, canHookUpWithNpc, canReconcileWithNpc } from '../systems/RelationshipSystem';
 import { specialCareerExitGate } from '../systems/SpecialCareerExitSystem';
 import {
   specialCareerLifecycleViews,
@@ -16,6 +16,7 @@ import { persistentCareerWorlds, PERSISTENT_CAREER_WORLD_KINDS } from '../system
 import { canReportCoworker } from '../systems/WorkplaceSystem';
 import { peopleWorkspaceSemanticView } from '../systems/PeopleWorkspaceSystem';
 import { projectYouthSocialPlans } from '../systems/YouthSocialSystem';
+import { projectRomanticDateOptions } from '../systems/RomanticDateSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -135,7 +136,14 @@ function relationshipActions(state:GameState):AiActionView[]{
     for(const plan of projectYouthSocialPlans(state,npc.id)){
       actions.push(boolGate('people.shared_experience',`${plan.label} with ${target} · ${plan.placeLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','placeId','activityId'],npc.id));
     }
-    if(canAskOutNpc(state,npc.id))actions.push(boolGate('people.ask_out',`Ask out ${target}`,!blocked,blocked,['npcId'],npc.id));
+    if(canAskNpcOnDate(state,npc.id)){
+      const inviteGate=actionGateStatus(state,{policy:'relationship.date.invite',target:npc.id});
+      actions.push(boolGate('people.ask_date',`Ask ${target} on a date`,Boolean(!blocked&&inviteGate.allowed),blocked??inviteGate.message,['npcId'],npc.id));
+    }
+    const dateOptions=projectRomanticDateOptions(state,npc.id);
+    for(const option of dateOptions)actions.push(boolGate('people.date',`${option.label} with ${target} · ${option.placeLabel}`,Boolean(!blocked&&option.allowed),blocked??option.reason,['npcId','placeId','activityId'],npc.id));
+    if(rel.romance?.pendingDate)actions.push(boolGate('people.cancel_date',`Cancel date plans with ${target}`,!blocked,blocked,['npcId'],npc.id));
+    if(canBecomePartners(state,npc.id))actions.push(boolGate('people.become_partners',`Become partners with ${target}`,!blocked,blocked,['npcId'],npc.id));
     if(canHookUpWithNpc(state,npc.id))actions.push(boolGate('people.hook_up',`Hook up with ${target}`,!blocked,blocked,['npcId'],npc.id));
     if(canReconcileWithNpc(state,npc.id))actions.push(boolGate('people.reconcile',`Reconcile with ${target}`,!blocked,blocked,['npcId'],npc.id));
     if(rel.type==='partner'){
@@ -356,7 +364,10 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     }
     case'people.adopt':return engine.haveChild(undefined,true);
     case'people.hook_up':return engine.interactWithCharacter(argString(command,'npcId'),'hook_up');
-    case'people.ask_out':return engine.relationshipAction(argString(command,'npcId'),'ask_out');
+    case'people.ask_date':return engine.askOnDate(argString(command,'npcId'));
+    case'people.date':return engine.romanticDate(argString(command,'npcId'),argString(command,'placeId'),argString(command,'activityId'));
+    case'people.cancel_date':return engine.cancelDate(argString(command,'npcId'));
+    case'people.become_partners':return engine.relationshipAction(argString(command,'npcId'),'become_partners');
     case'people.propose':return engine.relationshipAction(argString(command,'npcId'),'propose');
     case'people.marry':return engine.relationshipAction(argString(command,'npcId'),'marry');
     case'people.break_up':return engine.relationshipAction(argString(command,'npcId'),'break_up');

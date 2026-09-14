@@ -1,4 +1,4 @@
-import type { GameState } from '../types/game';
+import type { GameState, Relationship } from '../types/game';
 import { createRng } from '../core/rng';
 import { validateState } from '../core/invariants';
 import { createNewGame } from '../systems/CharacterSystem';
@@ -6,7 +6,8 @@ import { ageUp, finalizeAgeUp } from '../systems/AgingSystem';
 import { resolvePendingEvent } from '../systems/EventSystem';
 import { availablePrograms, enrollProgram, studyHarder } from '../systems/EducationSystem';
 import { availableJobs, applyForJob, workHarder, takeFreelanceGig } from '../systems/CareerSystem';
-import { meetPotentialPartner, changeRelationshipType, haveChild, interactWithNpc } from '../systems/RelationshipSystem';
+import { askNpcOnDate, canAskNpcOnDate, canBecomePartners, completeRomanticDate, meetPotentialPartner, changeRelationshipType, haveChild, interactWithNpc } from '../systems/RelationshipSystem';
+import { projectRomanticDateOptions } from '../systems/RomanticDateSystem';
 import { availableCrimes, commitCrime, resolveLegalCase, prisonActivity } from '../systems/CrimeSystem';
 import { performWellnessActivity } from '../systems/HealthSystem';
 import { buySecurity } from '../systems/InvestmentSystem';
@@ -203,11 +204,30 @@ function pursueRelationships(state:GameState,profile:SimulationProfile,policy:Si
   const rng=createRng(`${state.seed}-relationships-policy-${age}`);
   const romantic=state.relationships.find(r=>['partner','fiance','spouse'].includes(r.type)&&state.npcs[r.npcId]?.alive);
   const relationshipMultiplier=policy==='social'?1.7:policy==='family'?1.55:policy==='career'?.55:policy==='reckless'?1.2:policy==='conservative'?.9:1;
-  if(!romantic&&rng.chance(Math.min(.8,(age<35?.14:.06)*relationshipMultiplier))){
-    const met=meetPotentialPartner(state);
-    if(met.success){
-      const candidate=[...state.relationships].reverse().find(r=>r.type==='friend'&&state.npcs[r.npcId]?.alive);
-      if(candidate){interactWithNpc(state,candidate.npcId,'spend_time');if(candidate.score>=45)changeRelationshipType(state,candidate.npcId,'ask_out');}
+  const ongoingCourtship=!romantic?state.relationships
+    .filter(rel=>Boolean(rel.romance?.pendingDate)||canBecomePartners(state,rel.npcId)||((rel.romance?.dateHistory?.length??0)>0&&canAskNpcOnDate(state,rel.npcId)))
+    .filter(rel=>state.npcs[rel.npcId]?.alive)
+    .sort((a,b)=>(b.romance?.dateHistory?.length??0)-(a.romance?.dateHistory?.length??0)||b.score-a.score)[0]:undefined;
+  const continueCourtship=Boolean(ongoingCourtship)&&rng.chance(Math.min(.9,.35*relationshipMultiplier));
+  const startCourtship=!ongoingCourtship&&rng.chance(Math.min(.8,(age<35?.14:.06)*relationshipMultiplier));
+  if(!romantic&&(continueCourtship||startCourtship)){
+    let candidate:Relationship|undefined=ongoingCourtship??state.relationships
+      .filter(rel=>canAskNpcOnDate(state,rel.npcId))
+      .sort((a,b)=>b.score-a.score)[0];
+    if(!candidate){
+      const met=meetPotentialPartner(state);
+      if(met.success)candidate=[...state.relationships].reverse().find(rel=>rel.type==='friend'&&canAskNpcOnDate(state,rel.npcId));
+    }
+    if(candidate){
+      for(let attempt=0;attempt<3&&!['partner','fiance','spouse'].includes(candidate.type);attempt+=1){
+        if(canBecomePartners(state,candidate.npcId)){changeRelationshipType(state,candidate.npcId,'become_partners');break;}
+        if(!candidate.romance?.pendingDate){const invite=askNpcOnDate(state,candidate.npcId);if(!invite.accepted)continue;}
+        const options=projectRomanticDateOptions(state,candidate.npcId).filter(option=>option.allowed);
+        if(!options.length)break;
+        const option=rng.pick(options);
+        completeRomanticDate(state,candidate.npcId,option.placeId,option.activityId);
+      }
+      if(canBecomePartners(state,candidate.npcId))changeRelationshipType(state,candidate.npcId,'become_partners');
     }
     return;
   }

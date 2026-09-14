@@ -2,6 +2,7 @@ import { createNewGame } from '../systems/CharacterSystem';
 import { ensureSpecialCareerRelationships } from '../systems/SpecialCareerRelationshipSystem';
 import { ensureSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
+import type { Npc } from '../types/game';
 import { EverthreadAiTestbench, withEverthreadAiTestbench } from './aiInteractionTestbench';
 
 export async function runAiInteractionRegression(){
@@ -36,7 +37,7 @@ export async function runAiInteractionRegression(){
     const newRel=bench.getState().relationships.at(-1);verify(Boolean(newRel),'15 relationship-producing actions must expose their real persisted NPC relationship');
     const person=bench.inspectNpc(newRel!.npcId);verify(Boolean(person)&&person!.id===newRel!.npcId&&person!.alive,'16 inspectNpc must resolve the exact persistent NPC id');
     verify(bench.observe('people').actions.some(action=>action.targetId===newRel!.npcId),'17 People observation must expose semantic actions targeted at the exact NPC');
-    verify(bench.observe('people').actions.some(action=>action.id==='people.ask_out'&&action.targetId===newRel!.npcId),'18 relationship-specific action availability must reuse the real Ask Out eligibility projection');
+    verify(bench.observe('people').actions.some(action=>action.id==='people.ask_date'&&action.targetId===newRel!.npcId),'18 relationship-specific action availability must reuse the real Ask on Date eligibility projection');
 
     const forced=bench.execute({id:'test.force_event',args:{eventId:'midlife_reassessment'}});
     verify(forced.result.success&&Boolean(bench.getState().pendingEvent),'19 private test setup commands may create a pending event through the real engine without player UI exposure');
@@ -96,6 +97,21 @@ export async function runAiInteractionRegression(){
     const step=youthBench.execute({id:'people.shared_experience',args:{npcId:youthNpc.id,placeId:'crossroads-mall',activityId:'mall_games'}});
     verify(step.result.success&&step.diff.some(diff=>diff.path.includes('relationships')),'44 AI youth outings must execute through the real GameEngine and mutate the authoritative relationship');
     verify(step.invariantIssues.length===0,'45 AI youth-social execution must leave the shared game state invariant-clean');
+  });
+
+  const datingState=createNewGame({seed:'ai-test-dating-1'});datingState.seed='ai-test-dating-1';datingState.rngCounter=0;datingState.character.age=24;datingState.currentYear=2064;datingState.character.orientation='pansexual';datingState.character.stats.happiness=90;datingState.character.stats.health=95;datingState.education=[];
+  const datingNpc:Npc={id:'ai-dating-peer',firstName:'Riley',lastName:'Thread',age:24,alive:true,health:95,happiness:90,wealth:5000,countryId:datingState.character.countryId,city:datingState.character.city,gender:'female',sexuality:'pansexual',fertility:70,maritalStatus:'single',traits:['romantic','loyal'],hiddenOpinion:100,memories:[],parentIds:[],childIds:[],simulationTier:'full',preferences:{version:1,likes:['romance','food','film','nature'],dislikes:[],aversions:[]}};
+  datingState.npcs[datingNpc.id]=datingNpc;datingState.relationships.push({id:'ai-dating-rel',npcId:datingNpc.id,type:'friend',score:100,attraction:100,compatibility:100,yearsKnown:4});ensureNpcLife(datingState,datingNpc);
+  await withEverthreadAiTestbench({state:datingState,screen:'people'},async datingBench=>{
+    const initial=datingBench.observe('people');verify(initial.actions.some(action=>action.id==='people.ask_date'&&action.targetId===datingNpc.id&&action.enabled),'46 AI People parity must expose Ask on Date for the exact eligible NPC');
+    const invite1=datingBench.execute({id:'people.ask_date',args:{npcId:datingNpc.id}});verify(invite1.result.success&&datingBench.getState().relationships.find(rel=>rel.npcId===datingNpc.id)?.romance?.pendingDate!==undefined,'47 semantic Ask on Date must execute through the real GameEngine and persist the accepted exact-NPC plan');
+    const diner=datingBench.observe('people').actions.find(action=>action.id==='people.date'&&action.targetId===datingNpc.id&&action.label.includes('Diner'));verify(Boolean(diner?.enabled),'48 an accepted date must project exact location/activity choices through the AI People surface');
+    const date1=datingBench.execute({id:'people.date',args:{npcId:datingNpc.id,placeId:'nightjar-diner',activityId:'diner_meal'}});verify(date1.result.success&&datingBench.getState().relationships.find(rel=>rel.npcId===datingNpc.id)?.romance?.dateHistory?.length===1,'49 semantic date execution must reuse the real shared-experience engine and persist bounded relationship-owned date history');
+    const invite2=datingBench.execute({id:'people.ask_date',args:{npcId:datingNpc.id}});const date2=invite2.result.success?datingBench.execute({id:'people.date',args:{npcId:datingNpc.id,placeId:'crossroads-mall',activityId:'movie_outing'}}):undefined;
+    const invite3=datingBench.execute({id:'people.ask_date',args:{npcId:datingNpc.id}});const date3=invite3.result.success?datingBench.execute({id:'people.date',args:{npcId:datingNpc.id,placeId:'weaver-park',activityId:'park_walk'}}):undefined;
+    verify(Boolean(date2?.result.success&&date3?.result.success&&datingBench.getState().relationships.find(rel=>rel.npcId===datingNpc.id)?.romance?.dateHistory?.length===3),'50 three successful semantic dates must build the same bounded hidden romantic history as the player UI');
+    verify(datingBench.observe('people').actions.some(action=>action.id==='people.become_partners'&&action.targetId===datingNpc.id&&action.enabled),'51 AI parity must expose Become Partners only after sufficient real date momentum exists');
+    const partners=datingBench.execute({id:'people.become_partners',args:{npcId:datingNpc.id}});verify(partners.result.success&&datingBench.getState().relationships.find(rel=>rel.npcId===datingNpc.id)?.type==='partner'&&partners.invariantIssues.length===0,'52 semantic Become Partners must call the same bounded milestone path and leave authoritative state invariant-clean');
   });
 
   return checks;

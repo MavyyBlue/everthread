@@ -10,7 +10,7 @@ import { processAnnualFinance, netWorth, wealthBreakdown } from '../systems/Fina
 import { buyCollectible, buyProperty, renovateProperty } from '../systems/PropertySystem';
 import { countryById } from '../data/countries';
 import { educationById } from '../data/education';
-import { meetPotentialPartner, haveChild, ageNpcs, changeRelationshipType, interactWithNpc, processFamilyPlanningYear } from '../systems/RelationshipSystem';
+import { askNpcOnDate, canAskNpcOnDate, meetPotentialPartner, haveChild, ageNpcs, changeRelationshipType, interactWithNpc, processFamilyPlanningYear } from '../systems/RelationshipSystem';
 import { jobById } from '../data/jobs';
 import { eventById } from '../data/events';
 import { enforceStateInvariants, validateState } from '../core/invariants';
@@ -246,10 +246,10 @@ export const regressionCases:RegressionCase[]=[
       const state=createNewGame({seed:'school-romance-age'});state.character.age=12;
       const friend: Npc={id:'young-friend',firstName:'Kai',lastName:'Test',age:12,alive:true,health:90,happiness:80,wealth:0,countryId:state.character.countryId,city:state.character.city,sexuality:'bisexual',fertility:60,maritalStatus:'single',traits:['curious'],hiddenOpinion:40,memories:[],parentIds:[],childIds:[]};
       state.npcs[friend.id]=friend;state.relationships.push({id:'young-friend-rel',npcId:friend.id,type:'friend',score:90,attraction:90,compatibility:90,yearsKnown:3});
-      equal(changeRelationshipType(state,friend.id,'ask_out').success,false,'pre-teen school friend could be dated');
-      state.character.age=16;friend.age=16;equal(changeRelationshipType(state,friend.id,'ask_out').success,true,'valid teen-to-teen dating was blocked');
+      equal(askNpcOnDate(state,friend.id).success,false,'pre-teen school friend could be asked on a date');
+      state.character.age=16;friend.age=16;equal(canAskNpcOnDate(state,friend.id),true,'valid teen-to-teen date eligibility was blocked');const friendRel=state.relationships.find(rel=>rel.npcId===friend.id)!;friendRel.romance={dateHistory:[0,1,2].map(offset=>({year:state.currentYear-offset,age:state.character.age-offset,placeId:'nightjar-diner',activityId:'diner_meal',approval:84,band:'good' as const}))};equal(changeRelationshipType(state,friend.id,'become_partners').success,true,'valid teen-to-teen partnership was blocked after successful dates');
       equal(changeRelationshipType(state,friend.id,'propose').success,false,'teen relationship could become engaged');
-      state.character.age=18;friend.age=17;state.relationships.find(rel=>rel.npcId===friend.id)!.type='friend';equal(changeRelationshipType(state,friend.id,'ask_out').success,false,'adult could date a minor school friend');
+      state.character.age=18;friend.age=17;state.relationships.find(rel=>rel.npcId===friend.id)!.type='friend';equal(canAskNpcOnDate(state,friend.id),false,'adult could date a minor school friend');
     }
   },
   {

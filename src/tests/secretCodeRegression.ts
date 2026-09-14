@@ -2,7 +2,7 @@ import { actionUsesThisAge } from '../core/actionEconomy';
 import { createNewGame } from '../systems/CharacterSystem';
 import { relationshipsForFolder } from '../systems/PeopleGraphSystem';
 import { biologicalChildGate } from '../systems/ReproductionSystem';
-import { canAskOutNpc, changeRelationshipType } from '../systems/RelationshipSystem';
+import { canAskNpcOnDate, changeRelationshipType } from '../systems/RelationshipSystem';
 import { redeemSecretCode, YUKI_SECRET_CODE } from '../systems/SecretCodeSystem';
 
 export function runSecretCodeRegression(){
@@ -33,10 +33,11 @@ export function runSecretCodeRegression(){
   const relationship=()=>state.relationships.find(item=>item.npcId===yuki.id);
   verify(relationship()?.type==='friend','Yuki should begin as a normal friend rather than bypassing relationship progression');
   verify(relationshipsForFolder(state,'friends').some(item=>item.npcId===yuki.id),'Yuki should appear in Friends & Social');
-  verify(canAskOutNpc(state,yuki.id),'adult Yuki friendship should expose the normal Ask Out path');
+  verify(canAskNpcOnDate(state,yuki.id),'adult Yuki friendship should expose the normal Ask on Date path');
 
-  const ask=changeRelationshipType(state,yuki.id,'ask_out');
-  verify(ask.success&&relationship()?.type==='partner','Yuki should use the normal successful dating transition');
+  relationship()!.romance={dateHistory:[0,1,2].map(offset=>({year:state.currentYear-offset,age:state.character.age-offset,placeId:'nightjar-diner',activityId:'diner_meal',approval:88,band:'good' as const}))};
+  const ask=changeRelationshipType(state,yuki.id,'become_partners');
+  verify(ask.success&&relationship()?.type==='partner','Yuki should use the normal successful Become Partners transition');
   verify(biologicalChildGate(state,yuki.id).allowed,'male protagonist + female Yuki should expose normal biological family planning');
 
   state.character.age+=1;yuki.age+=1;
@@ -54,14 +55,14 @@ export function runSecretCodeRegression(){
   femaleState.character.age=25;
   redeemSecretCode(femaleState,YUKI_SECRET_CODE);
   const femaleYuki=Object.values(femaleState.npcs).find(npc=>npc.firstName==='Yuki'&&npc.lastName==='Aster')!;
-  changeRelationshipType(femaleState,femaleYuki.id,'ask_out');
+  const femaleRel=femaleState.relationships.find(item=>item.npcId===femaleYuki.id)!;femaleRel.romance={dateHistory:[0,1,2].map(offset=>({year:femaleState.currentYear-offset,age:femaleState.character.age-offset,placeId:'nightjar-diner',activityId:'diner_meal',approval:88,band:'good' as const}))};changeRelationshipType(femaleState,femaleYuki.id,'become_partners');
   verify(!biologicalChildGate(femaleState,femaleYuki.id).allowed,'female protagonist + female Yuki should preserve the established muted biological-family-planning rule');
 
   const childState=createNewGame({seed:'secret-code-yuki-child',sandbox:true});
   childState.character.age=8;
   redeemSecretCode(childState,YUKI_SECRET_CODE);
   const childYuki=Object.values(childState.npcs).find(npc=>npc.firstName==='Yuki'&&npc.lastName==='Aster')!;
-  verify(childYuki.age===8&&!canAskOutNpc(childState,childYuki.id),'childhood redemption should create an age-matched friend while keeping dating age gates intact');
+  verify(childYuki.age===8&&!canAskNpcOnDate(childState,childYuki.id),'childhood redemption should create an age-matched friend while keeping dating age gates intact');
 
   return checks;
 }
