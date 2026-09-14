@@ -193,4 +193,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 9B — Shared Experience Foundation** from certified Run #139 / schema-17 Phase 9A. Build one reusable evaluator over exact player + exact NPC + relationship context + place + activity + preference/context. RelationshipSystem remains authoritative for relationship deltas and NPC memories remain authoritative for meaningful remembered history. Do not begin 9C Childhood & Youth Social Life until 9B is independently certified and synchronized.
+Begin **Phase 9C — Childhood & Youth Social Life** from certified Run #141 / schema-17 Phase 9B and the certified documentation baseline that follows it. Reuse the single shared-experience evaluator for age-appropriate play dates, sleepovers, parks, home visits, mall/game outings, school friends, siblings, and youth social events. RelationshipSystem remains authoritative for relationship changes, SchoolWorld retains school-world ownership, and NPC memories remain authoritative for meaningful remembered history. Do not fork a youth-only relationship, experience, location, or memory ledger.
