@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A, 9B, 9C, and 9D certified and 9E next.**
+Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A, 9B, 9C, 9D, and 9E certified and 9F next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`;
+- newest certified gameplay/source: Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -19,7 +19,8 @@ Current certified program baseline:
 - Phase 9B: **certified / closed**;
 - Phase 9C: **certified / closed**;
 - Phase 9D: **certified / closed**;
-- next slice: **Phase 9E — Real Gifts**.
+- Phase 9E: **certified / closed**;
+- next slice: **Phase 9F — Cross-World Chemistry**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -145,9 +146,15 @@ Completed dates append to an **8-entry bounded history on the existing Relations
 
 The long-life harness now follows the real multi-date courtship contract without any test-only romance shortcut. Deep preflight's 1,000-life run completed with 0 anomalies and bounded population.
 
-### Phase 9E — Real Gifts
+### Phase 9E — Real Gifts — CERTIFIED Run #148
 
-Gift becomes inventory-driven. The player chooses an owned item; the exact gift is evaluated against the NPC's preferences/context; the UI shows concise reaction text and a Gift Approval meter; relationship/opinion consequences follow; the item transfers exactly once. Meaningful gifts may create NPC memories. Do not create a large parallel NPC inventory unless possession later has independent gameplay value.
+Certified in Run #148 on expanded source `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`, save schema **17**, dedicated regression **60/60**, canonical preflight 4/4, and a **195-module** production build.
+
+Gift is now inventory-driven. The player chooses an exact owned Phase 8D personal-item instance from the People profile; the old generic `$150` Gift action refuses rather than fabricating a present. `PersonalInventorySystem` remains the ownership/removal authority, while `RelationshipSystem` owns committed relationship/opinion/happiness/timeline/memory/preference/action-economy/RNG consequences.
+
+`GiftSystem` evaluates the exact item's existing `preferenceTags` through the pure preference/relationship/wellbeing scoring core shared with Phase 9B experiences. This reuses the 38-tag Phase 9A vocabulary without inventing a fake location or a second gift-outcome engine. People shows concise reaction text plus Gift Approval; AI semantic actions use the same exact instance ID.
+
+Failed/stale/dead/ineligible attempts preserve ownership; a successful committed gift—good or bad—removes exactly one instance. Duplicate copies remain independent, stale instance replay cannot duplicate transfer, rewind restores inventory and consequences atomically, and descendants do not inherit the prior protagonist's ordinary possessions by accident. Valuable collectibles/assets stay with their existing authorities. No broad durable NPC inventory was added.
 
 ### Phase 9F — Cross-World Chemistry
 
@@ -209,4 +216,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 9E — Real Gifts** from certified Run #146 / schema-17 Phase 9D and the certified documentation baseline that follows it. Reuse Phase 8D `PersonalInventorySystem` as the sole owner of ordinary owned items, Phase 9A preference knowledge, the Phase 9B shared-experience evaluation path where appropriate, and `RelationshipSystem` for relationship/opinion/memory consequences. The player chooses an exact owned item; transfer/removal must occur exactly once only after a successful committed gift action. Show concise reaction/approval without exposing hidden preference weights. Do not create a parallel financial asset ledger or large durable NPC inventory unless possession later gains independent gameplay value.
+Begin **Phase 9F — Cross-World Chemistry** from certified Run #148 / schema-17 Phase 9E and the certified documentation baseline that follows it. Reuse the single shared-experience evaluator and the existing Relationship/NPC preference stack across school peers, family, friends, coworkers/managers, teammates/coaches, actors, musicians, models, racers, combat peers, military peers, and political contacts. Do not create a cross-world chemistry score or parallel relationship graph. Any school/work/career-specific chemistry consequence must flow through the authority that already owns that concept, while exact-NPC targeting, action economy, bounded memory/history, deterministic save/rewind behavior, and AI/player action parity remain preserved.

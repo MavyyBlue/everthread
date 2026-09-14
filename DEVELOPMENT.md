@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`
-Certified gameplay baseline: Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`
+Newest certified expanded gameplay/source: Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`
+Certified gameplay baseline: Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`
 
 ## Product direction
 
@@ -28,6 +28,24 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
+### Phase 9E — Real Gifts (CI Green Run #148)
+
+Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9E**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- Real Gifts now selects an **exact owned personal-item instance** instead of fabricating a `$150` present. `PersonalInventorySystem` remains the sole ordinary-item ownership/removal authority; successful commitment removes one exact instance once, while failed/stale/ineligible attempts preserve it.
+- `GiftSystem` projects/evaluates gift choices using the existing Phase 9A 38-tag preference vocabulary and the pure scoring core shared with Phase 9B experiences. It does not create a fake outing/location or a second relationship evaluator.
+- `RelationshipSystem` remains authoritative for committed score/opinion/happiness/timeline/memory/preference-reveal/action-economy/RNG consequences. Meaningful gifts may create bounded NPC memories, but no broad NPC inventory/shadow possession ledger exists.
+- People Threadspace exposes a mobile exact-item chooser and Gift Approval result. Valuable collectibles/assets remain with their existing Assets/Estate owners. AI semantic parity executes the same exact item-instance engine action.
+- Rewind restores inventory plus social consequences atomically; duplicate copies remain distinct; stale instance IDs cannot transfer twice; descendant continuation does not recreate the previous protagonist's ordinary possessions.
+- Save schema remains **17**; personal-item catalog remains **24** and preference vocabulary remains **38**.
+- Dedicated Phase 9E regression is **60/60**. AI interaction testbench is **58/58**, Relationship Microcopy **69/69**, Phase 8D **63/63**, Phase 9A **45/45**, Phase 9B **53/53**, Phase 9C **40/40**, Phase 9D **61/61**, People **57/57**, Rewind **16/16**, Dynasty **64/64**, Integrated Long-Life **105/105**, Progressive Disclosure **25/25**, base **82/82**, minigames **19/19**, and feedback **20/20 + 23/23**; the complete established wall remained Green.
+- Production build transformed **195 modules**. People remains lazy/code-split at ~37.88 kB JS / 11.69 kB gzip; main JS is ~1,229.92 kB / 348.18 kB gzip; the established main-chunk warning remains nonblocking.
+- Certified source SHA-256 `f7a6ae88c9b44736c8afbd5776a46a133403768eaf7b13293b13492958160597`; dependency SHA-256 `65d66454a8375d812706cabfc922065311439405e49542f5b71a2cccb863db87`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact `10372914569` (`3aba83994b203611a9c09d0f201b76a5c220bea35ff84c4d955b2cfe210b68d3`); Pages artifact `10373447865` (`5b1860077132ff8d3cfb947e77d12c44523604b388fe071f0885ef7a71fe2340`).
+- Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the review checkpoint to `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` at `2026-09-14 23:22:00.588163+00`.
+
+**Exact next slice:** Phase 9F — Cross-World Chemistry. Reuse the certified shared-experience/gift/preference foundation across school, family, workplace, and special-career relationships; any school/work/career-specific chemistry consequence must flow through the system that already owns that concept.
+
 ### Phase 9D — Dating & Romantic Momentum (CI Green Run #146)
 
 Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9D**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
@@ -46,7 +64,7 @@ Run #146 / `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` is the active certified ga
 - Certified preflight artifact `10372681543` (`81a91416305ef0c3b293c7c1dd679319df4d4245ba5f43978f3b80c4e1f17c55`); Pages artifact `10372740361` (`20878aec96f98fcafb45535fbdf206a791f28bd4578583c4f594837240248610`).
 - Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the review checkpoint to `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` at `2026-09-14 22:39:43.562077+00`.
 
-**Exact next slice:** Phase 9E — Real Gifts. Reuse Phase 8D personal inventory and the certified shared-experience/preference stack; transfer the exact owned item once, evaluate it against the exact NPC, and do not create a parallel NPC inventory unless later gameplay truly needs durable possession.
+**Historical handoff from 9D:** Phase 9E — Real Gifts, now certified in Run #148.
 
 ### Phase 9C — Childhood & Youth Social Life (CI Green Run #144)
 

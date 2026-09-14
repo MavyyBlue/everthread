@@ -1,3 +1,25 @@
+## Phase 9E — Real Gifts — CI Green Run #148 — 2026-09-14
+
+### Added / changed
+
+- Replaced the old generic `$150` relationship Gift interaction with an **exact owned-item gift flow**. The player chooses a concrete Phase 8D personal-inventory instance; successful commitment removes that exact instance once, while stale/dead/ineligible/failed attempts preserve ownership.
+- Added `GiftSystem` as the gift-specific projection/evaluation layer without creating another inventory or relationship authority. Ordinary ownership/instance removal remains in `PersonalInventorySystem`; committed relationship score, hidden opinion, happiness, timeline, preference reveal, bounded NPC memory, action economy, and gameplay RNG remain owned by `RelationshipSystem`.
+- Extracted the pure preference/relationship/wellbeing scoring core from the shared-experience evaluator so outings, dates, and gifts reuse one formula without pretending a gift occurred at a fake place. Existing Phase 9B shared-experience semantics remain formula-compatible.
+- Exact item `preferenceTags` drive Gift Approval/reaction through the existing 38-tag Phase 9A vocabulary. The People profile exposes a mobile owned-item chooser and approval meter; valuable collectibles/assets remain outside ordinary gifting and with their existing Assets/Estate authorities.
+- No broad durable NPC inventory was added. Meaningful committed gifts may create bounded NPC memories, but the transferred ordinary item is not duplicated into a shadow possession ledger.
+- Rewind restores the exact item plus relationship/action/RNG consequences atomically; descendant continuation does not resurrect the previous protagonist's ordinary possessions. Duplicate copies remain distinct, and replaying a stale instance cannot transfer twice.
+- Save schema remains **17**; the authored personal-item catalog remains **24** and the shared preference vocabulary remains **38 tags**.
+
+### Certification
+
+- GitHub Actions Run #148 (`34908361877`) certified expanded source `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` from upload wrapper `d2f4ee0f052387f6a91fec78210f0efc69b0b7ba`. Net diff from the prior certified repository source is exactly **14 intended Phase 9E source/test/UI files** (3 added, 11 modified); workflow import reports 15 changes only because it removes `everthread-source.zip`.
+- Canonical preflight PASS **4/4**; Phase 9E **60/60**; AI testbench **58/58**; Relationship Microcopy **69/69**; base **82/82**; People **57/57**; Phase 8D **63/63**; Phase 9A **45/45**; Phase 9B **53/53**; Phase 9C **40/40**; Phase 9D **61/61**; Dynasty **64/64**; Integrated Long-Life **105/105**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **195 modules**. People remains lazy/code-split at ~37.88 kB JS / 11.69 kB gzip; main JS ~1,229.92 kB / 348.18 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `f7a6ae88c9b44736c8afbd5776a46a133403768eaf7b13293b13492958160597`; dependency SHA-256 `65d66454a8375d812706cabfc922065311439405e49542f5b71a2cccb863db87`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact `10372914569` (`3aba83994b203611a9c09d0f201b76a5c220bea35ff84c4d955b2cfe210b68d3`); Pages artifact `10373447865` (`5b1860077132ff8d3cfb947e77d12c44523604b388fe071f0885ef7a71fe2340`); Pages deployment reported success.
+- Fresh Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` at `2026-09-14 23:22:00.588163+00`.
+- **Phase 9E is CLOSED / CERTIFIED. Next slice:** Phase 9F — Cross-World Chemistry.
+
 ## Phase 9D — Dating & Romantic Momentum — CI Green Run #146 — 2026-09-14
 
 ### Added / changed

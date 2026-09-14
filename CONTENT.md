@@ -3,6 +3,10 @@
 Last audited: 2026-09-14
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 9E real-gifts content note
+
+Certified Phase 9E adds **no new item definitions** and no gift-only content catalog. The existing **24 authored ordinary personal items** become exact-instance gift choices through their established `preferenceTags`, evaluated against the existing **38-tag** NPC preference vocabulary. Valuable collectibles/assets remain outside ordinary gifting. Shared-experience activities remain **12**, romantic date plans remain **8**, youth-social plans remain **11**, town places remain **24**, routed institution services remain **28**, and the ordinary/random event library remains **691**.
+
 ## Phase 9C youth-social content note
 
 Certified Phase 9C adds **11 curated youth-social plan definitions** for ages 3–17. These plans are contextual presentation over real existing relationships and the shared-experience evaluator, not new event rows or a parallel youth simulation. The canonical shared-experience activity registry expands **10 → 12** with two genuinely youth-bounded activities: **Sleepover** and **School Social**. The ordinary/random event library remains **691**; town places remain **24**; routed institution services remain **28**; personal inventory items remain **24**; and the shared NPC preference vocabulary remains **38 tags**.

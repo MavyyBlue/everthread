@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #146** (`34905053500`) on expanded source **`1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`**. This is the certified Phase 9D Dating & Romantic Momentum baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #146 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #148** (`34908361877`) on expanded source **`a9e53a6840d0fa05790acb3e20ce963a2df51f0e`**. This is the certified Phase 9E Real Gifts baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #148 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -18,11 +18,12 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #146**
 - Phase 9B — Shared Experience Foundation: **CERTIFIED / CLOSED**
 - Phase 9C — Childhood & Youth Social Life: **CERTIFIED / CLOSED**
 - Phase 9D — Dating & Romantic Momentum: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 9E — Real Gifts**
+- Phase 9E — Real Gifts: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 9F — Cross-World Chemistry**
 - Phase 9 — Shared Lives: **ACTIVE**
 - Planned Phase 10: **Living Everthread**
-- Fresh post-Run-#146 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
-- The stored review checkpoint successfully advanced to **`1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`** at **`2026-09-14 22:39:43.562077+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified 9D gameplay baseline.
+- Fresh post-Run-#148 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
+- The stored review checkpoint successfully advanced to **`a9e53a6840d0fa05790acb3e20ce963a2df51f0e`** at **`2026-09-14 23:22:00.588163+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified 9E gameplay baseline.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -34,7 +35,28 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #146 — Phase 9D Dating & Romantic Momentum
+## Newest certified gameplay/source — Run #148 — Phase 9E Real Gifts
+
+- Upload wrapper: `d2f4ee0f052387f6a91fec78210f0efc69b0b7ba`.
+- Expanded certified source: `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`.
+- GitHub Actions Run #148: `34908361877`.
+- Net diff from the prior certified repository source is exactly **14 intended Phase 9E source/test/UI files** (3 added, 11 modified). Workflow import reports 15 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, content-catalog, or save-schema drift is part of the committed gameplay diff.
+- Save schema remains **17**. The old generic `$150` Gift interaction is retired; the player chooses one exact owned Phase 8D personal-item instance.
+- `PersonalInventorySystem` remains sole owner of ordinary personal-item instances and exact removal. `GiftSystem` is projection/evaluation only; `RelationshipSystem` owns committed relationship/opinion/happiness/timeline/memory/preference/action-economy/RNG consequences.
+- Gift preference evaluation reuses the pure shared scoring core and the existing 38-tag preference vocabulary. There is no fake gift location, second relationship engine, or broad NPC inventory. Valuable collectibles/assets remain with their existing authorities.
+- Failed/stale/dead/ineligible attempts preserve ownership; committed good or bad gifts transfer the exact instance once. Duplicate copies remain independent and stale instance IDs cannot transfer twice. Rewind restores inventory plus consequences atomically; descendant continuation does not recreate prior ordinary possessions.
+- People Threadspace provides a mobile owned-item chooser and Gift Approval/reaction result; AI semantics execute the same exact-instance engine action.
+- Phase 9E regression **60/60**; canonical preflight **4/4**. Base **82/82**; People **57/57**; AI **58/58**; Relationship Microcopy **69/69**; Phase 8D **63/63**; Phase 9A **45/45**; Phase 9B **53/53**; Phase 9C **40/40**; Phase 9D **61/61**; Rewind **16/16**; Dynasty **64/64**; Integrated Long-Life **105/105**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build: Vite 7.3.6, **195 modules transformed**. People remains lazy/code-split at ~37.88 kB JS / 11.69 kB gzip; main JS ~1,229.92 kB / 348.18 kB gzip. Established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `f7a6ae88c9b44736c8afbd5776a46a133403768eaf7b13293b13492958160597`.
+- Certified dependency SHA-256: `65d66454a8375d812706cabfc922065311439405e49542f5b71a2cccb863db87`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10372914569`, digest `3aba83994b203611a9c09d0f201b76a5c220bea35ff84c4d955b2cfe210b68d3`.
+- Pages artifact ID `10373447865`, digest `5b1860077132ff8d3cfb947e77d12c44523604b388fe071f0885ef7a71fe2340`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` at `2026-09-14 23:22:00.588163+00`.
+- **Phase 9E is CLOSED / CERTIFIED. Exact next slice: Phase 9F — Cross-World Chemistry.**
+
+## Prior certified gameplay/source — Run #146 — Phase 9D Dating & Romantic Momentum
 
 - Upload wrapper: `aa6cd1fc69f4df9430a88baaa9331d5b279e556f`.
 - Expanded certified source: `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1`.
@@ -54,7 +76,7 @@ Candidate save schema: none
 - Certified preflight artifact ID `10372681543`, digest `81a91416305ef0c3b293c7c1dd679319df4d4245ba5f43978f3b80c4e1f17c55`.
 - Pages artifact ID `10372740361`, digest `20878aec96f98fcafb45535fbdf206a791f28bd4578583c4f594837240248610`; Pages deployment reported success.
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `1856e7b9053e2f6cfc9afda48be7c3dcac6069c1` at `2026-09-14 22:39:43.562077+00`.
-- **Phase 9D is CLOSED / CERTIFIED. Exact next slice: Phase 9E — Real Gifts.**
+- **Phase 9D is CLOSED / CERTIFIED. It was succeeded by certified Phase 9E in Run #148.**
 
 ## Prior certified gameplay/source — Run #144 — Phase 9C Childhood & Youth Social Life
 
@@ -250,11 +272,11 @@ Phase 9B is certified. Reuse the single shared-experience evaluator for age-appr
 
 Do not create a youth-only relationship score, shadow social ledger, duplicate friend state, or a second experience evaluator. Phase 9C is now certified and closed.
 
-### Approved next slice — Phase 9E Real Gifts
+### Approved next slice — Phase 9F Cross-World Chemistry
 
-Reuse `PersonalInventorySystem` as the sole ordinary-item ownership authority, Phase 9A preference knowledge, and the existing relationship/shared-experience consequence stack. The player must choose an exact owned personal item; a committed gift must remove/transfer that exact instance once and only once. Failed/stale/ineligible gift attempts must not lose or duplicate inventory. Keep valuable collectibles/assets with their existing Assets/Estate authorities. Do not create a broad durable NPC inventory merely to hold gifts unless later gameplay gives NPC possession independent meaning. Test exact-instance transfer, stale/dead NPCs, insufficient/duplicate ownership, preferences/aversions, bounded memories, action economy, rewind/dynasty semantics, determinism, and mobile People/Profile UX before any 9F work.
+Reuse the certified Phase 9B shared-experience evaluator and the Phase 9A/9E preference context across existing school, family, workplace, and special-career relationships. Do not create cross-world relationship state, chemistry scores, or a second affiliation graph. Any effect on school standing, workplace standing, team/career chemistry, public-life standing, or other domain-specific progression must be applied through the system that already owns that concept. Exact NPC identity, action economy, RNG, bounded memories, save/rewind/dynasty integrity, and AI/player action parity remain mandatory.
 
-Do not begin Phase 9F Cross-World Chemistry until 9E is independently certified and synchronized.
+Do not begin Phase 9G Closeout until 9F is independently certified and synchronized.
 
 ## Historical feedback snapshot after Run #141 / `f1be1e6…`
 
