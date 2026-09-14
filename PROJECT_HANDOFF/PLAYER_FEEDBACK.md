@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`**, save schema **15**. Phase 7 is closed; Phases 8A, 8B, and 8C are certified and Phase 8D is next.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`**, save schema **16**. Phase 7 is closed; Phases 8A, 8B, 8C, and 8D are certified and Phase 8E closeout is next.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last successful stored central review checkpoint: certified **Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`**. The reports table still contains **4 rows** and no new report row has appeared since the prior review; the previously reviewed queue was 0 unresolved.
+Last successful stored central review checkpoint: certified **Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`** at `2026-09-14 14:06:03.077434+00`. The reports table still contains **4 rows / 0 unresolved** and no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
@@ -104,4 +104,4 @@ Last successful stored central review checkpoint: certified **Run #131 / `5eca77
 - Newest recorded report receipt remains **2026-09-13 19:51:36.119407 UTC**.
 - Review-state checkpoint key `main` was successfully advanced at `2026-09-14 06:58:41.568166+00` to `5eca77206c61f7af67d1c12f101fd5c986369e0c` with four reviewed reports.
 - Player-visible disposition read-back remains certified and deployed.
-- No feedback item currently preempts **Phase 8D — Player Profile & Personal Inventory**.
+- No feedback item currently preempts **Phase 8E — Phase 8 Closeout**.

@@ -2,9 +2,9 @@
 
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
-Certified save schema: 15
-Newest certified expanded gameplay/source: Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`
-Certified gameplay baseline: Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`
+Certified save schema: 16
+Newest certified expanded gameplay/source: Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`
+Certified gameplay baseline: Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`
 
 ## Product direction
 
@@ -28,6 +28,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
+### Phase 8D — Player Profile & Personal Inventory (CI Green Run #133)
+
+Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837` is the active certified gameplay/source baseline on save schema **16**. Canonical preflight passed 4/4 stages; Phase 8D regression is **63/63**; Phase 8C remains 41/41; Phase 8B remains 46/46; Phase 8A remains 25/25; Integrated Long-Life remains 105/105; all established suites are Green; production build transformed **183 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
+
+- `PersonalInventorySystem` is the sole owner for ordinary personal possessions. It supports deterministic eligibility, exact Cash purchase, bounded instance ownership, discard-without-refund, and invariant repair while consuming no gameplay RNG.
+- The inventory is capped at 80 rows and is deliberately non-financial: personal items do not count toward net worth or estate value. Existing valuable collectibles remain owned by Assets/Estate and are only projected into the profile.
+- `PlayerProfileSystem` is read-only projection over existing character, legacy, location, career, education, relationship, appearance, achievement, asset, collectible, and personal-inventory truth. The same lazy `PlayerProfileSheet` opens from Life and the player's Threadspace **YOU** node.
+- Schema 15→16 migration creates empty personal inventory deterministically and idempotently with no gameplay-RNG or runtime-ID draw. Rewind restores inventory with the saved state; descendant continuation does not copy ordinary items to the successor, while valuable collectible inheritance stays with established estate logic.
+- Phase 8D adds **24** authored personal-item definitions. Shopping is available only when existing location/life/legal/age/Cash/action-economy rules permit it.
+- Certified source SHA-256 `79ee41e57885897f4a1efca5a2de8c51884dd975954de9289f8999fb2ffc835e`; preflight artifact `10352225006` (`ddce4db099dca9a0bfca79eef5374dacaab25e1f8e9c5313847f2afc96575030`); Pages artifact `10351555391` (`3a98da45ddcc6069fa4966892c647713f86dc0eb9b9e18a0cd736b6ac1244914`).
+
+**Exact next slice:** Phase 8E — Phase 8 Closeout. Prove navigation/access parity, migration/rewind/dynasty safety, deterministic browsing, mobile/accessibility, and bounded performance before any old navigation is retired or Phase 9 begins.
+
 ### Phase 8C — Institution Routing (CI Green Run #131)
 
 Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c` is the active certified gameplay/source baseline on save schema **15**. Canonical preflight passed 4/4 stages; Phase 8C regression is **41/41**; Phase 8B remains 46/46; Phase 8A remains 25/25; Integrated Long-Life remains 105/105; all established suites are Green; production build transformed **178 modules**; certified restore smoke/artifact publication and Pages deployment succeeded.
@@ -39,7 +52,7 @@ Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c` is the active certified ga
 - Routing adds no `GameState` field, no alternate location ledger, no runtime-ID/RNG consumption, and no save migration. Save schema remains **15**.
 - Certified source SHA-256 `5615d7382b8170be942c825f2c5d8def3a3a2855ce5411e389a4ae9782884db7`; preflight artifact `10336258752` (`c0ce8f6248bcdc113cc6f89c5f38b7c228265c39b6b60c607cb76768a59a6a65`); Pages artifact `10336585276` (`574d8f039938b3b3c46fb161d531b046f16d637515c9312c10016c7bb872d38f`).
 
-**Exact next slice:** Phase 8D — Player Profile & Personal Inventory. Build one player-facing identity/inventory projection over existing ownership authorities; do not create a parallel asset/collectible/economy ledger.
+**Historical next slice after Phase 8C:** Phase 8D — Player Profile & Personal Inventory, now certified in Run #133. The active target is Phase 8E closeout.
 
 ### Phase 8B — Town Place Registry & 2D Flat Map (CI Green; presentation correction Run #129)
 

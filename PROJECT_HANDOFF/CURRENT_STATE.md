@@ -2,20 +2,21 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #131** (`34815580108`) on expanded source **`5eca77206c61f7af67d1c12f101fd5c986369e0c`**. This is the certified Phase 8C Institution Routing gameplay baseline.
+The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #133** (`34853113638`) on expanded source **`cf2ede37be5362bc02678a2cc4bec6defa38a837`**. This is the certified Phase 8D Player Profile & Personal Inventory gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
-- Certified save schema: **15**
+- Certified save schema: **16**
 - Phase 7 — Persistent World Consequences: **CLOSED**
 - Current approved macro program: **Living World Program**
 - Phase 8A — Everthread Setting Foundation: **CERTIFIED / CLOSED**
 - Phase 8B — Town Place Registry & 2D Flat Map: **CERTIFIED / CLOSED**
 - Phase 8C — Institution Routing: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 8D — Player Profile & Personal Inventory**
+- Phase 8D — Player Profile & Personal Inventory: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 8E — Phase 8 Closeout**
 - Planned Phase 9: **Shared Lives**
 - Planned Phase 10: **Living Everthread**
 - Supabase Feedback Inbox: **4 total reports; no new report rows since 2026-09-13 19:51:36 UTC; the previously reviewed queue remains clear**.
-- Stored feedback review checkpoint points to certified gameplay source `5eca77206c61f7af67d1c12f101fd5c986369e0c`.
+- Stored feedback review checkpoint points to certified gameplay source `cf2ede37be5362bc02678a2cc4bec6defa38a837`.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
@@ -23,8 +24,28 @@ Last handoff synchronization: 2026-09-14
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
-Certified save schema: `15`
+Certified save schema: `16`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #133 — Phase 8D Player Profile & Personal Inventory
+
+- Upload wrapper: `b4fb020a999c38d32d7de0c8acaa408c4b04eb32`.
+- Expanded certified source: `cf2ede37be5362bc02678a2cc4bec6defa38a837`.
+- GitHub Actions Run #133: `34853113638`.
+- Net diff from the prior certified repository source is exactly **44 intended source/test files**. Workflow import reports 45 changed files only because it also removes the uploaded `everthread-source.zip`; no documentation, package, workflow, or unrelated asset drift is part of the committed gameplay diff.
+- Save schema advances **15 → 16**. `personalInventory` is a bounded ordinary-possession owner initialized empty for existing saves through deterministic/idempotent migration with no gameplay RNG or runtime-ID consumption.
+- `PersonalInventorySystem` owns ordinary non-financial personal possessions only: deterministic browse/eligibility, Cash-only purchase, one exact item instance per successful purchase, discard with no refund, 80-item hard cap, action-economy limits, and invariant repair. It does not own valuable collectibles, property, vehicles, businesses, financing, or net worth.
+- Phase 8D adds **24 authored personal items** from Crossroads Mall, Everthread Market, and Nightjar Diner. Ordinary items have no resale/net-worth value and are designed as future gift/keepsake content.
+- `PlayerProfileSystem` projects existing identity/location/career/education/relationship/appearance/license/achievement/asset/collectible/inventory truth read-only. One lazy profile sheet opens from both Life and the player's **YOU** node in People Threadspace.
+- Valuable collectibles remain authoritative Assets/Estate holdings and appear in the profile by projection only. Descendant continuation starts a successor with empty ordinary personal inventory while existing valuable collectible inheritance remains unchanged. Rewind restores personal inventory and Cash atomically from the snapshot.
+- Canonical preflight passed **4/4** stages. Base regression remains **82/82**; Phase 8A **25/25**; Phase 8B **46/46**; Phase 8C **41/41**; Phase 8D **63/63**; Integrated Long-Life **105/105**; every established suite remained Green.
+- Production build: Vite 7.3.6, **183 modules transformed**. Lazy `PlayerProfileSheet` is ~8.97 kB JS / 2.67 kB gzip plus ~3.82 kB CSS / 1.01 kB gzip. Main JS is ~1,198.18 kB / 338.73 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `79ee41e57885897f4a1efca5a2de8c51884dd975954de9289f8999fb2ffc835e`.
+- Certified dependency SHA-256: `d61b0fdec5af4e67b4dfb9f9b2adf39490aaad091b334635e18db7dd6e48069c`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10352225006`, digest `ddce4db099dca9a0bfca79eef5374dacaab25e1f8e9c5313847f2afc96575030`.
+- Pages artifact ID `10351555391`, digest `3a98da45ddcc6069fa4966892c647713f86dc0eb9b9e18a0cd736b6ac1244914`; Pages deployment reported success.
+- Post-certification feedback sweep found 4 total reports / 0 unresolved and no new receipt after `2026-09-13 19:51:36.119407+00`; stored checkpoint advanced to `cf2ede37be5362bc02678a2cc4bec6defa38a837` at `2026-09-14 14:06:03.077434+00`.
 
 ## Newest certified gameplay/source — Run #131 — Phase 8C Institution Routing
 
@@ -93,17 +114,17 @@ Phase 8B makes Everthread a first-class, mobile navigation surface without creat
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
 - Save schema remains **15**. No migration was required.
 
-## Approved next slice — Phase 8D: Player Profile & Personal Inventory
+## Approved next slice — Phase 8E: Phase 8 Closeout
 
-Build one player-facing identity/inventory surface that projects durable player possessions and profile context without creating a second asset, collectible, relationship, or economy authority. Inventory/giftable-item work must integrate with existing ownership records and prepare Phase 9 Shared Lives rather than duplicating mature ledgers.
+Close Phase 8 by proving access parity, schema-16 migration/rewind/dynasty safety, deterministic/RNG-neutral map/profile browsing, mobile accessibility, and bounded long-life performance. Preserve all contextual shortcuts and institution routing while verifying that no former Assets or core action path becomes unreachable.
 
-Preserve certified Phase 8C routing and all contextual shortcuts. Do not begin Phase 8E closeout or Phase 9 Shared Lives until the 8D ownership model is independently certified.
+Do not retire old navigation merely for cleanliness; only remove or consolidate an older entry point when parity is explicitly proven. Do not begin Phase 9 Shared Lives until 8E is independently certified and Phase 8 is formally closed.
 
-## Feedback queue snapshot after Run #131 / `5eca7720…`
+## Feedback queue snapshot after Run #133 / `cf2ede37…`
 
 - Supabase still contains **4 report rows**; no new report row has appeared since the previously recorded `2026-09-13 19:51:36.119407+00` receipt. The prior reviewed queue remains clear.
-- Review checkpoint key `main` was successfully advanced after Run #131 to `5eca77206c61f7af67d1c12f101fd5c986369e0c` at `2026-09-14 06:58:41.568166+00` with reviewed-report count 4.
-- No feedback item currently preempts Phase 8D.
+- Review checkpoint key `main` was successfully advanced after Run #133 to `cf2ede37be5362bc02678a2cc4bec6defa38a837` at `2026-09-14 14:06:03.077434+00` with reviewed-report count 4.
+- No feedback item currently preempts Phase 8E.
 
 ## Phase 7C baseline preserved beneath Phase 8B
 

@@ -1,18 +1,19 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8A, 8B, and 8C are certified; Phase 8D is next.**
+Status: **Active Mavyy-approved program. Phases 8A, 8B, 8C, and 8D are certified; Phase 8E closeout is next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified repository/gameplay source: Run #131 / `5eca77206c61f7af67d1c12f101fd5c986369e0c`;
+- newest certified repository/gameplay source: Run #133 / `cf2ede37be5362bc02678a2cc4bec6defa38a837`;
 - package: `everthread-life-unwritten@0.12.0`;
-- certified save schema: **15**;
+- certified save schema: **16**;
 - Phase 7: **closed**;
 - Phase 8A: **certified / closed**;
 - Phase 8B: **certified / closed**;
 - Phase 8C: **certified / closed**;
-- next slice: **Phase 8D — Player Profile & Personal Inventory**.
+- Phase 8D: **certified / closed**;
+- next slice: **Phase 8E — Phase 8 Closeout**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -62,11 +63,15 @@ Certified in Run #131: **28 institution service doorways** now route believable 
 
 Old/contextual entry points remain available. Route intent is ephemeral UI state, and every mature owner still decides eligibility, costs, actions, accounting, consequences, and RNG. Save schema remains 15.
 
-### Phase 8D — Player Profile & Personal Inventory
+### Phase 8D — Player Profile & Personal Inventory — CERTIFIED Run #133
 
-The player's own name becomes tappable from Life and Threadspace. Their profile houses personal inventory: existing collectibles, gift items, and meaningful possessions/keepsakes where justified.
+Certified in Run #133 on expanded source `cf2ede37be5362bc02678a2cc4bec6defa38a837`, save schema **16**, dedicated regression **63/63**, canonical preflight 4/4, and a 183-module production build.
 
-Inventory must not become a shadow asset ledger. Valuable collectibles, estate value, net worth, ownership, and financing reconcile exactly once through existing authorities.
+The player's name is tappable from Life and the **YOU** node in Threadspace, opening one shared lazy profile sheet. `PlayerProfileSystem` projects existing identity, generation, location, career, education, relationship, appearance, licenses, achievements, asset counts, valuable collectibles, and personal possessions without copying those authorities.
+
+A new bounded `PersonalInventorySystem` owns only ordinary non-financial possessions. Phase 8D adds **24** original personal-item definitions sold through existing Everthread places. Browsing is deterministic/RNG-neutral; purchases spend Cash once and allocate one runtime ID only on success; inventory is capped at 80 and invariant-repaired. Ordinary items do not count toward net worth or estate value. Valuable collectibles remain solely with Assets/Estate and are projected into the profile exactly once.
+
+Schema-15 saves migrate to schema 16 with an empty personal inventory deterministically and idempotently. Rewind restores inventory normally. Descendant continuation deliberately does not copy ordinary personal items to the successor, while valuable collectible inheritance stays with the existing estate authority. This creates the ownership foundation required for Phase 9 gift transfer without introducing a second asset ledger.
 
 ### Phase 8E — Phase 8 Closeout
 
@@ -164,4 +169,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 8D — Player Profile & Personal Inventory** from certified Run #131 / schema-15 Phase 8C. Build player identity/inventory as a projection over established ownership authorities, preserve contextual shortcuts and institution routing, and avoid a second asset/collectible/economy ledger. Do not begin Phase 8E or Phase 9 Shared Lives until 8D is independently certified.
+Begin **Phase 8E — Phase 8 Closeout** from certified Run #133 / schema-16 Phase 8D. Prove access parity, migration/rewind/dynasty safety, deterministic map/profile browsing, mobile accessibility, and bounded performance while preserving contextual shortcuts and institution routing. Do not begin Phase 9 Shared Lives until Phase 8 closeout is independently certified.

@@ -1,5 +1,26 @@
 # Everthread Changelog
 
+## Phase 8D — Player Profile & Personal Inventory — CI Green Run #133 — 2026-09-14
+
+### Added / changed
+
+- Added one shared player-profile surface opened from the Life identity and the **YOU** node in People Threadspace. `PlayerProfileSystem` projects identity, generation, location, career, education, relationship context, traits/appearance, licenses, achievements, asset counts, personal items, and valuable collectibles from their existing authorities rather than copying those truths.
+- Added a bounded **personal inventory** authority for ordinary non-financial possessions and future giftable items. Phase 8D ships **24 original personal-item definitions** across Crossroads Mall, Everthread Market, and Nightjar Diner. Browsing/eligibility projection consumes no gameplay RNG or runtime IDs; a successful purchase spends Cash exactly once and allocates exactly one item instance ID.
+- Personal inventory is intentionally **not** a shadow asset ledger: ordinary items contribute no net-worth/resale value, while valuable collectibles remain solely in the established Assets/estate authority and are projected into the player profile exactly once. Discarding a personal item returns no cash.
+- Added bounded invariant repair for malformed/duplicate/unknown inventory rows and a hard 80-item inventory cap. Shopping respects authoritative physical location, incarceration/death state, authored minimum ages, Cash, and centralized action-economy limits.
+- Save schema advances **15 → 16**. Existing saves receive an empty personal inventory deterministically; migration is idempotent, gameplay-RNG neutral, and runtime-ID neutral. Rewind restores inventory and Cash atomically. Descendant continuation starts the successor with their own empty ordinary personal inventory while valuable collectible inheritance continues through the existing estate/asset authority.
+- Phase 8C institution routing, the authored map, Threadspace relationship truth, finance/accounting, estate ownership, and all older contextual shortcuts remain intact.
+
+### Certification
+
+- GitHub Actions Run #133 (`34853113638`) certified expanded source `cf2ede37be5362bc02678a2cc4bec6defa38a837` from upload wrapper `b4fb020a999c38d32d7de0c8acaa408c4b04eb32`. The net committed gameplay diff from the prior docs baseline is exactly **44 intended source/test files**; workflow import reports 45 only because it removes the uploaded `everthread-source.zip`. No docs, package, workflow, or unrelated asset drift was introduced.
+- Both TypeScript gates PASS; canonical preflight PASS **4/4**; base regression **82/82**; Phase 8A **25/25**; Phase 8B **46/46**; Phase 8C **41/41**; new Phase 8D profile/inventory regression **63/63**; Integrated Long-Life **105/105**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **183 modules**. `PlayerProfileSheet` remains lazy/code-split at ~8.97 kB JS / 2.67 kB gzip plus ~3.82 kB CSS / 1.01 kB gzip. Main JS is ~1,198.18 kB / 338.73 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `79ee41e57885897f4a1efca5a2de8c51884dd975954de9289f8999fb2ffc835e`; dependency SHA-256 `d61b0fdec5af4e67b4dfb9f9b2adf39490aaad091b334635e18db7dd6e48069c`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10352225006`, digest `ddce4db099dca9a0bfca79eef5374dacaab25e1f8e9c5313847f2afc96575030`; Pages artifact ID `10351555391`, digest `3a98da45ddcc6069fa4966892c647713f86dc0eb9b9e18a0cd736b6ac1244914`; Pages deployment reported success.
+- Post-certification feedback sweep found **4 total reports / 0 unresolved** with no new receipt after `2026-09-13 19:51:36.119407+00`; stored review checkpoint advanced to `cf2ede37be5362bc02678a2cc4bec6defa38a837` at `2026-09-14 14:06:03.077434+00`.
+- **Next slice:** Phase 8E — Phase 8 Closeout.
+
 ## Phase 8C — Institution Routing — CI Green Run #131 — 2026-09-14
 
 ### Added / changed
