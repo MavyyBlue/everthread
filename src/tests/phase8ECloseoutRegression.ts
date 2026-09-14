@@ -70,7 +70,7 @@ export async function runPhase8ECloseoutRegression(){
   const legacy=createNewGame({seed:'phase8e-schema14'});legacy.saveVersion=14;legacy.character.countryId='us';legacy.character.city='New York';legacy.travel.visitedCountries=['us'];legacy.travel.visitedCities=['New York'];delete (legacy as unknown as {personalInventory?:unknown}).personalInventory;delete (legacy.character as unknown as {namePoolCountryId?:unknown}).namePoolCountryId;
   const legacyInput=structuredClone(legacy),legacyRng=legacy.rngCounter,legacyId=legacy.idCounter;
   const migratedA=migrateSave(legacyInput),migratedB=migrateSave(structuredClone(legacy));
-  verify(migratedA.saveVersion===CURRENT_SAVE_VERSION&&CURRENT_SAVE_VERSION===16,'20 a schema-14 save must migrate all the way through the Phase 8 closeout schema 16 baseline');
+  verify(migratedA.saveVersion===CURRENT_SAVE_VERSION&&CURRENT_SAVE_VERSION===17,'20 a schema-14 save must migrate all the way through the Phase 8 closeout schema 17 baseline');
   verify(migratedA.character.city==='Everthread'&&migratedA.personalInventory.items.length===0,'21 combined setting/inventory migration must produce Everthread residence plus an empty personal inventory without inventing possessions');
   verify(migratedA.rngCounter===legacyRng&&migratedA.idCounter===legacyId,'22 combined Phase 8 migration must remain RNG- and runtime-ID-neutral');
   verify(JSON.stringify(migratedA)===JSON.stringify(migratedB),'23 identical legacy inputs must migrate deterministically');

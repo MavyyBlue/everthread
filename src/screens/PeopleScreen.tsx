@@ -13,6 +13,7 @@ import { npcGender, npcGenderLabel, npcReproductiveSexLabel } from '../systems/N
 import { orientationLabel } from '../systems/NpcOrientationSystem';
 import { npcCareerProjection } from '../systems/CareerIdentitySystem';
 import { formatMoney } from '../core/format';
+import { projectKnownNpcPreferences } from '../systems/NpcPreferenceSystem';
 import type { ActionResultHandler } from '../core/actionVfx';
 
 const CURRENT_ROMANTIC_TYPES=new Set<GameState['relationships'][number]['type']>(['partner','fiance','spouse']);
@@ -25,6 +26,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const currentWorkRole=npc?workplaceRoleForNpc(state,npc.id):undefined;
   const lifeSummary=npc?npcLifeSummary(npc):undefined;
   const careerProjection=npc?npcCareerProjection(state,npc):undefined;
+  const knownPreferences=npc?projectKnownNpcPreferences(state,npc.id):[];
   const currentPartner=state.relationships.find(r=>CURRENT_ROMANTIC_TYPES.has(r.type)&&!r.estranged&&state.npcs[r.npcId]?.alive);
   const expecting=state.familyPlanning.pregnancy;
   const canTryChild=actionAllowed(state,{policy:'family.child_attempt'});
@@ -44,6 +46,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
       <div><small>Gender</small><strong>{selectedGender?npcGenderLabel(selectedGender):'Unknown'}</strong></div>
       {npc.age>=14&&<div><small>Orientation</small><strong>{orientationLabel(npc.sexuality)}</strong></div>}
     </div>
+    <div className="sheet-section"><h3>Interests</h3>{knownPreferences.length?<div className="npc-preference-list">{knownPreferences.map(pref=><span key={pref.tag} className={`npc-preference npc-preference--${pref.level}`}>{pref.level==='like'?'Likes':pref.level==='neutral'?'Neutral':pref.level==='dislike'?'Dislikes':'Avoids'} · {pref.label}</span>)}</div>:<p className="muted">You haven't learned much about their tastes yet.</p>}</div>
     <div className="action-grid">{['conversation','compliment','spend_time','gift','apologize','prank','argue','insult'].map(a=><button key={a} disabled={!npc.alive||!actionAllowed(state,[{policy:'social.npc.total',target:npc.id},{policy:'social.npc.action',target:`${npc.id}:${a}`}])} onClick={()=>feedback(gameEngine.interactWithCharacter(npc.id,a))}>{a.replace('_',' ')}</button>)}</div>
     {npc.alive&&<div className="sheet-section"><h3>Relationship</h3><div className="action-grid">{canAskOutNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'ask_out'))}>Ask out</button>}{canHookUpWithNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.interactWithCharacter(npc.id,'hook_up'))}>Hook Up</button>}{selected.type==='partner'&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'propose'))}>Propose</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={state.character.age<18||npc.age<18||!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'marry'))}>Marry</button>}{['partner','fiance'].includes(selected.type)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'break_up'))}>Break up</button>}{selected.type==='spouse'&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'divorce'))}>Divorce</button>}{canReconcileWithNpc(state,npc.id)&&<button disabled={!actionAllowed(state,{policy:'relationship.milestone',target:npc.id})} onClick={()=>feedback(gameEngine.relationshipAction(npc.id,'reconcile'))}>Reconcile</button>}</div></div>}
     {selectedIsCurrentPartner&&<div className="sheet-section family-planning-section">

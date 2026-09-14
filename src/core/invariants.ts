@@ -7,6 +7,8 @@ import { MAX_ACTIVE_WORLD_CONDITIONS, MAX_WORLD_CONDITION_HISTORY, ensureWorldCo
 import { worldConditionById } from '../data/worldConditions';
 import { ensurePersonalInventoryState, PERSONAL_INVENTORY_MAX_ITEMS } from '../systems/PersonalInventorySystem';
 import { personalItemById } from '../data/personalItems';
+import { NPC_PREFERENCE_TAG_IDS } from '../data/npcPreferences';
+import { NPC_PREFERENCE_AVERSION_LIMIT, NPC_PREFERENCE_DISLIKE_LIMIT, NPC_PREFERENCE_KNOWLEDGE_LIMIT, NPC_PREFERENCE_LIKE_LIMIT, NPC_PREFERENCE_PROFILE_VERSION, normalizeNpcPreferenceState } from '../systems/NpcPreferenceSystem';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -222,6 +224,7 @@ export function enforceStateInvariants(state: GameState): GameState {
     }
     if (!npc.alive) { npc.imprisoned = false; npc.partnerId = undefined; if(npc.life) npc.life.legal.sentenceRemaining = 0; }
   }
+  normalizeNpcPreferenceState(state);
   state.socialWorlds ??= [];
   state.employment.partTimeJobs ??= [];
   state.employment.partTimeHistory ??= [];
@@ -277,6 +280,8 @@ export function validateState(state: GameState): string[] {
   const spouses = state.relationships.filter(r => r.type === 'spouse' && !r.estranged);
   if (spouses.length > 1) errors.push('Multiple active spouses');
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
+  const preferenceTagIds=new Set<string>(NPC_PREFERENCE_TAG_IDS);
+  for(const rel of state.relationships){const known=rel.knownPreferenceTags??[];if(known.length>NPC_PREFERENCE_KNOWLEDGE_LIMIT)errors.push(`Relationship ${rel.id} preference knowledge is unbounded`);if(new Set(known).size!==known.length)errors.push(`Relationship ${rel.id} has duplicate preference knowledge`);for(const tag of known)if(!preferenceTagIds.has(tag))errors.push(`Relationship ${rel.id} has unknown preference tag ${tag}`);}
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
   if(!state.worldConditions)errors.push('Missing world-condition state');else{
@@ -299,6 +304,7 @@ export function validateState(state: GameState): string[] {
   const seenNpcPropertyIds=new Set<string>();const seenNpcBusinessIds=new Set<string>();
   for (const npc of Object.values(state.npcs)) {
     if (npc.alive && npc.health <= 0) errors.push(`NPC ${npc.id} is alive with terminal health`);
+    if(npc.preferences){const profile=npc.preferences;if(profile.version!==NPC_PREFERENCE_PROFILE_VERSION)errors.push(`NPC ${npc.id} has invalid preference profile version`);if(profile.likes.length>NPC_PREFERENCE_LIKE_LIMIT||profile.dislikes.length>NPC_PREFERENCE_DISLIKE_LIMIT||profile.aversions.length>NPC_PREFERENCE_AVERSION_LIMIT)errors.push(`NPC ${npc.id} preference profile is unbounded`);const preferenceTags=[...profile.likes,...profile.dislikes,...profile.aversions];if(new Set(preferenceTags).size!==preferenceTags.length)errors.push(`NPC ${npc.id} has overlapping preference tags`);for(const tag of preferenceTags)if(!preferenceTagIds.has(tag))errors.push(`NPC ${npc.id} has unknown preference tag ${tag}`);}
     if (!npc.life) errors.push(`NPC ${npc.id} is missing life state`);
     else {
       if (npc.life.finance.debt < 0 || npc.life.finance.propertyValue < 0 || npc.life.finance.annualIncome < 0) errors.push(`NPC ${npc.id} has invalid finances`);

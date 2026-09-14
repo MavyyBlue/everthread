@@ -23,11 +23,11 @@ export function runPhase8DPlayerProfileInventoryRegression(){
   const places=new Set(TOWN_PLACES.map(place=>place.id));
 
   const fresh=createNewGame({seed:'phase8d-fresh'});
-  verify(CURRENT_SAVE_VERSION===16&&fresh.saveVersion===16,'01 Phase 8D must advance current saves to schema 16');
+  verify(CURRENT_SAVE_VERSION===17&&fresh.saveVersion===17,'01 Phase 8D inventory remains compatible with current schema 17');
   verify(Array.isArray(fresh.personalInventory.items)&&fresh.personalInventory.items.length===0,'02 new lives must initialize one empty personal inventory authority');
 
   const legacy=createNewGame({seed:'phase8d-migrate'});legacy.saveVersion=15;delete (legacy as unknown as {personalInventory?:unknown}).personalInventory;const migrationRng=legacy.rngCounter,migrationId=legacy.idCounter;const migrated=migrateSave(legacy);
-  verify(migrated.saveVersion===16&&migrated.personalInventory.items.length===0,'03 schema-15 saves must migrate to an empty personal inventory');
+  verify(migrated.saveVersion===17&&migrated.personalInventory.items.length===0,'03 schema-15 saves must migrate to an empty personal inventory');
   verify(migrated.rngCounter===migrationRng&&migrated.idCounter===migrationId,'04 personal-inventory migration must consume neither gameplay RNG nor runtime IDs');
   const remigrated=migrateSave(structuredClone(migrated));verify(JSON.stringify(remigrated.personalInventory)===JSON.stringify(migrated.personalInventory),'05 current-schema personal-inventory normalization must be idempotent');
 

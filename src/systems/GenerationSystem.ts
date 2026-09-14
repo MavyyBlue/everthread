@@ -16,6 +16,7 @@ import { createEmptyCreditState } from './CreditSystem';
 import { resetConsequenceSchedulerForNewProtagonist } from './ConsequenceSystem';
 import { npcNamePoolCountryId } from './SettingSystem';
 import { createEmptyPersonalInventoryState } from './PersonalInventorySystem';
+import { initializeNpcPreferenceKnowledge } from './NpcPreferenceSystem';
 
 export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
@@ -108,5 +109,5 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   if(settlement.siblingValue>0)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'family',importance:2,text:`Other family heirs received ${Math.round(settlement.siblingValue).toLocaleString()} of the estate between them.`});
   if(state.employment.current)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'career',importance:2,text:`You entered this chapter already working as ${state.employment.current.title}.`});
   if(originalChild.partnerId){const partner=state.npcs[originalChild.partnerId];if(partner)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'relationship',importance:2,text:`Your existing ${originalChild.maritalStatus==='married'?'marriage':'relationship'} with ${partner.firstName} ${partner.lastName} continued with you.`});}
-  state.yearlySnapshots=[];initializeMissingNpcLives(state);return{success:true,messages:[{text:inheritedImmediately?`Generation ${state.legacy.generation}: now playing as ${newCharacter.firstName}.`:`Generation ${state.legacy.generation}: now playing as ${newCharacter.firstName}. Their inheritance is protected until age 18.`}]};
+  state.yearlySnapshots=[];initializeMissingNpcLives(state);initializeNpcPreferenceKnowledge(state);return{success:true,messages:[{text:inheritedImmediately?`Generation ${state.legacy.generation}: now playing as ${newCharacter.firstName}.`:`Generation ${state.legacy.generation}: now playing as ${newCharacter.firstName}. Their inheritance is protected until age 18.`}]};
 }

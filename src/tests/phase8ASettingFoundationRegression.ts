@@ -20,7 +20,7 @@ export function runPhase8ASettingFoundationRegression(){
   let checks=0;const verify=(condition:unknown,message:string)=>{checks+=1;check(condition,message);};
 
   const fresh=createNewGame({seed:'phase8a-everthread-home'});
-  verify(fresh.saveVersion===16,'new lives must initialize schema 16');
+  verify(fresh.saveVersion===17,'new lives must initialize current schema 17');
   verify(fresh.character.countryId===EVERTHREAD_COUNTRY_ID&&fresh.character.city===EVERTHREAD_CITY,'player-facing new lives must begin in Everthread');
   verify(Boolean(countryById[fresh.character.namePoolCountryId])&&fresh.character.namePoolCountryId!==EVERTHREAD_COUNTRY_ID,'new lives must retain a real naming profile separate from physical residence');
   verify(Object.values(fresh.npcs).every(npc=>npc.countryId===EVERTHREAD_COUNTRY_ID&&npc.city===EVERTHREAD_CITY),'new-life parent cast must share the local Everthread setting');
@@ -47,7 +47,7 @@ export function runPhase8ASettingFoundationRegression(){
   const namesBefore=Object.fromEntries(Object.values(legacy.npcs).map(npc=>[npc.id,`${npc.firstName}|${npc.lastName}`]));
   const relationshipsBefore=JSON.stringify(legacy.relationships);const educationBefore=JSON.stringify(legacy.education);const assetsBefore=JSON.stringify(legacy.assets);const timelineBefore=JSON.stringify(legacy.timeline);const historyBefore=JSON.stringify(legacy.worldConditions.history);
   const migrated=migrateSave(structuredClone(legacy));
-  verify(migrated.saveVersion===16&&migrated.character.countryId===EVERTHREAD_COUNTRY_ID&&migrated.character.city===EVERTHREAD_CITY,'legacy pre-setting protagonists must migrate into canonical Everthread residence before current-schema normalization');
+  verify(migrated.saveVersion===17&&migrated.character.countryId===EVERTHREAD_COUNTRY_ID&&migrated.character.city===EVERTHREAD_CITY,'legacy pre-setting protagonists must migrate into canonical Everthread residence before current-schema normalization');
   verify(migrated.character.namePoolCountryId===oldCountry,'Everthread setting migration must retain the protagonist legacy country as cultural naming context');
   verify(migrated.npcs[localNpc.id]?.countryId===EVERTHREAD_COUNTRY_ID&&migrated.npcs[localNpc.id]?.city===EVERTHREAD_CITY&&migrated.npcs[localNpc.id]?.namePoolCountryId===oldCountry,'local NPCs must move with the protagonist while keeping their established naming profile');
   verify(migrated.npcs[remoteNpc.id]?.countryId===oldCountry&&migrated.npcs[remoteNpc.id]?.city===remoteNpc.city&&migrated.npcs[remoteNpc.id]?.namePoolCountryId===oldCountry,'NPCs already living elsewhere must retain their physical location and naming profile');

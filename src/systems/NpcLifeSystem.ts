@@ -15,6 +15,7 @@ import { settleNpcEstateOnDeath } from './NpcEstateSystem';
 import { EXTENDED_FAMILY_RELATION_TYPE_SET, FAMILY_RELATIONSHIP_TYPE_SET, LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET } from '../core/familyRelations';
 import { npcNamePoolCountryId } from './SettingSystem';
 import { syncPlayerFamilyTopology } from './FamilyTopologySystem';
+import { advanceNpcPreferenceKnowledge } from './NpcPreferenceSystem';
 import type {
   GameState,
   Npc,
@@ -472,6 +473,7 @@ function processRelationshipDrift(state:GameState,rng:SeededRng){
     const desired=clamp(52+npc.hiddenOpinion*.24+memoryMood*.9+(family?10:0));const pull=(desired-rel.score)*(family?.035:.055);const noise=family?rng.int(-1,1):rng.int(-2,1);rel.score=clamp(rel.score+pull+noise);
     npc.hiddenOpinion=clamp(npc.hiddenOpinion+memoryMood*.025,-100,100);
   }
+  advanceNpcPreferenceKnowledge(state);
 }
 
 export function processNpcLives(state:GameState,rng=createRng(state.seed,state.rngCounter)){

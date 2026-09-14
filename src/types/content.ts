@@ -1,4 +1,5 @@
 import type { Id, Money, Percent, WorldConditionModifiers, WorldConditionScope } from './game';
+import type { NpcPreferenceTag } from './npcPreferences';
 
 export interface JobDefinition {
   id: Id;
@@ -133,7 +134,7 @@ export interface PersonalItemDefinition {
   price: Money;
   minAge: number;
   vendorPlaceId: Id;
-  preferenceTags: string[];
+  preferenceTags: NpcPreferenceTag[];
 }
 
 export interface WorldConditionDefinition {

@@ -39,7 +39,7 @@ export function runPhase8BTownMapRegression(){
   verify(routedServices.every(route=>Boolean(route.id&&route.label&&route.description&&route.destination)),'12 routing metadata must remain authored service metadata and never embed map-owned gameplay actions');
 
   const state=createNewGame({seed:'phase8b-map'});
-  verify(state.saveVersion===CURRENT_SAVE_VERSION&&CURRENT_SAVE_VERSION===16,'13 Phase 8B must not add durable save state or bump schema 16');
+  verify(state.saveVersion===CURRENT_SAVE_VERSION&&CURRENT_SAVE_VERSION===17,'13 Phase 8B map browsing must remain save-neutral under current schema 17');
   verify(state.character.countryId===EVERTHREAD_COUNTRY_ID,'14 the map foundation must sit on the certified Everthread home-setting authority');
   const before=JSON.stringify(state);const rngBefore=state.rngCounter,idBefore=state.idCounter;
   const first=buildTownMapProjection(state);const second=buildTownMapProjection(state);
@@ -88,7 +88,7 @@ export function runPhase8BTownMapRegression(){
   state.character.countryId='jp';state.character.city='Tokyo';
   const abroad=buildTownMapProjection(state);
   verify(!abroad.playerInEverthread&&abroad.playerLocationLabel==='Tokyo, Japan','34 the Everthread map must remain a browseable hometown projection after authoritative emigration rather than rewriting residence');
-  verify(state.saveVersion===16,'35 browsing Everthread after emigration must not alter the save schema or location authority');
+  verify(state.saveVersion===17,'35 browsing Everthread after emigration must not alter the save schema or location authority');
 
   return checks;
 }
