@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 16
-Newest certified expanded gameplay/source: Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`
-Certified gameplay baseline: Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`
+Newest certified expanded gameplay/source: Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`
+Certified gameplay baseline: Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`
 
 ## Product direction
 
@@ -27,6 +27,20 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
 ## Active implementation phase
+
+### Phase 8E — Phase 8 Closeout (CI Green Run #137)
+
+Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899` is the active certified gameplay/source baseline on save schema **16** and formally closes **Phase 8 — Everthread: Home**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- `src/core/navigation.ts` centralizes the six primary destinations and the six established Assets sections for direct parity testing; the Assets owner remains a first-class reachable surface.
+- Phase 8E makes no gameplay-authority or save-state changes. It proves that Map/Profile routing complements rather than replaces mature Life/People/Activities/Career/Assets access.
+- Remaining People/Map secondary controls meet the established **44px minimum touch target**.
+- Dedicated Phase 8E Closeout regression is **34/34**. People remains **57/57**, Map **46/46**, Routing **41/41**, Profile/Inventory **63/63**, Threadspace recovery **10/10**, Rewind **16/16**, Dynasty **64/64**, AI testbench **41/41**, Integrated Long-Life **105/105**, base **82/82**, minigames **19/19**, and feedback **20/20 + 23/23**.
+- Production build transformed **186 modules**. Map, People, and Player Profile remain independently lazy/code-split.
+- Certified source SHA-256 `a9fcef3b305afd578e7ac84e0f3428d5394e9b5c522bd010cce3329d8e7247f1`; preflight artifact `10354132463` (`8c4d3f2e6c4b461150870e59b0a8290be66763897992fb5a0a10a3f49bef1a03`); Pages artifact `10354586748` (`08fb8de646d10252a474957d0890d598c28d7e6fa5fb0695679ed13c8d2682c8`).
+- Post-certification feedback sweep remains 4 total / 0 unresolved by triage status with no new report. Stored review checkpoint successfully advanced to Run #137 at `2026-09-14 15:07:04.320301+00`.
+
+**Exact next slice:** Phase 9A — NPC Interests & Preferences. Do not begin broader Shared Lives work ahead of that certified slice.
 
 ### Critical Threadspace lazy-load recovery hotfix (CI Green Run #135)
 

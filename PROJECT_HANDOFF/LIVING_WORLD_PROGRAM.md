@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8A, 8B, 8C, and 8D are certified; Phase 8E closeout is next.**
+Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified repository/gameplay source: Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`;
+- newest certified gameplay/source: Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **16**;
 - Phase 7: **closed**;
@@ -13,7 +13,9 @@ Current certified program baseline:
 - Phase 8B: **certified / closed**;
 - Phase 8C: **certified / closed**;
 - Phase 8D: **certified / closed**;
-- next slice: **Phase 8E — Phase 8 Closeout**.
+- Phase 8E: **certified / closed**;
+- Phase 8: **CLOSED**;
+- next slice: **Phase 9A — NPC Interests & Preferences**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -79,9 +81,13 @@ Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d` fixes a production-critica
 
 Preserve this boundary in later work: People, Map, and Player Profile should remain independently lazy/code-split, but no lazy feature may be able to take down the root app shell. Save schema remains 16; no gameplay authority changed. Dedicated recovery regression is 10/10 and canonical Run #135 preflight/deploy is Green.
 
-### Phase 8E — Phase 8 Closeout
+### Phase 8E — Phase 8 Closeout — CERTIFIED Run #137
 
-Prove every former Assets action remains reachable, old saves migrate safely, map browsing is deterministic/RNG-neutral, mobile interaction is accessible, and long-life/dynasty performance remains bounded before retiring old navigation.
+Certified in Run #137 on expanded source `e1aa213fac4e03ab9a4af3039d9605852289b899`, save schema **16**, dedicated regression **34/34**, canonical preflight 4/4, and a 186-module production build.
+
+Closeout proves every established primary/Assets owner remains reachable; all 28 institution routes still terminate in mature reachable owners; canonical Assets gameplay families remain exposed; map/profile/route browsing is read-only and RNG/runtime-ID neutral; schema-14→16 migration is deterministic/idempotent; emigration and underworld visibility remain projections of existing truth; and 360/390/412/430px map-camera behavior remains finite and usable. Remaining People/Map secondary controls were raised to the established 44px touch target. No old navigation was retired, save schema remains 16, and no Phase 9 mechanics were introduced.
+
+**Phase 8 — Everthread: Home is CLOSED.** Preserve its authority boundaries throughout Shared Lives: Map is navigation/projection, Threadspace is relationship projection, Player Profile is identity/ownership projection, personal inventory owns only ordinary non-financial possessions, and mature system owners retain gameplay consequences.
 
 # Phase 9 — Shared Lives
 
@@ -175,4 +181,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 8E — Phase 8 Closeout** from certified Run #133 / schema-16 Phase 8D. Prove access parity, migration/rewind/dynasty safety, deterministic map/profile browsing, mobile accessibility, and bounded performance while preserving contextual shortcuts and institution routing. Do not begin Phase 9 Shared Lives until Phase 8 closeout is independently certified.
+Begin **Phase 9A — NPC Interests & Preferences** from certified Run #137 / schema-16 Phase 8 closeout. Add compact persistent preferences to meaningful NPCs through the existing NPC authority, keep generation/migration/browsing deterministic and bounded, let traits influence rather than replace preference identity, and reveal only plausibly knowable information. Do not begin 9B Shared Experience Foundation until 9A is independently certified and synchronized.

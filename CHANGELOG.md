@@ -1,5 +1,25 @@
 # Everthread Changelog
 
+## Phase 8E — Phase 8 Closeout — CI Green Run #137 — 2026-09-14
+
+### Closed / verified
+
+- Formally closed **Phase 8 — Everthread: Home** after proving access parity, migration/rewind/dynasty safety, deterministic browsing, mobile touch accessibility, and bounded integration behavior across the existing Phase 8 stack.
+- Added one centralized primary/Assets navigation contract so the six primary tabs and all six established Assets sections are directly regression-testable. The legacy Assets owner remains directly reachable; no mature entry point was retired merely because Map/Profile routing exists.
+- Raised the remaining People/Map secondary controls to the established **44px minimum touch target** on the supported mobile widths. No gameplay authority, save state, content count, RNG behavior, or runtime-ID behavior changed. Save schema remains **16**.
+- Added dedicated **Phase 8E Closeout** regression coverage at **34/34** for primary/Assets reachability, all 28 institution doorways, canonical Assets action families, read-only browsing purity, schema-14→16 migration determinism/idempotency, emigration safety, underworld visibility projection, and 360/390/412/430px map-camera behavior.
+- Preserved the post-8D lazy-screen recovery boundary. Mavyy also confirmed on the real player-facing Android path that People Threadspace and Map load correctly again after the Run #135 hotfix.
+
+### Certification
+
+- GitHub Actions Run #137 (`34859549989`) certified expanded source `e1aa213fac4e03ab9a4af3039d9605852289b899` from upload wrapper `ca6e726ce31896593d0de825e1614ce5e5ca5418`. Net diff from the prior certified repository source is exactly **7 intended Phase 8E source/test files**; workflow import reports 8 changes only because it removes `everthread-source.zip`. No docs, schema, package, content, workflow, or Phase 9 drift was introduced.
+- Canonical preflight PASS **4/4**; base regression **82/82**; People Threadspace **57/57**; Phase 8B Map **46/46**; Phase 8C Routing **41/41**; Phase 8D **63/63**; Threadspace Load Recovery **10/10**; new Phase 8E **34/34**; Dynasty **64/64**; Integrated Long-Life **105/105**; minigames **19/19**; feedback suites **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **186 modules**. Map, People, and Player Profile remain independently lazy/code-split. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256 `a9fcef3b305afd578e7ac84e0f3428d5394e9b5c522bd010cce3329d8e7247f1`; dependency SHA-256 `a06a60a2ac51e42e9a21e01c9cf8f89828068df4890ec262f7c989e906e9d1a6`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10354132463`, digest `8c4d3f2e6c4b461150870e59b0a8290be66763897992fb5a0a10a3f49bef1a03`; Pages artifact ID `10354586748`, digest `08fb8de646d10252a474957d0890d598c28d7e6fa5fb0695679ed13c8d2682c8`; Pages deployment reported success.
+- Post-certification feedback sweep found **4 total reports / 0 unresolved by triage status**, no new receipt after `2026-09-13 19:51:36.119407+00`, and successfully advanced the stored review checkpoint to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00`.
+- **Phase 8 is CLOSED. Next slice:** Phase 9A — NPC Interests & Preferences.
+
 ## Critical Threadspace Lazy-Load Recovery Hotfix — CI Green Run #135 — 2026-09-14
 
 ### Fixed

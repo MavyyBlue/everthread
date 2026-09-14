@@ -6,17 +6,17 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 The required post-Phase-7 brainstorm is complete. Mavyy approved the **Living World Program** as the next direction. The detailed authority, player-intent, migration, QA, and slice contract lives in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
 
-Current certified context: **Run #135 / `39523787af658a6907cb82ba0e7b94d964fca82d`**, save schema **16**. Phases 8A, 8B, 8C, and 8D are certified; the post-8D critical Threadspace lazy-load recovery hotfix is also certified. The exact next slice remains **8E Phase 8 Closeout**.
+Current certified context: **Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`**, save schema **16**. **Phase 8 — Everthread: Home is closed/certified**, including the post-8D critical Threadspace recovery hotfix and 8E closeout. The exact next slice is **9A NPC Interests & Preferences**.
 
-1. **Phase 8 — Everthread: Home** — **active.** 8A Everthread Setting Foundation is CI Green in Run #125. 8B Town Place Registry & 2D Flat Map is CI Green in Run #127, with the authored-map presentation correction certified in Run #129. 8C Institution Routing is CI Green in Run #131. 8D Player Profile & Personal Inventory is CI Green in Run #133 on schema 16 with 24 ordinary personal-item definitions and a shared Life/Threadspace player profile. Run #135 then certified the critical lazy People/Map/Profile load-recovery hotfix without changing gameplay authority or schema. **Next: 8E Phase 8 Closeout.**
-2. **Phase 9 — Shared Lives** — persistent NPC interests/preferences; one shared-experience evaluator; childhood/youth social life; dates and romantic momentum; actual inventory gifts; cross-world chemistry through existing authorities.
+1. **Phase 8 — Everthread: Home** — **CLOSED / CERTIFIED.** 8A Everthread Setting Foundation is CI Green in Run #125. 8B Town Place Registry & 2D Flat Map is CI Green in Run #127, with the authored-map presentation correction certified in Run #129. 8C Institution Routing is CI Green in Run #131. 8D Player Profile & Personal Inventory is CI Green in Run #133 on schema 16. Run #135 certified the critical lazy People/Map/Profile load-recovery hotfix, and Run #137 certified 8E access/migration/mobile closeout at 34/34 with no authority or schema change.
+2. **Phase 9 — Shared Lives** — **active; next 9A NPC Interests & Preferences.** Then one shared-experience evaluator; childhood/youth social life; dates and romantic momentum; actual inventory gifts; cross-world chemistry through existing authorities.
 3. **Phase 10 — Living Everthread** — residential/workplace projections, bounded generational place memory, and a living map that reflects meaningful current/dynasty context without becoming a second simulation.
 
 **Sequencing rule:** one certified slice at a time. After every certified gameplay/feature/fix/migration/architecture commit, complete the mandatory documentation synchronization before beginning the next slice.
 
 ## Closed macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, 6, and **7 are closed** and remain preserved under the active Phase 8 baseline. Run #91 established canonical pre-deployment certification; Run #122 closed Phase 7 on schema 14. Run #135 is now the certified gameplay/repository baseline on schema **16** after the post-8D critical Threadspace lazy-load recovery hotfix. The post-Phase-7 planning pause was honored and the approved Living World Program is active.
+Phases 4, 5, 6, **7, and 8 are closed** and remain preserved under the active Living World baseline. Run #91 established canonical pre-deployment certification; Run #122 closed Phase 7 on schema 14; Run #137 closes Phase 8 on schema **16**. The post-Phase-7 planning pause was honored and the approved Living World Program now advances into Phase 9 Shared Lives.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -169,7 +169,7 @@ Phase 7 compatibility requirements: scheduler priority is centralized; one featu
 
 ## Cross-cutting player-feedback gate
 
-Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Living World sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The post-Run-#125 sweep still found **4 total reports, all 4 already reviewed/resolved, and no new report rows**. The stored review checkpoint now successfully points to certified source `2596084575dd4288a0b549dc1a618736280f135b` with reviewed count 4. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
+Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Living World sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The post-Run-#137 sweep found **4 total reports, all 4 triage-resolved, and no new report rows**. The stored review checkpoint successfully points to certified gameplay source `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed count 4. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
 
 Future feature work should review active supplied/exported reports before starting, with data-loss/crash/accounting/state-integrity/blocking defects taking priority, followed by explicitly prioritized triaged experience/UX reports. A backend-green test result redirects technical triage into UI/experience investigation rather than invalidating the report.
 

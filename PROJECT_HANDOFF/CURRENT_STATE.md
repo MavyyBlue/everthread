@@ -2,21 +2,24 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository and gameplay** source is **GitHub Actions Run #135** (`34856517423`) on expanded source **`39523787af658a6907cb82ba0e7b94d964fca82d`**. This is the certified critical Threadspace lazy-load recovery hotfix baseline on top of Phase 8D.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #137** (`34859549989`) on expanded source **`e1aa213fac4e03ab9a4af3039d9605852289b899`**. This is the certified Phase 8E closeout baseline. The documentation-only synchronization based on it changes no gameplay; after that sync certifies, its expanded docs commit becomes the newest repository source while Run #137 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **16**
 - Phase 7 — Persistent World Consequences: **CLOSED**
 - Current approved macro program: **Living World Program**
+- Phase 8 — Everthread: Home: **CLOSED / CERTIFIED**
 - Phase 8A — Everthread Setting Foundation: **CERTIFIED / CLOSED**
 - Phase 8B — Town Place Registry & 2D Flat Map: **CERTIFIED / CLOSED**
 - Phase 8C — Institution Routing: **CERTIFIED / CLOSED**
 - Phase 8D — Player Profile & Personal Inventory: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 8E — Phase 8 Closeout**
+- Phase 8E — Phase 8 Closeout: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 9A — NPC Interests & Preferences**
 - Planned Phase 9: **Shared Lives**
 - Planned Phase 10: **Living Everthread**
-- Supabase Feedback Inbox: **4 total reports; no new report rows since 2026-09-13 19:51:36 UTC; the previously reviewed queue remains clear**.
-- Fresh post-Run-#135 feedback sweep found **4 total / 0 unresolved** with no new receipt; the connector blocked the bookkeeping checkpoint write, so the last successfully stored checkpoint remains `cf2ede37be5362bc02678a2cc4bec6defa38a837`.
+- Supabase Feedback Inbox: **4 total reports; all 4 triage-resolved; no new report rows since 2026-09-13 19:51:36 UTC**.
+- Stored review checkpoint successfully advanced to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4.
+- Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
@@ -26,6 +29,25 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `16`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #137 — Phase 8E Closeout
+
+- Upload wrapper: `ca6e726ce31896593d0de825e1614ce5e5ca5418`.
+- Expanded certified source: `e1aa213fac4e03ab9a4af3039d9605852289b899`.
+- GitHub Actions Run #137: `34859549989`.
+- Net diff from the prior certified repository source is exactly **7 intended Phase 8E source/test files**. Workflow import reports 8 changed files only because it also removes the uploaded `everthread-source.zip`; no documentation, save-schema, package, content, workflow, or Phase 9 drift is part of the committed gameplay diff.
+- `src/core/navigation.ts` centralizes the six primary tabs and six established Assets sections for direct closeout parity coverage. Existing navigation is preserved rather than retired for cleanliness.
+- Remaining People/Map secondary controls now meet the established **44px minimum touch target**. No gameplay authority, `GameState`, RNG, runtime-ID, or content count changed. Save schema remains **16**.
+- Phase 8E Closeout regression **34/34** proves primary/Assets reachability, all 28 institution routes, canonical Assets action families, browsing purity, schema-14→16 deterministic/idempotent migration, emigration safety, underworld projection semantics, and supported 360/390/412/430px map-camera behavior.
+- Canonical preflight passed **4/4**. Base **82/82**; People **57/57**; Map **46/46**; Routing **41/41**; Profile/Inventory **63/63**; Threadspace Load Recovery **10/10**; Phase 8E **34/34**; Dynasty **64/64**; Integrated Long-Life **105/105**; all established suites remained Green.
+- Production build: Vite 7.3.6, **186 modules transformed**. Map, People, and Player Profile remain independently lazy/code-split. Established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `a9fcef3b305afd578e7ac84e0f3428d5394e9b5c522bd010cce3329d8e7247f1`.
+- Certified dependency SHA-256: `a06a60a2ac51e42e9a21e01c9cf8f89828068df4890ec262f7c989e906e9d1a6`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10354132463`, digest `8c4d3f2e6c4b461150870e59b0a8290be66763897992fb5a0a10a3f49bef1a03`.
+- Pages artifact ID `10354586748`, digest `08fb8de646d10252a474957d0890d598c28d7e6fa5fb0695679ed13c8d2682c8`; Pages deployment reported success.
+- Post-certification feedback sweep: 4 total / 0 unresolved by triage status, no new receipt; stored checkpoint advanced successfully to Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00`.
+- **Phase 8 is formally CLOSED. Exact next slice: Phase 9A — NPC Interests & Preferences.**
 
 ## Newest certified gameplay/source — Run #135 — Critical Threadspace lazy-load recovery hotfix
 
@@ -133,17 +155,17 @@ Phase 8B makes Everthread a first-class, mobile navigation surface without creat
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
 - Save schema remains **15**. No migration was required.
 
-## Approved next slice — Phase 8E: Phase 8 Closeout
+## Approved next slice — Phase 9A: NPC Interests & Preferences
 
-Close Phase 8 by proving access parity, schema-16 migration/rewind/dynasty safety, deterministic/RNG-neutral map/profile browsing, mobile accessibility, and bounded long-life performance. Preserve all contextual shortcuts and institution routing while verifying that no former Assets or core action path becomes unreachable.
+Phase 8 is closed. Begin Shared Lives narrowly with compact, stable NPC interests/preferences owned by existing NPC state rather than introducing a second social graph. Traits may influence preferences but must not deterministically replace them. Preference generation/migration/browsing must remain deterministic and bounded, and the UI should reveal only information the player could plausibly know.
 
-Do not retire old navigation merely for cleanliness; only remove or consolidate an older entry point when parity is explicitly proven. Do not begin Phase 9 Shared Lives until 8E is independently certified and Phase 8 is formally closed.
+Do not jump ahead to the shared-experience evaluator, dates, gifts, or cross-world chemistry until 9A is independently certified and synchronized.
 
-## Feedback queue snapshot after Run #133 / `cf2ede37…`
+## Feedback queue snapshot after Run #137 / `e1aa213f…`
 
-- Supabase still contains **4 report rows**; no new report row has appeared since the previously recorded `2026-09-13 19:51:36.119407+00` receipt. The prior reviewed queue remains clear.
-- Review checkpoint key `main` was successfully advanced after Run #133 to `cf2ede37be5362bc02678a2cc4bec6defa38a837` at `2026-09-14 14:06:03.077434+00` with reviewed-report count 4.
-- No feedback item currently preempts Phase 8E.
+- Supabase contains **4 report rows**; all 4 are triage-resolved and no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
+- Review checkpoint key `main` successfully advanced to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4.
+- No feedback item currently preempts Phase 9A.
 
 ## Phase 7C baseline preserved beneath Phase 8B
 
