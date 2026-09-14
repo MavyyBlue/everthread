@@ -1,5 +1,26 @@
 # Everthread Changelog
 
+## Phase 9A — NPC Interests & Preferences — CI Green Run #139 — 2026-09-14
+
+### Added / changed
+
+- Opened **Phase 9 — Shared Lives** with one compact, persistent preference foundation for meaningful NPCs. Intrinsic tastes remain part of the existing NPC record; what the current protagonist has learned remains on the existing `Relationship` record. No second personality graph, relationship score, or social-memory authority was introduced.
+- Added one shared **38-tag** preference vocabulary spanning gifts and future shared experiences. Each persistent profile is bounded to at most 4 likes, 3 dislikes, and 1 occasional aversion; traits bias generation without deterministically dictating identity. Neutral is derived rather than stored as another list.
+- Preference generation is stable from existing game seed + NPC identity, uses an isolated deterministic RNG stream, and consumes no gameplay RNG counter or runtime IDs. Background NPCs remain lazy until they become protagonist-relevant; invariant/save repair normalizes only profiles that already exist.
+- Player-specific preference knowledge is bounded separately to 8 tags, with passive discovery capped at 6 and age/relationship context limiting how quickly knowledge appears. Schema migration does **not** retroactively invent learned tastes on old relationship records.
+- People profiles now expose only plausibly known interests with concise **Likes / Neutral / Dislikes / Avoids** labels. Browsing is read-only and never reveals raw hidden weights.
+- Save schema advances **16 → 17**. Existing relationship targets receive stable intrinsic profiles during migration, while relationship knowledge remains untouched until normal play reveals it. Rewind, dynasty continuation, malformed-save repair, and long-life behavior remain covered.
+
+### Certification
+
+- GitHub Actions Run #139 (`34870897923`) certified expanded source `f8ddfe5db0995dceb07969765b34b78f18740e01` from upload wrapper `8245a89f919086fcebc82e12880282076a13e5ef`. Net diff from the prior certified repository source is exactly **38 intended Phase 9A source/test files**; workflow import reports 39 changes only because it removes `everthread-source.zip`. No documentation, package, workflow, asset, or Phase 9B drift was introduced.
+- Canonical preflight PASS **4/4**; base regression **82/82**; People Threadspace **57/57**; Rewind **16/16**; Dynasty **64/64**; Integrated Long-Life **105/105**; Phase 8A **25/25**; Phase 8D **63/63**; Phase 8E **34/34**; Threadspace Load Recovery **10/10**; new Phase 9A **45/45**; minigames **19/19**; feedback suites **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **188 modules**. People remains lazy/code-split at ~27.94 kB JS / 9.10 kB gzip; Map and Player Profile remain independently lazy. Main JS is ~1,206.90 kB / 341.59 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `7ecc001e4c79f113e2f3ac52071fdd1c8d3256ea2eb7cd25720adb19c8cfaca7`; dependency SHA-256 `e3bc0b39f962260217d42104c0c8dd802b9f4ae6a46d47013205fab46f610e2e`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10359137007`, digest `60ef75dd3105118723f0af12bcffa173d85c439e55c69c49edbc81f6a7614005`; Pages artifact ID `10359321568`, digest `e0234fa05dc501106535fc9694644150181c9203bc48d00fabbeb1734bfb3e1d`; Pages deployment reported success.
+- Post-certification feedback read attempts were blocked by the connector safety layer, so no new inbox result or checkpoint advance is claimed. The last successfully reviewed state remains **4 total / 0 unresolved by `triage_status`** with checkpoint `e1aa213fac4e03ab9a4af3039d9605852289b899`.
+- **Phase 9A is CLOSED / CERTIFIED. Next slice:** Phase 9B — Shared Experience Foundation.
+
 ## Phase 8E — Phase 8 Closeout — CI Green Run #137 — 2026-09-14
 
 ### Closed / verified

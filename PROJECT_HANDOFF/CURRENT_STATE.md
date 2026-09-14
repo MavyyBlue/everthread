@@ -2,10 +2,10 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #137** (`34859549989`) on expanded source **`e1aa213fac4e03ab9a4af3039d9605852289b899`**. This is the certified Phase 8E closeout baseline. The documentation-only synchronization based on it changes no gameplay; after that sync certifies, its expanded docs commit becomes the newest repository source while Run #137 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #139** (`34870897923`) on expanded source **`f8ddfe5db0995dceb07969765b34b78f18740e01`**. This is the certified Phase 9A NPC Interests & Preferences baseline on schema 17. The documentation-only synchronization based on it changes no gameplay; after that sync certifies, its expanded docs commit becomes the newest repository source while Run #139 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
-- Certified save schema: **16**
+- Certified save schema: **17**
 - Phase 7 — Persistent World Consequences: **CLOSED**
 - Current approved macro program: **Living World Program**
 - Phase 8 — Everthread: Home: **CLOSED / CERTIFIED**
@@ -14,11 +14,12 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #137**
 - Phase 8C — Institution Routing: **CERTIFIED / CLOSED**
 - Phase 8D — Player Profile & Personal Inventory: **CERTIFIED / CLOSED**
 - Phase 8E — Phase 8 Closeout: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 9A — NPC Interests & Preferences**
-- Planned Phase 9: **Shared Lives**
+- Phase 9A — NPC Interests & Preferences: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 9B — Shared Experience Foundation**
+- Phase 9 — Shared Lives: **ACTIVE**
 - Planned Phase 10: **Living Everthread**
-- Supabase Feedback Inbox: **4 total reports; all 4 triage-resolved; no new report rows since 2026-09-13 19:51:36 UTC**.
-- Stored review checkpoint successfully advanced to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4.
+- Last successfully reviewed Supabase Feedback Inbox state: **4 total reports; all 4 triage-resolved; no new report rows since 2026-09-13 19:51:36 UTC**.
+- Last successful stored review checkpoint remains `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4. Post-Run-#139 read attempts were blocked by connector safety, so no newer inbox/checkpoint state is claimed.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -27,8 +28,29 @@ Last handoff synchronization: 2026-09-14
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
-Certified save schema: `16`
+Certified save schema: `17`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #139 — Phase 9A NPC Interests & Preferences
+
+- Upload wrapper: `8245a89f919086fcebc82e12880282076a13e5ef`.
+- Expanded certified source: `f8ddfe5db0995dceb07969765b34b78f18740e01`.
+- GitHub Actions Run #139: `34870897923`.
+- Net diff from the prior certified repository source is exactly **38 intended Phase 9A source/test files**. Workflow import reports 39 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, or Phase 9B drift is part of the committed gameplay diff.
+- Save schema advances **16 → 17**. `NpcPreferenceSystem` gives protagonist-relevant NPCs stable intrinsic likes/dislikes/occasional aversions while existing Relationship records own what the current protagonist has learned.
+- One shared **38-tag** age-aware vocabulary is reused across NPC tastes and existing Phase 8D personal-item preference tags. Profiles are bounded to 4 likes / 3 dislikes / 1 aversion; relationship knowledge is bounded to 8 tags with passive discovery capped at 6.
+- Preference generation is deterministic from existing seed + NPC identity through an isolated RNG stream. It does not consume gameplay RNG counters or runtime IDs. Traits bias outcomes without dictating them. Background NPC storage remains lazy until they become protagonist-relevant.
+- Schema migration does **not** write learned preference knowledge onto old relationship records. Existing relationship targets receive stable intrinsic profiles, while protagonist knowledge starts from actual post-upgrade play. Rewind/dynasty semantics preserve the NPC's identity while successor protagonists do not inherit someone else's learned social knowledge.
+- People profile projection shows only plausibly known tags as Likes / Neutral / Dislikes / Avoids; browsing is read-only and does not expose hidden weights.
+- Phase 9A regression **45/45**; canonical preflight **4/4**. Base **82/82**; People **57/57**; Rewind **16/16**; Dynasty **64/64**; Integrated Long-Life **105/105**; Phase 8A **25/25**; Phase 8D **63/63**; Phase 8E **34/34**; Threadspace recovery **10/10**; all established suites remained Green.
+- Production build: Vite 7.3.6, **188 modules transformed**. People remains lazy/code-split at ~27.94 kB JS / 9.10 kB gzip; main JS ~1,206.90 kB / 341.59 kB gzip. Established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `7ecc001e4c79f113e2f3ac52071fdd1c8d3256ea2eb7cd25720adb19c8cfaca7`.
+- Certified dependency SHA-256: `e3bc0b39f962260217d42104c0c8dd802b9f4ae6a46d47013205fab46f610e2e`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10359137007`, digest `60ef75dd3105118723f0af12bcffa173d85c439e55c69c49edbc81f6a7614005`.
+- Pages artifact ID `10359321568`, digest `e0234fa05dc501106535fc9694644150181c9203bc48d00fabbeb1734bfb3e1d`; Pages deployment reported success.
+- Post-certification feedback read attempts were blocked by connector safety, so the last successfully reviewed state/checkpoint remains the Run #137 snapshot (4 total / 0 unresolved by `triage_status`).
+- **Phase 9A is CLOSED / CERTIFIED. Exact next slice: Phase 9B — Shared Experience Foundation.**
 
 ## Newest certified gameplay/source — Run #137 — Phase 8E Closeout
 
@@ -155,17 +177,17 @@ Phase 8B makes Everthread a first-class, mobile navigation surface without creat
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
 - Save schema remains **15**. No migration was required.
 
-## Approved next slice — Phase 9A: NPC Interests & Preferences
+## Approved next slice — Phase 9B: Shared Experience Foundation
 
-Phase 8 is closed. Begin Shared Lives narrowly with compact, stable NPC interests/preferences owned by existing NPC state rather than introducing a second social graph. Traits may influence preferences but must not deterministically replace them. Preference generation/migration/browsing must remain deterministic and bounded, and the UI should reveal only information the player could plausibly know.
+Phase 9A is certified. Build one reusable shared-experience evaluator shaped around the exact player, exact NPC, relationship context, place, activity, and the 9A preference vocabulary. RelationshipSystem remains authoritative for relationship changes; NPC memories remain authoritative for meaningful remembered history.
 
-Do not jump ahead to the shared-experience evaluator, dates, gifts, or cross-world chemistry until 9A is independently certified and synchronized.
+Do not jump ahead to childhood/youth social expansion, dating momentum, inventory gifts, or cross-world chemistry until 9B is independently certified and synchronized.
 
-## Feedback queue snapshot after Run #137 / `e1aa213f…`
+## Feedback queue snapshot after Run #139 / `f8ddfe5d…`
 
 - Supabase contains **4 report rows**; all 4 are triage-resolved and no new report row has appeared since `2026-09-13 19:51:36.119407+00`.
 - Review checkpoint key `main` successfully advanced to `e1aa213fac4e03ab9a4af3039d9605852289b899` at `2026-09-14 15:07:04.320301+00` with reviewed-report count 4.
-- No feedback item currently preempts Phase 9A.
+- The post-Run-#139 live read attempt was blocked by connector safety, so no newer queue state is claimed. Last successfully reviewed state remains four triage-resolved reports and no known item preempted Phase 9A. Before 9B implementation, retry the live inbox read if the connector permits.
 
 ## Phase 7C baseline preserved beneath Phase 8B
 

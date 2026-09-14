@@ -1,13 +1,13 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A next.**
+Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A certified and 9B next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`;
+- newest certified gameplay/source: Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`;
 - package: `everthread-life-unwritten@0.12.0`;
-- certified save schema: **16**;
+- certified save schema: **17**;
 - Phase 7: **closed**;
 - Phase 8A: **certified / closed**;
 - Phase 8B: **certified / closed**;
@@ -15,7 +15,8 @@ Current certified program baseline:
 - Phase 8D: **certified / closed**;
 - Phase 8E: **certified / closed**;
 - Phase 8: **CLOSED**;
-- next slice: **Phase 9A — NPC Interests & Preferences**.
+- Phase 9A: **certified / closed**;
+- next slice: **Phase 9B — Shared Experience Foundation**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -95,9 +96,15 @@ Closeout proves every established primary/Assets owner remains reachable; all 28
 
 Make relationships feel like histories between people. Replace generic score-only social clicks with one reusable shared-experience framework for outings, dates, youth social life, gifts, and cross-world chemistry.
 
-### Phase 9A — NPC Interests & Preferences
+### Phase 9A — NPC Interests & Preferences — CERTIFIED Run #139
 
-Meaningful NPCs receive compact persistent procedural preferences: likes, indifference, dislikes, and occasional strong aversions across coherent interest tags. Preferences are stable/deterministic; traits influence rather than replace them. Reveal only what the player could plausibly know.
+Certified in Run #139 on expanded source `f8ddfe5db0995dceb07969765b34b78f18740e01`, save schema **17**, dedicated regression **45/45**, canonical preflight 4/4, and a 188-module production build.
+
+`NpcPreferenceSystem` adds one shared **38-tag** age-aware preference vocabulary and bounded intrinsic profiles on existing NPC records: at most 4 likes, 3 dislikes, and 1 occasional aversion. Neutral remains derived. Traits bias deterministic generation but never fully dictate identity. Generation uses an isolated seed + NPC-ID stream and consumes no gameplay RNG/runtime IDs.
+
+Protagonist-specific knowledge belongs to the existing Relationship record and is independently bounded to 8 tags (passive discovery capped at 6). Schema-16 saves migrate intrinsic profiles for existing relationship targets but do not fabricate historical learned knowledge. Background NPC preference storage stays lazy until the person becomes relevant. Rewind and dynasty continuation preserve intrinsic identity while successor protagonists do not inherit the prior protagonist's learned knowledge.
+
+People profiles reveal only plausibly known preference labels; raw weights remain hidden. The shared tag vocabulary intentionally aligns with Phase 8D personal-item tags so later outings/dates/gifts can consume one taxonomy rather than creating parallel definitions.
 
 ### Phase 9B — Shared Experience Foundation
 
@@ -181,4 +188,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 9A — NPC Interests & Preferences** from certified Run #137 / schema-16 Phase 8 closeout. Add compact persistent preferences to meaningful NPCs through the existing NPC authority, keep generation/migration/browsing deterministic and bounded, let traits influence rather than replace preference identity, and reveal only plausibly knowable information. Do not begin 9B Shared Experience Foundation until 9A is independently certified and synchronized.
+Begin **Phase 9B — Shared Experience Foundation** from certified Run #139 / schema-17 Phase 9A. Build one reusable evaluator over exact player + exact NPC + relationship context + place + activity + preference/context. RelationshipSystem remains authoritative for relationship deltas and NPC memories remain authoritative for meaningful remembered history. Do not begin 9C Childhood & Youth Social Life until 9B is independently certified and synchronized.

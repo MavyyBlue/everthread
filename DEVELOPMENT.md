@@ -2,9 +2,9 @@
 
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
-Certified save schema: 16
-Newest certified expanded gameplay/source: Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`
-Certified gameplay baseline: Run #137 / `e1aa213fac4e03ab9a4af3039d9605852289b899`
+Certified save schema: 17
+Newest certified expanded gameplay/source: Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`
+Certified gameplay baseline: Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01`
 
 ## Product direction
 
@@ -27,6 +27,22 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
 ## Active implementation phase
+
+### Phase 9A — NPC Interests & Preferences (CI Green Run #139)
+
+Run #139 / `f8ddfe5db0995dceb07969765b34b78f18740e01` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9A**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- `NpcPreferenceSystem` owns compact intrinsic preference profiles on existing NPC records only; Relationship remains the owner of protagonist-specific learned preference tags. Traits bias profile generation but do not replace preference identity.
+- The shared catalog contains **38** age-aware tags. Stored NPC profiles are capped at 4 likes / 3 dislikes / 1 aversion; relationship knowledge is capped at 8 tags, with passive knowledge capped at 6.
+- Generation is stable from seed + NPC identity through an isolated deterministic RNG stream and consumes no gameplay RNG counter/runtime IDs. Background NPC storage remains lazy until the protagonist can actually know something about that NPC.
+- Schema **16→17** migration creates stable intrinsic profiles for existing relationship targets but deliberately leaves `knownPreferenceTags` absent so upgrades do not fabricate historical social knowledge. Normal play reveals knowledge later.
+- People profiles project only known preferences. Read-only profile browsing does not mutate state or reveal hidden weights.
+- Dedicated Phase 9A regression is **45/45**. People **57/57**, Rewind **16/16**, Dynasty **64/64**, Integrated Long-Life **105/105**, Phase 8A **25/25**, Phase 8D **63/63**, Phase 8E **34/34**, recovery **10/10**, base **82/82**, minigames **19/19**, and feedback **20/20 + 23/23** remained Green.
+- Production build transformed **188 modules**. People remains lazy/code-split; established main-chunk size warning remains nonblocking.
+- Certified source SHA-256 `7ecc001e4c79f113e2f3ac52071fdd1c8d3256ea2eb7cd25720adb19c8cfaca7`; preflight artifact `10359137007` (`60ef75dd3105118723f0af12bcffa173d85c439e55c69c49edbc81f6a7614005`); Pages artifact `10359321568` (`e0234fa05dc501106535fc9694644150181c9203bc48d00fabbeb1734bfb3e1d`).
+- Post-certification feedback read attempts were blocked by connector safety. No new inbox result or review-checkpoint advance is claimed; the last successfully reviewed state remains Run #137 / 4 resolved reports.
+
+**Exact next slice:** Phase 9B — Shared Experience Foundation. Build one reusable evaluator over exact player/NPC/relationship/place/activity/preference context while preserving RelationshipSystem and NPC-memory ownership.
 
 ### Phase 8E — Phase 8 Closeout (CI Green Run #137)
 
