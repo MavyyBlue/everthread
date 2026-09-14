@@ -5,6 +5,8 @@ import { sanitizeCreditState } from '../systems/CreditSystem';
 import { CONSEQUENCE_SCHEDULER_VERSION, MAX_ACTIVE_CONSEQUENCES, MAX_CONSEQUENCE_HISTORY, MAX_EVENT_COOLDOWNS, ensureConsequenceSchedulerState } from '../systems/ConsequenceSystem';
 import { MAX_ACTIVE_WORLD_CONDITIONS, MAX_WORLD_CONDITION_HISTORY, ensureWorldConditionState } from '../systems/WorldConditionSystem';
 import { worldConditionById } from '../data/worldConditions';
+import { ensurePersonalInventoryState, PERSONAL_INVENTORY_MAX_ITEMS } from '../systems/PersonalInventorySystem';
+import { personalItemById } from '../data/personalItems';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -115,6 +117,7 @@ function normalizePhase4CareerWorlds(state:GameState){
 export function enforceStateInvariants(state: GameState): GameState {
   ensureConsequenceSchedulerState(state);
   ensureWorldConditionState(state);
+  ensurePersonalInventoryState(state);
   state.character.age = Math.max(0, Math.floor(state.character.age));
   state.character.stats.health = clamp(state.character.stats.health);
   state.character.stats.happiness = clamp(state.character.stats.happiness);
@@ -266,6 +269,8 @@ export function enforceStateInvariants(state: GameState): GameState {
 
 export function validateState(state: GameState): string[] {
   const errors: string[] = [];
+  if(!state.personalInventory)errors.push('Missing personal inventory state');
+  else{if(state.personalInventory.items.length>PERSONAL_INVENTORY_MAX_ITEMS)errors.push('Personal inventory is unbounded');const personalIds=new Set<string>();for(const item of state.personalInventory.items){if(personalIds.has(item.id))errors.push(`Duplicate personal item id ${item.id}`);personalIds.add(item.id);if(!personalItemById[item.itemId])errors.push(`Unknown personal item definition ${item.itemId}`);if(item.purchasePrice<0)errors.push(`Personal item ${item.id} has invalid purchase price`);}}
   if (!state.character?.id) errors.push('Missing character id');
   if (state.character.age < 0) errors.push('Negative player age');
   if (state.saveVersion < 1) errors.push('Invalid save version');

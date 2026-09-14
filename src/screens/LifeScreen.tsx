@@ -14,7 +14,7 @@ import { InstitutionRouteBanner } from '../components/InstitutionRouteBanner';
 import type { InstitutionRouteRequest } from '../core/institutionRouting';
 import { activeWorldConditionCards } from '../systems/WorldConditionSystem';
 
-export function LifeScreen({state,onResult,routeRequest,onReturnToMap}:{state:GameState;onResult:(r:EngineResult)=>void;routeRequest?:InstitutionRouteRequest;onReturnToMap?:()=>void}){
+export function LifeScreen({state,onResult,routeRequest,onReturnToMap,onOpenProfile}:{state:GameState;onResult:(r:EngineResult)=>void;routeRequest?:InstitutionRouteRequest;onReturnToMap?:()=>void;onOpenProfile:()=>void}){
   const routed=routeRequest?.resolved.tab==='life'?routeRequest:undefined;
   const bankingView=routed?.resolved.tab==='life'?routed.resolved.bankingView:undefined;
   const[bankingOpen,setBankingOpen]=useState(Boolean(routed));
@@ -27,7 +27,7 @@ export function LifeScreen({state,onResult,routeRequest,onReturnToMap}:{state:Ga
     <InstitutionRouteBanner request={routed} onBackToMap={onReturnToMap}/>
     <section className="identity-card">
       <Avatar character={state.character} size={58}/>
-      <div><p className="eyebrow">Generation {state.legacy.generation}</p><h1>{state.character.firstName} {state.character.lastName}</h1><p>Age {state.character.age} · {state.character.city}</p></div>
+      <button className="player-profile-open" onClick={onOpenProfile} aria-label={`Open profile for ${state.character.firstName} ${state.character.lastName}`}><p className="eyebrow">Generation {state.legacy.generation}</p><h1>{state.character.firstName} {state.character.lastName}</h1><p>Age {state.character.age} · {state.character.city}</p><small>View profile & inventory ›</small></button>
       <div className="life-money-summary">
         <div className="money-chip" title={exactMoney(state.finances.cash)}><small>Cash</small><div className="money-chip__value"><img className="money-chip__icon" src={EVERTHREAD_UI_ICONS.cash} alt="" aria-hidden="true"/><strong>{cashLabel}</strong></div></div>
         <div className="money-chip credit-chip" title={exactMoney(availableCredit)}><small>Credit available</small><div className="money-chip__value"><strong>{formatMoney(availableCredit)}</strong></div></div>

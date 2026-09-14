@@ -13,6 +13,7 @@ import { createEmptyCreditState } from './CreditSystem';
 import { emptyConsequenceSchedulerState } from './ConsequenceSystem';
 import { createEmptyWorldConditionState } from './WorldConditionSystem';
 import { CURRENT_SAVE_VERSION } from '../core/saveVersion';
+import { createEmptyPersonalInventoryState } from './PersonalInventorySystem';
 
 const traits = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
 const skinTones = ['porcelain','fair','light','medium','olive','tan','brown','deep brown','dark'];
@@ -104,7 +105,7 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     saveVersion:CURRENT_SAVE_VERSION,slotId:options.slotId??'slot-1',seed,rngCounter:rng.counter(),idCounter:0,currentYear:2026,character,npcs:{[p1.id]:p1,[p2.id]:p2},relationships,
     education:[], socialWorlds:[], employment:{history:[],partTimeJobIds:[],partTimeJobs:[],partTimeHistory:[],freelanceReputation:10,retired:false},
     finances:{cash:0,annualIncome:0,annualExpenses:0,taxesPaid:0,liabilities:[],credit:createEmptyCreditState()},
-    assets:{properties:[],vehicles:[],collectibles:[]}, investments:{positions:[],prices:{},marketRegime:'neutral',history:{}}, businesses:[],
+    assets:{properties:[],vehicles:[],collectibles:[]}, personalInventory:createEmptyPersonalInventoryState(), investments:{positions:[],prices:{},marketRegime:'neutral',history:{}}, businesses:[],
     health:{conditions:[],fitness:rng.int(35,70),wellness:rng.int(50,85),addictions:[]}, legal:{criminalRecord:[],investigationHeat:0,imprisoned:false,sentenceRemaining:0,paroleEligible:false},
     fame:{fame:0,publicReputation:50,followers:0,engagement:0,platforms:{},scandals:[]}, specialCareers:{}, pets:[],
     timeline:[{id:'birth',year:2026,age:0,category:'birth',importance:3,text:`You were born ${character.birthCircumstance} in ${locationLabel(country.id,city)}.`}],

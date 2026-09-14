@@ -55,6 +55,7 @@ import { runProgressiveDisclosureRegression } from './progressiveDisclosureRegre
 import { runPhase8ASettingFoundationRegression } from './phase8ASettingFoundationRegression';
 import { runPhase8BTownMapRegression } from './phase8BTownMapRegression';
 import { runPhase8CInstitutionRoutingRegression } from './phase8CInstitutionRoutingRegression';
+import { runPhase8DPlayerProfileInventoryRegression } from './phase8DPlayerProfileInventoryRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -114,5 +115,6 @@ try{const checks=runPhase7CWorldConditionRegression();console.log(`Phase 7C worl
 try{const checks=runPhase8ASettingFoundationRegression();console.log(`Phase 8A setting-foundation regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase8BTownMapRegression();console.log(`Phase 8B town-map regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase8CInstitutionRoutingRegression();console.log(`Phase 8C institution-routing regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runPhase8DPlayerProfileInventoryRegression();console.log(`Phase 8D player-profile/inventory regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

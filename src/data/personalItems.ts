@@ -1,0 +1,30 @@
+import type { PersonalItemDefinition } from '../types/content';
+
+export const personalItemDefinitions: PersonalItemDefinition[] = [
+  {id:'woven_scarf',name:'Woven Scarf',description:'A soft patterned scarf from a small Crossroads Mall maker.',category:'style',price:34,minAge:8,vendorPlaceId:'crossroads-mall',preferenceTags:['fashion','cozy','craft']},
+  {id:'pocket_journal',name:'Pocket Journal',description:'A clothbound notebook sized for plans, sketches, and secrets.',category:'hobby',price:18,minAge:6,vendorPlaceId:'crossroads-mall',preferenceTags:['writing','creative','quiet']},
+  {id:'sketchbook_set',name:'Sketchbook Set',description:'Heavy paper, pencils, and a compact case for drawing anywhere.',category:'hobby',price:29,minAge:6,vendorPlaceId:'crossroads-mall',preferenceTags:['art','creative','quiet']},
+  {id:'polished_fountain_pen',name:'Polished Fountain Pen',description:'A balanced everyday pen with a subtle woven-line engraving.',category:'gift',price:46,minAge:10,vendorPlaceId:'crossroads-mall',preferenceTags:['writing','professional','classic']},
+  {id:'threadfox_plush',name:'Little Threadfox Plush',description:'A ridiculous little fox mascot with an oversized stitched tail.',category:'gift',price:24,minAge:0,vendorPlaceId:'crossroads-mall',preferenceTags:['cute','cozy','playful']},
+  {id:'everthread_city_print',name:'Framed Everthread City Print',description:'A monochrome print of Everthread streets in a slim black frame.',category:'keepsake',price:58,minAge:8,vendorPlaceId:'crossroads-mall',preferenceTags:['art','local','home']},
+  {id:'tabletop_puzzle',name:'Tabletop Puzzle',description:'A compact mechanical puzzle that is harder than it looks.',category:'hobby',price:31,minAge:8,vendorPlaceId:'crossroads-mall',preferenceTags:['games','logic','playful']},
+  {id:'vinyl_discovery_record',name:'Vinyl Discovery Record',description:'A staff-picked record from a rotating shelf of Everthread artists.',category:'hobby',price:27,minAge:10,vendorPlaceId:'crossroads-mall',preferenceTags:['music','creative','local']},
+  {id:'scented_candle',name:'Scented Candle',description:'A clean-burning candle with cedar, rain, and warm-paper notes.',category:'gift',price:22,minAge:10,vendorPlaceId:'crossroads-mall',preferenceTags:['cozy','home','relaxing']},
+  {id:'enamel_pin_set',name:'Enamel Pin Set',description:'A small set of original Everthread landmark pins.',category:'keepsake',price:16,minAge:6,vendorPlaceId:'crossroads-mall',preferenceTags:['fashion','local','collecting']},
+  {id:'market_tea_sampler',name:'Market Tea Sampler',description:'A neatly boxed set of loose-leaf blends from Everthread Market.',category:'gift',price:21,minAge:10,vendorPlaceId:'everthread-market',preferenceTags:['food','cozy','relaxing']},
+  {id:'roasted_coffee_tin',name:'Roasted Coffee Tin',description:'A reusable tin packed with a small-batch local roast.',category:'gift',price:19,minAge:14,vendorPlaceId:'everthread-market',preferenceTags:['food','local','morning']},
+  {id:'wildflower_press_book',name:'Wildflower Press Book',description:'A little field book for pressing flowers and recording where they were found.',category:'hobby',price:17,minAge:6,vendorPlaceId:'everthread-market',preferenceTags:['nature','creative','quiet']},
+  {id:'picnic_blanket',name:'Foldaway Picnic Blanket',description:'A durable blanket that folds into its own carry strap.',category:'gift',price:38,minAge:8,vendorPlaceId:'everthread-market',preferenceTags:['outdoors','social','cozy']},
+  {id:'spice_blend_set',name:'Spice Blend Set',description:'Six small jars built around sweet, smoky, bright, and savory blends.',category:'gift',price:25,minAge:10,vendorPlaceId:'everthread-market',preferenceTags:['food','cooking','creative']},
+  {id:'baking_kit',name:'Weekend Baking Kit',description:'Reusable tools and a recipe booklet for a slow afternoon in the kitchen.',category:'hobby',price:32,minAge:8,vendorPlaceId:'everthread-market',preferenceTags:['food','cooking','home']},
+  {id:'ceramic_planter',name:'Small Ceramic Planter',description:'A hand-glazed planter with a simple woven-line motif.',category:'gift',price:28,minAge:8,vendorPlaceId:'everthread-market',preferenceTags:['plants','home','craft']},
+  {id:'local_recipe_book',name:'Everthread Recipe Book',description:'A compact community recipe collection with handwritten-style notes.',category:'keepsake',price:26,minAge:8,vendorPlaceId:'everthread-market',preferenceTags:['food','local','family']},
+  {id:'nightjar_mug',name:'Nightjar Diner Mug',description:'A sturdy diner mug stamped with the Nightjar crescent mark.',category:'keepsake',price:14,minAge:6,vendorPlaceId:'nightjar-diner',preferenceTags:['local','cozy','food']},
+  {id:'diner_postcard_pack',name:'Nightjar Postcard Pack',description:'A retro-styled set of postcards showing the diner at different hours.',category:'keepsake',price:9,minAge:4,vendorPlaceId:'nightjar-diner',preferenceTags:['local','art','nostalgia']},
+  {id:'counter_jukebox_token',name:'Jukebox Token Keepsake',description:'A polished replica token from the Nightjar counter display.',category:'keepsake',price:12,minAge:6,vendorPlaceId:'nightjar-diner',preferenceTags:['music','nostalgia','local']},
+  {id:'late_night_cocoa_set',name:'Late-Night Cocoa Set',description:'Two ceramic cups and a tin of the diner’s cocoa blend.',category:'gift',price:30,minAge:8,vendorPlaceId:'nightjar-diner',preferenceTags:['cozy','food','romance']},
+  {id:'nightjar_matchbook_art',name:'Framed Nightjar Matchbook Art',description:'A tiny framed print based on the diner’s old fictional matchbook design.',category:'keepsake',price:23,minAge:8,vendorPlaceId:'nightjar-diner',preferenceTags:['art','nostalgia','local']},
+  {id:'diner_counter_notebook',name:'Counter Notebook',description:'A pocket notebook patterned after the Nightjar’s black-and-cream menus.',category:'hobby',price:13,minAge:6,vendorPlaceId:'nightjar-diner',preferenceTags:['writing','local','creative']},
+];
+
+export const personalItemById = Object.fromEntries(personalItemDefinitions.map(item=>[item.id,item])) as Record<string,PersonalItemDefinition>;

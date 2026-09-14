@@ -124,6 +124,18 @@ export interface ChallengeDefinition {
 }
 
 
+
+export interface PersonalItemDefinition {
+  id: Id;
+  name: string;
+  description: string;
+  category: 'keepsake' | 'hobby' | 'style' | 'gift';
+  price: Money;
+  minAge: number;
+  vendorPlaceId: Id;
+  preferenceTags: string[];
+}
+
 export interface WorldConditionDefinition {
   id: Id;
   title: string;

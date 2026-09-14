@@ -15,6 +15,7 @@ import { syncPlayerFamilyTopology } from './FamilyTopologySystem';
 import { createEmptyCreditState } from './CreditSystem';
 import { resetConsequenceSchedulerForNewProtagonist } from './ConsequenceSystem';
 import { npcNamePoolCountryId } from './SettingSystem';
+import { createEmptyPersonalInventoryState } from './PersonalInventorySystem';
 
 export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
@@ -82,6 +83,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   const npcLife=originalChild.life!;const inheritedImmediately=newCharacter.age>=18;const ownPropertyConversions=(originalChild.assetPortfolio?.properties??[]).map(holding=>playerPropertyFromNpcHolding(state,holding));const ownProperties=ownPropertyConversions.map(item=>item.property);const ownMortgages=ownPropertyConversions.flatMap(item=>item.mortgage?[item.mortgage]:[]);const ownBusinesses=(originalChild.assetPortfolio?.businesses??[]).filter(item=>item.active).map(holding=>playerBusinessFromNpcHolding(state,holding));const personalDebt=Math.max(0,Math.round(npcLife.finance.debt-npcMortgageDebt(originalChild)));const personalDebtLoan=personalDebt>0?{id:makeStateId(state,'loan'),kind:'personal' as const,principal:personalDebt,balance:personalDebt,annualRate:.08,annualPayment:Math.max(500,Math.round(personalDebt/8)),remainingYears:8}:undefined;
   const mergeUnique=<T extends {id:string}>(a:T[],b:T[])=>{const seen=new Set<string>();return[...a,...b].filter(item=>!seen.has(item.id)&&Boolean(seen.add(item.id)));};
   state.assets={properties:mergeUnique(ownProperties,inheritedImmediately?settlement.properties:[]),vehicles:[],collectibles:inheritedImmediately?settlement.collectibles:[]};
+  state.personalInventory=createEmptyPersonalInventoryState();
   state.businesses=mergeUnique(ownBusinesses,inheritedImmediately?settlement.businesses:[]);
   state.investments={...state.investments,positions:inheritedImmediately?settlement.investments:[]};
   state.finances={cash:Math.max(0,originalChild.wealth)+(inheritedImmediately?settlement.cash:0),annualIncome:state.employment.current?.salary??0,annualExpenses:0,taxesPaid:0,liabilities:mergeUnique(ownMortgages,[...(inheritedImmediately?settlement.liabilities:[]),...(personalDebtLoan?[personalDebtLoan]:[])]),credit:createEmptyCreditState()};

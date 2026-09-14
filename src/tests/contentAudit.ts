@@ -7,6 +7,7 @@ import { achievements, challenges } from '../data/achievements';
 import { countries } from '../data/countries';
 import { propertyDefinitions, securities, businessIndustries, petVariants, vehicleDefinitions, luxuryVehicleDefinitions, collectibleDefinitions } from '../data/assets';
 import { TOWN_PLACES } from '../data/townPlaces';
+import { personalItemDefinitions } from '../data/personalItems';
 
 export interface ContentAudit {
   events:number;
@@ -30,6 +31,7 @@ export interface ContentAudit {
   countries:number;
   townPlaces:number;
   institutionServices:number;
+  personalItems:number;
   regionalNamePools:number;
   firstNamesPerPool:number;
   lastNamesPerPool:number;
@@ -43,7 +45,7 @@ export function auditContent():ContentAudit{
     relationshipEvents:(eventCategories.friends??0)+(eventCategories.family??0)+(eventCategories.romance??0)+(eventCategories.relationships??0),careerEvents:eventCategories.work??0,
     crimes:crimes.length,achievements:achievements.length,challenges:challenges.length,properties:propertyDefinitions.length,pets:petVariants.length,
     vehicles:vehicleDefinitions.length+luxuryVehicleDefinitions.length,securities:securities.length,businessIndustries:businessIndustries.length,
-    businessProducts:businessIndustries.reduce((sum,industry)=>sum+industry.productNames.length,0),collectibles:collectibleDefinitions.length,countries:countries.length,townPlaces:TOWN_PLACES.length,institutionServices:TOWN_PLACES.reduce((sum,place)=>sum+(place.routes?.length??0),0),
+    businessProducts:businessIndustries.reduce((sum,industry)=>sum+industry.productNames.length,0),collectibles:collectibleDefinitions.length,countries:countries.length,townPlaces:TOWN_PLACES.length,institutionServices:TOWN_PLACES.reduce((sum,place)=>sum+(place.routes?.length??0),0),personalItems:personalItemDefinitions.length,
     regionalNamePools:7,firstNamesPerPool:20,lastNamesPerPool:20,
   };
 }
@@ -69,6 +71,7 @@ export function formatContentAudit(audit:ContentAudit){
     `Countries: ${audit.countries}`,
     `Everthread town places: ${audit.townPlaces}`,
     `Everthread routed institution services: ${audit.institutionServices}`,
+    `Personal inventory items: ${audit.personalItems}`,
     `Regional name pools: ${audit.regionalNamePools}; ${audit.firstNamesPerPool} first + ${audit.lastNamesPerPool} last names each`,
   ];
   return lines.join('\n');

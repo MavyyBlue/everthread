@@ -77,7 +77,7 @@ export function runPhase7BSystemicStoryRegression(){
 
   const {state:missingSchool,world:missingWorld}=schoolFixture('phase7b-school-missing');const rngBeforeSchedule=missingSchool.rngCounter;const directSchool=scheduleSchoolConductStory(missingSchool,missingWorld);check(directSchool.scheduled&&missingSchool.rngCounter===rngBeforeSchedule,'30 direct systemic scheduling must remain gameplay-RNG neutral');missingSchool.socialWorlds=[];missingSchool.character.age=18;check(!nextDueConsequence(missingSchool)&&missingSchool.consequenceScheduler.history.some(item=>item.eventId==='systemic_school_conduct_return'&&item.reason==='missing_target:social_world'),'31 missing exact school world must cancel instead of redirecting to another school');
 
-  check(parenting.saveVersion===15&&school.saveVersion===15,'32 Phase 7B1 story state remains compatible with current schema 15');
+  check(parenting.saveVersion===16&&school.saveVersion===16,'32 Phase 7B1 story state remains compatible with current schema 16');
   const invariantErrors={parenting:validateState(parenting),friendship:validateState(friendship),reconciliation:validateState(reconciliation),marriage:validateState(validMarriage),school:validateState(school)};check(Object.values(invariantErrors).every(errors=>errors.length===0),`33 resolved systemic-story fixtures must satisfy global state invariants: ${JSON.stringify(invariantErrors)}`);
 
   return checks;

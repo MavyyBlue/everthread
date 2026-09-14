@@ -17,7 +17,7 @@ import type { ActionResultHandler } from '../core/actionVfx';
 
 const CURRENT_ROMANTIC_TYPES=new Set<GameState['relationships'][number]['type']>(['partner','fiance','spouse']);
 
-export function PeopleScreen({state,onResult}:{state:GameState;onResult:ActionResultHandler}){
+export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameState;onResult:ActionResultHandler;onOpenPlayerProfile:()=>void}){
   const[selectedNpcId,setSelectedNpcId]=useState<string>();
   const selected=selectedNpcId?state.relationships.find(r=>r.npcId===selectedNpcId):undefined;
   const npc=selected?state.npcs[selected.npcId]:undefined;
@@ -77,7 +77,7 @@ export function PeopleScreen({state,onResult}:{state:GameState;onResult:ActionRe
     :undefined;
 
   return <main className="screen people-workspace-screen">
-    <PeopleWorkspace state={state} revision={gameEngine.getRevision()} onSelect={setSelectedNpcId} floatingActions={floatingActions}/>
+    <PeopleWorkspace state={state} revision={gameEngine.getRevision()} onSelect={setSelectedNpcId} onSelectPlayer={onOpenPlayerProfile} floatingActions={floatingActions}/>
     {personSheet}
   </main>;
 }

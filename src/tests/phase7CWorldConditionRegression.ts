@@ -41,9 +41,9 @@ export function runPhase7CWorldConditionRegression(){
   check(lifeEvents.length===691&&worldConditionDefinitions.every(definition=>!lifeEvents.some(event=>event.id===definition.id)),'04 world conditions must remain outside the 691 ordinary random-event pool');
 
   const fresh=adult('phase7c-fresh');
-  check(fresh.saveVersion===15&&fresh.worldConditions.active.length===0&&fresh.worldConditions.history.length===0,'05 new games must initialize schema 15 with an empty bounded world-condition state');
+  check(fresh.saveVersion===16&&fresh.worldConditions.active.length===0&&fresh.worldConditions.history.length===0,'05 new games must initialize schema 16 with an empty bounded world-condition state');
   const legacy=structuredClone(fresh) as GameState;delete (legacy as unknown as {worldConditions?:GameState['worldConditions']}).worldConditions;legacy.saveVersion=13;const legacyRng=legacy.rngCounter;const legacyId=legacy.idCounter;const migrated=migrateSave(legacy);
-  check(migrated.saveVersion===15&&migrated.worldConditions.active.length===0&&migrated.worldConditions.history.length===0,'06 schema-13 migration must add empty world-condition state without retroactive history');
+  check(migrated.saveVersion===16&&migrated.worldConditions.active.length===0&&migrated.worldConditions.history.length===0,'06 schema-13 migration must add empty world-condition state without retroactive history');
   check(migrated.rngCounter===legacyRng&&migrated.idCounter===legacyId,'07 world-condition migration must be RNG-neutral and runtime-ID-neutral');
   const migratedAgain=migrateSave(structuredClone(migrated));check(JSON.stringify(migratedAgain.worldConditions)===JSON.stringify(migrated.worldConditions),'08 migration must be idempotent');
 
@@ -105,7 +105,7 @@ export function runPhase7CWorldConditionRegression(){
 
   const saved=adult('phase7c-save');const savedCondition=attachCondition(saved,'media_frenzy',3);const roundTrip=importSave(exportSave(saved));const restored=roundTrip.worldConditions.active.find(item=>item.id===savedCondition.id);
   check(restored?.definitionId==='media_frenzy'&&restored.intensity===3&&restored.endYear===savedCondition.endYear,'38 save round-trip must preserve exact condition identity, intensity, and duration');
-  check(roundTrip.saveVersion===15&&validateState(roundTrip).length===0,'39 restored Phase 7C state must validate on schema 15');
+  check(roundTrip.saveVersion===16&&validateState(roundTrip).length===0,'39 restored Phase 7C state must validate on schema 16');
 
   const queueIsolation=adult('phase7c-queue-isolation');const delayedBefore=queueIsolation.delayedEvents.length;const pendingBefore=queueIsolation.pendingEvent;for(let i=0;i<20;i++){queueIsolation.currentYear+=1;queueIsolation.character.age+=1;processWorldConditionsYear(queueIsolation);}
   check(queueIsolation.delayedEvents.length===delayedBefore&&queueIsolation.pendingEvent===pendingBefore,'40 world conditions must not create a parallel delayed-event/pending-event queue');

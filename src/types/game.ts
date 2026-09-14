@@ -418,6 +418,23 @@ export interface AssetState {
   collectibles: CollectibleAsset[];
 }
 
+/**
+ * Non-financial personal possessions owned by the playable character.
+ * Valuable assets remain authoritative in AssetState and are only projected into profile UI.
+ */
+export interface PersonalItemInstance {
+  id: Id;
+  itemId: Id;
+  acquiredAge: number;
+  acquiredYear: number;
+  sourcePlaceId: Id;
+  purchasePrice: Money;
+}
+
+export interface PersonalInventoryState {
+  items: PersonalItemInstance[];
+}
+
 export interface InvestmentPosition {
   securityId: Id;
   units: number;
@@ -760,6 +777,7 @@ export interface GameState {
   employment: EmploymentState;
   finances: FinancesState;
   assets: AssetState;
+  personalInventory: PersonalInventoryState;
   investments: InvestmentState;
   businesses: Business[];
   health: HealthState;

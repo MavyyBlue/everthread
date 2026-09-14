@@ -69,6 +69,8 @@ export const ACTION_POLICIES = {
   'pet.adopt': { maxPerAge: 2, message: 'You have already adopted enough pets for one year.' },
   'collectible.purchase.total': { maxPerAge: 4, message: 'You have already spent enough time hunting for collectibles this year.' },
   'collectible.purchase.item': { maxPerAge: 1, message: 'You already pursued that collectible this year.' },
+  'personal.inventory.purchase.total': { maxPerAge: 6, message: 'You have already done enough personal shopping this year. Age up before buying more.' },
+  'personal.inventory.purchase.item': { maxPerAge: 2, message: 'You already picked up two of that personal item this year.' },
   'pet.total': { maxPerAge: 3, message: 'You have already spent substantial time caring for this pet this year.' },
   'pet.action': { maxPerAge: 1, message: 'You already did that activity with this pet this year.' },
   'credit.application.total': { maxPerAge: 2, message: 'You have already made enough formal credit applications this year. Age up before applying again.' },

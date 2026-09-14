@@ -29,7 +29,7 @@ function nodeSize(kind:PeopleWorkspaceLayoutNode['kind']){
   return{w:158,h:78};
 }
 
-export function PeopleWorkspace({state,revision,onSelect,floatingActions}:{state:GameState;revision:number;onSelect:(npcId:string)=>void;floatingActions?:ReactNode}){
+export function PeopleWorkspace({state,revision,onSelect,onSelectPlayer,floatingActions}:{state:GameState;revision:number;onSelect:(npcId:string)=>void;onSelectPlayer?:()=>void;floatingActions?:ReactNode}){
   const viewportRef=useRef<HTMLDivElement|null>(null);
   const pointersRef=useRef(new Map<number,PointerPoint>());
   const gestureRef=useRef<{lastSingle?:PointerPoint;distance?:number;midpoint?:PointerPoint}>({});
@@ -231,7 +231,7 @@ export function PeopleWorkspace({state,revision,onSelect,floatingActions}:{state
           })}
         </svg>
         {renderedNodes.map(node=>{
-          if(node.kind==='player')return <div className="threadspace-node threadspace-node--player" key={node.id} style={{left:node.x,top:node.y}}><span className="threadspace-node-glyph">YOU</span><div><strong>{node.name}</strong><small>Age {state.character.age} · center of this life</small></div></div>;
+          if(node.kind==='player')return <button className="threadspace-node threadspace-node--player" key={node.id} style={{left:node.x,top:node.y}} onClick={onSelectPlayer} aria-label={`Open your profile: ${node.name}`}><span className="threadspace-node-glyph">YOU</span><div><strong>{node.name}</strong><small>Age {state.character.age} · tap for profile</small></div></button>;
           if(node.kind==='folder'){
             const folderId=node.folderId!;const folder=model.folders.find(item=>item.id===folderId)!;
             return <button className={`threadspace-node threadspace-node--folder ${node.expanded?'expanded':''}`} key={node.id} style={{left:node.x,top:node.y}} onClick={()=>toggleFolder(folderId)} aria-expanded={node.expanded}>
