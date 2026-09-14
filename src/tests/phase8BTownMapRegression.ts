@@ -4,6 +4,7 @@ import { CURRENT_SAVE_VERSION } from '../core/saveVersion';
 import { createNewGame } from '../systems/CharacterSystem';
 import {
   buildTownMapProjection,
+  coverTownMapCamera,
   clampTownMapScale,
   constrainTownMapCamera,
   fitTownMapCamera,
@@ -25,6 +26,7 @@ export function runPhase8BTownMapRegression(){
   verify(new Set(TOWN_DISTRICTS.map(district=>district.id)).size===TOWN_DISTRICTS.length,'3 district layout ids must be unique');
   verify(TOWN_PLACES.every(place=>TOWN_DISTRICTS.some(district=>district.id===place.districtId)),'4 every place must belong to a real authored district');
   verify(TOWN_PLACES.every(place=>place.map.x>=0&&place.map.x<=TOWN_MAP_WIDTH&&place.map.y>=0&&place.map.y<=TOWN_MAP_HEIGHT),'5 every place coordinate must stay inside the authored map bounds');
+  verify(TOWN_MAP_WIDTH===1536&&TOWN_MAP_HEIGHT===961,'5b the authored coordinate system must match the supplied Everthread map artwork native dimensions');
   verify(TOWN_DISTRICTS.every(d=>d.map.x>=0&&d.map.y>=0&&d.map.x+d.map.width<=TOWN_MAP_WIDTH&&d.map.y+d.map.height<=TOWN_MAP_HEIGHT),'6 district rectangles must stay inside map bounds');
 
   const requiredIds=['central-everthread-bank','loomline-motors','hearthline-realty','threadwell-residential','crossroads-mall','nightjar-diner','weaver-park','everthread-market','everthread-school','everthread-college','everthread-general-hospital','pulseworks-gym','silverframe-studios','facet-modeling-agency','everthread-speedway','everthread-stadium','everthread-defense-garrison','everthread-city-hall','everthread-courthouse','public-safety-center','everthread-correctional','everthread-air-terminal','loomworks-business-district','blackline-freight-yard'];
@@ -62,9 +64,12 @@ export function runPhase8BTownMapRegression(){
   verify(none.places.length===0,'24 explicitly turning every category off must produce a deliberately blank filtered map');
 
   for(const width of [360,390,412,430]){
-    const camera=fitTownMapCamera({width,height:560});
+    const viewport={width,height:560};
+    const camera=fitTownMapCamera(viewport);
     verify(Number.isFinite(camera.scale)&&camera.scale>=.2&&camera.scale<=2.2,`25-${width} mobile fit must produce a bounded valid scale at ${width}px`);
     verify(Math.abs((camera.x+TOWN_MAP_WIDTH*camera.scale/2)-width/2)<.001,`26-${width} fit must center the authored town horizontally at ${width}px`);
+    const cover=coverTownMapCamera(viewport);
+    verify(TOWN_MAP_WIDTH*cover.scale>=width&&TOWN_MAP_HEIGHT*cover.scale>=560,`26b-${width} initial map view must fill the flush Threadspace viewport without letterbox gaps at ${width}px`);
   }
   verify(clampTownMapScale(-2)===.2&&clampTownMapScale(9)===2.2,'27 zoom scale must remain bounded');
   const constrained=constrainTownMapCamera({x:9999,y:-9999,scale:1},{width:390,height:560});

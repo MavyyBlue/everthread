@@ -63,6 +63,11 @@ export function fitTownMapCamera(viewport:TownMapViewport,padding=28):TownMapCam
   return{x:(viewport.width-TOWN_MAP_WIDTH*scale)/2,y:(viewport.height-TOWN_MAP_HEIGHT*scale)/2,scale};
 }
 
+export function coverTownMapCamera(viewport:TownMapViewport,focusX=TOWN_MAP_WIDTH/2,focusY=TOWN_MAP_HEIGHT/2):TownMapCamera{
+  const scale=clampTownMapScale(Math.max(viewport.width/TOWN_MAP_WIDTH,viewport.height/TOWN_MAP_HEIGHT));
+  return constrainTownMapCamera({x:viewport.width/2-focusX*scale,y:viewport.height/2-focusY*scale,scale},viewport,0);
+}
+
 export function constrainTownMapCamera(camera:TownMapCamera,viewport:TownMapViewport,overscroll=72):TownMapCamera{
   const scale=clampTownMapScale(camera.scale);
   const width=TOWN_MAP_WIDTH*scale,height=TOWN_MAP_HEIGHT*scale;

@@ -5,6 +5,7 @@ import {
   buildTownMapProjection,
   clampTownMapScale,
   constrainTownMapCamera,
+  coverTownMapCamera,
   fitTownMapCamera,
   townMapLabelVisible,
   townMapMarkerVisible,
@@ -13,11 +14,10 @@ import {
   type TownMapCamera,
 } from '../systems/TownMapSystem';
 import type { GameState } from '../types/game';
+import townMapArtwork from '../assets/everthread-town-map.png';
 import './TownMapScreen.css';
 
 type PointerPoint={x:number;y:number};
-const districtClass=(index:number)=>`town-map-district town-map-district--${(index%4)+1}`;
-
 export default function TownMapScreen({state}:{state:GameState}){
   const viewportRef=useRef<HTMLDivElement|null>(null);
   const pointersRef=useRef(new Map<number,PointerPoint>());
@@ -37,7 +37,7 @@ export default function TownMapScreen({state}:{state:GameState}){
     const element=viewportRef.current;if(!element)return;
     const read=()=>{
       const rect=element.getBoundingClientRect();const next={width:Math.max(1,rect.width),height:Math.max(1,rect.height)};setViewport(next);
-      if(!initialized.current){initialized.current=true;setCamera(fitTownMapCamera(next));}
+      if(!initialized.current){initialized.current=true;setCamera(coverTownMapCamera(next));}
       else setCamera(current=>constrainTownMapCamera(current,next));
     };
     read();const observer=new ResizeObserver(read);observer.observe(element);return()=>observer.disconnect();
@@ -97,15 +97,7 @@ export default function TownMapScreen({state}:{state:GameState}){
     </aside>}
     <div className="town-map-viewport" ref={viewportRef} onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer}>
       <div className="town-map-world" style={{width:TOWN_MAP_WIDTH,height:TOWN_MAP_HEIGHT,transform:`translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`}}>
-        {TOWN_DISTRICTS.map((district,index)=><section key={district.id} className={districtClass(index)} style={{left:district.map.x,top:district.map.y,width:district.map.width,height:district.map.height}} aria-hidden="true"><strong>{district.label}</strong><small>{district.description}</small></section>)}
-        <svg className="town-map-roads" width={TOWN_MAP_WIDTH} height={TOWN_MAP_HEIGHT} viewBox={`0 0 ${TOWN_MAP_WIDTH} ${TOWN_MAP_HEIGHT}`} aria-hidden="true">
-          <path className="town-map-road town-map-road--major" d="M 40 375 C 330 350, 640 380, 1010 365 S 1320 350, 1410 385"/>
-          <path className="town-map-road town-map-road--major" d="M 485 30 C 475 290, 485 520, 500 760 S 515 980, 520 1070"/>
-          <path className="town-map-road town-map-road--major" d="M 985 40 C 965 300, 980 530, 995 760 S 1005 960, 1015 1070"/>
-          <path className="town-map-road" d="M 45 770 C 350 755, 710 770, 1030 760 S 1290 750, 1400 770"/>
-          <path className="town-map-road" d="M 55 105 C 300 125, 560 115, 960 110 S 1230 115, 1390 150"/>
-          <path className="town-map-road" d="M 55 1040 C 420 1010, 820 1035, 1390 1015"/>
-        </svg>
+        <img className="town-map-artwork" src={townMapArtwork} width={TOWN_MAP_WIDTH} height={TOWN_MAP_HEIGHT} draggable={false} alt="" aria-hidden="true"/>
         {renderedPlaces.map(place=><button key={place.id} className={`town-map-place town-map-place--${place.category} ${selectedId===place.id?'selected':''}`} style={{left:place.map.x,top:place.map.y,transform:`translate(-50%,-50%) scale(${placeScale})`}} onClick={()=>setSelectedId(place.id)} aria-label={`Open ${place.label}`}>
           <span className="town-map-place-glyph" aria-hidden="true">{place.map.glyph}</span>
           {townMapLabelVisible(place,camera.scale)&&<span className="town-map-place-label">{place.shortLabel}</span>}
