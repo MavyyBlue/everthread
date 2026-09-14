@@ -3,7 +3,7 @@
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
 Certified save schema: 13
-Newest certified expanded source: Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`
+Newest certified expanded source: Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003` (documentation-only synchronization)
 Certified gameplay baseline: Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`
 
 ## Product direction
@@ -28,15 +28,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Phase 7B2 — Ownership & Workplace Echoes (CI Green, Run #118)
+### Phase 7B3 — Special-Career Long-Tail Echoes (local candidate; CI certification pending)
 
-Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237` is the active certified gameplay/source baseline. Phase 7B2 extends the already-certified systemic-story pattern into property, business, and ordinary workplace history without creating new authorities. Successful property renovation, business founding, product expansion, manager feedback, and formal coworker concerns request exact future consequences through `SystemicStorySystem` → `ConsequenceSystem`. Property targets must still exist; workplace targets preserve the exact persistent SocialWorld and exact NPC even after that workplace archives; invalid/dead targets cancel deterministically.
+Newest certified repository source is docs-only Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`; gameplay behavior baseline remains Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`. A fresh central-feedback review immediately before implementation found no active triaged/new/untriaged reports and advanced the checkpoint to Run #119.
 
-Save schema remains 13. Scheduling is RNG-neutral and does not alter the 691 ordinary random-event definitions. Property/business effects mutate exact authoritative records; workplace consequences reuse persistent SocialWorld, relationship, NPC opinion/memory, and timeline authorities. No copied names or shadow ownership records are persisted.
+Phase 7B3 fills the delayed-story gap across Combat, Military, and Politics—the persistent 4E ecosystems that are outside the older Phase 4D8 annual `SpecialCareerStorySystem` scanner. Five explicit player actions now request future consequences through `SystemicStorySystem` → `ConsequenceSystem`: combat training, a sanctioned bout, military training, a policy push, and a press confrontation. Existing annual special-career story scanning remains untouched.
 
-Canonical Run #118 passed `phase7B2OwnershipWorkRegression.ts` **35/35**, both TypeScript gates, the complete regression wall, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, Feedback Reporting 20/20, Feedback Central Inbox 23/23, certified restore smoke, and the **168-module** production build. Certified source SHA-256 is `bba33e3f10e6d4a81e321acbd9aad5051f9092ac4c68e220e613bb62a4be5075`; certified artifact `10328692946` and Pages artifact `10328503412` both published successfully.
+When the relevant world/person already exists, the consequence retains the exact archived-capable `SocialWorld` plus exact NPC and career track. Combat training/bouts always carry exact coach/rival context. Military and politics can safely fall back to a career-only target if the action happens before annual processing creates the persistent unit/office; the action does not create a world early merely to satisfy story presentation. Invalid exact targets cancel rather than retarget.
 
-A fresh live feedback review after certification still finds **0 unresolved reports**. The next planned Phase 7B gameplay slice is special-career long-tail echoes, using the same scheduler/target pattern.
+`ChoiceEffect.specialCareer` is deliberately narrow: only bounded `skill`, `reputation`, and `approval` deltas can be applied to the exact `payload.careerKind`. It cannot author fight results, championships, contracts, seasons, elections, terms, promotions/ranks, projects, or other career lifecycle truth. Save schema remains 13; random events remain 691; scheduling is gameplay-RNG neutral.
+
+Dedicated `phase7B3SpecialCareerEchoRegression.ts` is **36/36** locally. Both TypeScript gates, the complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, Special-career Story 37/37, Path-story 68/68, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, and both feedback suites pass. Production build is green at **168 modules**. GitHub Actions remains final certification authority.
+
+Mavyy's sequencing rule is explicit: **after Phase 7 is complete, do not invent or begin another implementation phase. Stop implementation planning and brainstorm the future direction together first.**
 
 ## Recent corrective history
 

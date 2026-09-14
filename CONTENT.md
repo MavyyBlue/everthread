@@ -5,7 +5,7 @@ Source of truth: executable definitions under `src/data/`; use `npm run content:
 
 ## Phase 7B systemic-story content note
 
-The ordinary/random event library remains exactly **691** definitions. Phase 7B1 contributes **5** probability-zero system-owned delayed story definitions outside that pool; the Phase 7B2 candidate contributes **5 more**, bringing the systemic delayed-story registry to **10** while leaving random-selection counts/RNG shape unchanged. These definitions are invoked only by authoritative player actions through the consequence scheduler.
+The ordinary/random event library remains exactly **691** definitions. Phase 7B1 contributes **5** probability-zero system-owned delayed story definitions outside that pool; certified Phase 7B2 contributes **5 more**; the Phase 7B3 candidate adds **5** combat/military/politics echoes, bringing the systemic delayed-story registry to **15** while leaving random-selection counts/RNG shape unchanged. These definitions are invoked only by authoritative player actions through the consequence scheduler. The older dedicated special-career story registry remains separate at **18** definitions and its annual scanner is unchanged.
 
 ## Phase 7A systems/content note
 
@@ -91,7 +91,7 @@ Not every button should have a cooldown. Investment buy/sell and business tuning
 
 Total ordinary/random event definitions: 691.
 
-Phase 7B1 adds **5 probability-zero system-owned delayed story definitions** outside that random pool: parenting presence, school conduct, friend conflict, reconciliation, and marriage expectations. Phase 7B2 adds **5 more** for property renovation, business founding, business product launches, manager feedback, and formal coworker concerns. All are triggered by real player actions through the consequence scheduler and therefore do not change the 691-event random-selection count.
+Phase 7B1 adds **5 probability-zero system-owned delayed story definitions** outside that random pool: parenting presence, school conduct, friend conflict, reconciliation, and marriage expectations. Phase 7B2 adds **5 more** for property renovation, business founding, business product launches, manager feedback, and formal coworker concerns. Phase 7B3 adds **5 candidate definitions** for combat training, sanctioned-bout rivalry, military training, a policy record, and a political press confrontation. All are triggered by real player actions through the consequence scheduler and therefore do not change the 691-event random-selection count.
 
 Routine events use multiple description variants and data-defined choices. The 691 count is based on distinct event definitions produced from scenario families rather than copies of identical prose. Five explicit delayed-consequence chains cover romantic secrecy, family favors, ignored health warnings, workplace shortcuts, and broken confidences with persistent context.
 

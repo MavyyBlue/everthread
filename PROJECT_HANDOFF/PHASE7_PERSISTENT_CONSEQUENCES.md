@@ -2,9 +2,9 @@
 
 ## Status
 
-**Phase 7A, Phase 7B1, and Phase 7B2 are CI Green, certified, and deployed. Run #117 certified the cross-cutting progressive-disclosure correction; Run #118 certified Ownership & Workplace Echoes.**
+**Phase 7A, Phase 7B1, and Phase 7B2 are CI Green, certified, and deployed. Phase 7B3 — Special-Career Long-Tail Echoes is the active local candidate.**
 
-Newest certified gameplay/source baseline: GitHub Actions **Run #118** (`34792171294`), expanded source `a4d04523e18128044c00f960f6db5fcd306a8237`, package `everthread-life-unwritten@0.12.0`, certified save schema **13**. Run #118 preserved Phase 7A scheduler authority, Phase 7B1 33/33, and progressive disclosure while certifying Phase 7B2 at 35/35.
+Newest certified repository source is docs-only GitHub Actions **Run #119** (`34793035216`), expanded source `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`. Newest gameplay-changing baseline remains **Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`**, package `everthread-life-unwritten@0.12.0`, save schema **13**. Phase 7B3 is built on Run #119 source and is not certified until canonical CI passes.
 
 ## Why Phase 7A came first
 
@@ -82,13 +82,17 @@ Dedicated `phase7BSystemicStoryRegression.ts` is **33/33 in Run #115**. The comp
 
 **Certified Phase 7B2 — Ownership & Workplace Echoes:** five additional probability-zero stories are action-driven by property renovation, business founding, business product launch, manager feedback, and formal coworker concerns. Exact property/business/SocialWorld/NPC refs are scheduled through the same authority. Sold/missing properties cancel; archived workplace history may still surface through the same persistent world/person; dead/missing people or worlds cancel rather than retarget. Property effects update exact condition/value, business effects update exact demand/reputation, and workplace/NPC effects reuse existing authorities. Dedicated regression is **35/35 in Run #118**; save schema remains 13 and the random pool remains 691.
 
-Special-career long-tail stories are the next planned 7B slice. They should bind exact persistent career worlds/projects/contracts/people through existing career authorities and the same scheduler rather than becoming a parallel career-story state machine.
+**Active Phase 7B3 candidate — Special-Career Long-Tail Echoes:** five probability-zero stories are requested only by explicit actions in Combat, Military, and Politics. Combat training binds the exact coach/world/career for three years; a sanctioned bout binds the exact rival/world/career for two years; military training schedules a three-year service echo with exact posting/commander when that world already exists; policy and press actions schedule two-year political echoes with exact office/chief or opposition leader when available. Military/politics may fall back to career-only targeting rather than violating their certified rule that entry actions do not create persistent worlds before annual processing.
+
+This slice deliberately leaves `SpecialCareerStorySystem` unchanged: its annual Phase 4D8 mentor/rival/path scanner remains a separate established content mechanism. Phase 7B3 adds no second scanner. `ChoiceEffect.specialCareer` is narrow and can adjust only bounded `skill`, `reputation`, or `approval`; it cannot author lifecycle outcomes such as fights, championships, contracts, elections, terms, ranks, promotions, projects, or retirements. Dedicated regression is **36/36 locally**; full wall/build are green; save schema remains 13 and random pool remains 691. Canonical CI is pending.
 
 ## Phase 7C — Persistent world conditions
 
 After scheduler and delayed-story foundations are stable, add national/world conditions with multi-year duration and real systemic effects. Conditions should modify existing authorities—employment, salary pressure, business demand, housing, investments, travel, fame/media, finance, etc.—instead of existing as standalone flavor popups.
 
 World conditions must remain bounded, deterministic under the seed, inspectable enough for player understanding, and compatible with dynasty-scale simulation.
+
+When Phase 7C and the Phase 7 closeout are complete, **stop implementation planning**. Mavyy and Yuki will brainstorm what comes next before any new macro phase or implementation roadmap is created.
 
 ## First files to inspect before Phase 7B implementation
 

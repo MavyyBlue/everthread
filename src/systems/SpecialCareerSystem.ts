@@ -8,6 +8,9 @@ import { ensureSpecialCareerRelationships, processSpecialCareerEcosystemsYear } 
 import { beginActingProject, beginDirectingProject, screenCareerOffer } from './ScreenCareerCycleSystem';
 import { beginMusicTour, launchMusicRelease, musicPartnershipDecision, processMusicCareerYear } from './MusicCareerCycleSystem';
 import { processCombatCareerYear, takeCombatFight, trainCombatCareer } from './CombatCareerWorldSystem';
+import { activeMilitaryCareerWorld, militaryCareerWorldView } from './MilitaryCareerWorldSystem';
+import { activePoliticsCareerWorld, politicsCareerWorldView } from './PoliticsCareerWorldSystem';
+import { scheduleMilitaryTrainingEcho, schedulePoliticsPolicyEcho, schedulePoliticsPressEcho } from './SystemicStorySystem';
 
 export const SPECIAL_CAREER_MIN_AGES={acting:8,music:0,sports:8,combat:12,politics:25,royalty:0,military:18,crimeOrg:18,modeling:14,racing:16,directing:21} as const;
 export const ACTING_AUDITION_MIN_AGE=14;
@@ -127,7 +130,7 @@ export function enlistMilitary(state:GameState,branch:string,officer=false):Engi
 }
 
 export function militaryTraining(state:GameState):EngineResult {
-  const r=track(state,'military');if(!r.active)return{success:false,messages:[{text:'You are not in military service.'}]};const gate=consumeAction(state,{policy:'special.training',target:'military'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};setN(r,'skill',clamp(n(r,'skill')+4));state.character.secondary.discipline=clamp(state.character.secondary.discipline+3);state.health.fitness=clamp(state.health.fitness+2);return{success:true,messages:[{text:'You completed another period of training.'}]};
+  const r=track(state,'military');if(!r.active)return{success:false,messages:[{text:'You are not in military service.'}]};const gate=consumeAction(state,{policy:'special.training',target:'military'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};setN(r,'skill',clamp(n(r,'skill')+4));state.character.secondary.discipline=clamp(state.character.secondary.discipline+3);state.health.fitness=clamp(state.health.fitness+2);const world=activeMilitaryCareerWorld(state);const view=world?militaryCareerWorldView(state,world):undefined;scheduleMilitaryTrainingEcho(state,world?.id,view?.commanderNpcId);return{success:true,messages:[{text:'You completed another period of training.'}]};
 }
 
 export function enterPolitics(state:GameState,officeLevel=1):EngineResult {
@@ -135,7 +138,7 @@ export function enterPolitics(state:GameState,officeLevel=1):EngineResult {
 }
 
 export function politicalAction(state:GameState,action:'speech'|'policy'|'press'|'fundraise'):EngineResult {
-  const r=track(state,'politics');if(!r.office)return{success:false,messages:[{text:'You do not currently hold elected office.'}]};const gate=consumeAction(state,[{policy:'special.politics.total'},{policy:'special.politics.kind',target:action}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-political-action`,state.rngCounter);const delta=action==='policy'?rng.int(-6,8):action==='speech'?rng.int(-3,6):action==='press'?rng.int(-5,5):rng.int(-2,3);setN(r,'approval',clamp(n(r,'approval',50)+delta));if(action==='fundraise')state.finances.cash+=rng.int(0,2500);state.rngCounter=rng.counter();return{success:delta>=0,messages:[{text:`Your ${action} changed approval by ${delta>=0?'+':''}${delta}.`}]};
+  const r=track(state,'politics');if(!r.office)return{success:false,messages:[{text:'You do not currently hold elected office.'}]};const gate=consumeAction(state,[{policy:'special.politics.total'},{policy:'special.politics.kind',target:action}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const rng=createRng(`${state.seed}-political-action`,state.rngCounter);const delta=action==='policy'?rng.int(-6,8):action==='speech'?rng.int(-3,6):action==='press'?rng.int(-5,5):rng.int(-2,3);setN(r,'approval',clamp(n(r,'approval',50)+delta));if(action==='fundraise')state.finances.cash+=rng.int(0,2500);state.rngCounter=rng.counter();const world=activePoliticsCareerWorld(state);const view=world?politicsCareerWorldView(state,world):undefined;if(action==='policy')schedulePoliticsPolicyEcho(state,world?.id,view?.chiefStaffNpcId);else if(action==='press')schedulePoliticsPressEcho(state,world?.id,view?.opponentNpcId);return{success:delta>=0,messages:[{text:`Your ${action} changed approval by ${delta>=0?'+':''}${delta}.`}]};
 }
 
 export function royalDuty(state:GameState):EngineResult {

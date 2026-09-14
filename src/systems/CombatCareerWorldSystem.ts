@@ -6,6 +6,7 @@ import type { EngineResult, GameState, Npc, Orientation, RelationshipType, Socia
 import { ensureNpcLife } from './NpcLifeSystem';
 import { assignGeneratedNpcOrientation } from './NpcOrientationSystem';
 import { pickCollisionAwareNpcName } from './NpcNamingSystem';
+import { scheduleCombatBoutEcho, scheduleCombatTrainingEcho } from './SystemicStorySystem';
 
 export const COMBAT_TRAINING_MIN_AGE=12;
 export const COMBAT_FIGHT_MIN_AGE=16;
@@ -126,6 +127,7 @@ export function trainCombatCareer(state:GameState):EngineResult{
   if(state.character.age<COMBAT_TRAINING_MIN_AGE)return{success:false,messages:[{text:'Combat-sport training is not available yet.'}]};const gate=consumeAction(state,{policy:'special.training',target:'combat'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const career=track(state);career.active=true;const world=ensureCombatCareerWorld(state,{announce:!activeCombatCareerWorld(state)});const view=combatCareerWorldView(state,world);const coachBonus=view&&view.coachSupport>=70?1:view&&view.coachSupport<34?-1:0;
   setN(career,'striking',clamp(n(career,'striking',state.character.talents.combat*.3)+Math.max(1,3+coachBonus)));setN(career,'grappling',clamp(n(career,'grappling',state.character.talents.combat*.3)+Math.max(1,3+coachBonus)));setN(career,'defense',clamp(n(career,'defense',25)+Math.max(1,2+coachBonus)));setN(career,'stamina',clamp(n(career,'stamina',state.health.fitness)+Math.max(1,3+coachBonus)));setN(career,'fightIQ',clamp(n(career,'fightIQ',state.character.stats.intelligence*.4)+Math.max(1,2+coachBonus)));syncCompositeSkill(career);state.health.fitness=clamp(state.health.fitness+2);state.character.secondary.athleticism=clamp(state.character.secondary.athleticism+1);
+  if(view?.coachNpcId)scheduleCombatTrainingEcho(state,world.id,view.coachNpcId);
   return{success:true,messages:[{text:`You completed a combat-sport training block at ${world.name}. Your persistent coaches and training partners now influence the environment around your career.`}]};
 }
 
@@ -139,7 +141,7 @@ export function takeCombatFight(state:GameState,miniGameScore?:number):EngineRes
   if(opponentRel){const delta=win?-3:2;opponentRel.score=clamp(opponentRel.score+delta);opponent.hiddenOpinion=clamp(opponent.hiddenOpinion+delta*.5,-100,100);setN(career,'rivalryTemperature',clamp(100-opponentRel.score));}
   opponent.memories.push({id:makeStateId(state,'memory'),year:state.currentYear,age:state.character.age,kind:'combat_bout',sentiment:win?-5:2,summary:win?`${state.character.firstName} defeated you in a fictional sanctioned bout connected to ${world.name}.`:`You defeated ${state.character.firstName} in a fictional sanctioned bout connected to ${world.name}.`,permanent:false});opponent.memories=opponent.memories.slice(-36);
   const earnedFirstTitle=n(career,'wins')>=10&&n(career,'reputation')>=65&&n(career,'titles')<1;if(earnedFirstTitle){setN(career,'titles',1);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`Your record through ${world.name} earned you your first fictional combat-sport title.`,npcIds:[opponentId]});}
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:win?2:1,text:win?`You defeated ${opponent.firstName} ${opponent.lastName} in a fictional sanctioned bout connected to ${world.name}${purse?` and earned ${purse.toLocaleString()}`:''}.`:`${opponent.firstName} ${opponent.lastName} defeated you in a fictional sanctioned bout connected to ${world.name}.`,npcIds:[opponentId]});state.rngCounter=rng.counter();
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:win?2:1,text:win?`You defeated ${opponent.firstName} ${opponent.lastName} in a fictional sanctioned bout connected to ${world.name}${purse?` and earned ${purse.toLocaleString()}`:''}.`:`${opponent.firstName} ${opponent.lastName} defeated you in a fictional sanctioned bout connected to ${world.name}.`,npcIds:[opponentId]});state.rngCounter=rng.counter();scheduleCombatBoutEcho(state,world.id,opponentId);
   return{success:win,messages:[{text:win?`You won against ${opponent.firstName} ${opponent.lastName}. The persistent rivalry and career record were updated.`:`You lost to ${opponent.firstName} ${opponent.lastName}. The result and exact rival remain part of your career history.`}],stateChanges:['combatCareer','relationships','timeline']};
 }
 

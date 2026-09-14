@@ -131,6 +131,72 @@ export const systemicConsequenceEvents:GameEventDefinition[]=[
       {id:'reignite',label:'Reopen the argument',effects:{relationship:{npcSelector:'payload',delta:-10},workplace:{tension:8,reputation:-3},secondary:{stress:4}}},
     ],
   },
+  {
+    id:'systemic_combat_training_return',category:'work',title:'The Lesson That Stayed With You',
+    descriptions:[
+      'Years after a training block at {WORLD_NAME}, {NPC_FIRST} wants to know which parts of their coaching actually became part of your style.',
+      '{NPC_FIRST} remembers how you trained at {WORLD_NAME} at age {ORIGIN_AGE}. They can see which lessons you kept—and which ones you quietly discarded.',
+      'A conversation with {NPC_FIRST} circles back to an old training period at {WORLD_NAME}. The lesson has had years to prove whether it mattered.',
+    ],
+    minAge:12,maxAge:110,probability:0,cooldown:99,tags:['work','special-career','systemic','delayed','phase7b3','combat'],choices:[
+      {id:'credit_coach',label:'Give them credit for what stuck',effects:{relationship:{npcSelector:'payload',delta:7},specialCareer:{skill:2},secondary:{discipline:2,confidence:1}}},
+      {id:'adapt_lesson',label:'Explain how you adapted their lesson',effects:{relationship:{npcSelector:'payload',delta:3},specialCareer:{skill:3},secondary:{confidence:2,stress:1}}},
+      {id:'outgrow_method',label:'Tell them you had to outgrow their method',effects:{relationship:{npcSelector:'payload',delta:-5},specialCareer:{skill:1},secondary:{willpower:2}}},
+    ],
+  },
+  {
+    id:'systemic_combat_bout_return',category:'work',title:'The Rivalry Has a Memory',
+    descriptions:[
+      '{NPC_FIRST} brings up the bout you shared through {WORLD_NAME} at age {ORIGIN_AGE}. The result is history; what it meant between you is still negotiable.',
+      'A later encounter with {NPC_FIRST} makes it clear that your old bout at {WORLD_NAME} became part of both of your professional stories.',
+      'Years after you faced {NPC_FIRST} through {WORLD_NAME}, the two of you finally have room to talk about what that rivalry became.',
+    ],
+    minAge:16,maxAge:110,probability:0,cooldown:99,tags:['work','special-career','systemic','delayed','phase7b3','combat'],choices:[
+      {id:'show_respect',label:'Show respect for the shared history',effects:{relationship:{npcSelector:'payload',delta:7},specialCareer:{reputation:2},secondary:{karma:1,confidence:1}}},
+      {id:'stoke_rivalry',label:'Keep the rivalry hot',effects:{relationship:{npcSelector:'payload',delta:-6},specialCareer:{reputation:4},secondary:{stress:2,willpower:2}}},
+      {id:'close_chapter',label:'Let the old result stay in the past',effects:{relationship:{npcSelector:'payload',delta:1},specialCareer:{reputation:-1},secondary:{stress:-2}}},
+    ],
+  },
+  {
+    id:'systemic_military_training_return',category:'work',title:'What the Training Became',
+    descriptions:[
+      'A training period from age {ORIGIN_AGE} has become part of your service reputation. You are asked what standard you carried forward from it.',
+      'Years after that service training block, the habits it built are visible in how you approach responsibility now.',
+      'An old period of military training comes back into conversation. The question is not whether you completed it, but what you kept from it.',
+    ],
+    minAge:18,maxAge:110,probability:0,cooldown:99,tags:['work','special-career','systemic','delayed','phase7b3','military'],choices:[
+      {id:'carry_standard',label:'Carry the standard forward',effects:{relationship:{npcSelector:'payload',delta:5},specialCareer:{skill:3},secondary:{discipline:2}}},
+      {id:'adapt_standard',label:'Adapt the lesson to who you became',effects:{relationship:{npcSelector:'payload',delta:2},specialCareer:{skill:2},secondary:{confidence:2}}},
+      {id:'leave_it_there',label:'Leave that training period in the past',effects:{relationship:{npcSelector:'payload',delta:-3},specialCareer:{skill:-1},secondary:{stress:-2}}},
+    ],
+  },
+  {
+    id:'systemic_politics_policy_return',category:'work',title:'The Policy Has a Record Now',
+    descriptions:[
+      'A policy decision you pushed at age {ORIGIN_AGE} has had time to produce a real political record. The old talking points are no longer enough.',
+      'Years after one of your policy pushes, people are judging the decision by what followed rather than by the day you announced it.',
+      'An earlier policy choice has become part of your record in office. You have to decide whether to defend it, revise it, or distance yourself from it.',
+    ],
+    minAge:25,maxAge:110,probability:0,cooldown:99,tags:['work','special-career','systemic','delayed','phase7b3','politics'],choices:[
+      {id:'defend_record',label:'Defend the record it created',effects:{relationship:{npcSelector:'payload',delta:4},specialCareer:{approval:4},reputation:2,secondary:{confidence:1}}},
+      {id:'revise_position',label:'Acknowledge what you would revise',effects:{relationship:{npcSelector:'payload',delta:6},specialCareer:{approval:2},reputation:3,secondary:{stress:1,karma:1}}},
+      {id:'disown_policy',label:'Distance yourself from the old decision',effects:{relationship:{npcSelector:'payload',delta:-5},specialCareer:{approval:-5},reputation:-2,secondary:{stress:-1}}},
+    ],
+  },
+  {
+    id:'systemic_politics_press_return',category:'work',title:'The Exchange Never Fully Ended',
+    descriptions:[
+      'A press confrontation from age {ORIGIN_AGE} has become one of the moments people still use to describe your political instincts.',
+      'An old public exchange comes back into focus years later. {NPC_FIRST} remembers it too, and neither of you controls the story alone anymore.',
+      'The political argument involving {NPC_FIRST} outlived the news cycle. You now have a chance to decide what kind of rivalry it becomes.',
+    ],
+    minAge:25,maxAge:110,probability:0,cooldown:99,tags:['work','special-career','systemic','delayed','phase7b3','politics'],choices:[
+      {id:'answer_directly',label:'Answer the history directly',effects:{relationship:{npcSelector:'payload',delta:3},specialCareer:{approval:3},reputation:2,secondary:{confidence:2}}},
+      {id:'attack_back',label:'Reopen the fight',effects:{relationship:{npcSelector:'payload',delta:-7},specialCareer:{approval:2},reputation:-1,secondary:{stress:3,willpower:2}}},
+      {id:'move_past',label:'Refuse to relive the old exchange',effects:{relationship:{npcSelector:'payload',delta:1},specialCareer:{approval:-2},secondary:{stress:-2}}},
+    ],
+  },
+
 
 ];
 

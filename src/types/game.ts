@@ -770,6 +770,7 @@ export interface ChoiceEffect {
   school?: Partial<Pick<SchoolWorldState, 'attendance' | 'conduct' | 'socialStanding'>>;
   property?: { condition?: number; marketValuePercent?: number };
   business?: Partial<Pick<Business, 'demand' | 'reputation'>>;
+  specialCareer?: Partial<Record<'skill' | 'reputation' | 'approval', number>>;
   health?: number;
   legalHeat?: number;
 }

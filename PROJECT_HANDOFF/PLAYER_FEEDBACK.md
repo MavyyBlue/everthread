@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed in the current gameplay/source baseline: **Run #118 / expanded source `a4d04523e18128044c00f960f6db5fcd306a8237` / save schema 13**.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified repository source is docs-only **Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`**; newest gameplay-changing baseline is **Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`**, save schema 13.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,14 +94,14 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Last central review checkpoint: certified **Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`**.
+Last central review checkpoint: certified **Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`**.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
-- Central unresolved reports after the Run #118 review: **0**.
-- Review-state checkpoint is advanced to `a4d04523e18128044c00f960f6db5fcd306a8237` with four reviewed reports; newest received report remains 2026-09-13 19:51:36 UTC.
+- Fresh pre-Phase-7B3 queries found **0 triaged reports and 0 new/untriaged reports**.
+- Review-state checkpoint is advanced to `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003` with four reviewed reports; newest received report remains 2026-09-13 19:51:36 UTC.
 - Player-visible disposition read-back remains certified and deployed.
-- Phase 7B2 is certified in Run #118. Refresh the live inbox again immediately before beginning the next special-career Phase 7B slice.
+- Phase 7B2 is certified in Run #118; Phase 7B3 Special-Career Long-Tail Echoes is a local candidate and remains subject to canonical certification.
