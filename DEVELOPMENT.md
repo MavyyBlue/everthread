@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`
-Certified gameplay baseline: Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`
+Newest certified expanded gameplay/source: Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`
+Certified gameplay baseline: Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`
 
 ## Product direction
 
@@ -27,6 +27,24 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
 ## Active implementation phase
+
+### Phase 9C — Childhood & Youth Social Life (CI Green Run #144)
+
+Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9C**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- `YouthSocialSystem` is a read-only planner over existing Relationship/NPC/SchoolWorld/town-place/shared-experience truth. It creates no durable youth ledger and no second relationship, school, memory, or location authority.
+- **11 curated youth plans** cover ages 3–17 with progressive age filtering: park playdates, home visits, sleepovers, arcade/game outings, movies, current-school socials, stadium trips, cooking, mall/diner hangouts, and park walks. Friendly non-family peers are bounded to a ±3-year age band; existing sibling/half-sibling/step-sibling/cousin relationships remain valid family targets without fabricated peer records.
+- The canonical shared-experience registry grows **10 → 12** with youth-bounded `sleepover` and `school_social`. School Social is available only for a current real classmate in an active SchoolWorld. All other plans reuse established 9B activity/place definitions.
+- People Threadspace exposes **Spend time together** on eligible youth profiles with real availability reasons and a bounded approval/prose result. The committed action remains `GameEngine.shareExperience` → `RelationshipSystem` → `SharedExperienceSystem`; browsing/planning remains read-only and gameplay-RNG/runtime-ID neutral.
+- AI interaction semantics now cover shared outings by exact NPC/place/activity IDs through the real engine. AI testbench regression advances to **45/45** without creating a QA-only gameplay path.
+- No save migration is required; schema remains **17**. Adult romance rules, attraction/orientation gates, family planning, school authority, and exact-target relationship behavior remain preserved.
+- Dedicated Phase 9C regression is **40/40**. Phase 9B remains **53/53**, People **57/57**, Relationship Microcopy **66/66**, Family Topology **40/40**, Dynasty **64/64**, Integrated Long-Life **105/105**, base **82/82**, minigames **19/19**, and feedback **20/20 + 23/23**; the complete established wall remained Green.
+- Production build transformed **192 modules**. People remains lazy/code-split at ~33.49 kB JS / 10.82 kB gzip; main JS is ~1,217.14 kB / 344.75 kB gzip; the established main-chunk warning remains nonblocking.
+- Certified source SHA-256 `a56dfebebee0aefd227dfbca71850dff591d62eef247064ed481cdb8f3bbe689`; dependency SHA-256 `a18b4bac9c33cffe3a798f023efcee7adb05ff5c0f973f6a4c36f9f5ceebe020`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact `10365740616` (`21efe389a43afb8950185182edc7ea2e5e2897b2f74aa4617499531f993fa5f7`); Pages artifact `10365790597` (`85d5a26d84d9e086180eaa15c2ea8a1212fee786ce53bd503e9bad49c4729082`).
+- Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and successfully advanced the review checkpoint to `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` at `2026-09-14 19:32:14.421886+00`.
+
+**Exact next slice:** Phase 9D — Dating & Romantic Momentum. Reuse the certified shared-experience evaluator for individual dates while preserving RelationshipSystem as the romance mutation authority; do not create a second romance score or date engine.
 
 ### Phase 9B — Shared Experience Foundation (CI Green Run #141)
 

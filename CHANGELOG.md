@@ -1,5 +1,27 @@
 # Everthread Changelog
 
+## Phase 9C — Childhood & Youth Social Life — CI Green Run #144 — 2026-09-14
+
+### Added / changed
+
+- Added `YouthSocialSystem`, a read-only contextual planner over existing NPC, Relationship, SchoolWorld, town-place, and Phase 9B shared-experience truth. It does not create a youth-only relationship graph, school roster, experience ledger, memory store, or location authority.
+- Added **11 curated age-aware youth plans** for ages 3–17: park playdates, home visits, sleepovers, arcade/game-shop outings, movies, real school socials, stadium days, cooking, mall/diner hangouts, and park walks. Friendly non-family peers are limited to a plausible ±3-year age band; siblings, half-siblings, step-siblings, and cousins remain valid through the existing family relationship taxonomy.
+- Expanded the canonical shared-experience activity registry **10 → 12** with youth-bounded `sleepover` and `school_social`. School Social is projected only for a current real classmate in an active SchoolWorld; every other youth plan reuses a certified Phase 9B activity/place pair.
+- Added a mobile **Spend time together** section to eligible People profiles. Plans age in/out rather than exposing future adult-sized option walls, unavailable plans preserve real shared-experience reasons, and successful outings show concise prose plus a bounded approval meter.
+- Preserved the existing committed path: `GameEngine.shareExperience` → `RelationshipSystem` → `SharedExperienceSystem`. Successful youth outings reuse the established social action economy, exact-target timeline, single gameplay-RNG draw, preference reveal, and bounded NPC memory semantics. Browsing/planning remains read-only and RNG/runtime-ID neutral.
+- Extended AI Interaction Testbench semantics so exact NPC/place/activity shared outings execute through the real engine action. No test-only gameplay implementation was added.
+- Save schema remains **17**. Adult romance, attraction/orientation, commitment, school, family-planning, and family-topology authorities are unchanged.
+
+### Certification
+
+- GitHub Actions Run #144 (`34887219411`) certified expanded source `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` from upload wrapper `ef1d386c5baab2e964f2e8f00cabe8d4e6264ab7`. Net source diff from the prior certified repository source is exactly **12 intended Phase 9C source/test/UI files**; workflow import reports 13 changes only because it removes `everthread-source.zip`. No documentation, package, workflow, asset, schema, or Phase 9D drift was introduced.
+- Canonical preflight PASS **4/4**; Phase 9C **40/40**; base **82/82**; People Threadspace **57/57**; AI Interaction Testbench **45/45**; Relationship Microcopy **66/66**; Family Topology **40/40**; Dynasty **64/64**; Phase 9A **45/45**; Phase 9B **53/53**; Integrated Long-Life **105/105**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **192 modules**. People remains lazy/code-split at ~33.49 kB JS / 10.82 kB gzip; main JS is ~1,217.14 kB / 344.75 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `a56dfebebee0aefd227dfbca71850dff591d62eef247064ed481cdb8f3bbe689`; dependency SHA-256 `a18b4bac9c33cffe3a798f023efcee7adb05ff5c0f973f6a4c36f9f5ceebe020`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10365740616`, digest `21efe389a43afb8950185182edc7ea2e5e2897b2f74aa4617499531f993fa5f7`; Pages artifact ID `10365790597`, digest `85d5a26d84d9e086180eaa15c2ea8a1212fee786ce53bd503e9bad49c4729082`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved by `triage_status`**, no new report after `2026-09-13 19:51:36.119407+00`, and successfully advanced the stored review checkpoint to `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` at `2026-09-14 19:32:14.421886+00`.
+- **Phase 9C is CLOSED / CERTIFIED. Next slice:** Phase 9D — Dating & Romantic Momentum.
+
 ## Phase 9B — Shared Experience Foundation — CI Green Run #141 — 2026-09-14
 
 ### Added / changed

@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A and 9B certified and 9C next.**
+Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A, 9B, and 9C certified and 9D next.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #141 / `f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`;
+- newest certified gameplay/source: Run #144 / `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -17,7 +17,8 @@ Current certified program baseline:
 - Phase 8: **CLOSED**;
 - Phase 9A: **certified / closed**;
 - Phase 9B: **certified / closed**;
-- next slice: **Phase 9C — Childhood & Youth Social Life**.
+- Phase 9C: **certified / closed**;
+- next slice: **Phase 9D — Dating & Romantic Momentum**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -119,9 +120,17 @@ One reusable evaluation path now follows the intended shape:
 
 `RelationshipSystem` remains authoritative for committed social mutation: action-economy use, relationship score, hidden opinion, player happiness, exact-target timeline history, the single committed gameplay-RNG draw, preference reveal through the existing Phase 9A authority, and bounded NPC memory writes. No parallel relationship score, experience ledger, or memory authority exists. The evaluator already accepts explicit preference/context overrides so Phase 9C youth social life, Phase 9D dates, Phase 9E gifts, and Phase 9F cross-world chemistry can reuse one path instead of forking scoring logic.
 
-### Phase 9C — Childhood & Youth Social Life
+### Phase 9C — Childhood & Youth Social Life — CERTIFIED Run #144
 
-Use the same framework for play dates, sleepovers, parks, home visits, mall/game-store/arcade outings, school friends, siblings, and age-appropriate social events. Childhood should become an actual social life rather than a waiting room for adulthood.
+Certified in Run #144 on expanded source `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`, save schema **17**, dedicated regression **40/40**, canonical preflight 4/4, and a 192-module production build.
+
+`YouthSocialSystem` projects age-appropriate plans from existing NPC, Relationship, SchoolWorld, place, and Phase 9B shared-experience truth. It introduces no youth-only relationship graph, school roster, experience ledger, memory store, or location authority. The authored layer contains **11 curated plans** spanning playdates, home visits, sleepovers, arcade/game outings, movies, real school socials, stadium trips, cooking, mall/diner hangouts, and park walks for ages 3–17.
+
+Classmates/friends/best friends remain the established relationship records; siblings, half-siblings, step-siblings, and cousins remain the established family relationship taxonomy. Non-family youth peers stay within a bounded ±3-year age band. A School Social is offered only when the selected NPC is a current real classmate in an active SchoolWorld, so school context is projected rather than duplicated.
+
+The shared activity registry expands **10 → 12** with youth-bounded `sleepover` and `school_social`; all other youth plans reuse the certified Phase 9B activity/place pairs. The People profile exposes a mobile **Spend time together** chooser and bounded approval result, while committed actions still route through `GameEngine.shareExperience` and `RelationshipSystem`. AI-testbench semantic parity uses the same exact-NPC/place/activity engine action. Browsing remains read-only and RNG/runtime-ID neutral; successful actions preserve the established one-draw/action-economy/timeline/preference/memory behavior.
+
+Childhood now has a real social action surface without weakening adult relationship rules or creating a second social simulation.
 
 ### Phase 9D — Dating & Romantic Momentum
 
@@ -193,4 +202,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 9C — Childhood & Youth Social Life** from certified Run #141 / schema-17 Phase 9B and the certified documentation baseline that follows it. Reuse the single shared-experience evaluator for age-appropriate play dates, sleepovers, parks, home visits, mall/game outings, school friends, siblings, and youth social events. RelationshipSystem remains authoritative for relationship changes, SchoolWorld retains school-world ownership, and NPC memories remain authoritative for meaningful remembered history. Do not fork a youth-only relationship, experience, location, or memory ledger.
+Begin **Phase 9D — Dating & Romantic Momentum** from certified Run #144 / schema-17 Phase 9C and the certified documentation baseline that follows it. Preserve the established age, orientation, attraction, commitment, household, family-planning, breakup/divorce/reconciliation, and exact-NPC rules. Separate individual **Ask on Date** attempts from **Ask Out / Become Partners**; accepted dates should reuse the single shared-experience evaluator and build bounded hidden romantic momentum/history through existing relationship authority. Roughly three genuinely successful dates may unlock the attempt to become official partners, but must never guarantee acceptance. Do not fork a second romance score, relationship graph, date-outcome engine, or memory ledger.

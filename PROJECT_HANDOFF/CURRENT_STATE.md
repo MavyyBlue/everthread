@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #141** (`34880935501`) on expanded source **`f1be1e6bc39482cb613b85bbdad77ea5ca7e9298`**. This is the certified Phase 9B Shared Experience Foundation baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #141 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #144** (`34887219411`) on expanded source **`5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`**. This is the certified Phase 9C Childhood & Youth Social Life baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #144 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,11 +16,12 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #141**
 - Phase 8E — Phase 8 Closeout: **CERTIFIED / CLOSED**
 - Phase 9A — NPC Interests & Preferences: **CERTIFIED / CLOSED**
 - Phase 9B — Shared Experience Foundation: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 9C — Childhood & Youth Social Life**
+- Phase 9C — Childhood & Youth Social Life: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 9D — Dating & Romantic Momentum**
 - Phase 9 — Shared Lives: **ACTIVE**
 - Planned Phase 10: **Living Everthread**
-- Fresh post-Run-#141 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407 UTC**.
-- The stored review-checkpoint write was blocked by connector safety, so `everthread_feedback_review_state.main` still remains at `e1aa213fac4e03ab9a4af3039d9605852289b899` / `2026-09-14 15:07:04.320301+00` with reviewed-report count 4. The inbox read is current; only checkpoint persistence is stale.
+- Fresh post-Run-#144 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
+- The stored review checkpoint successfully advanced to **`5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`** at **`2026-09-14 19:32:14.421886+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified 9C gameplay baseline.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -31,6 +32,27 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #144 — Phase 9C Childhood & Youth Social Life
+
+- Upload wrapper: `ef1d386c5baab2e964f2e8f00cabe8d4e6264ab7`.
+- Expanded certified source: `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b`.
+- GitHub Actions Run #144: `34887219411`.
+- Net diff from the prior certified repository source is exactly **12 intended Phase 9C source/test/UI files**. Workflow import reports 13 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, save-schema, or Phase 9D drift is part of the committed gameplay diff.
+- Save schema remains **17**. `YouthSocialSystem` is a read-only contextual projection over existing NPC, `Relationship`, SchoolWorld, town-place, and Phase 9B shared-experience truth; it creates no youth-only relationship graph, outing ledger, school roster, location state, or memory authority.
+- Phase 9C adds **11 curated age-aware youth plans** for ages 3–17. Eligible targets remain real classmates/friends/best friends plus siblings, half-siblings, step-siblings, and cousins. Non-family peer plans enforce a bounded ±3-year age band; family plans preserve real kin links without fabricating peer records. Estranged, dead, stale, remote, or otherwise invalid targets are rejected through existing authorities.
+- The shared-experience registry expands **10 → 12** with youth-bounded `sleepover` and `school_social` activities. School Social appears only for a current real classmate in an active SchoolWorld; all other youth plans are contextual labels over the existing certified 9B activity/place pairs.
+- People Threadspace now exposes a mobile **Spend time together** section on eligible youth profiles. Plans age in/out instead of showing an adult-sized wall of future buttons, unavailable contextual plans surface the real 9B reason, and successful outings show concise prose plus a bounded approval meter. Commits still route through `GameEngine.shareExperience` → `RelationshipSystem` → `SharedExperienceSystem`.
+- AI semantic parity now invokes shared outings by exact NPC/place/activity IDs through the same engine action. No UI-only gameplay path exists.
+- Phase 9C regression **40/40**; canonical preflight **4/4**. Base **82/82**; People Threadspace **57/57**; AI interaction testbench **45/45**; Relationship Microcopy **66/66**; Family Topology **40/40**; Dynasty **64/64**; Phase 9A **45/45**; Phase 9B **53/53**; Integrated Long-Life **105/105**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build: Vite 7.3.6, **192 modules transformed**. People remains lazy/code-split at ~33.49 kB JS / 10.82 kB gzip; main JS ~1,217.14 kB / 344.75 kB gzip. The established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `a56dfebebee0aefd227dfbca71850dff591d62eef247064ed481cdb8f3bbe689`.
+- Certified dependency SHA-256: `a18b4bac9c33cffe3a798f023efcee7adb05ff5c0f973f6a4c36f9f5ceebe020`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10365740616`, digest `21efe389a43afb8950185182edc7ea2e5e2897b2f74aa4617499531f993fa5f7`.
+- Pages artifact ID `10365790597`, digest `85d5a26d84d9e086180eaa15c2ea8a1212fee786ce53bd503e9bad49c4729082`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and successfully advanced the stored review checkpoint to `5a6d35a5f906e16e3c26ddcb2502efc0e1c2f71b` at `2026-09-14 19:32:14.421886+00`.
+- **Phase 9C is CLOSED / CERTIFIED. Exact next slice: Phase 9D — Dating & Romantic Momentum.**
 
 ## Newest certified gameplay/source — Run #141 — Phase 9B Shared Experience Foundation
 

@@ -3,6 +3,10 @@
 Last audited: 2026-09-14
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 9C youth-social content note
+
+Certified Phase 9C adds **11 curated youth-social plan definitions** for ages 3–17. These plans are contextual presentation over real existing relationships and the shared-experience evaluator, not new event rows or a parallel youth simulation. The canonical shared-experience activity registry expands **10 → 12** with two genuinely youth-bounded activities: **Sleepover** and **School Social**. The ordinary/random event library remains **691**; town places remain **24**; routed institution services remain **28**; personal inventory items remain **24**; and the shared NPC preference vocabulary remains **38 tags**.
+
 ## Phase 9B shared-experience content note
 
 Certified Phase 9B adds **10 authored shared-experience activity definitions** spanning Weaver Park, Crossroads Mall, Nightjar Diner, Threadwell Residential, Pulseworks Gym, and Everthread Stadium. These are reusable activity/context definitions for the single shared-experience evaluator, not random events or duplicate relationship mechanics. The ordinary/random event library remains **691**; town places remain **24**; routed institution services remain **28**; personal inventory items remain **24**; and the shared NPC preference vocabulary remains **38 tags**.
@@ -94,7 +98,7 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Everthread institution service doorways | 28 | — | Phase 8C routes into existing Life/Assets/Activities/Career owners |
 | Personal inventory item definitions | 24 | — | Phase 8D ordinary non-financial possessions / future giftable items |
 | NPC preference tags | 38 | — | Phase 9A shared vocabulary for intrinsic tastes, gifts, and future shared experiences |
-| Shared experience activity definitions | 10 | — | Phase 9B reusable age-aware outing/activity registry across 6 Everthread places |
+| Shared experience activity definitions | 12 | — | Phase 9B foundation + Phase 9C youth-bounded Sleepover and School Social |
 | Regional name pools | 7 | hundreds of names per region | Expanded; country/subregion depth still useful |
 | First names per regional pool | 120 | hundreds/region | 6× increase; 840 total active first-name entries |
 | Last names per regional pool | 120 | hundreds/region | 6× increase; 840 total surname entries |
