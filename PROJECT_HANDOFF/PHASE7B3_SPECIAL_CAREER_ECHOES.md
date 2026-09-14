@@ -2,9 +2,9 @@
 
 ## Status
 
-**Local candidate; canonical GitHub Actions certification pending.**
+**CI Green, certified, and deployed in GitHub Actions Run #120 (`34796052224`).**
 
-Built from newest certified repository source **Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`** (documentation-only). Gameplay behavior baseline beneath it remains **Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`**. Package `0.12.0`, save schema **13**.
+Certified expanded source **Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`**, from wrapper `c74078a41340023ab7760378f1fdfe0f77108643`. Package `0.12.0`, save schema **13**.
 
 ## Goal
 
@@ -60,7 +60,9 @@ Those remain owned by their established lifecycle systems. Echo choices can addi
 
 Also green locally: Engine TypeScript, Test TypeScript, complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, Special-career Story 37/37, Special-career Path-story 68/68, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, Feedback Reporting 20/20, Feedback Central Inbox 23/23, and production build at **168 modules**.
 
-Canonical GitHub Actions is the certification authority.
+Canonical Run #120 passed Phase 7B3 **36/36**, both TypeScript gates, the complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, Special-career Story 37/37, Path-story 68/68, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Progressive Disclosure 25/25, Random-event Coherence 77/77, both feedback suites, certified restore smoke, the 168-module production build, artifact publication, and Pages deployment.
+
+Certified source SHA-256: `b742118c6ce2db92abf774f178d1f067551ced5148268cdaf70de1c70e78f539`. Certified artifact ID `10329833244`; Pages artifact ID `10329833247`.
 
 ## Post-Phase-7 project rule
 

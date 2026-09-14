@@ -2,9 +2,9 @@
 
 ## Status
 
-**Phase 7A, Phase 7B1, and Phase 7B2 are CI Green, certified, and deployed. Phase 7B3 — Special-Career Long-Tail Echoes is the active local candidate.**
+**Phase 7A and all three Phase 7B slices are CI Green, certified, and deployed. Phase 7C — Persistent World Conditions is next.**
 
-Newest certified repository source is docs-only GitHub Actions **Run #119** (`34793035216`), expanded source `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`. Newest gameplay-changing baseline remains **Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`**, package `everthread-life-unwritten@0.12.0`, save schema **13**. Phase 7B3 is built on Run #119 source and is not certified until canonical CI passes.
+Newest certified gameplay/source baseline is GitHub Actions **Run #120** (`34796052224`), expanded source `4dd4378ec8986056fc3348dec5b2c6b1594b236b`, package `everthread-life-unwritten@0.12.0`, save schema **13**. Run #120 certified Phase 7B3 at 36/36 while preserving the scheduler and all earlier Phase 7B authority boundaries.
 
 ## Why Phase 7A came first
 
@@ -72,7 +72,7 @@ The dedicated persistent-consequence regression is **36/36** in canonical Run #1
 
 Both TypeScript gates, every existing regression, Phase 7A 36/36, Integrated Long-Life, production build, certified artifact restore smoke, and Pages deployment passed in Run #112. Phase 7A is green.
 
-## Phase 7B — Systemic delayed stories — IN PROGRESS
+## Phase 7B — Systemic delayed stories — CERTIFIED
 
 The certified first 7B1 slice turns earlier player actions into exact multi-year follow-ups through existing authorities. Five probability-zero systemic definitions are outside the 691-event random library and are requested only by real actions: child time, academic misconduct, friend arguments, reconciliation, and marriage.
 
@@ -82,9 +82,9 @@ Dedicated `phase7BSystemicStoryRegression.ts` is **33/33 in Run #115**. The comp
 
 **Certified Phase 7B2 — Ownership & Workplace Echoes:** five additional probability-zero stories are action-driven by property renovation, business founding, business product launch, manager feedback, and formal coworker concerns. Exact property/business/SocialWorld/NPC refs are scheduled through the same authority. Sold/missing properties cancel; archived workplace history may still surface through the same persistent world/person; dead/missing people or worlds cancel rather than retarget. Property effects update exact condition/value, business effects update exact demand/reputation, and workplace/NPC effects reuse existing authorities. Dedicated regression is **35/35 in Run #118**; save schema remains 13 and the random pool remains 691.
 
-**Active Phase 7B3 candidate — Special-Career Long-Tail Echoes:** five probability-zero stories are requested only by explicit actions in Combat, Military, and Politics. Combat training binds the exact coach/world/career for three years; a sanctioned bout binds the exact rival/world/career for two years; military training schedules a three-year service echo with exact posting/commander when that world already exists; policy and press actions schedule two-year political echoes with exact office/chief or opposition leader when available. Military/politics may fall back to career-only targeting rather than violating their certified rule that entry actions do not create persistent worlds before annual processing.
+**Certified Phase 7B3 — Special-Career Long-Tail Echoes:** five probability-zero stories are requested only by explicit actions in Combat, Military, and Politics. Combat training binds the exact coach/world/career for three years; a sanctioned bout binds the exact rival/world/career for two years; military training schedules a three-year service echo with exact posting/commander when that world already exists; policy and press actions schedule two-year political echoes with exact office/chief or opposition leader when available. Military/politics may fall back to career-only targeting rather than violating their certified rule that entry actions do not create persistent worlds before annual processing.
 
-This slice deliberately leaves `SpecialCareerStorySystem` unchanged: its annual Phase 4D8 mentor/rival/path scanner remains a separate established content mechanism. Phase 7B3 adds no second scanner. `ChoiceEffect.specialCareer` is narrow and can adjust only bounded `skill`, `reputation`, or `approval`; it cannot author lifecycle outcomes such as fights, championships, contracts, elections, terms, ranks, promotions, projects, or retirements. Dedicated regression is **36/36 locally**; full wall/build are green; save schema remains 13 and random pool remains 691. Canonical CI is pending.
+This slice deliberately leaves `SpecialCareerStorySystem` unchanged: its annual Phase 4D8 mentor/rival/path scanner remains a separate established content mechanism. Phase 7B3 adds no second scanner. `ChoiceEffect.specialCareer` is narrow and can adjust only bounded `skill`, `reputation`, or `approval`; it cannot author lifecycle outcomes such as fights, championships, contracts, elections, terms, ranks, promotions, projects, or retirements. Dedicated regression is **36/36 in Run #120**; full wall/build, certified restore smoke, artifact publication, and Pages deployment are green. Save schema remains 13 and random pool remains 691.
 
 ## Phase 7C — Persistent world conditions
 

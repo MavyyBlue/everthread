@@ -3,8 +3,8 @@
 Last updated: 2026-09-13
 Current build line: 0.12.0 pre-release
 Certified save schema: 13
-Newest certified expanded source: Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003` (documentation-only synchronization)
-Certified gameplay baseline: Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`
+Newest certified expanded source: Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`
+Certified gameplay baseline: Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b`
 
 ## Product direction
 
@@ -28,19 +28,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Current implementation slice
 
-### Phase 7B3 — Special-Career Long-Tail Echoes (local candidate; CI certification pending)
+### Phase 7B3 — Special-Career Long-Tail Echoes (CI Green, Run #120)
 
-Newest certified repository source is docs-only Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`; gameplay behavior baseline remains Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`. A fresh central-feedback review immediately before implementation found no active triaged/new/untriaged reports and advanced the checkpoint to Run #119.
+Run #120 / `4dd4378ec8986056fc3348dec5b2c6b1594b236b` is the active certified gameplay/source baseline. Phase 7B3 fills the delayed-story gap across Combat, Military, and Politics—the persistent 4E ecosystems that are outside the older Phase 4D8 annual `SpecialCareerStorySystem` scanner. Five explicit player actions request future consequences through `SystemicStorySystem` → `ConsequenceSystem`: combat training, a sanctioned bout, military training, a policy push, and a press confrontation. Existing annual special-career story scanning remains untouched.
 
-Phase 7B3 fills the delayed-story gap across Combat, Military, and Politics—the persistent 4E ecosystems that are outside the older Phase 4D8 annual `SpecialCareerStorySystem` scanner. Five explicit player actions now request future consequences through `SystemicStorySystem` → `ConsequenceSystem`: combat training, a sanctioned bout, military training, a policy push, and a press confrontation. Existing annual special-career story scanning remains untouched.
+When the relevant world/person already exists, the consequence retains the exact archived-capable `SocialWorld` plus exact NPC and career track. Military and politics safely fall back to career-only targeting if their persistent world has not yet been created; no action creates a world early merely for story presentation. Invalid exact targets cancel rather than retarget. `ChoiceEffect.specialCareer` remains narrow: bounded `skill`, `reputation`, and `approval` only, never lifecycle-result authority.
 
-When the relevant world/person already exists, the consequence retains the exact archived-capable `SocialWorld` plus exact NPC and career track. Combat training/bouts always carry exact coach/rival context. Military and politics can safely fall back to a career-only target if the action happens before annual processing creates the persistent unit/office; the action does not create a world early merely to satisfy story presentation. Invalid exact targets cancel rather than retarget.
+Canonical Run #120 passed Phase 7B3 **36/36**, both TypeScript gates, the complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, Special-career Story 37/37, Path-story 68/68, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, both feedback suites, certified restore smoke, and the **168-module** production build. Save schema remains 13; random events remain 691.
 
-`ChoiceEffect.specialCareer` is deliberately narrow: only bounded `skill`, `reputation`, and `approval` deltas can be applied to the exact `payload.careerKind`. It cannot author fight results, championships, contracts, seasons, elections, terms, promotions/ranks, projects, or other career lifecycle truth. Save schema remains 13; random events remain 691; scheduling is gameplay-RNG neutral.
+Phase 7B is now stable across family/school/relationships, ownership/workplace, and special-career echoes. The next implementation slice is **Phase 7C — Persistent World Conditions**.
 
-Dedicated `phase7B3SpecialCareerEchoRegression.ts` is **36/36** locally. Both TypeScript gates, the complete regression wall, Combat 51/51, Military 65/65, Politics 80/80, Special-career Story 37/37, Path-story 68/68, Integrated Long-Life 105/105, Phase 7A 36/36, Phase 7B1 33/33, Phase 7B2 35/35, Progressive Disclosure 25/25, Random-event Coherence 77/77, minigame 19/19, and both feedback suites pass. Production build is green at **168 modules**. GitHub Actions remains final certification authority.
-
-Mavyy's sequencing rule is explicit: **after Phase 7 is complete, do not invent or begin another implementation phase. Stop implementation planning and brainstorm the future direction together first.**
+Mavyy's sequencing rule remains explicit: **after Phase 7 is complete, do not invent or begin another implementation phase. Stop implementation planning and brainstorm the future direction together first.**
 
 ## Recent corrective history
 

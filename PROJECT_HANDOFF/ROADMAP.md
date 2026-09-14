@@ -4,7 +4,7 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 ## Current macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, and 6 are closed. Run #91 established canonical pre-deployment certification. **Run #119** (`34793035216`) / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003` is the newest certified repository source and is documentation-only; **Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`** remains the newest gameplay-changing baseline on save schema **13**. Phase 7B3 Special-Career Long-Tail Echoes is the active local candidate. Phase 7A remains the scheduler foundation.
+Phases 4, 5, and 6 are closed. Run #91 established canonical pre-deployment certification. **Run #120** (`34796052224`) / `4dd4378ec8986056fc3348dec5b2c6b1594b236b` is the newest certified repository and gameplay-changing source on save schema **13**. Phase 7B3 Special-Career Long-Tail Echoes is certified/deployed; Phase 7C Persistent World Conditions is next. Phase 7A remains the scheduler foundation.
 
 ### Phase 4A — Persistent career worlds
 Status: green.
@@ -148,7 +148,7 @@ Compatibility requirements: Credit Available is never cash/net worth; browsing o
 Run #115 certified Phase 7B1: five action-driven family/school/friendship/romance follow-ups now use the existing scheduler without changing the random pool or save schema.
 
 1. **Phase 7A — Persistent Consequence Foundation:** **green; certified in Run #112** and still green through Run #115. One authoritative bounded scheduler owns cooldown ages, chain/consequence identity, origin context, exact targets, due windows, priority, cancellation/validity, dedupe, bounded completion/cancellation history, deterministic ordering, and migration. Dedicated regression: 36/36.
-2. **Phase 7B — Systemic delayed stories:** **in progress.** 7B1 family/school/relationships is certified in Run #115 at 33/33; 7B2 Ownership & Workplace Echoes is certified in Run #118 at 35/35. **7B3 Special-Career Long-Tail Echoes is the active candidate at 36/36 locally**, adding action-driven delayed consequences for combat, military, and politics while leaving the older annual special-career story scanner and career lifecycle authorities intact.
+2. **Phase 7B — Systemic delayed stories:** **green and stable.** 7B1 family/school/relationships is certified in Run #115 at 33/33; 7B2 Ownership & Workplace Echoes is certified in Run #118 at 35/35; 7B3 Special-Career Long-Tail Echoes is certified in Run #120 at 36/36, adding action-driven delayed consequences for combat, military, and politics while leaving the older annual special-career story scanner and career lifecycle authorities intact.
 3. **Phase 7C — Persistent world conditions:** after 7B is stable. Add bounded multi-year national/world conditions whose effects flow through existing employment, business, investment, housing, travel, fame/media, and finance authorities rather than flavor-only popups.
 
 **After Phase 7 closes, stop implementation planning. Do not define or begin a new macro phase until Mavyy and Yuki brainstorm the future direction together. Existing later-quality notes are not an automatic post-Phase-7 implementation queue.**
@@ -157,7 +157,7 @@ Phase 7 compatibility requirements: scheduler priority is centralized; one featu
 
 ## Cross-cutting player-feedback gate
 
-Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Phase 7 sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The inbox was refreshed immediately before Phase 7B3 from certified Run #119 / `bc6fdd70…`: there are **0 triaged reports and 0 new/untriaged reports**. The central review checkpoint is advanced to `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`. Phase 7B3 is local candidate work until canonical certification. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
+Player feedback/issue reporting is a playtest-driven cross-cutting priority and can temporarily gate Phase 7 sequencing when Mavyy prioritizes active triaged reports. Device-local structured reporting is CI Green from Run #109; the secure Supabase Central Feedback Inbox is live from Run #110; token-authenticated player-visible status/disposition read-back is certified from Run #111. The inbox was refreshed after Phase 7B3 certification in Run #120 / `4dd4378e…`: there are **4 total reports and 0 unresolved reports**. The central review checkpoint is advanced to `4dd4378ec8986056fc3348dec5b2c6b1594b236b`. Feedback stays outside `GameState`; never expose Supabase service-role, GitHub, or other write credentials in the public Pages client.
 
 Future feature work should review active supplied/exported reports before starting, with data-loss/crash/accounting/state-integrity/blocking defects taking priority, followed by explicitly prioritized triaged experience/UX reports. A backend-green test result redirects technical triage into UI/experience investigation rather than invalidating the report.
 

@@ -1,6 +1,6 @@
 # Everthread Changelog
 
-## Phase 7B3 — Special-Career Long-Tail Echoes candidate — 2026-09-13
+## Phase 7B3 — Special-Career Long-Tail Echoes — CI Green Run #120 — 2026-09-13
 
 ### Added / changed
 
@@ -11,13 +11,15 @@
 - Exact archived SocialWorlds remain valid history; dead/missing exact NPC/world targets cancel deterministically rather than retargeting. Military/politics actions taken before their annual world is created may schedule career-only history without forcing premature world creation.
 - Save schema remains **13**. Scheduling consumes no gameplay RNG; the ordinary random-event library remains exactly **691** definitions and the older 18-definition dedicated special-career story registry remains separate.
 
-### Local candidate validation
+### Certification
 
-- New `phase7B3SpecialCareerEchoRegression.ts`: **36/36** checks covering content-pool isolation, action wiring, exact career/world/NPC refs, due ages, archived-world persistence, dead/missing-target cancellation, dedupe/no-ID-consumption, save round-trip, career effect application/stateChanges, career-only fallback, schema stability, RNG neutrality, and global invariants.
-- Engine TypeScript PASS; Test TypeScript PASS; complete regression wall PASS; Combat 51/51; Military 65/65; Politics 80/80; Special-career Story 37/37; Path-story 68/68; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Progressive Disclosure 25/25; Random-event Coherence 77/77; minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23.
-- Production build PASS with Vite 7.3.6 at **168 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt. Local build identity is unavailable because the certified artifact extraction is not a Git worktree.
-- Built from newest certified source **Run #119 / `bc6fdd70ff027fc079d4eaaba37a85a2e08ab003`** (documentation-only synchronization); gameplay behavior baseline remains **Run #118 / `a4d04523e18128044c00f960f6db5fcd306a8237`**. Canonical GitHub Actions remains final certification authority.
-- Live Supabase review immediately before implementation found no `triaged`, `new`, or `untriaged` reports; review checkpoint was advanced to Run #119.
+- GitHub Actions Run #120 (`34796052224`) certified expanded source `4dd4378ec8986056fc3348dec5b2c6b1594b236b` from upload wrapper `c74078a41340023ab7760378f1fdfe0f77108643` on package `0.12.0`, save schema **13**.
+- `phase7B3SpecialCareerEchoRegression.ts`: **36/36**; Combat 51/51; Military 65/65; Politics 80/80; Special-career Story 37/37; Path-story 68/68; Integrated Long-Life 105/105; Phase 7A 36/36; Phase 7B1 33/33; Phase 7B2 35/35; Progressive Disclosure 25/25; Random-event Coherence 77/77; minigame 19/19; Feedback Reporting 20/20; Feedback Central Inbox 23/23; all established suites remained green.
+- Canonical preflight passed Engine TypeScript, Test TypeScript, the complete regression wall, and production build with Vite 7.3.6 at **168 modules**. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256: `b742118c6ce2db92abf774f178d1f067551ced5148268cdaf70de1c70e78f539`.
+- Certified dependency SHA-256: `657e8c495c687e2f4667000052eb2c42461568c5e5bfe970f48e14290bd071dd`; package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified artifact ID `10329833244`, digest `51b4e4bdc22a9824039f46a20eee603081b66f243e7abd3f70650a7b2df56ef5`; Pages artifact ID `10329833247`, digest `2f00aa0d6b096b3379db5ad80e74b42afbae74a09bf9dfb28544dd99aa2e92a8`. Certified restore smoke and Pages deployment reported success.
+- A fresh live Supabase review after Run #120 found **4 total reports and 0 unresolved reports**; the review checkpoint is advanced to `4dd4378ec8986056fc3348dec5b2c6b1594b236b`.
 
 ## Phase 7B2 — Ownership & Workplace Echoes — CI Green Run #118 — 2026-09-13
 
