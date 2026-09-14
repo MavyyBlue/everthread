@@ -1,4 +1,4 @@
-const CACHE = 'everthread-shell-v8';
+const CACHE = 'everthread-shell-v9';
 const BASE = new URL('./', self.registration.scope).pathname;
 const SHELL = [
   BASE,
@@ -31,7 +31,7 @@ self.addEventListener('fetch', event => {
 
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-store' })
         .then(response => {
           if (response.ok) caches.open(CACHE).then(cache => cache.put(BASE, response.clone()));
           return response;
@@ -41,13 +41,24 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  const requestUrl = new URL(event.request.url);
+  const sameOrigin = requestUrl.origin === self.location.origin;
+  const codeRequest = sameOrigin && (event.request.destination === 'script' || event.request.destination === 'style' || event.request.destination === 'worker');
+
+  if (codeRequest) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-store' })
+        .catch(() => caches.match(event.request))
+        .then(response => response || Response.error()),
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
       return fetch(event.request).then(response => {
-        if (response.ok && new URL(event.request.url).origin === self.location.origin) {
-          caches.open(CACHE).then(cache => cache.put(event.request, response.clone()));
-        }
+        if (response.ok && sameOrigin) caches.open(CACHE).then(cache => cache.put(event.request, response.clone()));
         return response;
       });
     }),
