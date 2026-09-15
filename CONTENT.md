@@ -1,5 +1,10 @@
 # Everthread — Content Inventory
 
+## Post-Phase-10 UI iconography / theme polish — Run #168
+
+Run #168 adds **no gameplay/content definitions**. The Astra-derived local vector library is presentation metadata only, and the Appearance reactivity correction changes render invalidation rather than content. Current certified gameplay totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, save schema **17**.
+
+
 Last audited: 2026-09-15
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
@@ -132,8 +137,8 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Business product lines | 80 | 50+ products/industries | Met combined target |
 | Collectible definitions | 40 | — | Needs expansion |
 | Countries / home jurisdictions | 33 | 30+ | Met; Everthread + 32 external travel/naming-profile definitions |
-| Everthread town places | 24 | — | Phase 8B authored registry across 6 districts |
-| Everthread institution service doorways | 28 | — | Phase 8C routes into existing Life/Assets/Activities/Career owners |
+| Everthread town places | 25 | — | Phase 8B registry + Threadtone Music Studio correction across 6 districts |
+| Everthread institution service doorways | 29 | — | Phase 8C routes + Threadtone Music Studio doorway into existing owners |
 | Personal inventory item definitions | 24 | — | Phase 8D ordinary non-financial possessions / future giftable items |
 | NPC preference tags | 38 | — | Phase 9A shared vocabulary for intrinsic tastes, gifts, and future shared experiences |
 | Shared experience activity definitions | 12 | — | Phase 9B foundation + Phase 9C youth-bounded Sleepover and School Social |

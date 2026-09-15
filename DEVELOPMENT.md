@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`
-Certified gameplay baseline: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`
+Newest certified expanded gameplay/source: Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`
+Certified gameplay baseline: Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`
 
 ## Product direction
 
@@ -25,6 +25,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
+
+## Current post-closeout player-facing polish baseline
+
+### Astra UI iconography + Appearance reactivity — CI Green Run #168
+
+Run #168 is a narrow presentation/integration correction on top of the closed Living World Program. It does **not** create a new macro phase or simulation authority.
+
+- Newest certified gameplay/source: Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`, schema **17**. Upload wrapper `3cf72e36ed002880391e1a683cb846171e364423`; Actions Run ID `34973140255`; job `104394090082`.
+- Appearance reactivity now follows a deterministic scalar visual-settings signature, so in-place settings mutation correctly refreshes theme/accent/font/text color/text scale/high contrast/reduced motion without requiring immutable GameState replacement.
+- Astra's original icon geometry is integrated as a local presentation library. Existing town-place IDs, navigation routes, discovery, eligibility, Action VFX ownership, and simulation state remain authoritative.
+- Canonical preflight **4/4 Green**. UI iconography/theme **183/183**; Action VFX **58/58**; Visual Identity **12/12**; base **82/82**; AI **82/82**; Long-Life **105/105**; Town Map **46/46**; Routing **42/42**; 10E **103/103**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build: Vite 7.3.6, **206 modules**. Town Map ~9.77 / 3.59 gzip JS + ~12.64 / 2.65 gzip CSS; People ~41.18 / 12.12; Player Profile ~10.29 / 2.98; main ~1,277.82 / 362.39. Existing >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `a76e2eb38cb9aa10f67ce8a0f5f5948fe94fc64d638edabeca8e9059a6387ae5`; dependency SHA-256 `b61b136d41557e6422fdb85983fadd6c93fa97dcc6b395df7f620a52bb4352f9`; package-lock SHA unchanged. Certified preflight artifact `10398407272`; Pages artifact `10397848707`; deployment succeeded.
+- Feedback Inbox after Run #168: **5 total / 0 unresolved**; checkpoint advanced to `f68ffacf47c1fd208f836666fca3b1010a517c85` at `2026-09-15 13:10:53.355932+00`.
+- No macro phase is active. Mavyy still controls the next major creative direction.
 
 ## Certified Phase 10 closeout / current baseline
 

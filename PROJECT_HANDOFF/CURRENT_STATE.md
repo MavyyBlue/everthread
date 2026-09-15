@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #166** (`34941015941`) on expanded source **`7523f6919ad808f7d826c42cd471d61e1f4f4678`**, save schema **17**. Run #165 certified Phase 10E Program Closeout; Run #166 certified the final player-requested Map-memory polish and extends the Phase 10E integration regression to **103/103**. **Phase 10 — Living Everthread is CLOSED / CERTIFIED.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #168** (`34973140255`) on expanded source **`f68ffacf47c1fd208f836666fca3b1010a517c85`**, save schema **17**. Run #168 is a post-closeout player-facing polish slice integrating the approved Astra iconography and fixing Appearance reactivity while preserving all established simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; no Phase 11 is implied.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,7 +16,7 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #166**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Fresh post-Run-#166 Supabase Feedback Inbox: **5 total / 0 unresolved**. New report `ET-20260915-86A6BA86` is resolved by the certified Map-memory correction.
+- Fresh post-Run-#168 Supabase Feedback Inbox: **5 total / 0 unresolved**. Review checkpoint now points to certified `f68ffacf47c1fd208f836666fca3b1010a517c85`; the prior Map-memory report remains resolved.
 - Feedback review checkpoint points to `7523f6919ad808f7d826c42cd471d61e1f4f4678` at `2026-09-15 07:20:42.854732+00`, newest report receipt `2026-09-15 06:47:52.761298+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
 - No new macro phase is automatically queued. The next major development direction remains Mavyy's creative decision; certified player feedback may still interrupt with concrete defects/suggestions.
@@ -29,6 +29,17 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #168 — post-closeout UI iconography / theme reactivity
+
+- Upload wrapper `3cf72e36ed002880391e1a683cb846171e364423`; expanded certified source `f68ffacf47c1fd208f836666fca3b1010a517c85`; Actions Run ID `34973140255`; job `104394090082`. Net diff from synchronized baseline `5e4f226341a5d28f1c70e67bf5dc72ece358a44f` is exactly **25 intended presentation/integration/test files**.
+- Appearance/theme synchronization now keys off a deterministic scalar signature of visual settings, closing the in-place-mutation render gap identified by the Astra audit without changing GameState ownership or save semantics.
+- The approved Astra icon set is integrated as local vector presentation: 25 canonical Map place pictograms plus shared navigation/control/result glyphs. Existing place IDs, routing, discovery, eligibility, VFX snapshot authority, and gameplay systems remain unchanged.
+- Canonical preflight **4/4**; UI iconography/theme **183/183**; Action VFX **58/58**; Visual Identity **12/12**; base **82/82**; People **57/57**; AI **82/82**; Integrated Long-Life **105/105**; Town Map **46/46**; Routing **42/42**; 8E **34/34**; 9G **41/41**; 10A **69/69**; 10B **50/50**; 10C **50/50**; 10D **50/50**; pre-10E **20/20**; 10E **103/103**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build **206 modules**. Town Map ~9.77/3.59 gzip JS + ~12.64/2.65 CSS; People ~41.18/12.12; Player Profile ~10.29/2.98; main ~1,277.82/362.39. Existing >700 kB warning remains nonblocking.
+- Certified source SHA-256 `a76e2eb38cb9aa10f67ce8a0f5f5948fe94fc64d638edabeca8e9059a6387ae5`; dependency SHA-256 `b61b136d41557e6422fdb85983fadd6c93fa97dcc6b395df7f620a52bb4352f9`; lock SHA unchanged `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10398407272` (`2683be9ae642bb99d04ff0a7f7e767b6ea3389557eab1cd5e603b898787a0a6e`); Pages artifact `10397848707` (`5fb24e99f02db634a292aab8a2018b0fcd337ce1f2342aa98f4a68baa546331f`); Pages deployment succeeded.
+- Feedback Inbox: **5 total / 0 unresolved**; checkpoint `main` → `f68ffacf47c1fd208f836666fca3b1010a517c85` at `2026-09-15 13:10:53.355932+00`.
+- This slice does not reopen the Living World Program or define a successor macro phase.
 
 ## Newest certified gameplay/source — Run #166 — Phase 10 final closeout
 

@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`**, save schema **17**. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** are certified/closed. Phase 10E Program Closeout certified in Run #165, and Run #166 certified the final player-requested Map-memory polish before documentation closure. No successor macro phase is active without Mavyy approval.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`**, save schema **17**. Run #168 is post-closeout UI polish and does not reopen Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** are certified/closed. Phase 10E Program Closeout certified in Run #165, and Run #166 certified the final player-requested Map-memory polish before documentation closure. No successor macro phase is active without Mavyy approval.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Fresh post-Run-#166 live central-inbox read found **5 rows / 0 unresolved by `triage_status`**. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` points to certified **Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`** at `2026-09-15 07:20:42.854732+00`, with newest report receipt `2026-09-15 06:47:52.761298+00` and reviewed count **5**.
+Fresh post-Run-#168 live central-inbox read found **5 rows / 0 unresolved by `triage_status`**. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` points to certified **Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`** at `2026-09-15 13:10:53.355932+00`, with newest report receipt `2026-09-15 06:47:52.761298+00` and reviewed count **5**.
 
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.

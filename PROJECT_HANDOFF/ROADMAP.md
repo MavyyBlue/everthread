@@ -6,11 +6,13 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 The Mavyy-approved **Living World Program** is now **CLOSED / CERTIFIED**. Its authority, player-intent, migration, QA, and slice contracts remain documented in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md` and must be preserved by future work.
 
-Final certified context: **Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`**, save schema **17**. Phase 8 — Everthread: Home, Phase 9 — Shared Lives, and Phase 10 — Living Everthread are all closed/certified. Phase 10E integration closeout certified in Run #165; the final player-requested Map-memory polish and expanded **103/103** closeout wall certified in Run #166.
+Closed-program context remains Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`, save schema **17**. The newest certified gameplay/source is post-closeout polish **Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`**, which integrates approved Astra iconography and fixes Appearance reactivity without reopening Phase 10 or defining Phase 11. Phase 8 — Everthread: Home, Phase 9 — Shared Lives, and Phase 10 — Living Everthread remain closed/certified.
 
 1. **Phase 8 — Everthread: Home** — **CLOSED / CERTIFIED.** Canonical setting, Town Map, institution routing, Player Profile/inventory, load recovery, and access/mobile closeout remain preserved.
 2. **Phase 9 — Shared Lives** — **CLOSED / CERTIFIED.** Preferences, shared experiences, youth social life, dating momentum, real gifts, cross-world chemistry, and integrated closeout remain preserved.
 3. **Phase 10 — Living Everthread** — **CLOSED / CERTIFIED.** 10A Residential Life (#154), 10B Working Everthread (#156), 10C Generational Place Memory (#158), 10D Living Map Projection (#160), player-tested corrections (#162–#163), 10E Program Closeout (#165), and final Map-memory feedback polish (#166) are certified.
+
+**Post-closeout polish status:** Run #168 is certified presentation/integration work only; UI iconography/theme **183/183**, Action VFX **58/58**, canonical preflight **4/4**, Pages Green.
 
 **Next-direction rule:** no Phase 11 or replacement macro program is automatic. Before new macro implementation, Mavyy chooses the creative direction; Yuki then inspects the certified repository/feedback and designs a compatible plan. Concrete player-reported defects may preempt planning.
 

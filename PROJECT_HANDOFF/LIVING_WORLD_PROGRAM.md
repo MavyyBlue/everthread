@@ -1,11 +1,12 @@
 # Everthread — Living World Program
 
-Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10. Phase 10E Program Closeout certified in Run #165 and the final player-requested Map-memory polish certified in Run #166. No successor macro phase is implied; Mavyy controls the next creative direction.**
+Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10 in Run #166. Post-closeout Run #168 adds approved presentation polish (Astra iconography + Appearance reactivity) without reopening the program. No successor macro phase is implied; Mavyy controls the next creative direction.**
 
 Approved: 2026-09-13 after Phase 7 closeout. Closed: 2026-09-15 after Run #166.
 
 Final certified program baseline:
-- newest certified gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`;
+- final certified Living World Program gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`;
+- newest certified post-closeout gameplay/source: Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -17,6 +18,8 @@ Final certified program baseline:
 - next macro direction: **not yet defined; requires Mavyy's creative approval**.
 
 This remains the authority-boundary record for the closed Living World Program. Future work must preserve these certified contracts unless Mavyy deliberately reopens a design decision with migration/QA coverage.
+
+Post-closeout certification note: Run #168 (`34973140255`) integrates the approved Astra presentation iconography and repairs Appearance/theme reactivity over in-place settings mutation. It adds no simulation owner, save migration, content definition, route authority, or macro phase. Canonical preflight is 4/4, UI iconography/theme 183/183, Action VFX 58/58, and Pages Green on expanded source `f68ffacf47c1fd208f836666fca3b1010a517c85`.
 
 ## North star
 

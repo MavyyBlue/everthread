@@ -1,3 +1,22 @@
+## Post-Phase-10 UI iconography + theme reactivity polish — CI Green Run #168 — 2026-09-15
+
+### Added / changed
+
+- Integrated the Mavyy-approved Astra UI-kit icon language as a **presentation-only** layer over Everthread's existing authorities. Canonical town-place IDs now resolve to the new Everthread pictograms; primary/contextual navigation and selected shared controls use the same local vector library without changing routing, eligibility, discovery, or simulation ownership.
+- Fixed the player-facing Appearance reactivity defect identified during the Astra audit. Everthread intentionally permits in-place `GameState.settings` mutation, so the root visual-sync effect now depends on a deterministic scalar visual-settings signature instead of the settings-object identity. Theme/accent/font/text-scale/text-color/high-contrast/reduced-motion changes therefore invalidate presentation correctly without changing GameState architecture or save semantics.
+- Extended the established Action VFX projection rather than creating a second effect authority. Existing action snapshots can now derive bounded semantic feedback for money, health, knowledge, stress, relationship, year-advance, gift, milestone, and known blocked-state cues while preserving existing career-specific VFX and engine result semantics.
+- Added shared `EverthreadIcon` / icon-path presentation helpers plus dedicated UI iconography regression coverage. No new GameState field, route table, effect bus, content definition, gameplay RNG consumer, package dependency, workflow, or save migration was introduced.
+- Save schema remains **17** and authored gameplay/content counts remain **691 events / 25 town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**.
+
+### Certification
+
+- GitHub Actions Run #168 (`34973140255`, job `104394090082`) certified expanded source `f68ffacf47c1fd208f836666fca3b1010a517c85` from upload wrapper `3cf72e36ed002880391e1a683cb846171e364423`. Net source diff from synchronized baseline `5e4f226341a5d28f1c70e67bf5dc72ece358a44f` is exactly **25 intended presentation/integration/test files**; workflow import reports 26 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4**. UI iconography & theme reactivity **183/183**; Action VFX **58/58**; base **82/82**; Visual Identity **12/12**; People **57/57**; AI **82/82**; Integrated Long-Life **105/105**; Town Map **46/46**; Routing **42/42**; Phase 8E **34/34**; Phase 9G **41/41**; 10A **69/69**; 10B **50/50**; 10C **50/50**; 10D **50/50**; pre-10E UX **20/20**; 10E **103/103**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed with Vite 7.3.6 at **206 modules**. Town Map is ~9.77 kB / 3.59 kB gzip JS plus ~12.64 kB / 2.65 kB gzip CSS; People ~41.18 / 12.12; Player Profile ~10.29 / 2.98; main ~1,277.82 / 362.39. The established >700 kB main-chunk warning remains nonblocking technical debt.
+- Certified source SHA-256 `a76e2eb38cb9aa10f67ce8a0f5f5948fe94fc64d638edabeca8e9059a6387ae5`; dependency SHA-256 `b61b136d41557e6422fdb85983fadd6c93fa97dcc6b395df7f620a52bb4352f9`; package-lock SHA-256 remains `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact ID `10398407272`, digest `2683be9ae642bb99d04ff0a7f7e767b6ea3389557eab1cd5e603b898787a0a6e`; Pages artifact ID `10397848707`, digest `5fb24e99f02db634a292aab8a2018b0fcd337ce1f2342aa98f4a68baa546331f`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep remains **5 total / 0 unresolved**. Review checkpoint `main` now points to `f68ffacf47c1fd208f836666fca3b1010a517c85` at `2026-09-15 13:10:53.355932+00` with reviewed-report count 5.
+- This is a **post-closeout player-facing polish slice**, not Phase 11 and not a reopening of the certified Living World Program.
+
 ## Phase 10E — Program Closeout + final Map-memory feedback polish — CI Green Runs #165–#166 — 2026-09-15
 
 ### Added / changed
