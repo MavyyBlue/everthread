@@ -44,6 +44,27 @@ export interface Talents {
   combat: Percent;
 }
 
+export interface CharacterVisualIdentity {
+  version: 1;
+  faceFamily: string;
+  eyeFamily: string;
+  browFamily: string;
+  noseId: string;
+  mouthFamily: string;
+  earId: string;
+  hairId: string;
+  skinPaletteId: string;
+  hairPaletteId: string;
+  irisPaletteId: string;
+  bodyId: string;
+  clothingId: string;
+  facialHairId?: string;
+  detailId?: string;
+  eyewearId?: string;
+  accessoryId?: string;
+  expressionId: string;
+}
+
 export interface AppearanceProfile {
   skinTone: string;
   hairColor: string;
@@ -51,6 +72,8 @@ export interface AppearanceProfile {
   eyeColor: string;
   facialHair?: string;
   accessories: string[];
+  /** Stable modular portrait identity; optional for backwards-compatible schema-17 saves. */
+  visual?: CharacterVisualIdentity;
 }
 
 export interface Character {

@@ -4,6 +4,7 @@ import { TOWN_PLACES } from '../data/townPlaces';
 import { locationLabel } from '../data/countries';
 import { playerCareerLabel } from './CareerIdentitySystem';
 import { relationshipTypeLabel } from '../core/familyRelations';
+import { describeAppearanceProfile } from './CharacterVisualSystem';
 
 const placeById=Object.fromEntries(TOWN_PLACES.map(place=>[place.id,place])) as Record<string,(typeof TOWN_PLACES)[number]>;
 const ROMANTIC_TYPES=new Set<GameState['relationships'][number]['type']>(['partner','fiance','spouse']);
@@ -45,7 +46,7 @@ export function projectPlayerProfile(state:GameState):PlayerProfileProjection{
     education:latestEducation?`${latestEducation.institution}${latestEducation.graduated?' · graduated':latestEducation.droppedOut?' · left early':' · current'}`:'No formal education record yet',
     relationship,
     traits:[...character.traits],
-    appearance:[character.appearance.hairColor,character.appearance.hairStyle,`${character.appearance.eyeColor} eyes`,...character.appearance.accessories].filter(Boolean),
+    appearance:describeAppearanceProfile(character.appearance),
     licenses,
     completedAchievements:state.achievements.filter(item=>item.completed).length,
     assetSummary:{homes:state.assets.properties.length,vehicles:state.assets.vehicles.length,businesses:state.businesses.filter(item=>!item.bankrupt).length,collectibles:state.assets.collectibles.length},

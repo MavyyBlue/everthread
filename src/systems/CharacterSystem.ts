@@ -1,7 +1,7 @@
 import { countryById, EVERTHREAD_COUNTRY_ID, locationLabel, namingProfileCountries } from '../data/countries';
 import { getNamePool } from '../data/names';
 import { achievements } from '../data/achievements';
-import type { Character, GameState, Npc, Relationship, Sex, GenderIdentity, Orientation } from '../types/game';
+import type { AppearanceProfile, Character, GameState, Npc, Relationship, Sex, GenderIdentity, Orientation } from '../types/game';
 import { clamp } from '../core/math';
 import { createRng, randomSeed } from '../core/rng';
 import { EVERTHREAD_DEFAULT_ACCENT } from '../core/visualIdentity';
@@ -14,6 +14,7 @@ import { emptyConsequenceSchedulerState } from './ConsequenceSystem';
 import { createEmptyWorldConditionState } from './WorldConditionSystem';
 import { CURRENT_SAVE_VERSION } from '../core/saveVersion';
 import { createEmptyPersonalInventoryState } from './PersonalInventorySystem';
+import { normalizeAppearanceProfile } from './CharacterVisualSystem';
 
 const traits = ['generous','selfish','loyal','jealous','ambitious','reckless','calm','romantic','aggressive','responsible','curious','private','witty','stubborn','patient','competitive'];
 const skinTones = ['porcelain','fair','light','medium','olive','tan','brown','deep brown','dark'];
@@ -31,6 +32,8 @@ export interface CharacterCreationOptions {
   sex?: Sex;
   genderIdentity?: GenderIdentity;
   orientation?: Orientation;
+  /** Optional player-created appearance draft. It is normalized into the canonical character appearance record. */
+  appearance?: AppearanceProfile;
   /** Low-level scenario/test override. The player-facing creator always starts in Everthread. */
   countryId?: string;
   city?: string;
@@ -78,11 +81,15 @@ export function createNewGame(options: CharacterCreationOptions = {}): GameState
     {item:'poor' as const,weight:12},{item:'working' as const,weight:28},{item:'middle' as const,weight:38},{item:'comfortable' as const,weight:17},{item:'wealthy' as const,weight:5}
   ]);
   const adv = options.advanced ?? {};
+  // Preserve the historical four appearance RNG draws even when a custom portrait is supplied.
+  // Rich modular art selection is deterministic and consumes no gameplay RNG beyond these legacy draws.
+  const legacyAppearance:AppearanceProfile={skinTone:rng.pick(skinTones),hairColor:rng.pick(hairColors),hairStyle:rng.pick(hairStyles),eyeColor:rng.pick(eyeColors),accessories:[]};
+  const resolvedAppearance=normalizeAppearanceProfile(options.appearance??legacyAppearance,`${seed}:player-visual`,sex,genderIdentity);
   const stat = (value:number|undefined,min=28,max=88) => clamp(value ?? rng.int(min,max));
   const character: Character = {
     id:`player-${seed.slice(-10)}`, firstName, middleName:options.middleName, lastName, sex, genderIdentity, orientation,
     namePoolCountryId:namePoolCountry.id,countryId:country.id, city, birthYear:2026, age:0, alive:true,
-    appearance:{skinTone:rng.pick(skinTones),hairColor:rng.pick(hairColors),hairStyle:rng.pick(hairStyles),eyeColor:rng.pick(eyeColors),accessories:[]},
+    appearance:resolvedAppearance,
     stats:{health:stat(adv.health,70,100),happiness:stat(adv.happiness,55,95),intelligence:stat(adv.intelligence),appearance:stat(adv.appearance)},
     secondary:{
       athleticism:stat(adv.athleticism),discipline:stat(adv.discipline),willpower:stat(adv.willpower),karma:0,reputation:rng.int(45,60),stress:rng.int(0,8),

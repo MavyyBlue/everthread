@@ -19,17 +19,19 @@ import { createEmptyPersonalInventoryState } from './PersonalInventorySystem';
 import { initializeNpcPreferenceKnowledge } from './NpcPreferenceSystem';
 import { EVERTHREAD_CITY } from '../data/countries';
 import { businessWorkLocation } from './WorkingEverthreadSystem';
+import { normalizeAppearanceProfile } from './CharacterVisualSystem';
 
 export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
 function npcToCharacter(state:GameState,npc:Npc):Character {
   const rng=createRng(`${state.seed}-descendant-${npc.id}`,state.rngCounter);
   const identity=characterIdentityFromNpc(state,npc);
+  const legacyAppearance={skinTone:rng.pick(['fair','light','medium','olive','tan','brown','deep brown','dark']),hairColor:rng.pick(['black','brown','auburn','blonde','red']),hairStyle:rng.pick(['straight','wavy','curly','coiled','cropped']),eyeColor:rng.pick(['brown','hazel','green','blue','gray']),accessories:[]};
   return {
     id:npc.id,firstName:npc.firstName,lastName:npc.lastName,
     sex:identity.sex,genderIdentity:identity.genderIdentity,orientation:npc.sexuality,
     namePoolCountryId:npcNamePoolCountryId(state,npc),countryId:npc.countryId,city:npc.city,birthYear:state.currentYear-npc.age,age:npc.age,alive:true,
-    appearance:{skinTone:rng.pick(['fair','light','medium','olive','tan','brown','deep brown','dark']),hairColor:rng.pick(['black','brown','auburn','blonde','red']),hairStyle:rng.pick(['straight','wavy','curly','coiled','cropped']),eyeColor:rng.pick(['brown','hazel','green','blue','gray']),accessories:[]},
+    appearance:normalizeAppearanceProfile(legacyAppearance,`${state.seed}:descendant-visual:${npc.id}`,identity.sex,identity.genderIdentity),
     stats:{health:npc.health,happiness:npc.happiness,intelligence:clamp((npc.life?.aptitude??50)*.72+state.character.stats.intelligence*.18+rng.int(0,12)),appearance:clamp(state.character.stats.appearance*.45+rng.int(20,55))},
     secondary:{athleticism:clamp((npc.life?.health.fitness??50)*.62+state.character.secondary.athleticism*.18+rng.int(0,18)),discipline:clamp((npc.life?.education.performance??50)*.45+rng.int(20,45)),willpower:rng.int(25,80),karma:0,reputation:clamp(npc.life?.publicLife.reputation??50),stress:rng.int(0,25),fertility:npc.fertility,charisma:rng.int(25,85),creativity:rng.int(25,85),confidence:rng.int(20,80),addictionSusceptibility:rng.int(5,75),criminalNotoriety:clamp(npc.life?.legal.recordSeverity??0),academicPerformance:clamp(npc.life?.education.performance??50),workPerformance:clamp(npc.careerId?60+(npc.traits.includes('responsible')?8:0)+(npc.traits.includes('ambitious')?5:0):50)},
     talents:{music:clamp(state.character.talents.music*.35+rng.int(10,55)),acting:clamp(state.character.talents.acting*.35+rng.int(10,55)),athletics:clamp(state.character.talents.athletics*.35+rng.int(10,55)),business:clamp(state.character.talents.business*.35+rng.int(10,55)),crime:clamp(state.character.talents.crime*.35+rng.int(10,55)),social:clamp(state.character.talents.social*.35+rng.int(10,55)),combat:clamp(state.character.talents.combat*.35+rng.int(10,55))},
