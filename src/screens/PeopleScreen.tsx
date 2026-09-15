@@ -25,7 +25,9 @@ import { projectCrossWorldChemistryPlans } from '../systems/CrossWorldChemistryS
 import type { CrossWorldChemistryPlan } from '../types/crossWorldChemistry';
 import { npcHouseholdResidenceProjection, projectResidentialPlans } from '../systems/ResidentialLifeSystem';
 import { CharacterPortrait, CharacterSilhouette } from '../components/CharacterPortrait';
+import { YukiThreadroom } from '../components/YukiThreadroom';
 import { npcPortraitRevealMode, projectNpcAppearance } from '../systems/NpcVisualSystem';
+import { peopleSurfaceForNpc } from '../systems/YukiThreadroomSystem';
 import type { ResidentialPlan } from '../types/residentialLife';
 
 const CURRENT_ROMANTIC_TYPES=new Set<GameState['relationships'][number]['type']>(['partner','fiance','spouse']);
@@ -38,8 +40,10 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const[lastCrossWorldExperience,setLastCrossWorldExperience]=useState<SharedExperienceResult>();
   const[lastResidentialExperience,setLastResidentialExperience]=useState<SharedExperienceResult>();
   const[giftPickerOpen,setGiftPickerOpen]=useState(false);
+  const[showYukiDetails,setShowYukiDetails]=useState(false);
   const selected=selectedNpcId?state.relationships.find(r=>r.npcId===selectedNpcId):undefined;
   const npc=selected?state.npcs[selected.npcId]:undefined;
+  const selectedIsSecretYuki=peopleSurfaceForNpc(npc)==='yuki-threadroom';
   const npcWorlds=npc?state.socialWorlds.filter(world=>world.members.some(member=>member.npcId===npc.id)):[];
   const currentWorkRole=npc?workplaceRoleForNpc(state,npc.id):undefined;
   const lifeSummary=npc?npcLifeSummary(npc):undefined;
@@ -76,7 +80,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const shareCrossWorldExperience=(plan:CrossWorldChemistryPlan)=>{const result=gameEngine.crossWorldExperience(plan.npcId,plan.id);if(result.experience)setLastCrossWorldExperience(result.experience);feedback(result);};
   const shareResidentialExperience=(plan:ResidentialPlan)=>{const result=gameEngine.residentialExperience(plan.npcId,plan.id);if(result.experience)setLastResidentialExperience(result.experience);feedback(result);};
 
-  const personSheet=<BottomSheet open={!!selected} title={npc?`${npc.firstName} ${npc.lastName}`:'Relationship'} onClose={()=>{setSelectedNpcId(undefined);setGiftPickerOpen(false);}}>{selected&&npc&&<>
+  const personSheet=<BottomSheet open={!!selected&&(!selectedIsSecretYuki||showYukiDetails)} title={npc?`${npc.firstName} ${npc.lastName}`:'Relationship'} onClose={()=>{setSelectedNpcId(undefined);setGiftPickerOpen(false);setShowYukiDetails(false);}}>{selected&&npc&&<>
     <div className={`npc-visual-identity npc-visual-identity--${portraitMode}`}>
       {portraitAppearance?<CharacterPortrait appearance={portraitAppearance} age={npc.age} size={112} frame="people" label={`${npc.firstName} ${npc.lastName} portrait`}/>:<CharacterSilhouette age={npc.age} size={112} frame="people" label={`${npc.firstName} ${npc.lastName} silhouette`}/>} 
       <div><p className="eyebrow">{portraitMode==='portrait'?'Portrait revealed':'Familiarity'}</p><h3>{portraitMode==='portrait'?'A face you know':'Still coming into focus'}</h3><p className="muted">{portraitMode==='portrait'?'Their stable portrait now follows this person through Threadspace and future life stages.':'As this relationship becomes more familiar, their portrait will reveal without changing who they are.'}</p></div>
@@ -128,7 +132,8 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
     :undefined;
 
   return <main className="screen people-workspace-screen">
-    <PeopleWorkspace state={state} revision={gameEngine.getRevision()} onSelect={id=>{setSelectedNpcId(id);setGiftPickerOpen(false);}} onSelectPlayer={onOpenPlayerProfile} floatingActions={floatingActions}/>
+    <PeopleWorkspace state={state} revision={gameEngine.getRevision()} onSelect={id=>{setSelectedNpcId(id);setGiftPickerOpen(false);setShowYukiDetails(false);}} onSelectPlayer={onOpenPlayerProfile} floatingActions={floatingActions}/>
+    {selected&&npc&&selectedIsSecretYuki&&!showYukiDetails&&<YukiThreadroom state={state} npc={npc} relationship={selected} onClose={()=>{setSelectedNpcId(undefined);setGiftPickerOpen(false);}} onResult={onResult} onOpenDetails={()=>setShowYukiDetails(true)}/>}
     {personSheet}
   </main>;
 }

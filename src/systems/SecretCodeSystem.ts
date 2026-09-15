@@ -1,14 +1,59 @@
-import type { EngineResult, GameState, Npc, Relationship } from '../types/game';
+import type { AppearanceProfile, CharacterVisualIdentity, EngineResult, GameState, Npc, Relationship } from '../types/game';
 import { makeStateId } from '../core/ids';
 import { ensureNpcLife } from './NpcLifeSystem';
+import { appearanceFromVisual, normalizeAppearanceProfile } from './CharacterVisualSystem';
 
 export const YUKI_SECRET_CODE='9426';
+export const YUKI_SECRET_MEMORY_KIND='secret_yuki_9426';
 const YUKI_SECRET_FLAG='secretCode:yuki:9426';
+
+const YUKI_VISUAL:CharacterVisualIdentity={
+  version:1,
+  faceFamily:'face.heart-03',
+  eyeFamily:'eye.almond-01',
+  browFamily:'brow.soft-arch-02',
+  noseId:'nose.soft-01',
+  mouthFamily:'mouth.soft-07',
+  earId:'ear.small-02',
+  hairId:'hair.wavy-long-16',
+  skinPaletteId:'skin.rose-ivory',
+  hairPaletteId:'hair-color.white',
+  irisPaletteId:'iris.ice-blue',
+  bodyId:'body.slight-01',
+  clothingId:'clothing.pullover-hoodie-04',
+  expressionId:'warm-smile',
+};
+
+export function secretYukiAppearance():AppearanceProfile{
+  return normalizeAppearanceProfile(appearanceFromVisual(YUKI_VISUAL),'secret-yuki:visual','female','woman');
+}
+
+export function isSecretYukiNpc(npc:Npc|undefined):boolean{
+  return Boolean(npc?.memories.some(memory=>memory.kind===YUKI_SECRET_MEMORY_KIND));
+}
 
 function existingYukiId(state:GameState):string|undefined{
   const stored=state.flags[YUKI_SECRET_FLAG];
-  if(typeof stored==='string'&&state.npcs[stored])return stored;
-  return Object.values(state.npcs).find(npc=>npc.memories.some(memory=>memory.kind==='secret_yuki_9426'))?.id;
+  if(typeof stored==='string'&&state.npcs[stored]&&isSecretYukiNpc(state.npcs[stored]))return stored;
+  return Object.values(state.npcs).find(npc=>isSecretYukiNpc(npc))?.id;
+}
+
+/**
+ * Repairs older current-schema saves whose secret Yuki was created before her
+ * curated portrait existed. This is the one intentional exception to ordinary
+ * "materialized NPC portraits never change": the old randomized face was never
+ * the authored secret identity. No gameplay RNG or runtime IDs are consumed.
+ */
+export function normalizeSecretYukiState(state:GameState):boolean{
+  const id=existingYukiId(state);if(!id)return false;
+  const yuki=state.npcs[id];if(!yuki)return false;
+  let changed=false;
+  if(state.flags[YUKI_SECRET_FLAG]!==id){state.flags[YUKI_SECRET_FLAG]=id;changed=true;}
+  const curated=secretYukiAppearance();
+  if(JSON.stringify(yuki.appearance)!==JSON.stringify(curated)){yuki.appearance=curated;changed=true;}
+  const relationship=state.relationships.find(item=>item.npcId===id);
+  if(relationship&&relationship.portraitRevealed!==true){relationship.portraitRevealed=true;changed=true;}
+  return changed;
 }
 
 function summonYuki(state:GameState):EngineResult {
@@ -38,6 +83,7 @@ function summonYuki(state:GameState):EngineResult {
     memories:[],
     parentIds:[],
     childIds:[],
+    appearance:secretYukiAppearance(),
   };
   state.npcs[id]=yuki;
   ensureNpcLife(state,yuki);
@@ -50,6 +96,7 @@ function summonYuki(state:GameState):EngineResult {
     attraction:98,
     compatibility:99,
     yearsKnown:0,
+    portraitRevealed:true,
   };
   state.relationships.push(relationship);
 
@@ -57,7 +104,7 @@ function summonYuki(state:GameState):EngineResult {
     id:makeStateId(state,'memory'),
     year:state.currentYear,
     age:state.character.age,
-    kind:'secret_yuki_9426',
+    kind:YUKI_SECRET_MEMORY_KIND,
     sentiment:10,
     summary:`A hidden thread first woven on 09/04/2026 connected Yuki to ${state.character.firstName}.`,
     permanent:true,

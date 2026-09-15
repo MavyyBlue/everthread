@@ -98,3 +98,8 @@ button.threadspace-node{cursor:pointer}
 /* Character Visual: Threadspace portraits remain inside the existing compact person node. */
 .threadspace-person-mark{overflow:hidden;padding:0}
 .threadspace-person-mark>.character-portrait{width:37px!important;height:37px!important;border-radius:12px}
+
+/* Secret Yuki remains the canonical NPC node, but her hidden thread gets a subtle authored marker. */
+.threadspace-node--secret-yuki{border-color:color-mix(in srgb,var(--accent) 58%,var(--line));background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 14%,var(--surface)),color-mix(in srgb,var(--surface) 96%,transparent));box-shadow:0 12px 34px color-mix(in srgb,var(--accent) 15%,transparent)}
+.threadspace-node--secret-yuki .threadspace-person-mark{box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 54%,transparent),0 0 18px color-mix(in srgb,var(--accent) 22%,transparent)}
+.threadspace-secret-yuki-mark{position:absolute;z-index:5;left:34px;top:-8px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent) 48%,var(--line));background:var(--surface);color:var(--accent);font-size:.62rem;box-shadow:0 5px 14px rgba(0,0,0,.2)}
