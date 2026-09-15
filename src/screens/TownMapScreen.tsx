@@ -26,12 +26,15 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
   const[viewport,setViewport]=useState({width:390,height:560});
   const[camera,setCamera]=useState<TownMapCamera>({x:0,y:0,scale:.28});
   const[panelOpen,setPanelOpen]=useState(false);
+  const[showLiving,setShowLiving]=useState(true);
   const[query,setQuery]=useState('');
   const[categories,setCategories]=useState<TownPlaceCategory[]>(TOWN_PLACE_CATEGORIES.map(item=>item.id));
   const[selectedId,setSelectedId]=useState<string|undefined>(initialSelectedId);
 
   const projection=useMemo(()=>buildTownMapProjection(state,{query,categories}),[state,query,categories]);
+  const livingByPlace=useMemo(()=>new Map(projection.living.places.map(item=>[item.placeId,item] as const)),[projection.living.places]);
   const selected=TOWN_PLACES.find(place=>place.id===selectedId);
+  const selectedLiving=selected?livingByPlace.get(selected.id):undefined;
 
   useLayoutEffect(()=>{
     const element=viewportRef.current;if(!element)return;
@@ -83,12 +86,14 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
   const toggleCategory=(category:TownPlaceCategory)=>setCategories(current=>current.includes(category)?current.filter(item=>item!==category):[...current,category]);
   const resetFilters=()=>{setQuery('');setCategories(TOWN_PLACE_CATEGORIES.map(item=>item.id));};
   const placeScale=1/camera.scale;
+  const renderedDistrictContexts=useMemo(()=>showLiving&&camera.scale>=.32?projection.living.districts.filter(item=>{const district=TOWN_DISTRICTS.find(candidate=>candidate.id===item.districtId);if(!district)return false;const x=district.map.x+district.map.width/2,y=district.map.y+district.map.height/2;return x>=worldBounds.left&&x<=worldBounds.right&&y>=worldBounds.top&&y<=worldBounds.bottom;}):[],[showLiving,camera.scale,projection.living.districts,worldBounds]);
 
   return <main className="town-map-screen" aria-label="Everthread town map">
     <div className="town-map-status" aria-live="polite"><strong>Everthread</strong><small>{projection.playerInEverthread?'You currently live in Everthread.':`Hometown map · you currently live in ${projection.playerLocationLabel}.`}</small></div>
     <button className={`town-map-explore-toggle ${panelOpen?'active':''}`} onClick={()=>setPanelOpen(value=>!value)} aria-expanded={panelOpen} aria-controls="town-map-explore-panel">Explore</button>
     {panelOpen&&<aside id="town-map-explore-panel" className="town-map-explore-panel" aria-label="Map filters and view controls">
       <div className="town-map-panel-heading"><strong>Explore Everthread</strong><small>{projection.places.length} places</small></div>
+      <label className="town-map-living-toggle"><input type="checkbox" checked={showLiving} onChange={event=>setShowLiving(event.target.checked)}/><span><strong>Your life on the map</strong><small>{projection.living.connectedPlaceCount} places · {projection.living.connectedDistrictCount} districts connected</small></span></label>
       <div className="town-map-view-controls"><button onClick={fitMap}>Fit Map</button><button onClick={()=>zoomCenter(.84)}>−</button><span>{Math.round(camera.scale*100)}%</span><button onClick={()=>zoomCenter(1.18)}>+</button></div>
       <label className="town-map-search"><span>Find a place or activity</span><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="Bank, park, racing…"/></label>
       <div className="town-map-category-grid"><strong>Show categories</strong>{TOWN_PLACE_CATEGORIES.map(item=><label key={item.id}><input type="checkbox" checked={categories.includes(item.id)} onChange={()=>toggleCategory(item.id)}/><span>{item.label}</span></label>)}</div>
@@ -98,10 +103,13 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
     <div className="town-map-viewport" ref={viewportRef} onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer}>
       <div className="town-map-world" style={{width:TOWN_MAP_WIDTH,height:TOWN_MAP_HEIGHT,transform:`translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`}}>
         <img className="town-map-artwork" src={townMapArtwork} width={TOWN_MAP_WIDTH} height={TOWN_MAP_HEIGHT} draggable={false} alt="" aria-hidden="true"/>
-        {renderedPlaces.map(place=><button key={place.id} className={`town-map-place town-map-place--${place.category} ${selectedId===place.id?'selected':''}`} style={{left:place.map.x,top:place.map.y,transform:`translate(-50%,-50%) scale(${placeScale})`}} onClick={()=>setSelectedId(place.id)} aria-label={`Open ${place.label}`}>
-          <span className="town-map-place-glyph" aria-hidden="true">{place.map.glyph}</span>
-          {townMapLabelVisible(place,camera.scale)&&<span className="town-map-place-label">{place.shortLabel}</span>}
-        </button>)}
+        {renderedPlaces.map(place=>{const living=showLiving?livingByPlace.get(place.id):undefined;return <button key={place.id} className={`town-map-place town-map-place--${place.category} ${selectedId===place.id?'selected':''} ${living?'has-living-context':''}`} style={{left:place.map.x,top:place.map.y,transform:`translate(-50%,-50%) scale(${placeScale})`}} onClick={()=>setSelectedId(place.id)} aria-label={`Open ${place.label}${living?` · ${living.contexts.map(item=>item.label).join(', ')}`:''}`}>
+          <span className="town-map-place-glyph" aria-hidden="true">{place.map.glyph}{living&&<b className="town-map-context-count">{living.contexts.length}</b>}</span>
+          {townMapLabelVisible(place,camera.scale)&&<span className="town-map-place-label">{place.shortLabel}{living&&<small>{living.contexts[0]?.label}</small>}</span>}
+        </button>})}
+        {renderedDistrictContexts.map(item=>{const district=TOWN_DISTRICTS.find(candidate=>candidate.id===item.districtId)!;const x=district.map.x+district.map.width/2,y=district.map.y+district.map.height/2;return <div key={`living-${item.districtId}`} className="town-map-district-context" style={{left:x,top:y,transform:`translate(-50%,-50%) scale(${placeScale})`}} aria-label={`${item.districtLabel}: ${item.contexts.map(context=>context.label).join(', ')}`}>
+          <strong>{item.contexts[0]?.label}</strong><small>{item.districtLabel}{item.contexts.length>1?` · +${item.contexts.length-1}`:''}</small>
+        </div>})}
       </div>
       {!projection.places.length&&<div className="town-map-empty">No places match these filters.</div>}
       <div className="town-map-gesture-hint">Drag to move · pinch to zoom · tap a place</div>
@@ -111,6 +119,7 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
         <p className="eyebrow">{TOWN_PLACE_CATEGORIES.find(item=>item.id===selected.category)?.label} · {TOWN_DISTRICTS.find(item=>item.id===selected.districtId)?.label}</p>
         <h2>{selected.label}</h2><p>{selected.description}</p>
         <div className="town-place-tags">{selected.activityTags.map(tag=><span key={tag}>{tag}</span>)}</div>
+        {showLiving&&selectedLiving&&<section className="town-place-living"><small>Your life here</small><div className="town-place-living-list">{selectedLiving.contexts.map(context=><div key={context.id}><span className={`town-place-living-icon town-place-living-icon--${context.kind}`} aria-hidden="true"></span><span><strong>{context.label}</strong><small>{context.detail}</small></span>{context.count>1&&<b>{context.count}</b>}</div>)}</div></section>}
         {selected.routes?.length?<div className="town-place-services"><small>Available here</small><div className="town-place-service-list">{selected.routes.map(route=><button key={route.id} onClick={()=>onNavigate(selected.id,route.id)}><span><strong>{route.label}</strong><small>{route.description}</small></span><b aria-hidden="true">›</b></button>)}</div><p>These open established Everthread screens. The destination system still owns eligibility, costs, limits, and outcomes.</p></div>:<div className="town-place-route"><small>Map landmark</small><strong>No routed mechanic yet</strong><p>This place remains part of Everthread without inventing a duplicate or fake system. Later world-life phases can add experiences when an authoritative owner exists.</p></div>}
       </div>}
     </BottomSheet>

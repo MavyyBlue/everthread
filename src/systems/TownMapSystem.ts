@@ -7,6 +7,8 @@ import {
   type TownPlaceDefinition,
 } from '../data/townPlaces';
 import type { GameState } from '../types/game';
+import type { LivingMapProjection } from '../types/livingMap';
+import { livingMapProjection } from './LivingMapSystem';
 
 export interface TownMapBounds {left:number;right:number;top:number;bottom:number}
 export interface TownMapCamera {x:number;y:number;scale:number}
@@ -17,6 +19,7 @@ export interface TownMapProjection {
   hiddenPlaceCount:number;
   playerInEverthread:boolean;
   playerLocationLabel:string;
+  living:LivingMapProjection;
 }
 
 export const TOWN_MAP_MIN_SCALE=.2;
@@ -34,13 +37,20 @@ export function townPlaceDiscovered(state:GameState,place:TownPlaceDefinition){
 export function buildTownMapProjection(state:GameState,options:TownMapProjectionOptions={}):TownMapProjection{
   const query=(options.query??'').trim().toLowerCase();
   const categorySet=options.categories===undefined?undefined:new Set(options.categories);
+  const livingRaw=livingMapProjection(state);
+  const discoveredIds=new Set(TOWN_PLACES.filter(place=>townPlaceDiscovered(state,place)||options.includeUndiscovered).map(place=>place.id));
+  const living:LivingMapProjection={...livingRaw,places:livingRaw.places.filter(item=>discoveredIds.has(item.placeId))};
+  living.connectedPlaceCount=living.places.length;living.totalContexts=living.places.reduce((sum,item)=>sum+item.contexts.length,0)+living.districts.reduce((sum,item)=>sum+item.contexts.length,0);
+  const livingByPlace=new Map(living.places.map(item=>[item.placeId,item] as const));
   let hiddenPlaceCount=0;
   const places=TOWN_PLACES.filter(place=>{
     const discovered=townPlaceDiscovered(state,place);
     if(!discovered&&!options.includeUndiscovered){hiddenPlaceCount+=1;return false;}
     if(categorySet&&!categorySet.has(place.category))return false;
     if(!query)return true;
-    const haystack=[place.label,place.shortLabel,place.category,place.description,...place.activityTags].join(' ').toLowerCase();
+    const context=livingByPlace.get(place.id);
+    const contextText=context?.contexts.flatMap(item=>[item.label,item.detail]).join(' ')??'';
+    const haystack=[place.label,place.shortLabel,place.category,place.description,...place.activityTags,contextText].join(' ').toLowerCase();
     return haystack.includes(query);
   });
   return{
@@ -48,6 +58,7 @@ export function buildTownMapProjection(state:GameState,options:TownMapProjection
     hiddenPlaceCount,
     playerInEverthread:state.character.countryId===EVERTHREAD_COUNTRY_ID&&state.character.city===EVERTHREAD_CITY,
     playerLocationLabel:locationLabel(state.character.countryId,state.character.city),
+    living,
   };
 }
 
@@ -98,16 +109,18 @@ export function townMapMarkerVisible(place:TownPlaceDefinition,scale:number){
 export function townMapLabelVisible(place:TownPlaceDefinition,scale:number){return scale>=place.map.labelMinScale;}
 
 export function townMapSemanticView(state:GameState){
-  const projection=buildTownMapProjection(state);
+  const projection=buildTownMapProjection(state);const livingByPlace=new Map(projection.living.places.map(item=>[item.placeId,item] as const));
   return{
     map:{width:TOWN_MAP_WIDTH,height:TOWN_MAP_HEIGHT},
     playerInEverthread:projection.playerInEverthread,
     playerLocationLabel:projection.playerLocationLabel,
     placeCount:projection.places.length,
     hiddenPlaceCount:projection.hiddenPlaceCount,
+    living:{totalContexts:projection.living.totalContexts,connectedPlaceCount:projection.living.connectedPlaceCount,connectedDistrictCount:projection.living.connectedDistrictCount,districts:projection.living.districts.map(item=>({...item,contexts:item.contexts.map(context=>({...context,sourceIds:[...context.sourceIds]}))}))},
     places:projection.places.map(place=>({
       id:place.id,label:place.label,category:place.category,districtId:place.districtId,
       x:place.map.x,y:place.map.y,activityTags:[...place.activityTags],routes:place.routes?.map(route=>({...route})),
+      contexts:livingByPlace.get(place.id)?.contexts.map(context=>({...context,sourceIds:[...context.sourceIds]}))??[],
     })),
   };
 }
