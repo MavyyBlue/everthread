@@ -70,6 +70,7 @@ import { runPhase10BWorkingEverthreadRegression } from './phase10BWorkingEverthr
 import { runPhase10CGenerationalPlaceMemoryRegression } from './phase10CGenerationalPlaceMemoryRegression';
 import { runPhase10DLivingMapProjectionRegression } from './phase10DLivingMapProjectionRegression';
 import { runPrePhase10EPlayerUxRegression } from './prePhase10EPlayerUxRegression';
+import { runPhase10EProgramCloseoutRegression } from './phase10EProgramCloseoutRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -144,5 +145,6 @@ try{const checks=runPhase10BWorkingEverthreadRegression();console.log(`Phase 10B
 try{const checks=runPhase10CGenerationalPlaceMemoryRegression();console.log(`Phase 10C Generational Place Memory regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase10DLivingMapProjectionRegression();console.log(`Phase 10D Living Map Projection regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPrePhase10EPlayerUxRegression();console.log(`Pre-Phase 10E player-UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=await runPhase10EProgramCloseoutRegression();console.log(`Phase 10E Program Closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
