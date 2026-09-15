@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { EngineResult, GameState, Npc, Relationship } from '../types/game';
 import type { ActionResultHandler } from '../core/actionVfx';
 import { actionAllowed } from '../core/actionEconomy';
@@ -178,7 +179,7 @@ export function YukiThreadroom({state,npc,relationship,onClose,onResult,onOpenDe
     {policy:'social.npc.action',target:`${npc.id}:${action}`},
   ]);
 
-  return <section className="yuki-threadroom" role="dialog" aria-modal="true" aria-label="Yuki hidden Threadroom">
+  const room=<section className="yuki-threadroom" role="dialog" aria-modal="true" aria-label="Yuki hidden Threadroom">
     <picture className="yuki-threadroom__background" aria-hidden="true">
       <source media="(max-width: 700px)" srcSet={yukiThreadroomRoomAsset(lighting,'mobile')}/>
       <img src={yukiThreadroomRoomAsset(lighting,'master')} alt=""/>
@@ -246,4 +247,6 @@ export function YukiThreadroom({state,npc,relationship,onClose,onResult,onOpenDe
       </div>
     </div>}
   </section>;
+  return typeof document==='undefined'?room:createPortal(room,document.body);
 }
+

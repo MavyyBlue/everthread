@@ -17,7 +17,8 @@ export function runYukiThreadroomArtRegression(){
   let checks=0;
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Yuki Threadroom art regression failed: ${message}`);}
 
-  verify(yukiThreadroomArtMode(17)==='modular-age-aware','teen Yuki must not use the adult painted room sprite');
+  verify(yukiThreadroomArtMode(0)==='modular-age-aware','newborn Yuki must use the age-aware fallback instead of the age-30 painted sprite');
+  verify(yukiThreadroomArtMode(17)==='modular-age-aware','child and teen Yuki must not use the adult painted room sprite');
   verify(yukiThreadroomArtMode(18)==='reactive-adult'&&yukiThreadroomArtMode(44)==='reactive-adult','adult stage should use the reactive painted Yuki sprite');
   verify(yukiThreadroomArtMode(45)==='modular-age-aware'&&yukiThreadroomArtMode(65)==='modular-age-aware','mature and elder Yuki must fall back to age-aware modular portrait art until matching painted variants exist');
 
