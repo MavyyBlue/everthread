@@ -3,6 +3,12 @@
 Last audited: 2026-09-15
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Pre-Phase 10E player-tested correction content note
+
+The certified correction gate adds **1 authored town place** and **1 routed institution service**: **Threadtone Music Studio** in Eastworks routes to the already-established Music career owner. Current certified totals are **691 events**, **306 career positions across 51 six-step ladders**, **51 education programs**, **112 illness/health definitions**, **199 relationship-focused events**, **90 career/work events**, **50 crimes**, **124 achievements**, **56 challenges**, **60 properties**, **50 pets**, **47 vehicles/boats/aircraft**, **18 fictional securities**, **20 business industries / 80 products**, **40 collectibles**, **33 country/profile definitions**, **25 Everthread town places**, **29 routed institution services**, **24 personal inventory items**, **38 NPC preference tags**, and **7 regional name pools** with 20 first + 20 last names each.
+
+Run #163 changes the **meaning** of travel/residence without adding a second content catalog: Everthread is the only permanent player home; the other 32 country definitions remain external travel destinations and procedural naming/cultural profile sources. Achievement wording/conditions were reconciled to the rule while the achievement count remains **124**. Save schema remains **17**.
+
 ## Phase 10D Living Map Projection content note
 
 Certified Phase 10D adds **no new player-facing event, place, career, education, inventory, relationship, business-industry, product, or collectible definitions**. It adds one bounded read-only presentation projection over the existing 24-place map and established residential/work/school/business/property/legacy authorities. The certified-source audit remains **691 events**, **306 career positions across 51 six-step ladders**, **51 education programs**, **112 illness/health definitions**, **199 relationship-focused events**, **90 career/work events**, **50 crimes**, **124 achievements**, **56 challenges**, **60 properties**, **50 pets**, **47 vehicles/boats/aircraft**, **18 fictional securities**, **20 business industries / 80 products**, **40 collectibles**, **33 countries**, **24 Everthread town places**, **28 routed institution services**, **24 personal inventory items**, **38 NPC preference tags**, and **7 regional name pools** with 20 first + 20 last names each.
@@ -57,7 +63,7 @@ Certified Phase 8B has **24 authored Everthread town-place definitions across 6 
 
 ## Phase 8A setting/content note
 
-Certified Phase 8A adds **1** fictional home-jurisdiction definition, **Everthread**, increasing executable country definitions from **32 → 33**. The prior 32 real-world definitions remain available for travel/emigration and as hidden procedural naming-profile sources. The regional naming dataset remains **7 pools**; `namePoolCountryId` separates cultural naming semantics from physical residence without duplicating the name data. No random-event, career, education, health, asset, achievement, challenge, or systemic-story definition counts changed.
+Certified Phase 8A adds **1** fictional home-jurisdiction definition, **Everthread**, increasing executable country definitions from **32 → 33**. The prior 32 real-world definitions remain available as external travel destinations and hidden procedural naming-profile sources; permanent emigration was retired by the certified pre-10E world-rule correction. The regional naming dataset remains **7 pools**; `namePoolCountryId` separates cultural naming semantics from physical residence without duplicating the name data. No random-event, career, education, health, asset, achievement, challenge, or systemic-story definition counts changed.
 
 ## Phase 7C world-condition content note
 

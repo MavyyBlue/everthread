@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life, Phase 10B Working Everthread, Phase 10C Generational Place Memory, and Phase 10D Living Map Projection are certified / closed; Phase 10E Program Closeout is next after the mandatory 10D documentation sync certifies.**
+Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life, Phase 10B Working Everthread, Phase 10C Generational Place Memory, and Phase 10D Living Map Projection are certified / closed; the player-tested pre-10E correction gate is certified / closed in Runs #162–#163; Phase 10E Program Closeout is next after this mandatory correction documentation sync certifies.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`;
+- newest certified gameplay/source: Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -27,6 +27,7 @@ Current certified program baseline:
 - Phase 10B: **certified / closed**;
 - Phase 10C: **certified / closed**;
 - Phase 10D: **certified / closed**;
+- pre-10E player-tested correction gate: **certified / closed (Runs #162–#163)**;
 - next slice after this mandatory docs sync certifies: **Phase 10E — Program Closeout**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
@@ -237,6 +238,16 @@ Fresh certified-source content audit remains unchanged at 691 events / 24 town p
 
 **Phase 10D is CLOSED / CERTIFIED.** Preserve this projection-only boundary during Phase 10E closeout.
 
+### Pre-10E player-tested correction gate — CERTIFIED Runs #162–#163
+
+Direct mobile playtesting after 10D exposed two categories of issues that were fixed before closeout rather than normalized as acceptable debt. Run #162 certified shared Map-sheet touch scrolling/stacking, the three-permanent-plus-one-contextual bottom navigation model, and **Threadtone Music Studio** as a real Eastworks doorway into the existing Music career authority. The town registry is therefore now **25 authored places / 29 routed services** without adding a second Music system or Map authority.
+
+Run #163 certified the deeper setting rule: **Everthread is the only permanent player residence**. External countries remain temporary vacation/family-trip destinations and naming/cultural profile sources. The compatibility emigration action no longer mutates state, and legacy schema-17 emigrated saves deterministically normalize the current household/local context back to Everthread while preserving durable biography/travel. The repair is idempotent, RNG-neutral, runtime-ID-neutral, and requires no schema bump.
+
+Canonical Run #163 preflight passed **4/4** with the expanded pre-10E UX regression **20/20**, Integrated Long-Life **105/105**, Town Map **46/46**, Routing **42/42**, 10B **50/50**, 10D **50/50**, minigames **19/19**, feedback **20/20 + 23/23**, and a **203-module** build. Direct player-side validation confirmed the Airport behavior works as intended.
+
+**The pre-10E correction gate is CLOSED / CERTIFIED.** Phase 10E must close the program from certified gameplay/source `ab40d66808e0950f041a72681d573401926de8c0` (or the docs-only descendant once this synchronization certifies), not from the older Run #160 source.
+
 ### Phase 10E — Program Closeout
 
 Validate multi-generation behavior, migration/rewind, estate/accounting integrity, map performance, Threadspace ↔ Map ↔ Player Profile navigation, action-access parity, mobile/accessibility, and the complete CI/certification wall.
@@ -267,4 +278,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 10E — Program Closeout** only after this mandatory Phase 10D documentation sync certifies. Validate the complete Living Everthread stack across multi-generation continuation, save/load/migration/rewind, estate/accounting integrity, Map ↔ Threadspace ↔ Player Profile navigation, action-access parity, mobile/accessibility, deterministic projection, bounded performance, and canonical CI. Closeout should harden and certify the integrated program rather than add a new simulation authority.
+Begin **Phase 10E — Program Closeout** only after this mandatory pre-10E correction documentation sync certifies. Validate the complete Living Everthread stack across multi-generation continuation, save/load/migration/rewind, estate/accounting integrity, Map ↔ Threadspace ↔ Player Profile navigation, action-access parity, mobile/accessibility, deterministic projection, bounded performance, and canonical CI. Closeout should harden and certify the integrated program rather than add a new simulation authority.

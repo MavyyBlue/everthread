@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`**, save schema **17**. Phases 7, 8, and **9 — Shared Lives** are certified/closed; **Phase 10A — Residential Life**, **Phase 10B — Working Everthread**, **Phase 10C — Generational Place Memory**, and **Phase 10D — Living Map Projection** are certified/closed. Phase 10E — Program Closeout is the exact next implementation slice after this mandatory docs sync certifies.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`**, save schema **17**. Phases 7, 8, and **9 — Shared Lives** are certified/closed; **Phase 10A — Residential Life**, **Phase 10B — Working Everthread**, **Phase 10C — Generational Place Memory**, and **Phase 10D — Living Map Projection** are certified/closed. The player-tested pre-10E correction gate is also certified/closed in Runs #162–#163. Phase 10E — Program Closeout is the exact next implementation slice after this mandatory docs sync certifies.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Fresh post-Run-#160 live central-inbox read found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` now points to certified **Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`** at `2026-09-15 05:38:31.538933+00`.
+Fresh post-Run-#163 live central-inbox read found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` now points to certified **Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`** at `2026-09-15 06:46:01.03675+00`.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
@@ -102,6 +102,7 @@ Fresh post-Run-#160 live central-inbox read found **4 rows / 0 unresolved by `tr
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
 - Newest recorded report receipt remains **2026-09-13 19:51:36.119407 UTC**.
-- Review-state checkpoint key `main` is `8ce87ad1e812ed94a9918684b3b52452826f0ce9`, checked at `2026-09-15 05:38:31.538933+00`, with four reviewed reports.
+- Review-state checkpoint key `main` is `ab40d66808e0950f041a72681d573401926de8c0`, checked at `2026-09-15 06:46:01.03675+00`, with four reviewed reports.
+- Direct playtesting—not central-inbox reports—identified the Map sheet/navigation/Music Studio issues and Airport permanent-emigration loophole. They are certified fixed in Runs #162 and #163 respectively, and the player confirmed the Airport correction works.
 - Player-visible disposition read-back remains certified and deployed.
-- The fresh post-Run-#160 inbox read contains no actionable item that preempts **Phase 10E — Program Closeout** after the mandatory Phase 10D documentation sync certifies.
+- The fresh post-Run-#163 inbox read contains no actionable item that preempts **Phase 10E — Program Closeout** after the mandatory pre-10E correction documentation sync certifies.

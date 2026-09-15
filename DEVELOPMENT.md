@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`
-Certified gameplay baseline: Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`
+Newest certified expanded gameplay/source: Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`
+Certified gameplay baseline: Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`
 
 ## Product direction
 
@@ -26,7 +26,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Certified Phase 10D / next implementation phase
+## Certified pre-10E correction gate / next implementation phase
+
+### Player-tested Map/navigation/Music + Everthread-home corrections — CI Green Runs #162–#163
+
+Runs #162/#163 preserve the certified Phase 10D architecture while fixing player-found UX/world-rule defects before closeout. Run #162 makes all shared Map location sheets vertically touch-scrollable above navigation, trims permanent bottom navigation to **Life / People / Map** with one routed contextual fourth owner, and adds **Threadtone Music Studio** as a real Map doorway into the existing Music career system. Run #163 establishes **Everthread as the only permanent player residence** while preserving vacations/family trips as temporary travel; the compatibility `emigrate` action is mutation-free and old current-schema emigrated saves repair deterministically to Everthread.
+
+- Newest certified gameplay/source: Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`, schema **17**. Run #162 gameplay/source: `5834f9fc6de6327797c969542eb3fdcd07b4e13b`.
+- Canonical Run #163 preflight: **4/4 Green**. Pre-10E UX **20/20**; base **82/82**; Music **76/76**; AI **82/82**; Long-Life **105/105**; 8A **25/25**; Town Map **46/46**; Routing **42/42**; 8E **34/34**; 9B **53/53**; 10B **50/50**; 10D **50/50**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build: Vite 7.3.6, **203 modules**. Town Map remains ~8.92 kB / 3.32 kB gzip JS; main ~1,269.79 kB / 358.61 kB gzip. Existing >700 kB warning remains nonblocking technical debt.
+- Certified content totals now include **25 town places / 29 routed institution services**; the only new authored place/service is Threadtone Music Studio. Other major catalog counts remain unchanged.
+- Fresh post-certification Feedback Inbox sweep: **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`; review checkpoint advanced to `ab40d66808e0950f041a72681d573401926de8c0` at `2026-09-15 06:46:01.03675+00`.
+- Direct player-side verification confirmed the Run #163 Airport behavior works as intended.
+- **Exact next slice after this docs sync certifies: Phase 10E — Program Closeout.**
+
+## Historical certified Phase 10D
 
 ### Phase 10D — Living Map Projection (CI Green Run #160)
 
@@ -44,7 +58,7 @@ Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9` is the certified Phase 10D
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `8ce87ad1e812ed94a9918684b3b52452826f0ce9` at `2026-09-15 05:38:31.538933+00`.
 - Pre-upload local canonical wrapper was container-time-limited and is not claimed as a completed canonical preflight; GitHub Run #160 is certification authority.
 
-**Exact next slice after this documentation sync certifies:** Phase 10E — Program Closeout. Prove the entire Living Everthread stack across generations, save/load/rewind/dynasty, navigation/access parity, mobile/accessibility, bounded map performance, and the complete canonical CI wall without adding a second simulation authority.
+**Historical Run #160 handoff:** Phase 10E was the intended next slice, but direct playtesting inserted and certified the narrow Runs #162–#163 correction gate before closeout.
 
 ## Prior certified Phase 10B
 
@@ -63,7 +77,7 @@ Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67` is the certified Phase 10B
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `a497aa1bbec357fe12755383acb7053ab5d0ea67` at `2026-09-15 04:33:34.506272+00`.
 - Fresh local content audit after certification remained unchanged at 691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 NPC preference tags.
 
-**Historical handoff from Phase 10B:** Phase 10C and Phase 10D are now certified. The live target is Phase 10E — Program Closeout after the mandatory Phase 10D documentation sync certifies.
+**Historical handoff from Phase 10B:** Phase 10C and Phase 10D later certified; direct playtesting then inserted the now-certified Runs #162–#163 correction gate before the live Phase 10E target.
 
 ### Phase 10A — Residential Life (CI Green Run #154)
 

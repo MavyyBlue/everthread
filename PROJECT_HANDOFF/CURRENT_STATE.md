@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #160** (`34933437352`) on expanded source **`8ce87ad1e812ed94a9918684b3b52452826f0ce9`**. This is the certified Phase 10D Living Map Projection baseline on schema 17. This mandatory documentation synchronization changes no gameplay; once it certifies, its expanded docs commit becomes the newest repository source while Run #160 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #163** (`34937808322`) on expanded source **`ab40d66808e0950f041a72681d573401926de8c0`**. This is the certified pre-Phase-10E player-tested correction baseline on schema 17, layered narrowly over certified Phase 10D. This mandatory documentation synchronization changes no gameplay; once it certifies, its expanded docs commit becomes the newest repository source while Run #163 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -27,9 +27,11 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #160**
 - Phase 10B — Working Everthread: **CERTIFIED / CLOSED**
 - Phase 10C — Generational Place Memory: **CERTIFIED / CLOSED**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
+- Pre-Phase 10E player-tested correction gate: **CERTIFIED / CLOSED in Runs #162–#163**
 - Exact next implementation slice after this docs sync certifies: **Phase 10E — Program Closeout**
-- Fresh post-Run-#160 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
-- The stored review checkpoint successfully advanced to **`8ce87ad1e812ed94a9918684b3b52452826f0ce9`** at **`2026-09-15 05:38:31.538933+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified Phase 10D gameplay baseline.
+- Fresh post-Run-#163 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
+- The stored review checkpoint successfully advanced to **`ab40d66808e0950f041a72681d573401926de8c0`** at **`2026-09-15 06:46:01.03675+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the newest certified gameplay baseline.
+- Direct Android/player-side QA confirmed the Map sheet/navigation/Music Studio corrections and the Everthread-only Airport travel rule behave as intended.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -41,7 +43,23 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #160 — Phase 10D Living Map Projection
+## Newest certified gameplay/source — Run #163 — pre-Phase 10E player-tested corrections
+
+- Run #162 upload wrapper: `3c117cd69a4af99557e8c40e12a80b58ecb9737b`; expanded certified source: `5834f9fc6de6327797c969542eb3fdcd07b4e13b`; Actions Run ID `34936352466`.
+- Run #163 upload wrapper: `6dab74794cf7f0af3cc7ebcdb12a0a95693eba5e`; expanded certified source: `ab40d66808e0950f041a72681d573401926de8c0`; Actions Run ID `34937808322`.
+- Run #162 fixes shared Map sheet vertical touch scrolling/stacking, trims permanent bottom navigation to **Life / People / Map** with one contextual routed fourth tab, and adds **Threadtone Music Studio** as the 25th authored place / 29th routed service into the existing Music owner.
+- Run #163 makes **Everthread the only permanent player residence**. Vacations and family trips remain temporary external travel; they never rewrite canonical residence. The compatibility emigration action is mutation-free; legacy current-schema emigrated saves normalize deterministically/idempotently back to Everthread without consuming RNG/runtime IDs or discarding historical travel/biography.
+- Save schema remains **17**. No second residence, household, travel-history, Map, or Music-career authority was introduced.
+- Run #163 canonical preflight **4/4**. Pre-10E UX **20/20**; base **82/82**; Music **76/76**; AI **82/82**; Integrated Long-Life **105/105**; Phase 7C **42/42**; 8A **25/25**; Town Map **46/46**; Routing **42/42**; 8E **34/34**; 9B **53/53**; 10B **50/50**; 10D **50/50**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build: Vite 7.3.6, **203 modules transformed**. Town Map ~8.92 kB / 3.32 kB gzip JS; Player Profile ~10.29 / 2.97; People ~41.15 / 12.10; main ~1,269.79 / 358.61. Established >700 kB warning remains nonblocking technical debt.
+- Run #163 certified source SHA-256 `f8d7d6b59f13ec032d3fde5e031bb38ca3bf1947990e4e30a23bd16775b3257f`; dependency SHA-256 `4572bc66299fc92c2f067fe443fabd0c61c80d67b288be2ba103212e34393eeb`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10384556377`, digest `ff9ed03979076ea931b174c5383adde3c2e1ca1e76ba863c4b143beb6705bb88`; Pages artifact ID `10384640209`, digest `3a9a6e2d6e067a6d8a1db56ca2a644762a7311066d776cea148ccfcf53dcff8f`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `ab40d66808e0950f041a72681d573401926de8c0` at `2026-09-15 06:46:01.03675+00`.
+- Certified content totals: **691 events / 25 town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**.
+- Direct player-side verification confirmed the Airport fix works.
+- **Pre-10E correction gate is CLOSED / CERTIFIED. Exact next slice after this docs sync certifies: Phase 10E — Program Closeout.**
+
+## Prior certified gameplay/source — Run #160 — Phase 10D Living Map Projection
 
 - Upload wrapper: `321c92ce7ff4cb3ef96df7e10f523a6c5496b795`.
 - Expanded certified source: `8ce87ad1e812ed94a9918684b3b52452826f0ce9`.
@@ -61,7 +79,7 @@ Candidate save schema: none
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `8ce87ad1e812ed94a9918684b3b52452826f0ce9` at `2026-09-15 05:38:31.538933+00`.
 - Fresh certified-source content audit remains unchanged at 691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 NPC preference tags.
 - Pre-upload local canonical wrapper was container-time-limited; GitHub Run #160 is the final certification authority.
-- **Phase 10D is CLOSED / CERTIFIED. Exact next slice after this docs sync certifies: Phase 10E — Program Closeout.**
+- **Phase 10D is CLOSED / CERTIFIED. Its historical next step was 10E; the later player-tested correction gate in Runs #162–#163 is now the live certified boundary.**
 
 ## Prior certified gameplay/source — Run #158 — Phase 10C Generational Place Memory
 
@@ -412,11 +430,11 @@ Run #150 certified one read-only cross-world context projection over existing sc
 
 Run #152 certified the test-only Shared Lives integration closeout at **41/41** with the full canonical wall Green. No production gameplay fix was required. Phase 9 is closed while preserving one Relationship authority, the shared preference/evaluation path, bounded exact-target memories/history, real inventory gifting, romantic momentum on existing relationships, social-world roster ownership, deterministic save/rewind behavior, and AI/player action parity.
 
-### Certified Phase 10D / approved next slice — Phase 10E Program Closeout
+### Certified Phase 10D + pre-10E correction boundary
 
 Run #158 certified Generational Place Memory at **50/50** with the complete canonical wall Green. Meaningful place history remains bounded projection over Timeline/CompletedLife plus existing Property/Business/Estate/Working Everthread/Town Place truth; no global visited-place or family-landmark ledger exists.
 
-After this mandatory Phase 10D documentation sync certifies, begin **Phase 10E — Program Closeout**. Prove the full Living Everthread stack across Residential Life, Working Everthread, Generational Place Memory, and Living Map Projection: multi-generation continuation, save/load/migration/rewind, estate/accounting integrity, Threadspace ↔ Map ↔ Player Profile navigation, action-access parity, mobile/accessibility, bounded map performance, deterministic read-only projection, and the complete CI wall. Closeout should certify integration and polish rather than add a competing simulation authority.
+After the certified Runs #162–#163 correction documentation sync certifies, begin **Phase 10E — Program Closeout**. Prove the full Living Everthread stack across Residential Life, Working Everthread, Generational Place Memory, and Living Map Projection: multi-generation continuation, save/load/migration/rewind, estate/accounting integrity, Threadspace ↔ Map ↔ Player Profile navigation, action-access parity, mobile/accessibility, bounded map performance, deterministic read-only projection, and the complete CI wall. Closeout should certify integration and polish rather than add a competing simulation authority.
 
 ## Historical feedback snapshot after Run #141 / `f1be1e6…`
 
