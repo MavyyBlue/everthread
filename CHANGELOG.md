@@ -1,3 +1,25 @@
+## Phase 10B — Working Everthread — CI Green Run #156 — 2026-09-14
+
+### Added / changed
+
+- Added one **Working Everthread** projection layer over existing SchoolWorld, Workplace/SocialWorld, Business, Town Place, and character/NPC location truth. It creates no second workplace, school, employment, business, institution, revenue, bankruptcy, or relationship authority.
+- Current school institutions project to the existing Everthread School / Everthread College anchors when the authoritative active school world is local. Active full-time and part-time workplace worlds project deterministically into existing town districts and, where a real landmark exists, an existing place anchor; external school/work worlds remain external and receive no fictional Everthread district.
+- Player-founded businesses now preserve their physical base on the authoritative `Business` record with optional `countryId` / `city` provenance. NPC business holdings preserve the same provenance across estate conversion, so a company does not teleport when the player relocates or when ownership crosses generations.
+- Added deterministic business/work district rules using the existing six-district / 24-place town registry. Market-facing work maps to Market Row, civic/finance/medical work to Central Weave, education/community work to Campus Green, transport/logistics work to South Belt, and remaining technology/industrial work to Eastworks; exact existing landmarks are reused where appropriate.
+- Legacy player businesses missing location repair to the current protagonist location; legacy NPC businesses repair from the owning NPC. Repairs are deterministic, idempotent, RNG-neutral, and runtime-ID neutral.
+- Career now shows projected current campus/workplace location context; Assets shows each company base. AI semantic observations expose the same production projections. Browsing/projection is read-only and does not consume gameplay RNG, runtime IDs, actions, or mutate certified 10A residence meaning.
+- Save schema remains **17**. A fresh local content audit after certification still reports **691 events, 24 town places, 28 routed institution services, 24 personal inventory items, and 38 NPC preference tags**; Phase 10B adds mapping/projection rules rather than inflating authored content counts.
+
+### Certification
+
+- GitHub Actions Run #156 (`34927243187`) certified expanded source `a497aa1bbec357fe12755383acb7053ab5d0ea67` from upload wrapper `20b8359cb5bc306fbcb457a737027c56fb76fcc2`. Net diff from the prior synchronized repository source `2f29dfb7aaa17efdb35325383ed8d4fb4d84f390` is exactly **14 intended Phase 10B source/test/UI files** (4 added, 10 modified); workflow import reports 15 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight PASS **4/4**; Phase 10B Working Everthread **50/50**; base **82/82**; People **57/57**; AI Interaction Testbench **78/78**; Phase 10A Residential Life **69/69**; Relationship Microcopy **69/69**; NPC Asset Ownership **82/82**; Dynasty **64/64**; Integrated Long-Life **105/105**; Phase 9A–9G remained Green; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build PASS with Vite 7.3.6 at **201 modules**. People remains lazy/code-split at ~41.15 kB JS / 12.10 kB gzip; Player Profile ~9.34 kB / 2.73 kB gzip; Town Map ~6.97 kB / 2.82 kB gzip; main JS ~1,259.21 kB / 355.87 kB gzip. The established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `eb3fb05357822c18bc52585de60c4dc6838eed1ff51e9f857adf3c883897d83a`; dependency SHA-256 `46ecae009f310c130b64ad1efa141d9755bdd793ff3682f0b61cba8daa186394`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10380297168`, digest `4dfc38542f7510b4d5dbddd33e11aadfdeec97ed32e4326ee9a09561f0daaa17`; Pages artifact ID `10380680116`, digest `8acb6ef7976cd0078f5ff5e2e26f186e5e26352399c6b82fd0e5aaa20021acd0`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved by `triage_status`**, no new report after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `a497aa1bbec357fe12755383acb7053ab5d0ea67` at `2026-09-15 04:33:34.506272+00` with reviewed-report count 4.
+- **Phase 10B is CLOSED / CERTIFIED. Exact next slice after this mandatory documentation sync certifies: Phase 10C — Generational Place Memory.**
+
 ## Phase 10A — Residential Life — CI Green Run #154 — 2026-09-14
 
 ### Added / changed

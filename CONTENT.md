@@ -3,6 +3,10 @@
 Last audited: 2026-09-14
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 10B Working Everthread content note
+
+Certified Phase 10B adds **no new player-facing place, event, career, education, inventory, or relationship content definitions**. It adds deterministic work/business district and existing-landmark mapping rules over the certified six-district / 24-place Everthread registry, plus read-only projections for current school institutions, active workplaces, and player-founded businesses. A fresh post-certification content audit remains **691 events**, **306 career positions across 51 six-step ladders**, **51 education programs**, **24 town places**, **28 routed institution services**, **24 personal inventory items**, **38 NPC preference tags**, **20 business industries / 80 products**, and **40 collectibles**. Phase 10B therefore adds spatial meaning without cosmetic count inflation.
+
 ## Phase 10A Residential Life content note
 
 Certified Phase 10A adds **5 residential plan definitions**: Visit their home, Invite them home, Visit family at home, Cook together at home, and youth-bounded Sleepover. They reuse the established shared-experience activities, preference vocabulary, relationship evaluator, social action economy, and Threadwell Residential place instead of creating parallel visit/event content. The ordinary/random event library remains **691**; town places remain **24**; routed institution services remain **28**; personal inventory items remain **24**; shared NPC preference tags remain **38**; shared-experience activities remain **12**; youth-social plans remain **11**; romantic date plans remain **8**; and cross-world chemistry plans remain **22 across 13 context families**.

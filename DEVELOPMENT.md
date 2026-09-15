@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`
-Certified gameplay baseline: Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`
+Newest certified expanded gameplay/source: Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67`
+Certified gameplay baseline: Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67`
 
 ## Product direction
 
@@ -26,7 +26,24 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Certified Phase 10A / next implementation phase
+## Certified Phase 10B / next implementation phase
+
+### Phase 10B — Working Everthread (CI Green Run #156)
+
+Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67` is the certified Phase 10B gameplay/source baseline on save schema **17**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- `WorkingEverthreadSystem` is a **read-only projection** over authoritative SchoolWorld, Workplace/SocialWorld, Business, Town Place, and location truth. It creates no durable work-location ledger and writes no projection back into `GameState`.
+- Active local school worlds resolve to the existing School/College anchors; active local workplace worlds resolve by real industry to existing Everthread districts/landmarks. Remote worlds remain remote and receive no Everthread district.
+- Player businesses now persist optional founding `countryId` / `city` on the existing `Business` record; `NpcBusinessHolding` preserves the same provenance through estate conversion. Companies therefore remain where they were founded when protagonists relocate or ownership passes to descendants.
+- New/legacy business-location repair remains deterministic, idempotent, RNG-neutral, and runtime-ID neutral. Player legacy businesses repair from the protagonist location; NPC legacy businesses repair from the owning NPC location.
+- Career and Assets expose the derived location labels; AI semantic inspection observes the same projections. Phase 10A residence projection remains unchanged and isolated.
+- Dedicated Working Everthread regression **50/50**; AI **78/78**; base **82/82**; People **57/57**; Phase 10A **69/69**; Relationship Microcopy **69/69**; NPC Asset Ownership **82/82**; Dynasty **64/64**; Integrated Long-Life **105/105**; minigames **19/19**; feedback **20/20 + 23/23**; the established regression wall remained Green.
+- Production build transformed **201 modules**. People remains lazy/code-split at ~41.15 kB JS / 12.10 kB gzip; Player Profile ~9.34 kB / 2.73 kB gzip; Town Map ~6.97 kB / 2.82 kB gzip; main JS ~1,259.21 kB / 355.87 kB gzip; existing main-chunk warning remains nonblocking.
+- Certified source SHA-256 `eb3fb05357822c18bc52585de60c4dc6838eed1ff51e9f857adf3c883897d83a`; dependency SHA-256 `46ecae009f310c130b64ad1efa141d9755bdd793ff3682f0b61cba8daa186394`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10380297168` (`4dfc38542f7510b4d5dbddd33e11aadfdeec97ed32e4326ee9a09561f0daaa17`); Pages artifact `10380680116` (`8acb6ef7976cd0078f5ff5e2e26f186e5e26352399c6b82fd0e5aaa20021acd0`).
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `a497aa1bbec357fe12755383acb7053ab5d0ea67` at `2026-09-15 04:33:34.506272+00`.
+- Fresh local content audit after certification remained unchanged at 691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 NPC preference tags.
+
+**Exact next slice after this documentation sync certifies:** Phase 10C — Generational Place Memory. Add bounded meaningful place legacy using existing residence/business/memory/estate truth; record milestones rather than routine visits and do not create a second location-history authority.
 
 ### Phase 10A — Residential Life (CI Green Run #154)
 

@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life is certified / closed, and Phase 10B Working Everthread is next after the mandatory 10A documentation sync certifies.**
+Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life and Phase 10B Working Everthread are certified / closed; Phase 10C Generational Place Memory is next after the mandatory 10B documentation sync certifies.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`;
+- newest certified gameplay/source: Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -24,7 +24,8 @@ Current certified program baseline:
 - Phase 9G: **certified / closed**;
 - Phase 9: **CLOSED**;
 - Phase 10A: **certified / closed**;
-- next slice after this mandatory docs sync certifies: **Phase 10B — Working Everthread**.
+- Phase 10B: **certified / closed**;
+- next slice after this mandatory docs sync certifies: **Phase 10C — Generational Place Memory**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -196,9 +197,15 @@ Five residential plans reuse existing Phase 9 shared-experience activities/evalu
 
 **Phase 10A is CLOSED / CERTIFIED.** Preserve this authority split as later place-meaning slices build on residence context.
 
-### Phase 10B — Working Everthread
+### Phase 10B — Working Everthread — CERTIFIED Run #156
 
-Project current workplaces, institutions, and player-founded businesses into appropriate districts. Ownership, revenue, employment, bankruptcy, school membership, and career results remain with existing systems.
+Certified in Run #156 on expanded source `a497aa1bbec357fe12755383acb7053ab5d0ea67`, save schema **17**, dedicated regression **50/50**, AI semantic interaction **78/78**, canonical preflight **4/4**, and a **201-module** production build.
+
+`WorkingEverthreadSystem` is read-only projection over existing SchoolWorld, Workplace/SocialWorld, Business, Town Place, and location truth. Current local schools map to the existing School/College anchors; active local full-time and part-time workplace worlds map deterministically by authoritative industry into existing Everthread districts/landmarks. Remote worlds remain remote and receive no synthetic Everthread district.
+
+Player-founded companies preserve physical-base provenance on the existing Business record; NPC business holdings preserve it across estate conversion. Relocation therefore does not teleport companies and inherited businesses remain where they were founded. Legacy player/NPC business location repair is deterministic, idempotent, RNG-neutral, and runtime-ID neutral. Career/Assets/AI consume the same projections; no `workingEverthread` / `workLocations` shadow state is persisted into `GameState`.
+
+**Phase 10B is CLOSED / CERTIFIED.** Preserve this authority split when 10C adds bounded generational place meaning.
 
 ### Phase 10C — Generational Place Memory
 
@@ -238,4 +245,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 10B — Working Everthread** only after this mandatory Phase 10A documentation sync certifies. Project current workplaces, institutions, and player-founded businesses into appropriate Everthread districts from existing Workplace, Career, Education/SchoolWorld, Business, Town Place, and location truth. Ownership, revenue, employment, bankruptcy, school membership, career results, and relationship state remain with their existing authorities; do not create a second workplace/business/institution ledger. Preserve certified 10A residence meaning and the complete Phase 9 Shared Lives authority stack while work-place context is added.
+Begin **Phase 10C — Generational Place Memory** only after this mandatory Phase 10B documentation sync certifies. Add bounded legacy context to meaningful existing places—especially inherited family homes, surviving family businesses, and significant life milestones whose established records already identify where they happened. Record milestones, not routine visits. Reuse existing Property/Residential Life, Business/Working Everthread, Estate/Dynasty, Timeline/NPC memory, relationship, and Town Place truth; do not create a second place-history, family-landmark, business, event, or memory authority. Browsing/projection must remain deterministic and RNG/runtime-ID neutral.
