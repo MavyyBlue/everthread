@@ -31,13 +31,13 @@ It is not player-facing documentation. It is the continuity layer for developmen
 
 ## Fresh-chat restart instruction
 
-A new chat should begin by reading this folder and the root project tracking files, then inspecting the exact source files named by `CURRENT_STATE.md` and the active program handoff. Do not ask Mavyy to repeat already documented decisions. The post-Phase-7 brainstorm has occurred: `LIVING_WORLD_PROGRAM.md` is the authoritative approved direction unless Mavyy changes it.
+A new chat should begin by reading this folder and the root project tracking files, then inspecting the exact source files named by `CURRENT_STATE.md` and the active program handoff. Do not ask Mavyy to repeat already documented decisions. The Living World Program is now closed/certified; `LIVING_WORLD_PROGRAM.md` remains its authority-boundary record. Current post-closeout feature direction and newest certified source are tracked in `CURRENT_STATE.md` and `ROADMAP.md` unless Mavyy changes direction.
 
 Everthread is built as one interconnected simulation, not a collection of isolated feature pages.
 
 - `PHASE6_CREDIT_DEBT.md` — closed Phase 6 credit/debt architecture and the Run #106 household-finance/crisis-agency closeout on schema 12.
 - `PHASE7_PERSISTENT_CONSEQUENCES.md` — closed Phase 7 plan and preserved authority boundaries across 7A/7B/7C.
 - `PHASE7C_WORLD_CONDITIONS.md` — certified Phase 7C contract, ownership, schema-14 migration, modifiers, UI projection, and QA gates. Phase 7 is closed.
-- `LIVING_WORLD_PROGRAM.md` — active post-Phase-7 roadmap: Phase 8 Everthread: Home, Phase 9 Shared Lives, Phase 10 Living Everthread, plus the mandatory post-cert documentation-sync rule.
+- `LIVING_WORLD_PROGRAM.md` — closed Phase 8–10 Living World authority record plus the mandatory post-cert documentation-sync rule; current post-closeout direction is tracked in `CURRENT_STATE.md` / `ROADMAP.md`.
 
 - `PLAYER_FEEDBACK.md` — player report schema/lifecycle, future-Yuki inbox review protocol, triage classes, and the rule that backend-green reports still require interface/experience investigation.

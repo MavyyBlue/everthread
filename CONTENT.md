@@ -1,3 +1,7 @@
+## NPC Character Visual identity + reveal — Run #174
+
+Run #174 adds **no authored gameplay/event/place/career/inventory/art definitions**. It reuses the certified **624 modular Character Visual SVG components** for deterministic NPC portraits and relationship-based reveal. Background-only NPCs remain visually lazy, so this feature does not inflate the content catalog merely to populate unseen faces. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.
+
 ## New Life responsive hotfix — Run #172
 
 Run #172 adds **no gameplay/event/place/career/inventory/portrait-art definitions**. It fixes New Life responsive CSS and adds one layout-regression script. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged.

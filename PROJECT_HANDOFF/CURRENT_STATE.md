@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #172** (`35006276096`) on expanded source **`5cf52a39d79f0835c2d9682e21d40c9ace7498c1`**, save schema **17**. Run #172 is a narrow responsive hotfix over the Run #170 Character Visual foundation: the New Life sheet no longer exceeds narrow phone widths, and a dedicated 8/8 responsive regression now guards the fix. The Character Visual ownership/determinism/save contracts from Run #170 remain unchanged. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this work is not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #174** (`35016561442`) on expanded source **`69117c363124615a35683d03cbc0ab7a06472c06`**, save schema **17**. Run #174 extends the certified Character Visual foundation to deterministic NPC portrait identity plus relationship-based silhouette/full-portrait reveal while preserving one NPC authority and one Relationship authority. Background-only NPCs remain visually lazy; descendant continuation preserves the successor's established face. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,10 +16,10 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #172**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Fresh post-Run-#172 Supabase Feedback Inbox: **5 total / 0 unresolved**; no new receipt after `2026-09-15 06:47:52.761298+00`. The prior Map-memory report remains resolved.
-- Durable feedback review-state row now points to Run #172 source `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` at `2026-09-15 18:17:43.686626+00`, reviewed count **5**.
+- Fresh post-Run-#174 Supabase Feedback Inbox: **5 total / 0 unresolved**; no new receipt after `2026-09-15 06:47:52.761298+00`. The prior Map-memory report remains resolved.
+- Durable feedback review-state row now points to Run #174 source `69117c363124615a35683d03cbc0ab7a06472c06` at `2026-09-15 19:59:39.246769+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation and Run #172 certifies its New Life responsive-width hotfix; NPC visual identity/reveal and family resemblance/aging remain later slices. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
+- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, and Run #174 deterministic NPC identity/reveal plus descendant portrait continuity. Family resemblance/inheritance and richer aging/presentation remain later slices. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -30,7 +30,20 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #172 — New Life responsive hotfix
+## Newest certified gameplay/source — Run #174 — NPC Character Visual identity + relationship reveal
+
+- Upload wrapper `33ed012e757b4f76caf86602045519bab879da56`; expanded certified source `69117c363124615a35683d03cbc0ab7a06472c06`; Actions Run ID `35016561442`; job `104541388963`. Net diff from doc-synchronized baseline `fcc09814455ae9dabcc86a37ad7a6964dcb133e0` is exactly **11 intended source/test files**.
+- Existing NPC/Relationship truth remains authoritative. `Npc.appearance` optionally stores the exact stable modular portrait identity; `Relationship.portraitRevealed` stores only protagonist-specific learned face knowledge when relationship type does not already imply that the face is known. No duplicate NPC graph, avatar database, or familiarity score exists.
+- Close family and established romantic types reveal immediately. Other exact NPCs can reveal through existing familiarity evidence such as time known, relationship strength, learned preferences, and dating history. Learned portrait knowledge persists when relationship state later worsens.
+- Background-only and unrevealed NPCs remain visually lazy. Read-only projection and deterministic normalization consume neither gameplay RNG nor runtime IDs. Runtime invariants only normalize newly revealed/missing identities; save-load repair may fully normalize current-schema data once.
+- Threadspace nodes and People profiles render silhouettes or the same `CharacterPortrait` identity according to the reveal projection. Descendant continuation preserves the successor's existing NPC face, and the deceased prior protagonist preserves their existing portrait in family-history NPC state.
+- Save schema remains **17**. Character Visual **60/60** and Dynasty Transition **66/66** now cover the new contracts. Canonical preflight **4/4**; base **82/82**; People **57/57**; Visual Identity **12/12**; Player Profile **63/63**; Rewind **16/16**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life responsive **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build **212 modules**. Lazy character-art pack ~**971.11/69.18 gzip kB**; People ~**42.29/12.50**; main ~**1,355.82/378.21**; CSS ~**87.92/16.19**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `480f726cb369600aca7e1b391ac2fe20cdae6e6ae8d6526ec35e8b773b3b0828`; dependency SHA `5e3657ac306c699139c79de6d2107fbf3de60371e83fc69a33412b9b1cc3cab9`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10416325194` (`6d41bc18a628d0e0ce55de43612d4d4b6389d15e488226c914b82295e8154ff6`); Pages artifact `10415871928` (`b0ea1db2735c03925ba0c29845ac2272dfa3bdf6b6f58e98cda3e65e88281f95`); deployment succeeded.
+- Feedback Inbox: **5 total / 0 unresolved**. Review checkpoint `main` → `69117c363124615a35683d03cbc0ab7a06472c06` at `2026-09-15 19:59:39.246769+00`, reviewed count **5**.
+- Next planned Character Visual slice: family resemblance/inheritance using existing family topology and visual identities. Richer aging/presentation follows later; neither is part of Run #174.
+
+## Prior certified gameplay/source — Run #172 — New Life responsive hotfix
 
 - Upload wrapper `a2ab156e54cc0a18e13354435a0d50ecb633eed1`; expanded certified source `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`; Actions Run ID `35006276096`; job `104506709088`. Net diff from synchronized baseline `704def1523d652ca9ca24660d86ff14565a88f60` is exactly **3 intended files**.
 - Fixes New Life horizontal clipping on narrow phones at the owning layout rule: two-column rows now use zero-minimum grid tracks and their controls/content can shrink inside the grid. The sheet's overflow behavior was not used to hide the symptom.

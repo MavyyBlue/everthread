@@ -1,3 +1,24 @@
+## Character Visual NPC identity + relationship reveal — CI Green Run #174 — 2026-09-15
+
+### Added / changed
+
+- Added the second certified **Everthread Character Visual** slice: deterministic NPC portrait identity and relationship-based silhouette/full-portrait reveal. NPC visual identity stays on the existing `Npc` record as optional `appearance`; current-protagonist portrait knowledge stays on the existing `Relationship` as optional `portraitRevealed`. No parallel avatar database, familiarity score, or portrait ledger was introduced.
+- Added `NpcVisualSystem` as the deterministic projection/normalization owner over existing NPC + Relationship truth. Close family and established romantic relationships reveal immediately from relationship type; other exact NPCs can become known through existing familiarity evidence such as time known, relationship strength, learned preferences, and dating history. Once learned, portrait knowledge persists even if the relationship later deteriorates.
+- Kept background-only NPCs visually lazy. Unrevealed acquaintances do not persist hidden appearance payloads, while revealed/relevant NPCs receive one stable modular identity derived from the game seed + NPC id without consuming gameplay RNG or runtime IDs. Runtime invariants normalize only newly revealed/missing identities; save-load repair can perform one full deterministic normalization.
+- Integrated the same reveal state into People Threadspace nodes and the existing People profile sheet: unknown exact NPCs use silhouettes; known NPCs use the shared `CharacterPortrait` renderer and the same 624-component Astra art pack already certified for the protagonist.
+- Preserved generational identity continuity. Descendant continuation now keeps the selected successor's existing NPC portrait when they become playable, and the deceased prior protagonist keeps their established portrait when converted into family-history NPC state. No face is regenerated merely because playability changes.
+- Save schema remains **17**. The new fields are optional extensions of already-authoritative generic NPC/Relationship records; current-schema saves normalize deterministically and idempotently with no gameplay-RNG or runtime-ID consumption.
+- Added Character Visual regression coverage for deterministic NPC generation, lazy background NPCs, projection purity, familiarity reveal/persistence, save round-trip, and descendant portrait continuity. Character Visual is now **60/60** and Dynasty Transition **66/66**.
+
+### Certification
+
+- GitHub Actions Run #174 (`35016561442`, job `104541388963`) certified expanded source `69117c363124615a35683d03cbc0ab7a06472c06` from upload wrapper `33ed012e757b4f76caf86602045519bab879da56`. Net diff from doc-synchronized baseline `fcc09814455ae9dabcc86a37ad7a6964dcb133e0` is exactly **11 intended source/test files**; the workflow import also removes the uploaded `everthread-source.zip` wrapper.
+- Canonical preflight passed **4/4**: Engine TypeScript, Test TypeScript, complete regression wall, and production build. Connected suites remained Green, including base **82/82**, People/Threadspace **57/57**, Character Visual **60/60**, Visual Identity **12/12**, Player Profile/Inventory **63/63**, Rewind **16/16**, Dynasty **66/66**, AI **82/82**, Integrated Long-Life **105/105**, Phase 10E **103/103**, New Life responsive layout **8/8**, minigames **19/19**, and feedback **20/20 + 23/23**.
+- Production build passed at **212 modules**. Lazy `characterArtPack` remains ~**971.11 / 69.18 kB gzip**; People ~**42.29 / 12.50**; main JS ~**1,355.82 / 378.21**; CSS ~**87.92 / 16.19**. The established >700 kB chunk warning remains nonblocking technical debt.
+- Certified source SHA-256 `480f726cb369600aca7e1b391ac2fe20cdae6e6ae8d6526ec35e8b773b3b0828`; dependency SHA-256 `5e3657ac306c699139c79de6d2107fbf3de60371e83fc69a33412b9b1cc3cab9`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10416325194` (`6d41bc18a628d0e0ce55de43612d4d4b6389d15e488226c914b82295e8154ff6`); Pages artifact `10415871928` (`b0ea1db2735c03925ba0c29845ac2272dfa3bdf6b6f58e98cda3e65e88281f95`); deployment succeeded.
+- Post-Run-#174 Feedback Inbox remains **5 total / 0 unresolved**, with no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint `main` now points to `69117c363124615a35683d03cbc0ab7a06472c06` at `2026-09-15 19:59:39.246769+00`, reviewed count **5**.
+- This remains an approved Character Visual slice outside the closed Living World Program; it does **not** create Phase 11. The next planned Character Visual slice is family resemblance/inheritance, followed by richer aging/presentation behavior, subject to player feedback and separate certification.
+
 ## New Life mobile-width overflow hotfix — CI Green Run #172 — 2026-09-15
 
 ### Fixed

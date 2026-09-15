@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #172 / `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`
-Certified gameplay baseline: Run #172 / `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`
+Newest certified expanded gameplay/source: Run #174 / `69117c363124615a35683d03cbc0ab7a06472c06`
+Certified gameplay baseline: Run #174 / `69117c363124615a35683d03cbc0ab7a06472c06`
 
 ## Product direction
 
@@ -26,6 +26,22 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
+## Newest certified Character Visual slice — Run #174 — NPC identity + relationship reveal
+
+Run #174 extends the Run #170 player Character Visual foundation to exact NPCs without creating a second person, relationship, or portrait authority.
+
+- Expanded certified source: `69117c363124615a35683d03cbc0ab7a06472c06`, schema **17**. Upload wrapper `33ed012e757b4f76caf86602045519bab879da56`; Actions Run ID `35016561442`; job `104541388963`. Base doc-synchronized source was `fcc09814455ae9dabcc86a37ad7a6964dcb133e0`; net diff is exactly **11 intended source/test files**.
+- `NpcVisualSystem` derives stable NPC portrait identity from existing NPC identity plus a deterministic seed stream. Optional `Npc.appearance` owns the exact face; optional `Relationship.portraitRevealed` stores only protagonist-specific learned portrait knowledge when relationship type alone does not already imply familiarity.
+- Close family and established romantic relationships reveal immediately. Other relationships reveal from existing familiarity evidence; learned portrait knowledge does not regress when scores later fall. Unrevealed/background-only NPCs remain visually lazy to protect long-life save size and runtime cost.
+- People Threadspace nodes and the existing People profile sheet consume the same reveal projection and `CharacterPortrait` renderer. Unknown exact NPCs use silhouettes; known NPCs use their stable modular portrait.
+- Descendant continuation preserves the successor's existing NPC appearance exactly, and conversion of the deceased prior protagonist into family-history NPC state preserves the protagonist portrait. Playability changes never regenerate identity.
+- Save/load repair is deterministic/idempotent and consumes no gameplay RNG/runtime IDs. Runtime invariants avoid repeatedly rebuilding already-stable revealed portraits. Save schema remains **17**.
+- Canonical preflight **4/4 Green**. Character Visual **60/60**; base **82/82**; People **57/57**; Visual Identity **12/12**; Player Profile **63/63**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build: **212 modules**; lazy character-art pack ~**971.11/69.18 kB gzip**; People ~**42.29/12.50**; main ~**1,355.82/378.21**; CSS ~**87.92/16.19**. Existing large-chunk warning remains nonblocking.
+- Certified source SHA `480f726cb369600aca7e1b391ac2fe20cdae6e6ae8d6526ec35e8b773b3b0828`; dependency SHA `5e3657ac306c699139c79de6d2107fbf3de60371e83fc69a33412b9b1cc3cab9`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10416325194`; Pages artifact `10415871928`; deployment succeeded.
+- Feedback sweep: **5 total / 0 unresolved**. Review checkpoint `main` successfully advanced to Run #174 source at `2026-09-15 19:59:39.246769+00`, reviewed count **5**.
+- Next planned Character Visual work is family resemblance/inheritance, then richer aging/presentation behavior. Neither is implemented in Run #174, and no Phase 11 label is implied.
+
 ## Newest certified hotfix — Run #172 — New Life responsive width
 
 Run #172 fixes the narrow-phone New Life clipping reported by Mavyy without changing any simulation or portrait authority.
@@ -40,7 +56,7 @@ Run #172 fixes the narrow-phone New Life clipping reported by Mavyy without chan
 
 ## Current Character Visual baseline
 
-### Player Character Creator + portrait foundation — CI Green Run #170 (preserved under Run #172 hotfix)
+### Player Character Creator + portrait foundation — CI Green Run #170 (preserved under Runs #172 and #174)
 
 Run #170 establishes the first certified Character Visual slice without creating a parallel person/avatar authority.
 
@@ -49,7 +65,7 @@ Run #170 establishes the first certified Character Visual slice without creating
 - Historical appearance RNG draw positions are preserved; richer cosmetic detail derives from a separate cosmetic seed so identical seeded lives remain identical outside appearance.
 - `CharacterPortrait` renders Astra's 624 modular SVG components through a lazy runtime art pack. `CharacterCreator` is a mobile-first New Life draft editor; Back discards unsaved edits, Save commits the draft, and Avatar/Profile surfaces consume the same appearance identity.
 - Creator option groups are local collapsible accordions across Face/Hair/Style/Extras and never persist into GameState.
-- NPC portrait reveal, relationship familiarity, family resemblance/inheritance, and richer aging behavior are deliberately deferred to later certified slices over this foundation.
+- Run #174 now certifies NPC portrait identity/reveal over this foundation. Family resemblance/inheritance and richer aging behavior remain deferred to later certified slices.
 - Canonical preflight **4/4 Green**. Character Visual **46/46**; base **82/82**; Visual Identity **12/12**; Player Profile **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; minigames **19/19**; feedback **20/20 + 23/23**.
 - Production build: **211 modules**; lazy character-art pack ~**971.11 / 69.18 kB gzip**; main ~**1,354.43 / 377.85**; existing large-chunk warning remains nonblocking.
 - Certified source SHA `072c290101bd8853dca4e3e16a6af7e8d9cdc4ecadb332747db4e66f0fe4be7f`; dependency SHA `7890670ea96fa0ba70b95d7fd86ab72fcd2f96fece67cf48efa0d4512b30042b`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10409358703`; Pages artifact `10408949701`; deployment succeeded.
