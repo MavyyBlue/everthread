@@ -17,6 +17,8 @@ import { resetConsequenceSchedulerForNewProtagonist } from './ConsequenceSystem'
 import { npcNamePoolCountryId } from './SettingSystem';
 import { createEmptyPersonalInventoryState } from './PersonalInventorySystem';
 import { initializeNpcPreferenceKnowledge } from './NpcPreferenceSystem';
+import { EVERTHREAD_CITY } from '../data/countries';
+import { businessWorkLocation } from './WorkingEverthreadSystem';
 
 export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
@@ -78,6 +80,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
 
   ensureNpcLife(state,child);ensureNpcAssetPortfolio(state,child);const originalChild=structuredClone(child);const previousCharacter=structuredClone(state.character);const previousPlayerId=previousCharacter.id;const parentLife=state.completedLives.at(-1);const settlement=settleEstate(state,childId);const livingChildren=state.relationships.filter(r=>r.type==='child'&&state.npcs[r.npcId]?.alive);const survivingSpouseRel=state.relationships.find(r=>r.type==='spouse'&&!r.estranged&&state.npcs[r.npcId]?.alive);const newCharacter=npcToCharacter(state,child);
   for(const property of settlement.properties){property.origin='inherited';property.inheritedFromNpcId=previousPlayerId;delete property.primaryResidence;}
+  for(const business of settlement.businesses){business.origin='inherited';business.inheritedFromNpcId=previousPlayerId;}
 
   const parentNpc:Npc={id:previousPlayerId,firstName:previousCharacter.firstName,lastName:previousCharacter.lastName,age:previousCharacter.age,alive:false,health:0,happiness:previousCharacter.stats.happiness,wealth:0,namePoolCountryId:previousCharacter.namePoolCountryId,countryId:previousCharacter.countryId,city:previousCharacter.city,sexuality:previousCharacter.orientation,fertility:previousCharacter.secondary.fertility,gender:npcGenderFromCharacterIdentity(previousCharacter.genderIdentity),...(previousCharacter.sex==='female'||previousCharacter.sex==='male'?{reproductiveSex:previousCharacter.sex}:{}),maritalStatus:survivingSpouseRel?'married':'single',traits:[...previousCharacter.traits],hiddenOpinion:80,memories:[],parentIds:state.relationships.filter(r=>['parent','stepparent'].includes(r.type)&&state.npcs[r.npcId]).map(r=>r.npcId),childIds:livingChildren.map(r=>r.npcId)};
   state.npcs[parentNpc.id]=parentNpc;delete state.npcs[childId];state.character=newCharacter;state.currentYear=newCharacter.birthYear+newCharacter.age;state.relationships=rebuildDescendantRelationships(state,originalChild,previousPlayerId);syncPlayerFamilyTopology(state);state.education=descendantEducation(originalChild);state.socialWorlds=[];state.employment=descendantEmployment(state,originalChild);migrateLegacySchoolWorlds(state);migrateLegacyWorkplaceWorlds(state);
@@ -107,6 +110,10 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   }
   const inheritedAssetNames=[...settlement.properties.map(item=>item.name),...settlement.businesses.map(item=>item.name),...settlement.collectibles.map(item=>item.name)];
   if(inheritedAssetNames.length)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'asset',importance:2,text:`${inheritedImmediately?'Your inheritance included':'Your protected trust now holds'} ${inheritedAssetNames.join(', ')}.`});
+  if(inheritedImmediately){
+    for(const property of settlement.properties){if(property.location!==EVERTHREAD_CITY)continue;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'asset',placeId:'threadwell-residential',importance:3,text:`${property.name} passed to you as a family home in Everthread.`});}
+    for(const business of settlement.businesses){const work=businessWorkLocation(state,business);if(!work.inEverthread||!work.anchorPlaceId)continue;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'business',placeId:work.anchorPlaceId,importance:3,text:`${business.name} passed to you as a surviving family business.`});}
+  }
   if(settlement.siblingValue>0)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'family',importance:2,text:`Other family heirs received ${Math.round(settlement.siblingValue).toLocaleString()} of the estate between them.`});
   if(state.employment.current)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'career',importance:2,text:`You entered this chapter already working as ${state.employment.current.title}.`});
   if(originalChild.partnerId){const partner=state.npcs[originalChild.partnerId];if(partner)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:newCharacter.age,category:'relationship',importance:2,text:`Your existing ${originalChild.maritalStatus==='married'?'marriage':'relationship'} with ${partner.firstName} ${partner.lastName} continued with you.`});}

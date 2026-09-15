@@ -217,6 +217,8 @@ export interface TimelineEntry {
   year: number;
   age: number;
   category: TimelineCategory;
+  /** Optional canonical Everthread place for meaningful location-aware history. */
+  placeId?: Id;
   title?: string;
   text: string;
   importance: 1 | 2 | 3;
@@ -455,11 +457,16 @@ export interface InvestmentState {
   history: Record<Id, number[]>;
 }
 
+export type BusinessOrigin = 'founded' | 'inherited';
+
 export interface Business {
   id: Id;
   industryId: Id;
   name: string;
   foundedAge: number;
+  /** Ownership provenance stays on the business authority so surviving family companies remain recognizable. */
+  origin?: BusinessOrigin;
+  inheritedFromNpcId?: Id;
   /** Physical base owned by the business record so companies do not teleport when the player relocates. */
   countryId?: Id;
   city?: string;
@@ -654,6 +661,16 @@ export interface LegacyState {
   completedLifeIds: Id[];
 }
 
+export interface CompletedLifePlaceMilestone {
+  id: Id;
+  placeId: Id;
+  year: number;
+  age: number;
+  category: TimelineCategory;
+  text: string;
+  importance: 2 | 3;
+}
+
 export interface CompletedLife {
   id: Id;
   generation?: number;
@@ -666,6 +683,8 @@ export interface CompletedLife {
   children: number;
   fame: number;
   milestones: string[];
+  /** Bounded snapshot of place-tagged milestones; derived from the authoritative life timeline at death. */
+  placeMilestones?: CompletedLifePlaceMilestone[];
   epitaph: string;
   timeline: TimelineEntry[];
 }

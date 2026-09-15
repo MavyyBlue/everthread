@@ -5,6 +5,7 @@ import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 import { consumeAction } from '../core/actionEconomy';
 import { scheduleBusinessFounderStory, scheduleBusinessProductStory } from './SystemicStorySystem';
+import { businessWorkLocation } from './WorkingEverthreadSystem';
 
 export function startBusiness(state:GameState,industryId:string,name:string):EngineResult {
   if(state.character.age<18)return{success:false,messages:[{text:'You must be an adult to start a company.'}]};
@@ -12,8 +13,8 @@ export function startBusiness(state:GameState,industryId:string,name:string):Eng
   if(state.finances.cash<industry.startupCapital)return{success:false,messages:[{text:`You need ${industry.startupCapital.toLocaleString()} in available cash to fund this business.`}]};
   const gate=consumeAction(state,{policy:'business.start'});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   state.finances.cash-=industry.startupCapital;
-  const business:Business={id:makeStateId(state,'biz'),industryId,name:name.trim()||`New ${industry.name}`,foundedAge:state.character.age,countryId:state.character.countryId,city:state.character.city,capital:industry.startupCapital,revenue:0,expenses:0,profit:0,employees:Math.max(1,Math.round(industry.startupCapital/50000)),demand:55,reputation:35,valuation:industry.startupCapital,productIds:[`${industryId}_product_1`],priceIndex:1,marketingBudget:Math.round(industry.startupCapital*.05),compensationIndex:1,bankrupt:false};
-  state.businesses.push(business);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'business',importance:3,text:`You founded ${business.name}, a ${industry.name.toLowerCase()} business.`,moneyDelta:-industry.startupCapital});scheduleBusinessFounderStory(state,business.id);
+  const business:Business={id:makeStateId(state,'biz'),industryId,name:name.trim()||`New ${industry.name}`,foundedAge:state.character.age,origin:'founded',countryId:state.character.countryId,city:state.character.city,capital:industry.startupCapital,revenue:0,expenses:0,profit:0,employees:Math.max(1,Math.round(industry.startupCapital/50000)),demand:55,reputation:35,valuation:industry.startupCapital,productIds:[`${industryId}_product_1`],priceIndex:1,marketingBudget:Math.round(industry.startupCapital*.05),compensationIndex:1,bankrupt:false};
+  state.businesses.push(business);const work=businessWorkLocation(state,business);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'business',importance:3,...(work.inEverthread&&work.anchorPlaceId?{placeId:work.anchorPlaceId}:{}),text:`You founded ${business.name}, a ${industry.name.toLowerCase()} business.`,moneyDelta:-industry.startupCapital});scheduleBusinessFounderStory(state,business.id);
   return{success:true,messages:[{text:`${business.name} is open for business.`}]};
 }
 
@@ -32,7 +33,7 @@ export function processBusinessesYear(state:GameState) {
     if(b.profit>0){const distribution=Math.round(b.profit*.25);state.finances.cash+=distribution;b.capital-=distribution;b.reputation=clamp(b.reputation+rng.int(0,3));b.demand=clamp(b.demand+rng.int(-2,4));}
     else {b.reputation=clamp(b.reputation+rng.int(-4,1));b.demand=clamp(b.demand+rng.int(-5,2));}
     if(b.profit>0 && rng.chance(.32+founderSkill*.2)) b.employees+=Math.max(1,Math.round(b.employees*rng.int(3,14)/100));
-    if(b.profit<0 && b.capital<0){b.employees=Math.max(0,Math.floor(b.employees*.75));if(b.capital < -industry.startupCapital*.65 && rng.chance(.45)){b.bankrupt=true;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'business',importance:3,text:`${b.name} went bankrupt after ${age} years.`});}}
+    if(b.profit<0 && b.capital<0){b.employees=Math.max(0,Math.floor(b.employees*.75));if(b.capital < -industry.startupCapital*.65 && rng.chance(.45)){b.bankrupt=true;const work=businessWorkLocation(state,b);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'business',importance:3,...(work.inEverthread&&work.anchorPlaceId?{placeId:work.anchorPlaceId}:{}),text:`${b.name} went bankrupt after ${age} years.`});}}
     b.valuation=Math.max(0,Math.round(Math.max(b.capital,0)+Math.max(0,b.profit)*rng.int(5,12)+b.revenue*rng.int(40,110)/100));
   }
   state.rngCounter=rng.counter();

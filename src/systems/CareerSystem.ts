@@ -9,9 +9,12 @@ import { makeStateId } from '../core/ids';
 import { actionGateStatus, consumeAction } from '../core/actionEconomy';
 import { currentWorkplaceWorld, syncWorkplaceWorlds } from './WorkplaceSystem';
 import { worldConditionModifiers } from './WorldConditionSystem';
+import { workplaceWorldLocation } from './WorkingEverthreadSystem';
 
 export const FREELANCE_MIN_AGE=14;
 export const MINIMUM_FULL_TIME_JOB_AGE=Math.min(...jobs.map(job=>job.minAge));
+
+function currentWorkplacePlaceId(state:GameState){const world=currentWorkplaceWorld(state);if(!world)return;const location=workplaceWorldLocation(world);return location?.inEverthread?location.anchorPlaceId:undefined;}
 
 function completedPrograms(state:GameState) { return state.education.filter(e=>e.graduated).map(e=>e.programId).filter(Boolean) as string[]; }
 function hasSecondary(state:GameState) { return state.education.some(e=>e.stage==='secondary'&&e.graduated); }
@@ -79,7 +82,7 @@ export function applyForJob(state:GameState,jobId:string):EngineResult {
   consumeAction(state,{policy:'career.job_start'});
   state.character.secondary.workPerformance=55;
   syncWorkplaceWorlds(state,true);
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You accepted a position as ${job.title} at ${state.employment.current.company}.`,moneyDelta:salary});
+  const placeId=currentWorkplacePlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(placeId?{placeId}:{}),importance:3,text:`You accepted a position as ${job.title} at ${state.employment.current.company}.`,moneyDelta:salary});
   return {success:true,messages:[{text:`Hired as ${job.title} for ${salary.toLocaleString()} per year.`}]};
 }
 
@@ -95,6 +98,7 @@ export function processCareerYear(state:GameState) {
   const rng=createRng(state.seed,state.rngCounter);
   const workplace=currentWorkplaceWorld(state);
   const workplaceState=workplace?.workplace?.employmentKind==='full_time'?workplace.workplace:undefined;
+  const workplacePlaceId=workplace?workplaceWorldLocation(workplace)?.anchorPlaceId:undefined;
   const bossRel=workplaceState?.managerNpcId?state.relationships.find(rel=>rel.npcId===workplaceState.managerNpcId&&!rel.estranged):undefined;
   const annualWageGrowth=state.economy.lastSalaryGrowthRate??0;
   if(annualWageGrowth!==0) current.salary=Math.min(salaryCeiling(state,job),Math.max(1,Math.round(current.salary*(1+annualWageGrowth))));
@@ -109,7 +113,7 @@ export function processCareerYear(state:GameState) {
   const layoffChance=clamp(.007+demandPressure*.06+(workplaceState?Math.max(0,42-workplaceState.morale)*.00035:0)+worldConditionModifiers(state).layoffChanceDelta,0,.16);
   if(years>=1&&rng.chance(layoffChance)){
     if(workplaceState)workplaceState.layoffs+=1;
-    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`A restructuring eliminated your ${current.title} position at ${current.company}.`});
+    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:3,text:`A restructuring eliminated your ${current.title} position at ${current.company}.`});
     current.endAge=state.character.age;state.employment.history.push({...current});state.employment.current=undefined;state.character.stats.happiness=clamp(state.character.stats.happiness-9);state.character.secondary.stress=clamp(state.character.secondary.stress+6);syncWorkplaceWorlds(state,false);state.rngCounter=rng.counter();return;
   }
 
@@ -117,7 +121,7 @@ export function processCareerYear(state:GameState) {
     const next=jobById[job.promotionPath]; if(next){
       current.jobId=next.id; current.title=next.title; current.level+=1; current.salary=Math.min(salaryCeiling(state,next),Math.round(current.salary*rng.int(112,128)/100)); current.performance=58;
       if(workplaceState)workplaceState.reputation=clamp(workplaceState.reputation+6);
-      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You were promoted to ${next.title} at ${current.company}.`,moneyDelta:current.salary});
+      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:3,text:`You were promoted to ${next.title} at ${current.company}.`,moneyDelta:current.salary});
     }
   } else {
     const previous=jobs.find(candidate=>candidate.promotionPath===job.id);
@@ -125,14 +129,14 @@ export function processCareerYear(state:GameState) {
       current.jobId=previous.id;current.title=previous.title;current.level=Math.max(1,current.level-1);current.salary=Math.max(1,Math.round(current.salary*rng.int(76,88)/100));current.performance=46;
       if(workplaceState){workplaceState.reputation=clamp(workplaceState.reputation-7);workplaceState.tension=clamp(workplaceState.tension+5);}
       state.character.stats.happiness=clamp(state.character.stats.happiness-7);
-      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`After a difficult review cycle, you were demoted to ${previous.title}.`});
+      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:3,text:`After a difficult review cycle, you were demoted to ${previous.title}.`});
     } else if(current.performance<22 && rng.chance(.35)) {
-      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:`You were fired from your job as ${current.title}.`});
+      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:3,text:`You were fired from your job as ${current.title}.`});
       current.endAge=state.character.age; state.employment.history.push({...current}); state.employment.current=undefined; state.character.stats.happiness=clamp(state.character.stats.happiness-12);syncWorkplaceWorlds(state,false);
     } else if(rng.chance(.02+(workplaceState?.reputation??50)/2500)) {
       const bonus=Math.round(current.salary*rng.int(3,12)/100); state.finances.cash+=bonus;
       if(workplaceState)workplaceState.morale=clamp(workplaceState.morale+2);
-      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You received a performance bonus of ${bonus.toLocaleString()}.`,moneyDelta:bonus});
+      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:2,text:`You received a performance bonus of ${bonus.toLocaleString()}.`,moneyDelta:bonus});
     }
   }
   if(job.famePotential>0 && current.level>=4 && rng.chance(job.famePotential/300)) state.fame.fame=clamp(state.fame.fame+1);
@@ -164,18 +168,19 @@ export function askForRaise(state:GameState):EngineResult {
 
 export function resign(state:GameState):EngineResult {
   const current=state.employment.current;if(!current)return{success:false,messages:[{text:'You have no job to resign from.'}]};
-  current.endAge=state.character.age;state.employment.history.push({...current});state.employment.current=undefined;syncWorkplaceWorlds(state,false);
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You resigned from your position as ${current.title}.`});
+  const placeId=currentWorkplacePlaceId(state);current.endAge=state.character.age;state.employment.history.push({...current});state.employment.current=undefined;syncWorkplaceWorlds(state,false);
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(placeId?{placeId}:{}),importance:2,text:`You resigned from your position as ${current.title}.`});
   return {success:true,messages:[{text:'You resigned.'}]};
 }
 
 export function retire(state:GameState):EngineResult {
   if(state.character.age<50) return {success:false,messages:[{text:'Retirement is not available at your current age.'}]};
+  const placeId=currentWorkplacePlaceId(state);
   if(state.employment.current){state.employment.current.endAge=state.character.age;state.employment.history.push({...state.employment.current});state.employment.current=undefined;}
   state.employment.partTimeJobs??=[];state.employment.partTimeHistory??=[];
   for(const record of state.employment.partTimeJobs){record.endAge=state.character.age;state.employment.partTimeHistory.push({...record});}
   state.employment.partTimeJobs=[];state.employment.partTimeJobIds=[];
-  state.employment.retired=true;syncWorkplaceWorlds(state,false); state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:3,text:'You retired from working life.'});
+  state.employment.retired=true;syncWorkplaceWorlds(state,false); state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(placeId?{placeId}:{}),importance:3,text:'You retired from working life.'});
   return {success:true,messages:[{text:'You retired.'}]};
 }
 

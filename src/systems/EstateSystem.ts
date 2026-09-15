@@ -4,6 +4,8 @@ import { makeStateId } from '../core/ids';
 import { quoteEstateAdministration } from '../data/estateRules';
 import { addNpcBusinessHolding, addNpcInheritanceTrustHoldings, addNpcPropertyHolding, npcBusinessFromPlayerBusiness, npcPropertyFromPlayerAsset } from './NpcAssetSystem';
 import { creditCardDebt, securedCreditDeposits } from './CreditSystem';
+import { EVERTHREAD_CITY } from '../data/countries';
+import { businessWorkLocation } from './WorkingEverthreadSystem';
 
 type HeirShare={npc:Npc;ratio:number;role:EstateHeirRole};
 type EstateItem=
@@ -182,8 +184,11 @@ export function releaseMatureInheritanceTrust(state:GameState):boolean{
   state.finances.cash+=trust.cash;state.assets.properties.push(...structuredClone(trust.properties));state.businesses.push(...structuredClone(trust.businesses));state.assets.collectibles.push(...structuredClone(trust.collectibles));
   for(const position of trust.investments){const existing=state.investments.positions.find(item=>item.securityId===position.securityId);if(existing){const totalUnits=existing.units+position.units;existing.averageCost=totalUnits>0?((existing.averageCost*existing.units)+(position.averageCost*position.units))/totalUnits:position.averageCost;existing.units=totalUnits;}else state.investments.positions.push(structuredClone(position));}
   state.finances.liabilities.push(...structuredClone(trust.liabilities));
-  const amount=trust.inheritanceValue;delete state.inheritance.trust;state.flags.inheritanceReceived=amount;state.flags.inheritancePending=0;state.flags.lifetimeInheritance=Number(state.flags.lifetimeInheritance??0)+amount;state.flags.inheritances=Number(state.flags.inheritances??0)+(amount>0?1:0);
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text:`Your protected inheritance became yours at age ${state.character.age}.`});return true;
+  const inheritedProperties=structuredClone(trust.properties),inheritedBusinesses=structuredClone(trust.businesses);const amount=trust.inheritanceValue;delete state.inheritance.trust;state.flags.inheritanceReceived=amount;state.flags.inheritancePending=0;state.flags.lifetimeInheritance=Number(state.flags.lifetimeInheritance??0)+amount;state.flags.inheritances=Number(state.flags.inheritances??0)+(amount>0?1:0);
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'family',importance:3,text:`Your protected inheritance became yours at age ${state.character.age}.`});
+  for(const property of inheritedProperties){if(property.location!==EVERTHREAD_CITY)continue;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',placeId:'threadwell-residential',importance:3,text:`${property.name} became yours as a family home in Everthread.`});}
+  for(const business of inheritedBusinesses){const work=businessWorkLocation(state,business);if(!work.inEverthread||!work.anchorPlaceId)continue;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'business',placeId:work.anchorPlaceId,importance:3,text:`${business.name} became yours as a surviving family business.`});}
+  return true;
 }
 
 export function processNpcInheritanceTrusts(state:GameState){

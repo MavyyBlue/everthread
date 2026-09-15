@@ -10,10 +10,12 @@ import { personalItemById } from '../data/personalItems';
 import { NPC_PREFERENCE_TAG_IDS } from '../data/npcPreferences';
 import { NPC_PREFERENCE_AVERSION_LIMIT, NPC_PREFERENCE_DISLIKE_LIMIT, NPC_PREFERENCE_KNOWLEDGE_LIMIT, NPC_PREFERENCE_LIKE_LIMIT, NPC_PREFERENCE_PROFILE_VERSION, normalizeNpcPreferenceState } from '../systems/NpcPreferenceSystem';
 import { ROMANTIC_DATE_HISTORY_LIMIT } from '../data/romanticDates';
+import { TOWN_PLACES } from '../data/townPlaces';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
 const SUPPLEMENTAL_WORLD_KINDS = new Set<Phase4SpecialWorldKind>(['combat','military','politics']);
+const TOWN_PLACE_IDS=new Set(TOWN_PLACES.map(place=>place.id));
 
 type Track = Record<string, number | string | boolean>;
 
@@ -155,7 +157,10 @@ export function enforceStateInvariants(state: GameState): GameState {
   for (const business of state.businesses ?? []) {
     if(typeof business.countryId!=='string'||!business.countryId)business.countryId=state.character.countryId;
     if(typeof business.city!=='string'||!business.city)business.city=state.character.city;
+    if(business.origin!=='founded'&&business.origin!=='inherited')delete business.origin;
+    if(business.origin!=='inherited')delete business.inheritedFromNpcId;
   }
+
 
   for (const rel of state.relationships) {
     rel.score = clamp(rel.score);
@@ -206,7 +211,7 @@ export function enforceStateInvariants(state: GameState): GameState {
     const boundedBusinesses=[];
     for(const business of npc.assetPortfolio.businesses??[]){
       if(!business?.id||npcBusinessIds.has(business.id))continue;
-      business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.countryId=typeof business.countryId==='string'&&business.countryId?business.countryId:npc.countryId;business.city=typeof business.city==='string'&&business.city?business.city:npc.city;business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
+      business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.countryId=typeof business.countryId==='string'&&business.countryId?business.countryId:npc.countryId;business.city=typeof business.city==='string'&&business.city?business.city:npc.city;business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);if(!['generated','purchased','inherited'].includes(business.origin))business.origin='generated';if(business.origin!=='inherited')delete business.inheritedFromNpcId;
       npcBusinessIds.add(business.id);
       if(boundedBusinesses.length<NPC_ASSET_LIMITS.portfolioBusinesses)boundedBusinesses.push(business);
       else if(business.active)npc.wealth+=Math.max(0,Math.round(business.valuation));
@@ -228,7 +233,7 @@ export function enforceStateInvariants(state: GameState): GameState {
       const trustBusinesses=[];
       for(const business of Array.isArray(trust.businesses)?trust.businesses:[]){
         if(!business?.id||npcBusinessIds.has(business.id))continue;
-        business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.countryId=typeof business.countryId==='string'&&business.countryId?business.countryId:npc.countryId;business.city=typeof business.city==='string'&&business.city?business.city:npc.city;business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
+        business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.countryId=typeof business.countryId==='string'&&business.countryId?business.countryId:npc.countryId;business.city=typeof business.city==='string'&&business.city?business.city:npc.city;business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);if(!['generated','purchased','inherited'].includes(business.origin))business.origin='generated';if(business.origin!=='inherited')delete business.inheritedFromNpcId;
         npcBusinessIds.add(business.id);
         if(trustBusinesses.length<NPC_ASSET_LIMITS.portfolioBusinesses)trustBusinesses.push(business);else if(business.active)liquid+=Math.max(0,Math.round(business.valuation));
       }
@@ -327,6 +332,8 @@ export function validateState(state: GameState): string[] {
   for(const rel of state.relationships){const known=rel.knownPreferenceTags??[];if(known.length>NPC_PREFERENCE_KNOWLEDGE_LIMIT)errors.push(`Relationship ${rel.id} preference knowledge is unbounded`);if(new Set(known).size!==known.length)errors.push(`Relationship ${rel.id} has duplicate preference knowledge`);for(const tag of known)if(!preferenceTagIds.has(tag))errors.push(`Relationship ${rel.id} has unknown preference tag ${tag}`);const romance=rel.romance;if(romance){const history=romance.dateHistory??[];if(history.length>ROMANTIC_DATE_HISTORY_LIMIT)errors.push(`Relationship ${rel.id} romantic date history is unbounded`);for(const entry of history){if(entry.approval<0||entry.approval>100)errors.push(`Relationship ${rel.id} has invalid romantic date approval`);if(entry.age<0)errors.push(`Relationship ${rel.id} has invalid romantic date age`);}if(romance.pendingDate&&romance.pendingDate.acceptedAge<0)errors.push(`Relationship ${rel.id} has invalid pending-date age`);}}
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
   if (state.timeline.some(entry => entry.age < 0)) errors.push('Timeline contains negative age');
+  if(state.timeline.some(entry=>entry.placeId!==undefined&&!TOWN_PLACE_IDS.has(entry.placeId)))errors.push('Timeline contains invalid Everthread place reference');
+  for(const business of state.businesses??[]){if(business.origin!==undefined&&!['founded','inherited'].includes(business.origin))errors.push(`Business ${business.id} has invalid origin`);if(business.origin!=='inherited'&&business.inheritedFromNpcId)errors.push(`Business ${business.id} has invalid inheritance provenance`);}
   if(!state.worldConditions)errors.push('Missing world-condition state');else{
     if(state.worldConditions.active.length>MAX_ACTIVE_WORLD_CONDITIONS)errors.push('Active world conditions are unbounded');
     if(state.worldConditions.history.length>MAX_WORLD_CONDITION_HISTORY)errors.push('World-condition history is unbounded');
@@ -364,14 +371,14 @@ export function validateState(state: GameState): string[] {
       let npcPrimaryResidences=0;
       for(const property of npc.assetPortfolio.properties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC property ${property.id} has invalid value/debt`);if(!['generated','purchased','inherited'].includes(property.origin))errors.push(`NPC property ${property.id} has invalid origin`);if(property.origin!=='inherited'&&property.inheritedFromNpcId)errors.push(`NPC property ${property.id} has invalid inheritance provenance`);if(property.primaryResidence){npcPrimaryResidences++;if(property.location!==npc.city)errors.push(`NPC property ${property.id} is a remote primary residence`);}}
       if(npcPrimaryResidences>1)errors.push(`NPC ${npc.id} has multiple primary residences`);
-      for(const business of npc.assetPortfolio.businesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC business ${business.id} has invalid values`);}
+      for(const business of npc.assetPortfolio.businesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC business ${business.id} has invalid values`);if(!['generated','purchased','inherited'].includes(business.origin))errors.push(`NPC business ${business.id} has invalid origin`);if(business.origin!=='inherited'&&business.inheritedFromNpcId)errors.push(`NPC business ${business.id} has invalid inheritance provenance`);}
     }
     if(npc.inheritanceTrust){
       const trustProperties=npc.inheritanceTrust.properties??[];const trustBusinesses=npc.inheritanceTrust.businesses??[];
       if(trustProperties.length>NPC_ASSET_LIMITS.portfolioProperties)errors.push(`NPC ${npc.id} inheritance trust property portfolio is unbounded`);
       if(trustBusinesses.length>NPC_ASSET_LIMITS.portfolioBusinesses)errors.push(`NPC ${npc.id} inheritance trust business portfolio is unbounded`);
       for(const property of trustProperties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC trust property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC trust property ${property.id} has invalid value/debt`);if(property.primaryResidence)errors.push(`NPC trust property ${property.id} cannot be a primary residence`);}
-      for(const business of trustBusinesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC trust business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC trust business ${business.id} has invalid values`);}
+      for(const business of trustBusinesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC trust business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC trust business ${business.id} has invalid values`);if(!['generated','purchased','inherited'].includes(business.origin))errors.push(`NPC trust business ${business.id} has invalid origin`);if(business.origin!=='inherited'&&business.inheritedFromNpcId)errors.push(`NPC trust business ${business.id} has invalid inheritance provenance`);}
     }
     if (!npc.partnerId) continue;
     if (npc.partnerId === npc.id) errors.push(`NPC ${npc.id} is partnered with self`);

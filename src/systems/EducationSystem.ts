@@ -8,8 +8,10 @@ import { makeStateId } from '../core/ids';
 import { createRng } from '../core/rng';
 import { consumeAction } from '../core/actionEconomy';
 import { ensureSchoolWorldForEducationRecord, noteSkippingClass, noteStudying, schoolAdmissionsFactors, syncSchoolWorlds } from './SchoolWorldSystem';
+import { schoolInstitutionLocation } from './WorkingEverthreadSystem';
 
 function activeRecord(state:GameState) { return [...state.education].reverse().find(r=>!r.graduated&&!r.droppedOut&&!r.endAge); }
+function currentSchoolPlaceId(state:GameState){const location=schoolInstitutionLocation(state);return location?.inEverthread?location.anchorPlaceId:undefined;}
 
 function finishRecord(record:EducationRecord,age:number){record.graduated=true;record.endAge=age;}
 
@@ -24,12 +26,12 @@ function transitionCompulsorySchool(state:GameState) {
     if(previous&&['primary','middle','secondary'].includes(previous.stage))finishRecord(previous,age);
     const record:EducationRecord={stage:startingStage.stage,institution:schoolInstitution(state,startingStage.label),startAge:age,graduated:false,droppedOut:false,scholarship:false,performance:state.character.secondary.academicPerformance};
     state.education.push(record);ensureSchoolWorldForEducationRecord(state,record,true);
-    state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age,category:'school',importance:3,text:`You started ${startingStage.label.toLowerCase()} at ${record.institution}.`});
+    {const placeId=currentSchoolPlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age,category:'school',...(placeId?{placeId}:{}),importance:3,text:`You started ${startingStage.label.toLowerCase()} at ${record.institution}.`});}
   }
   const finalStage=profile.stages.at(-1);
   if(finalStage&&age===finalStage.endAge){
     const current=activeRecord(state);
-    if(current?.stage==='secondary'){finishRecord(current,age);current.performance=state.character.secondary.academicPerformance;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age,category:'school',importance:3,text:'You graduated from secondary school.'});}
+    if(current?.stage==='secondary'){finishRecord(current,age);current.performance=state.character.secondary.academicPerformance;const placeId=currentSchoolPlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age,category:'school',...(placeId?{placeId}:{}),importance:3,text:'You graduated from secondary school.'});}
   }
 }
 
@@ -52,7 +54,7 @@ export function processEducationYear(state:GameState) {
     const def=current.programId?educationById[current.programId]:undefined;
     if(def&&['university','community_college','graduate','professional','trade'].includes(current.stage)&&age-current.startAge>=def.years){
       finishRecord(current,age);current.performance=state.character.secondary.academicPerformance;
-      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age,category:'school',importance:3,text:`You graduated from ${current.institution} in ${def.name}.`});
+      const placeId=currentSchoolPlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age,category:'school',...(placeId?{placeId}:{}),importance:3,text:`You graduated from ${current.institution} in ${def.name}.`});
       state.character.stats.happiness=clamp(state.character.stats.happiness+6);state.character.stats.intelligence=clamp(state.character.stats.intelligence+Math.min(8,def.years*2));
     }else processAcademicYear(state,current);
   }
@@ -93,7 +95,7 @@ export function enrollProgram(state:GameState,programId:string):EngineResult {
   const need=familyNeedBonus(state);const scholarshipChance=clamp(10+Math.max(0,profile.score-62)*2+need,0,88)/100;const scholarship=rng.chance(scholarshipChance);const scholarshipPercent=scholarship?(profile.score>=88?.65:profile.score>=78?.45:.25):0;const total=Math.round(annualTuition*program.years*(1-scholarshipPercent));
   if(state.finances.cash>=total)state.finances.cash-=total;else{const needed=Math.max(0,total-state.finances.cash);state.finances.cash=0;if(needed>0)state.finances.liabilities.push({id:makeStateId(state,'loan'),kind:'student',principal:needed,balance:needed,annualRate:.047,annualPayment:Math.round(needed/10+needed*.047),remainingYears:10});}
   const record:EducationRecord={stage:program.kind,institution:`${state.character.city} Institute of ${program.name.replace(/ — .*/, '')}`,programId,major:program.name,startAge:state.character.age,graduated:false,droppedOut:false,scholarship,scholarshipPercent,admissionScore:profile.score,performance:state.character.secondary.academicPerformance};state.education.push(record);ensureSchoolWorldForEducationRecord(state,record,true);
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',importance:3,text:`You were accepted into ${program.name}${scholarship?` with a ${Math.round(scholarshipPercent*100)}% scholarship`:''}.`});state.rngCounter=rng.counter();return{success:true,messages:[{text:`Accepted into ${program.name}. Admissions profile ${Math.round(profile.score)}/100. Estimated total tuition after aid: ${total.toLocaleString()}.`}]};
+  {const placeId=currentSchoolPlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',...(placeId?{placeId}:{}),importance:3,text:`You were accepted into ${program.name}${scholarship?` with a ${Math.round(scholarshipPercent*100)}% scholarship`:''}.`});state.rngCounter=rng.counter();return{success:true,messages:[{text:`Accepted into ${program.name}. Admissions profile ${Math.round(profile.score)}/100. Estimated total tuition after aid: ${total.toLocaleString()}.`}]};}
 }
 
 export function canDropOut(state:GameState):boolean {
@@ -103,6 +105,6 @@ export function canDropOut(state:GameState):boolean {
   return active.stage==='secondary'&&state.character.age>=profile.minimumLeavingAge;
 }
 
-export function dropOut(state:GameState):EngineResult {const active=activeRecord(state);if(!active)return{success:false,messages:[{text:'There is no active program to leave.'}]};if(!canDropOut(state)){const leavingAge=schoolProfileFor(state.character.countryId).minimumLeavingAge;return{success:false,messages:[{text:`Compulsory schooling cannot be left before age ${leavingAge} in this country's simplified school profile.`}]};}active.droppedOut=true;active.endAge=state.character.age;state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',importance:3,text:`You dropped out of ${active.institution}.`});syncSchoolWorlds(state,false);return{success:true,messages:[{text:'You left your program. The decision is part of your permanent life history.'}]};}
+export function dropOut(state:GameState):EngineResult {const active=activeRecord(state);if(!active)return{success:false,messages:[{text:'There is no active program to leave.'}]};if(!canDropOut(state)){const leavingAge=schoolProfileFor(state.character.countryId).minimumLeavingAge;return{success:false,messages:[{text:`Compulsory schooling cannot be left before age ${leavingAge} in this country's simplified school profile.`}]};}active.droppedOut=true;active.endAge=state.character.age;const placeId=currentSchoolPlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',...(placeId?{placeId}:{}),importance:3,text:`You dropped out of ${active.institution}.`});syncSchoolWorlds(state,false);return{success:true,messages:[{text:'You left your program. The decision is part of your permanent life history.'}]};}
 
 export function availablePrograms(state:GameState){return educationPrograms.filter(program=>state.character.age>=17&&state.character.stats.intelligence>=program.minIntelligence-18);}

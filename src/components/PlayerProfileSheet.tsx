@@ -4,6 +4,7 @@ import { BottomSheet } from './BottomSheet';
 import { Avatar } from './Avatar';
 import { projectPlayerProfile } from '../systems/PlayerProfileSystem';
 import { playerResidenceProjection } from '../systems/ResidentialLifeSystem';
+import { generationalPlaceMemoryProjection } from '../systems/GenerationalPlaceMemorySystem';
 import { personalItemDefinitions } from '../data/personalItems';
 import { TOWN_PLACES } from '../data/townPlaces';
 import { personalItemPurchaseStatus } from '../systems/PersonalInventorySystem';
@@ -19,6 +20,7 @@ export function PlayerProfileSheet({open,state,onClose,onResult}:{open:boolean;s
   const[pendingDiscard,setPendingDiscard]=useState<string>();
   const profile=projectPlayerProfile(state);
   const residence=playerResidenceProjection(state);
+  const placeLegacy=generationalPlaceMemoryProjection(state);
   const inventoryCount=profile.personalItems.length+profile.valuableCollectibles.length;
   const close=()=>{setPendingDiscard(undefined);onClose();};
   return <BottomSheet open={open} title="Your profile" onClose={close} wide>
@@ -38,6 +40,7 @@ export function PlayerProfileSheet({open,state,onClose,onResult}:{open:boolean;s
         <div><small>Achievements</small><strong>{profile.completedAchievements}</strong></div>
       </section>
       <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Residence</p><h3>{residence.label}</h3></div>{residence.familyLandmark&&<span>Family landmark</span>}</div><p className="profile-muted">{residence.detail}</p></section>
+      {placeLegacy.places.length>0&&<section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Place legacy</p><h3>Places that remember your thread</h3></div><span>{placeLegacy.totalMemories}</span></div><p className="profile-muted">Only meaningful milestones and surviving family landmarks appear here. Routine visits stay out of your legacy.</p><div className="profile-item-list">{placeLegacy.places.slice(0,4).map(place=>{const memory=place.memories[0];return <article className="profile-item-card" key={place.placeId}><div><strong>{place.placeLabel}</strong><small>{place.districtLabel} · {place.memories.length} memor{place.memories.length===1?'y':'ies'}{place.familyHomes+place.familyBusinesses>0?' · family landmark':''}</small>{memory&&<p>{memory.text}</p>}</div></article>;})}</div></section>}
       <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Identity</p><h3>Traits & appearance</h3></div></div><div className="profile-chip-list">{profile.traits.map(trait=><span key={trait}>{trait}</span>)}{profile.appearance.map(value=><span key={value}>{value}</span>)}</div></section>
       <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Licenses</p><h3>Personal credentials</h3></div></div>{profile.licenses.length?<div className="profile-chip-list">{profile.licenses.map(license=><span key={license}>{license}</span>)}</div>:<p className="profile-muted">No travel or vehicle licenses yet.</p>}</section>
       <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Owned elsewhere</p><h3>Authoritative asset summary</h3></div></div><div className="player-profile-assets"><div><strong>{profile.assetSummary.homes}</strong><small>Homes</small></div><div><strong>{profile.assetSummary.vehicles}</strong><small>Vehicles</small></div><div><strong>{profile.assetSummary.businesses}</strong><small>Businesses</small></div><div><strong>{profile.assetSummary.collectibles}</strong><small>Collectibles</small></div></div><p className="profile-muted">These are projections only. Property, vehicles, companies, financing, collectibles, net worth, and estate ownership remain managed by their existing systems.</p></section>

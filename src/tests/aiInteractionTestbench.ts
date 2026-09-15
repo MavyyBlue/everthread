@@ -21,6 +21,7 @@ import { projectPersonalGiftOptions } from '../systems/GiftSystem';
 import { projectCrossWorldChemistryPlans } from '../systems/CrossWorldChemistrySystem';
 import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from '../systems/ResidentialLifeSystem';
 import { businessWorkLocation, workingEverthreadProjection } from '../systems/WorkingEverthreadSystem';
+import { generationalPlaceMemoryProjection } from '../systems/GenerationalPlaceMemorySystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -265,7 +266,8 @@ function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
     stats:structuredClone(state.character.stats),secondary:{stress:state.character.secondary.stress,confidence:state.character.secondary.confidence,karma:state.character.secondary.karma},
     cash:state.finances.cash,fame:state.fame.fame,publicReputation:state.fame.publicReputation,
     employment:state.employment.current?{title:state.employment.current.title,company:state.employment.current.company,salary:state.employment.current.salary}:undefined,
-    recentTimeline:state.timeline.slice(-8).map(entry=>({age:entry.age,category:entry.category,title:entry.title,text:entry.text,npcIds:entry.npcIds})),
+    recentTimeline:state.timeline.slice(-8).map(entry=>({age:entry.age,category:entry.category,placeId:entry.placeId,title:entry.title,text:entry.text,npcIds:entry.npcIds})),
+    placeLegacy:generationalPlaceMemoryProjection(state),
   };
   if(screen==='people')return{
     workspace:peopleWorkspaceSemanticView(state),
@@ -289,7 +291,8 @@ function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
     vehicles:state.assets.vehicles.map(item=>({id:item.id,typeId:item.typeId,name:item.name,value:item.value,condition:item.condition,category:item.category})),
     collectibles:state.assets.collectibles.map(item=>({id:item.id,itemId:item.itemId,name:item.name,estimatedValue:item.estimatedValue,rarity:item.rarity})),
     investments:state.investments.positions.map(item=>structuredClone(item)),
-    businesses:state.businesses.map(item=>({id:item.id,name:item.name,industryId:item.industryId,countryId:item.countryId,city:item.city,profit:item.profit,valuation:item.valuation,bankrupt:item.bankrupt,productIds:[...item.productIds],workLocation:businessWorkLocation(state,item)})),
+    businesses:state.businesses.map(item=>({id:item.id,name:item.name,industryId:item.industryId,origin:item.origin,inheritedFromNpcId:item.inheritedFromNpcId,countryId:item.countryId,city:item.city,profit:item.profit,valuation:item.valuation,bankrupt:item.bankrupt,productIds:[...item.productIds],workLocation:businessWorkLocation(state,item)})),
+    placeLegacy:generationalPlaceMemoryProjection(state),
   };
 }
 

@@ -239,7 +239,7 @@ function commitSharedExperience(state:GameState,npcId:string,placeId:string,acti
   const signal=experience.preferenceSignalTag;
   const alreadyKnown=signal?Boolean(rel.knownPreferenceTags?.includes(signal)):true;
   if(signal&&revealNpcPreference(state,npcId,signal)&&!alreadyKnown)experience.discoveredPreferenceTag=signal;
-  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:experience.meaningfulMemory?2:1,text:experience.prose,npcIds:[npcId],relationshipDelta:experience.relationshipDelta});
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',placeId,importance:experience.meaningfulMemory?2:1,text:experience.prose,npcIds:[npcId],relationshipDelta:experience.relationshipDelta});
   if(experience.meaningfulMemory)addRelationshipMemory(state,npc,options.memoryKind??`shared_experience:${activityId}`,experience.relationshipDelta,experience.memorySummary,experience.band==='awful'||experience.band==='great');
   state.rngCounter=rng.counter();
   return{success:true,messages:[{text:experience.prose}],experience};
