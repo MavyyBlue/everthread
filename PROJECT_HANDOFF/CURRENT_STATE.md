@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #170** (`35001748216`) on expanded source **`ef87fb8011b8ec9d6dc606c328db9b1c0882d942`**, save schema **17**. Run #170 establishes the first approved Character Visual foundation: a mobile New Life character creator, deterministic portrait identity, lazy modular renderer, age-stage presentation, and backward-compatible appearance normalization. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this work is not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #172** (`35006276096`) on expanded source **`5cf52a39d79f0835c2d9682e21d40c9ace7498c1`**, save schema **17**. Run #172 is a narrow responsive hotfix over the Run #170 Character Visual foundation: the New Life sheet no longer exceeds narrow phone widths, and a dedicated 8/8 responsive regression now guards the fix. The Character Visual ownership/determinism/save contracts from Run #170 remain unchanged. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this work is not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,10 +16,10 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #170**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Fresh post-Run-#170 Supabase Feedback Inbox: **5 total / 0 unresolved**; no new receipt after `2026-09-15 06:47:52.761298+00`. The prior Map-memory report remains resolved.
-- Durable feedback review-state row still points to Run #168 source `f68ffacf47c1fd208f836666fca3b1010a517c85` at `2026-09-15 13:10:53.355932+00`, reviewed count **5**. A post-Run-#170 checkpoint update was attempted but rejected by the database connector safety layer; do not infer unseen reports from this stale checkpoint.
+- Fresh post-Run-#172 Supabase Feedback Inbox: **5 total / 0 unresolved**; no new receipt after `2026-09-15 06:47:52.761298+00`. The prior Map-memory report remains resolved.
+- Durable feedback review-state row now points to Run #172 source `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` at `2026-09-15 18:17:43.686626+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation; NPC visual identity/reveal and family resemblance/aging remain later slices. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
+- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation and Run #172 certifies its New Life responsive-width hotfix; NPC visual identity/reveal and family resemblance/aging remain later slices. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -30,7 +30,17 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #170 — Character Visual foundation
+## Newest certified gameplay/source — Run #172 — New Life responsive hotfix
+
+- Upload wrapper `a2ab156e54cc0a18e13354435a0d50ecb633eed1`; expanded certified source `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`; Actions Run ID `35006276096`; job `104506709088`. Net diff from synchronized baseline `704def1523d652ca9ca24660d86ff14565a88f60` is exactly **3 intended files**.
+- Fixes New Life horizontal clipping on narrow phones at the owning layout rule: two-column rows now use zero-minimum grid tracks and their controls/content can shrink inside the grid. The sheet's overflow behavior was not used to hide the symptom.
+- Added New Life responsive layout regression **8/8**, covering 360/390/412/430px and enlarged text-scale cases. No GameState, save, RNG, portrait identity, content, or schema changes; save schema remains **17**.
+- Canonical preflight **4/4**; Character Visual **46/46**; base **82/82**; Visual Identity **12/12**; Player Profile **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build **211 modules**. Lazy character-art pack ~**971.11/69.18 gzip kB**; main ~**1,354.43/377.84**; CSS ~**87.30/16.11**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `c33df60a9811907ae0dc8d4d58b1d8e6fd86aea7a7041d8f5e99db0d1b924d17`; dependency SHA `3cb9249bb0e386b953e1561493692f23150e7be192108746b220da4824447783`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10410969204` (`9fc873a757e510e9883459eb13e3921343d096785064da4687272501c698868f`); Pages artifact `10411442227` (`7c8193b1e2ee60600efaa4293bd27af663fdbf0306f2f9ef22475d6658a009b8`); deployment succeeded.
+- Feedback Inbox: **5 total / 0 unresolved**. Review checkpoint `main` → `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` at `2026-09-15 18:17:43.686626+00`, reviewed count **5**.
+
+## Prior certified gameplay/source — Run #170 — Character Visual foundation
 
 - Upload wrapper `a620ac8b0a97458d05e66e11ac578163fb231dd1`; expanded certified source `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`; Actions Run ID `35001748216`; job `104491526661`. Net diff from synchronized baseline `2e94523a451454b94cbbee49179f0efbb62b0900` is exactly **15 intended source/test files**.
 - New Life now exposes a tappable portrait/silhouette that opens a mobile Character Creator. Back discards working edits; Save commits the draft and returns the resulting portrait to New Life. Creator option sections are collapsible local UI state with selected-value summaries.

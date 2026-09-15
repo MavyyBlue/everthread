@@ -1,3 +1,7 @@
+## New Life responsive hotfix — Run #172
+
+Run #172 adds **no gameplay/event/place/career/inventory/portrait-art definitions**. It fixes New Life responsive CSS and adds one layout-regression script. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged.
+
 # Everthread — Content Inventory
 
 ## Character Visual foundation — Run #170

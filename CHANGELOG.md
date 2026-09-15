@@ -1,3 +1,20 @@
+## New Life mobile-width overflow hotfix — CI Green Run #172 — 2026-09-15
+
+### Fixed
+
+- Fixed a player-reported New Life sheet overflow on narrow phones where the two-column identity rows could exceed the available viewport width and the sheet clipped the right edge. Root cause was CSS Grid intrinsic minimum sizing from form controls, not the sheet scroll container.
+- Changed the affected two-column tracks to zero-minimum columns and allowed their child form controls/content to shrink within the assigned grid cells. The New Life identity copy also now stacks cleanly instead of forcing a wider row.
+- Added `scripts/new-life-layout-regression.mjs` and registered it in the canonical `npm test` wall. The regression protects 360/390/412/430px mobile widths and enlarged text-scale conditions from horizontal overflow. No GameState, save, portrait, simulation, content, or schema authority changed. Save schema remains **17**.
+
+### Certification
+
+- GitHub Actions Run #172 (`35006276096`, job `104506709088`) certified expanded source `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` from upload wrapper `a2ab156e54cc0a18e13354435a0d50ecb633eed1`. Net diff from synchronized baseline `704def1523d652ca9ca24660d86ff14565a88f60` is exactly **3 intended files**; workflow import reports 4 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4**. New Life responsive layout **8/8**; Character Visual **46/46**; base **82/82**; Visual Identity **12/12**; Player Profile/Inventory **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Integrated Long-Life **105/105**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed at **211 modules**. Lazy `characterArtPack` remains ~**971.11 kB / 69.18 kB gzip**; main JS ~**1,354.43 / 377.84 kB gzip**; CSS ~**87.30 / 16.11 kB gzip**. The established >700 kB chunk warning remains nonblocking technical debt.
+- Certified source SHA-256 `c33df60a9811907ae0dc8d4d58b1d8e6fd86aea7a7041d8f5e99db0d1b924d17`; dependency SHA-256 `3cb9249bb0e386b953e1561493692f23150e7be192108746b220da4824447783`; package-lock SHA-256 remains `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10410969204` (`9fc873a757e510e9883459eb13e3921343d096785064da4687272501c698868f`); Pages artifact `10411442227` (`7c8193b1e2ee60600efaa4293bd27af663fdbf0306f2f9ef22475d6658a009b8`); Pages deployment reported success.
+- Post-Run-#172 Feedback Inbox sweep remains **5 total / 0 unresolved** with no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint `main` was successfully advanced to `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` at `2026-09-15 18:17:43.686626+00`, reviewed count **5**.
+- This is a narrow post-Character-Visual hotfix, **not Phase 11** and not a reopening of the Living World Program.
+
 ## Character Visual foundation — player creator + portrait renderer — CI Green Run #170 — 2026-09-15
 
 ### Added / changed

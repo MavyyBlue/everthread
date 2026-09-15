@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`
-Certified gameplay baseline: Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`
+Newest certified expanded gameplay/source: Run #172 / `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`
+Certified gameplay baseline: Run #172 / `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`
 
 ## Product direction
 
@@ -26,9 +26,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
+## Newest certified hotfix — Run #172 — New Life responsive width
+
+Run #172 fixes the narrow-phone New Life clipping reported by Mavyy without changing any simulation or portrait authority.
+
+- Expanded certified source: `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`, schema **17**. Upload wrapper `a2ab156e54cc0a18e13354435a0d50ecb633eed1`; Actions Run ID `35006276096`; job `104506709088`. Base synchronized source was `704def1523d652ca9ca24660d86ff14565a88f60`; net diff is exactly **3 intended files**.
+- Root cause: intrinsic minimum sizing from New Life form controls forced two-column grid rows wider than the phone viewport while the sheet hid horizontal overflow. The fix uses zero-minimum grid tracks plus shrink-safe child/form-control sizing; no global overflow masking was added.
+- Added canonical New Life responsive layout regression **8/8** covering 360/390/412/430px and enlarged text-scale cases.
+- Canonical preflight **4/4 Green**. Character Visual remains **46/46**; base **82/82**; Player Profile **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build remains **211 modules**; lazy character-art pack ~**971.11/69.18 kB gzip**; main ~**1,354.43/377.84**; CSS ~**87.30/16.11**. Existing large-chunk warning remains nonblocking.
+- Certified source SHA `c33df60a9811907ae0dc8d4d58b1d8e6fd86aea7a7041d8f5e99db0d1b924d17`; dependency SHA `3cb9249bb0e386b953e1561493692f23150e7be192108746b220da4824447783`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10410969204`; Pages artifact `10411442227`; deployment succeeded.
+- Feedback sweep: **5 total / 0 unresolved**. Review checkpoint `main` successfully advanced to Run #172 source at `2026-09-15 18:17:43.686626+00`, reviewed count **5**.
+
 ## Current Character Visual baseline
 
-### Player Character Creator + portrait foundation — CI Green Run #170
+### Player Character Creator + portrait foundation — CI Green Run #170 (preserved under Run #172 hotfix)
 
 Run #170 establishes the first certified Character Visual slice without creating a parallel person/avatar authority.
 

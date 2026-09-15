@@ -13,9 +13,9 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`**, save schema **17**. Run #170 is the approved Character Visual foundation and does not reopen Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** remain certified/closed; no Phase 11 label is active.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #172 / `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`**, save schema **17**. Run #172 is the New Life responsive-width hotfix over the approved Run #170 Character Visual foundation and does not reopen Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** remain certified/closed; no Phase 11 label is active.
 
-Post-Run-#170 review sweep on 2026-09-15 found **5 total / 0 unresolved** reports and no receipt newer than `2026-09-15 06:47:52.761298+00`. The stored `main` review-state checkpoint still points to Run #168 source `f68ffacf47c1fd208f836666fca3b1010a517c85` because the connector rejected the checkpoint write during this review session. Treat the explicit Run #170 sweep as the newest review evidence; do not interpret the stale row as proof of unseen reports.
+Post-Run-#172 review sweep on 2026-09-15 found **5 total / 0 unresolved** reports and no receipt newer than `2026-09-15 06:47:52.761298+00`. The stored `main` review-state checkpoint was successfully advanced to Run #172 source `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` at `2026-09-15 18:17:43.686626+00`, reviewed-report count **5**.
 
 Central Feedback Inbox infrastructure:
 

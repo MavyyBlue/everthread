@@ -1,12 +1,12 @@
 # Everthread — Living World Program
 
-Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10 in Run #166. Post-closeout Runs #168 and #170 add approved presentation/character-visual work without reopening the program. Character Visual is a separate approved feature direction, not Phase 11.**
+Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10 in Run #166. Post-closeout Runs #168, #170, and #172 add approved presentation/character-visual/mobile-UX work without reopening the program. Character Visual is a separate approved feature direction, not Phase 11.**
 
 Approved: 2026-09-13 after Phase 7 closeout. Closed: 2026-09-15 after Run #166.
 
 Final certified program baseline:
 - final certified Living World Program gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`;
-- newest certified post-closeout gameplay/source: Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`;
+- newest certified post-closeout gameplay/source: Run #172 / `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -19,7 +19,7 @@ Final certified program baseline:
 
 This remains the authority-boundary record for the closed Living World Program. Future work must preserve these certified contracts unless Mavyy deliberately reopens a design decision with migration/QA coverage.
 
-Post-closeout certification notes: Run #168 (`34973140255`) integrates the approved Astra presentation iconography and repairs Appearance/theme reactivity. Run #170 (`35001748216`) establishes the player Character Visual foundation on `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`: one existing appearance authority, deterministic/RNG-neutral enrichment, a mobile New Life creator, and a lazy modular portrait renderer. Neither slice reopens the Living World Program or creates a macro phase. Run #170 canonical preflight is 4/4 and Character Visual is 46/46.
+Post-closeout certification notes: Run #168 (`34973140255`) integrates the approved Astra presentation iconography and repairs Appearance/theme reactivity. Run #170 (`35001748216`) establishes the player Character Visual foundation on `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`: one existing appearance authority, deterministic/RNG-neutral enrichment, a mobile New Life creator, and a lazy modular portrait renderer. Run #172 (`35006276096`) certifies the narrow-phone New Life responsive-width hotfix on `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` with a dedicated 8/8 layout regression and no simulation/save/schema changes. None of these slices reopens the Living World Program or creates a macro phase.
 
 ## North star
 
