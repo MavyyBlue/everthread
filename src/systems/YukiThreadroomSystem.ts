@@ -5,6 +5,41 @@ export type YukiThreadroomTopicId='everthread'|'threads'|'space'|'games'|'quiet'
 
 export type PeopleNpcSurface='profile'|'yuki-threadroom';
 
+export type YukiThreadroomReactionState=
+  |'yuki.idle'
+  |'yuki.blink-half'
+  |'yuki.blink-closed'
+  |'yuki.talk-small'
+  |'yuki.talk-open'
+  |'yuki.playful-wink'
+  |'yuki.warm-blush'
+  |'yuki.focused'
+  |'yuki.concerned'
+  |'yuki.delighted'
+  |'yuki.talk-small-blink'
+  |'yuki.talk-open-blink';
+
+export type YukiThreadroomArtMode='reactive-adult'|'modular-age-aware';
+
+export function yukiThreadroomArtMode(age:number):YukiThreadroomArtMode{
+  return age>=18&&age<=44?'reactive-adult':'modular-age-aware';
+}
+
+export function yukiThreadroomTopicReaction(topic:YukiThreadroomTopicId,rel:Relationship):{state:YukiThreadroomReactionState;speaks:boolean}{
+  if(topic==='games')return{state:'yuki.playful-wink',speaks:true};
+  if(topic==='space')return{state:'yuki.delighted',speaks:true};
+  if(topic==='quiet')return{state:'yuki.warm-blush',speaks:false};
+  if(topic==='us'&&(rel.type==='ex'||rel.estranged||rel.score<35))return{state:'yuki.concerned',speaks:true};
+  if(topic==='us')return{state:'yuki.warm-blush',speaks:true};
+  return{state:'yuki.focused',speaks:true};
+}
+
+export function yukiThreadroomInteractionReaction(action:'spend_time'|'compliment'|'apologize'):{state:YukiThreadroomReactionState;speaks:boolean}{
+  if(action==='compliment')return{state:'yuki.delighted',speaks:true};
+  if(action==='apologize')return{state:'yuki.concerned',speaks:true};
+  return{state:'yuki.warm-blush',speaks:true};
+}
+
 export function peopleSurfaceForNpc(npc:Npc|undefined):PeopleNpcSurface{
   return isSecretYukiNpc(npc)?'yuki-threadroom':'profile';
 }
