@@ -12,7 +12,7 @@ export function runPhase8CInstitutionRoutingRegression(){
   const resolved=(placeId:string,serviceId:string)=>resolveInstitutionDestination(service(placeId,serviceId).destination);
 
   const allServices=TOWN_PLACES.flatMap(item=>(item.routes??[]).map(route=>({place:item,route})));
-  verify(allServices.length===28,'1 the certified initial town must expose the intended 28 institution service doorways without padding landmark-only places');
+  verify(allServices.length===29,'1 the current town must expose all 29 institution service doorways without padding landmark-only places');
   verify(TOWN_PLACES.every(item=>new Set((item.routes??[]).map(route=>route.id)).size===(item.routes??[]).length),'2 service ids must be unique within each authored place');
   verify(allServices.every(({route})=>route.label.trim().length>0&&route.description.trim().length>0),'3 every routed service needs player-facing identity and context');
   verify(allServices.every(({route})=>!route.label.toLowerCase().includes('phase')),'4 routing copy must be player-facing rather than exposing development-phase terminology');
@@ -48,6 +48,7 @@ export function runPhase8CInstitutionRoutingRegression(){
   verify(JSON.stringify(resolved('everthread-city-hall','business'))===JSON.stringify({tab:'assets',assetsTab:'business'}),'25 City Hall company services must reuse established company formation/management');
 
   verify((place('silverframe-studios').routes??[]).some(route=>route.destination==='acting')&&(place('silverframe-studios').routes??[]).some(route=>route.destination==='directing'),'26 Silverframe Studios must expose both existing acting and directing authorities');
+  verify(JSON.stringify(resolved('threadtone-music-studio','music'))===JSON.stringify({tab:'career',careerTab:'special',specialPath:'music'}),'26b Threadtone Music Studio must route to the existing Music life path');
   verify(JSON.stringify(resolved('facet-modeling-agency','modeling'))===JSON.stringify({tab:'career',careerTab:'special',specialPath:'modeling'}),'27 modeling agency must route to the existing Modeling life path');
   verify(JSON.stringify(resolved('everthread-speedway','racing'))===JSON.stringify({tab:'career',careerTab:'special',specialPath:'racing'}),'28 speedway must route to the existing Motorsport life path');
   verify(JSON.stringify(resolved('everthread-stadium','sports'))===JSON.stringify({tab:'career',careerTab:'special',specialPath:'sports'}),'29 stadium must route to the existing Professional sports life path');

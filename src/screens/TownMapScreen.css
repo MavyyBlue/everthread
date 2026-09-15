@@ -1,4 +1,4 @@
-.screen-host>.town-map-screen{position:fixed;z-index:1;top:calc(var(--safe-top) + 64px);right:0;bottom:calc(var(--safe-bottom) + 70px);left:0;width:auto;max-width:none;height:auto;min-height:0;margin:0;padding:0;overflow:hidden;background:#101418}
+.screen-host>.town-map-screen{position:fixed;z-index:26;top:calc(var(--safe-top) + 64px);right:0;bottom:calc(var(--safe-bottom) + 70px);left:0;width:auto;max-width:none;height:auto;min-height:0;margin:0;padding:0;overflow:hidden;background:#101418}
 .town-map-viewport{position:absolute;inset:0;overflow:hidden;touch-action:none;user-select:none;background:#101418;cursor:grab}
 .town-map-viewport:active{cursor:grabbing}
 .town-map-world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;overflow:hidden;background:#101418}

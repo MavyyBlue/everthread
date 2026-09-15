@@ -123,7 +123,7 @@ function SpecialPaths({state,onResult,focusPath}:{state:GameState;onResult:Actio
         ['Find agent',()=>gameEngine.actingAgent(),startBlocked('acting')||Number(state.specialCareers.acting?.agent??0)>=1],
         ['Audition',()=>launchChallenge('acting',score=>gameEngine.actingAudition(score),careerActionVfx('acting')),startBlocked('acting')||!actionAllowed(state,{policy:'special.audition'}),specialActionAgeVisible(state,'acting','Audition')],
       ]} vfx={careerActionVfx('acting')} onResult={onResult}/>} 
-      {specialPathAgeVisible(state,'music')&&<Path title="Music" stat={`${musicLife.status} · Skill ${Math.round(Number(state.specialCareers.music?.skill??0))}`} actions={[
+      {specialPathAgeVisible(state,'music')&&<Path routeId="music" focused={focusPath==='music'} title="Music" stat={`${musicLife.status} · Skill ${Math.round(Number(state.specialCareers.music?.skill??0))}`} actions={[
         ['Practice vocals',()=>gameEngine.musicPractice('vocals'),training('music')],
         ['Release song',()=>gameEngine.musicRelease('song'),startBlocked('music')||!actionAllowed(state,{policy:'special.music_release'}),specialActionAgeVisible(state,'music','Release song')],
         ['Release album',()=>gameEngine.musicRelease('album'),startBlocked('music')||!actionAllowed(state,{policy:'special.music_release'}),specialActionAgeVisible(state,'music','Release album')],

@@ -1,4 +1,4 @@
-import { ASSET_SECTION_NAVIGATION, PRIMARY_NAVIGATION } from '../core/navigation';
+import { ASSET_SECTION_NAVIGATION, CONTEXTUAL_NAVIGATION, PRIMARY_NAVIGATION, primaryNavigationItems } from '../core/navigation';
 import { CURRENT_SAVE_VERSION } from '../core/saveVersion';
 import { createInstitutionRouteRequest, resolveInstitutionDestination } from '../core/institutionRouting';
 import { TOWN_PLACES, type TownPlaceCategory } from '../data/townPlaces';
@@ -17,19 +17,19 @@ export async function runPhase8ECloseoutRegression(){
   let checks=0;
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 8E closeout regression failed: ${message}`);}
 
-  const primaryIds=PRIMARY_NAVIGATION.map(item=>item.id);
-  verify(JSON.stringify(primaryIds)===JSON.stringify(['life','people','map','activities','career','assets']),'01 primary navigation must preserve every pre-Phase-8 owner while keeping People and Map first-class');
-  verify(new Set(primaryIds).size===PRIMARY_NAVIGATION.length,'02 primary navigation ids must remain unique');
-  verify(PRIMARY_NAVIGATION.every(item=>item.label.trim().length>0&&item.icon.trim().length>0),'03 every primary navigation destination needs a visible label and compact icon');
-  verify(primaryIds.includes('assets'),'04 the legacy Assets owner must remain directly reachable during Phase 8 closeout');
+  const primaryIds=PRIMARY_NAVIGATION.map(item=>item.id);const contextualIds=CONTEXTUAL_NAVIGATION.map(item=>item.id);const ownerIds=new Set([...primaryIds,...contextualIds]);
+  verify(JSON.stringify(primaryIds)===JSON.stringify(['life','people','map']),'01 persistent primary navigation must keep Life, People, and Map first-class without six-way mobile crowding');
+  verify(new Set([...primaryIds,...contextualIds]).size===PRIMARY_NAVIGATION.length+CONTEXTUAL_NAVIGATION.length,'02 persistent and contextual navigation ids must remain unique');
+  verify([...PRIMARY_NAVIGATION,...CONTEXTUAL_NAVIGATION].every(item=>item.label.trim().length>0&&item.icon.trim().length>0),'03 every navigation destination needs a visible label and compact icon');
+  verify(!primaryIds.some(id=>String(id)==='assets')&&primaryNavigationItems('assets',true).some(item=>item.id==='assets'),'04 the legacy Assets owner must remain reachable as a map-routed contextual destination rather than a permanent tab');
 
   const assetSections=ASSET_SECTION_NAVIGATION.map(item=>item.id);
   verify(JSON.stringify(assetSections)===JSON.stringify(['money','property','invest','business','estate','more']),'05 all six established Assets sections must remain directly reachable');
   verify(new Set(assetSections).size===ASSET_SECTION_NAVIGATION.length,'06 Assets section ids must remain unique');
 
   const routes=TOWN_PLACES.flatMap(place=>(place.routes??[]).map(route=>({place,route,resolved:resolveInstitutionDestination(route.destination)})));
-  verify(routes.length===28,'07 closeout must preserve the certified 28 institution service doorways');
-  verify(routes.every(({resolved})=>primaryIds.includes(resolved.tab)),'08 every map institution route must terminate in a still-reachable primary owner');
+  verify(routes.length===29,'07 closeout must preserve all 29 current institution service doorways');
+  verify(routes.every(({resolved})=>ownerIds.has(resolved.tab)),'08 every map institution route must terminate in a still-reachable core or contextual owner');
   verify(routes.filter(({resolved})=>resolved.tab==='assets').every(({resolved})=>resolved.tab!=='assets'||assetSections.includes(resolved.assetsTab)),'09 every Assets-bound map route must terminate in a still-reachable Assets section');
   verify(routes.some(({resolved})=>resolved.tab==='assets'&&resolved.assetsTab==='money')&&routes.some(({resolved})=>resolved.tab==='assets'&&resolved.assetsTab==='property')&&routes.some(({resolved})=>resolved.tab==='assets'&&resolved.assetsTab==='invest')&&routes.some(({resolved})=>resolved.tab==='assets'&&resolved.assetsTab==='business'),'10 map routing must complement rather than replace the established money/property/invest/business entry points');
   verify(createInstitutionRouteRequest('central-everthread-bank','banking',100)?.resolved.tab==='life','11 bank routing must still land in the established Life banking owner');

@@ -8,7 +8,7 @@ export type InstitutionActivitySheet='travel'|'crime'|'health'|'habits';
 export type InstitutionActivityAnchor='wellness';
 export type InstitutionCareerTab='work'|'education'|'special';
 export type InstitutionCareerAnchor='work-market'|'education-current'|'education-admissions';
-export type InstitutionSpecialPathFocus='acting'|'directing'|'modeling'|'racing'|'sports'|'military'|'politics'|'crimeOrg';
+export type InstitutionSpecialPathFocus='acting'|'music'|'directing'|'modeling'|'racing'|'sports'|'military'|'politics'|'crimeOrg';
 
 export type InstitutionResolvedRoute=
   | {tab:'life';bankingView:InstitutionBankingView}
@@ -45,6 +45,7 @@ export function resolveInstitutionDestination(destination:TownInstitutionDestina
     case 'legal':return {tab:'activities',activitySheet:'crime'};
     case 'work':return {tab:'career',careerTab:'work',careerAnchor:'work-market'};
     case 'acting':return {tab:'career',careerTab:'special',specialPath:'acting'};
+    case 'music':return {tab:'career',careerTab:'special',specialPath:'music'};
     case 'directing':return {tab:'career',careerTab:'special',specialPath:'directing'};
     case 'modeling':return {tab:'career',careerTab:'special',specialPath:'modeling'};
     case 'racing':return {tab:'career',careerTab:'special',specialPath:'racing'};
