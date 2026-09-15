@@ -1,3 +1,7 @@
+## Yuki Threadroom reactive presentation + cutoff hotfix — Runs #180–#181
+
+Runs #180–#181 add **no gameplay/event/place/career/education/inventory/preference definitions** and no new durable simulation authority. Run #180 imports **41 selected presentation assets** (room PNGs, adult Yuki PNG/face patches, and UI icons) plus reactive presentation code; these are visual resources, not content-catalog definitions. Run #181 adds no assets or definitions and only hardens full-screen/fallback layout plus QA. The existing **624 modular Character Visual SVG components** remain the fallback for non-adult Yuki stages. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, save schema **17**.
+
 ## Secret Yuki / Hidden Threadroom — Run #178
 
 Run #178 adds **6 bespoke Hidden Threadroom conversation topics** plus reactive greeting/status/presentation copy for the secret-origin Yuki NPC. These are local character-surface copy, not `GameEventDefinition`s and not additions to the global event/place/career/education/inventory/preference catalogs. The slice reuses the existing **624 modular Character Visual SVG components**; no new portrait art asset definitions were added. Certified tracked totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.

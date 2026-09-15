@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #178 / `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`
-Certified gameplay baseline: Run #178 / `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`
+Newest certified expanded gameplay/source: Run #181 / `fd304ae097dbb5fccab52085fd32ab838b011887`
+Certified gameplay baseline: Run #181 / `fd304ae097dbb5fccab52085fd32ab838b011887`
 
 ## Product direction
 
@@ -26,7 +26,25 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified post-closeout slice — Run #178 — Secret Yuki / Hidden Threadroom
+## Newest certified post-closeout hotfix — Run #181 — Yuki Threadroom viewport/fallback
+
+Run #181 closes the player-facing cutoff found after Run #180 without changing simulation/save authorities.
+
+- Expanded certified source: `fd304ae097dbb5fccab52085fd32ab838b011887`, schema **17**. Upload wrapper `703516842c2e09a07ab298e60ec4dadce80490a4`; Actions Run ID `35035042349`; job `104602148567`. Base gameplay source was Run #180 `3d33429bed185c9c382a21f9926fda362fba79b9`; net diff is exactly **3 intended files**.
+- `YukiThreadroom` now portals its full-screen root to `document.body`, escaping Threadspace's stacking context so normal app header/bottom navigation cannot cover the room.
+- Modular age-aware fallback portraits use separate compact scene geometry; the painted Astra adult sprite remains restricted to ages 18–44. Dedicated Threadroom art regression is **19/19**, including age 0.
+- Canonical preflight **4/4 Green**; complete wall remains Green. Production: **218 modules**, People ~**58.81/17.86 kB gzip**, People CSS ~**22.57/4.69**, character-art pack ~**971.11/69.18**, main ~**1,358.35/379.57**.
+- Certified source SHA `aea29e68948a539fb6c3e34718fea5c2faf6f687adc7901d9bf41033a7be1d7c`; dependency SHA `81bd74d91f8a789f01d8ba6bae72e290fe378d0664cc94f180c71d33d9260400`; certified artifact `10423216985`; Pages artifact `10422897873`; deployment succeeded.
+- Feedback: **5 total / 0 unresolved**. Review checkpoint `main` advanced to Run #181 source at `2026-09-15 23:20:12.674778+00`, reviewed count **5**.
+
+## Prior certified post-closeout slice — Run #180 — Reactive Astra Yuki Threadroom art
+
+- Expanded certified source `3d33429bed185c9c382a21f9926fda362fba79b9`, schema **17**; Run ID `35033324379`, job `104596639702`; exactly **48 intended files** (7 source/test + 41 presentation assets).
+- Reactive adult Threadroom art is presentation-only over the existing Run #178 Yuki NPC/Relationship authorities. Day/evening backgrounds, seated adult PNGs, face patches, icons, blink/speech/reaction timers, reduced-motion behavior, and responsive scene layout do not create durable room state or consume gameplay RNG.
+- Painted art is age-gated to **18–44**; all other ages retain the special room with modular age-aware portrait fallback. Run #181 hardens that fallback layout.
+- Run #180 canonical preflight **4/4**, Yuki Threadroom Art **18/18**, production **217 modules**.
+
+## Prior certified post-closeout slice — Run #178 — Secret Yuki / Hidden Threadroom
 
 Run #178 gives the Sandbox secret-origin Yuki one authored visual identity and one unique People interaction surface without creating a parallel NPC, relationship, affection, family, or save authority.
 
@@ -38,8 +56,8 @@ Run #178 gives the Sandbox secret-origin Yuki one authored visual identity and o
 - Canonical preflight **4/4 Green**. Secret-code/Threadroom **32/32**; Character Visual **60/60**; Family Visual **27/27**; base **82/82**; People **57/57**; Threadspace recovery **10/10**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback regressions **20/20 + 23/23**.
 - Production build: **215 modules**; People lazy surface ~**50.76/15.18 kB gzip**; lazy character-art pack ~**971.11/69.18**; main ~**1,358.35/379.57**; CSS ~**87.92/16.19**. Existing large-chunk warning remains nonblocking.
 - Certified source SHA `c91e04d2fa246a4af4421ea48fe32b7fea543c5d48160a8afa4fc0d7e78f6fe2`; dependency SHA `d5a1c173c3bffb7ae194d1c7b0beaa07ebbdf086ee7a35d718cacde7ead62fa6`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10418778648`; Pages artifact `10419241565`; deployment succeeded.
-- Feedback refresh after Run #178 could not complete because the Supabase connector returned repeated upstream HTTP 502 errors. Do **not** infer a fresh inbox state from the Green backend regressions; the last verified checkpoint remains Run #176 at **5 total / 0 unresolved** until the next successful sweep.
-- Next planned Character Visual work remains richer aging/presentation behavior over the same stable identities, after documentation synchronization and feedback refresh. No Phase 11 label is implied.
+- The earlier Run #178 Supabase outage later recovered. Run #181 now holds the current verified Feedback Inbox checkpoint at **5 total / 0 unresolved**.
+- Next planned Character Visual work remains richer general aging/presentation behavior over the same stable identities after this documentation synchronization. Additional bespoke Yuki age-stage art can plug into the existing Threadroom visual-stage contract when authored; it is not a blocker. No Phase 11 label is implied.
 
 ## Prior certified Character Visual slice — Run #176 — Family resemblance + visual inheritance
 

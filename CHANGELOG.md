@@ -1,3 +1,36 @@
+## Yuki Threadroom viewport/fallback hotfix — CI Green Run #181 — 2026-09-15
+
+### Fixed
+
+- Moved the Hidden Threadroom root through a React portal onto `document.body` so the full-screen special surface is no longer trapped inside Threadspace's low stacking context. The room now correctly overlays Everthread's ordinary top app bar and bottom navigation while preserving higher-priority global overlays.
+- Gave non-Astra age-aware fallback portraits their own compact square scene geometry instead of reusing the tall seated-adult sprite stage. Newborn/child/teen/mature/elder Yuki can remain on the modular renderer without being buried behind the dialogue/action sheet.
+- Extended the dedicated Yuki Threadroom art regression to **19/19**, including an explicit age-0 case proving newborn Yuki uses the age-aware modular fallback rather than the adult painted sprite. No assets, save schema, identity logic, relationship logic, or simulation authority changed.
+
+### Certification
+
+- GitHub Actions Run #181 (`35035042349`, job `104602148567`) certified expanded source `fd304ae097dbb5fccab52085fd32ab838b011887` from upload wrapper `703516842c2e09a07ab298e60ec4dadce80490a4`. Net diff from Run #180 source `3d33429bed185c9c382a21f9926fda362fba79b9` is exactly **3 intended files**; workflow import reports 4 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4**. Yuki Threadroom Art **19/19**; Secret-code **32/32**; Character Visual **60/60**; Family Visual **27/27**; base **82/82**; People **57/57**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Integrated Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback regressions **20/20 + 23/23**.
+- Production build passed at **218 modules**. People lazy JS ~**58.81/17.86 kB gzip**; People CSS ~**22.57/4.69**; lazy `characterArtPack` remains ~**971.11/69.18**; main remains ~**1,358.35/379.57**.
+- Certified source SHA-256 `aea29e68948a539fb6c3e34718fea5c2faf6f687adc7901d9bf41033a7be1d7c`; dependency SHA-256 `81bd74d91f8a789f01d8ba6bae72e290fe378d0664cc94f180c71d33d9260400`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10423216985` (`7a71b8b856d2e00c66ad3612b1ff6a2700fb9f63ec2ca138dadee45d275ab38d`); Pages artifact `10422897873` (`a4d360a39e81ad4a5121f9ee3a8047796fb95fcee4a5bd36c228e6cfab2b552b`); Pages deployment reported success.
+- Post-certification Feedback Inbox remains **5 total / 0 unresolved**; durable review checkpoint `main` advanced to `fd304ae097dbb5fccab52085fd32ab838b011887` at `2026-09-15 23:20:12.674778+00`, reviewed count **5**.
+
+## Yuki Threadroom reactive Astra art integration — CI Green Run #180 — 2026-09-15
+
+### Added / changed
+
+- Integrated a curated subset of Astra Yuki's reactive Threadroom art kit into the already-certified Hidden Threadroom without replacing its simulation architecture. The exact secret-origin Yuki NPC, Relationship, memories, family links, dates/gifts/milestones, action economy, and save state remain authoritative.
+- Added responsive day/evening room art, seated adult Yuki PNGs, expression/blink/talking face patches, and Everthread/Yuki iconography as static presentation assets. Runtime reaction/blink/speech state is UI-only: it is never written to `GameState`, never consumes gameplay RNG, and never becomes a second affection/mood ledger.
+- Painted adult Yuki is intentionally restricted to the **18–44 adult visual stage**. Younger and older ages retain the special Threadroom but fall back to the existing age-aware modular `CharacterPortrait` until matching authored stage art exists.
+- Added `YukiReactivePortrait`, centralized Threadroom asset metadata, responsive scene composition, reduced-motion handling, timer cleanup, and an **18/18** dedicated art/presentation regression. Exactly **41 selected runtime art assets** were imported rather than the full design-kit archive.
+
+### Certification
+
+- GitHub Actions Run #180 (`35033324379`, job `104596639702`) certified expanded source `3d33429bed185c9c382a21f9926fda362fba79b9` from upload wrapper `01740bedf5a79c4578f77a238ff2af7aec39224d`. Net diff from synchronized Run #179 source `34b7cc0bec84ce3f7124f013a05311c566f80728` is exactly **48 intended files**: 7 source/test files + 41 selected presentation assets.
+- Canonical preflight passed **4/4**. Yuki Threadroom Art **18/18**; Secret-code **32/32**; Character Visual **60/60**; Family Visual **27/27**; base **82/82**; People **57/57**; Dynasty **66/66**; Long-Life **105/105**; 10E **103/103**; minigames **19/19**; feedback regressions **20/20 + 23/23**.
+- Production build passed at **217 modules**. People lazy JS ~**58.72/17.81 kB gzip**; People CSS ~**22.26/4.61**; lazy `characterArtPack` remains ~**971.11/69.18**; main remains ~**1,358.35/379.57**.
+- Certified source SHA-256 `da39625174446e0ff39f28bb088f902e66ef3097b356bf816201771edb3b44d1`; dependency SHA-256 `eee896666d92ee2ac424d314ac3fc9903eee989493cc2432597bba5ddcd7ca04`; package-lock SHA-256 unchanged. Certified artifact `10422221712` (`743be87eda5cadc9fb9300c5aa16d3bc9ccd1e18e0bee9181e9551ef19384c40`); Pages artifact `10422097592` (`e0b38649ddfad0ed795cc550310fbd4d517824dd4aac7335dc2f4cad8dbacf36`); Pages deployment reported success.
+- Post-certification Feedback Inbox was **5 total / 0 unresolved** and review state advanced to Run #180 source before the player-facing cutoff hotfix was implemented.
+
 ## Secret Yuki / Hidden Threadroom — CI Green Run #178 — 2026-09-15
 
 ### Added / changed
