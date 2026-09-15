@@ -1,3 +1,26 @@
+## Phase 10C — Generational Place Memory — CI Green Run #158 — 2026-09-15
+
+### Added / changed
+
+- Added one read-only **Generational Place Memory** projection over existing Timeline, CompletedLife, Property, Business, Estate/Dynasty, Working Everthread, and Town Place truth. It creates no second place-history, family-landmark, property, business, event, or memory authority.
+- `TimelineEntry` may now carry an optional canonical Everthread `placeId` for meaningful importance-2/3 milestones. Significant relationship outings, property/business ownership transitions, school/work exits, inheritance release/continuation, and other already-authoritative milestones can preserve where they happened without logging routine visits.
+- Completed lives keep an optional bounded `placeMilestones` snapshot derived from their authoritative timeline at death. Old schema-17 lives without the snapshot derive it read-only from their existing timeline; present-but-invalid snapshots sanitize to empty instead of fabricating fallback history. Save schema remains **17**.
+- Existing property provenance remains the family-home authority. Existing Business records now own optional founded/inherited provenance plus the exact predecessor ID; inherited companies retain their Working Everthread physical base across NPC/player estate conversion. No shadow family-business ledger exists.
+- The projection prioritizes surviving inherited family homes/businesses, then current-life and prior-generation milestones. It is bounded to **24 total memories**, **8 places**, **6 memories per place**, **12 place milestones per completed life**, and the most recent **12 completed lives**. Browsing is deterministic, RNG/runtime-ID neutral, and read-only.
+- Player Profile now surfaces a compact **Places that remember your thread** projection. Assets identifies inherited surviving companies as family businesses. Phase 10D still owns Map highlighting/pins; 10C deliberately does not turn the map into a second state owner.
+- Fresh certified-source content audit remains **691 events**, **306 career positions across 51 six-step ladders**, **51 education programs**, **24 town places**, **28 routed institution services**, **24 personal inventory items**, **38 NPC preference tags**, **20 business industries / 80 products**, and **40 collectibles**.
+
+### Certification
+
+- GitHub Actions Run #158 (`34931959983`) certified expanded source `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790` from upload wrapper `9c4626ce19b4197609019bbcfde15b1ad2bbb8f0`. Net diff from synchronized repository baseline `0cd6ecfef5ded8256c22d7246f852b1c15728c68` is exactly **19 intended Phase 10C source/test/UI files** (**3 added, 16 modified**); workflow import reports 20 files only because it removes `everthread-source.zip`. No documentation, package, workflow, asset, authored-content-count, or save-schema drift is part of the gameplay diff.
+- Canonical preflight PASS **4/4**; Phase 10C **50/50**; base **82/82**; People **57/57**; AI Interaction Testbench **82/82**; Phase 10A **69/69**; Phase 10B **50/50**; Rewind **16/16**; NPC Asset Ownership **82/82**; Dynasty **64/64**; Integrated Long-Life **105/105**; Phase 9A–9G remained Green; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build PASS with Vite 7.3.6 at **202 modules**. People remains ~41.15 kB / 12.10 kB gzip; Player Profile is ~10.29 kB / 2.97 kB gzip; Town Map remains ~6.97 kB / 2.82 kB gzip; main JS is ~1,265.72 kB / 357.31 kB gzip. The established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `566b8e47ce302afc45653dc7c9efd6ad677957761f433a35373cbdec97708cad`; dependency SHA-256 `9dca2d20b81675b5e3f4de775a4f70869edbd527b9d93c5fe7891b17b93bbeb6`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10381209515`, digest `ddec7d0513401516b45c956218404d9d690f1558f63e087b631b8f1e66bb76ae`; Pages artifact ID `10380859910`, digest `e21ed363a9c293e0574a02cf73b668ab128f467a690711e38ab3e7e374a0990d`; Pages deployment reported success.
+- Pre-upload local canonical/deep wrappers were constrained by the development container's outer execution ceilings, so they were **not** treated as certification. Constituent typecheck/regression/build gates were independently Green and a matched baseline-vs-candidate 10-life control showed no performance regression; GitHub canonical Run #158 is the authoritative certification.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved by `triage_status`**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790` at `2026-09-15 05:17:22.77373+00` with reviewed-report count 4.
+- **Phase 10C is CLOSED / CERTIFIED. Exact next slice after this mandatory documentation sync certifies: Phase 10D — Living Map Projection.**
+
 ## Phase 10B — Working Everthread — CI Green Run #156 — 2026-09-14
 
 ### Added / changed

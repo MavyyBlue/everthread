@@ -1,7 +1,11 @@
 # Everthread — Content Inventory
 
-Last audited: 2026-09-14
+Last audited: 2026-09-15
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
+
+## Phase 10C Generational Place Memory content note
+
+Certified Phase 10C adds **no new player-facing event, place, career, education, inventory, relationship, business-industry, product, or collectible definitions**. It adds bounded place-reference/provenance metadata and one read-only generational projection over existing authoritative histories/assets. The fresh certified-source audit remains **691 events**, **306 career positions across 51 six-step ladders**, **51 education programs**, **112 illness/health definitions**, **199 relationship-focused events**, **90 career/work events**, **50 crimes**, **124 achievements**, **56 challenges**, **60 properties**, **50 pets**, **47 vehicles/boats/aircraft**, **18 fictional securities**, **20 business industries / 80 products**, **40 collectibles**, **33 countries**, **24 Everthread town places**, **28 routed institution services**, **24 personal inventory items**, **38 NPC preference tags**, and **7 regional name pools** with 20 first + 20 last names each.
 
 ## Phase 10B Working Everthread content note
 

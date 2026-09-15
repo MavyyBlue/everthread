@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life and Phase 10B Working Everthread are certified / closed; Phase 10C Generational Place Memory is next after the mandatory 10B documentation sync certifies.**
+Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life, Phase 10B Working Everthread, and Phase 10C Generational Place Memory are certified / closed; Phase 10D Living Map Projection is next after the mandatory 10C documentation sync certifies.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67`;
+- newest certified gameplay/source: Run #158 / `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -25,7 +25,8 @@ Current certified program baseline:
 - Phase 9: **CLOSED**;
 - Phase 10A: **certified / closed**;
 - Phase 10B: **certified / closed**;
-- next slice after this mandatory docs sync certifies: **Phase 10C — Generational Place Memory**.
+- Phase 10C: **certified / closed**;
+- next slice after this mandatory docs sync certifies: **Phase 10D — Living Map Projection**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -207,9 +208,19 @@ Player-founded companies preserve physical-base provenance on the existing Busin
 
 **Phase 10B is CLOSED / CERTIFIED.** Preserve this authority split when 10C adds bounded generational place meaning.
 
-### Phase 10C — Generational Place Memory
+### Phase 10C — Generational Place Memory — CERTIFIED Run #158
 
-Allow meaningful locations to carry bounded legacy context: inherited family homes, surviving family businesses, and significant life memories that reference where they happened. Record milestones, not every routine visit.
+Certified in Run #158 on expanded source `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`, save schema **17**, dedicated regression **50/50**, AI semantic interaction **82/82**, canonical preflight **4/4**, and a **202-module** production build.
+
+Meaningful locations now carry bounded legacy context without a new place-history authority. `TimelineEntry.placeId` is optional canonical context for importance-2/3 milestones already owned by existing systems. Completed lives keep only a bounded derived place-milestone index (maximum 12) while preserving their full authoritative Timeline; old schema-17 lives without the index derive it read-only.
+
+Inherited Property provenance remains the family-home authority. Business records now own optional founded/inherited provenance plus immediate predecessor identity; Working Everthread still owns physical company placement. Estate/Dynasty conversion preserves those existing records rather than creating shadow family-landmark state. Unknown legacy provenance is not fabricated.
+
+`GenerationalPlaceMemorySystem` is read-only and deterministic. It prioritizes surviving inherited homes/businesses, then current/prior-generation milestones, with hard bounds of **24 memories / 8 places / 6 memories per place / 12 recent completed lives**. Player Profile can show the projection; Map rendering is intentionally deferred to 10D. Browsing/projection consumes no gameplay RNG/runtime IDs and does not mutate GameState.
+
+Fresh certified-source content audit remains unchanged at 691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 preference tags. Local deep-wrapper completion was constrained by the development container; canonical GitHub Run #158 is the final certification authority.
+
+**Phase 10C is CLOSED / CERTIFIED.** Preserve this ownership split when 10D adds living map context.
 
 ### Phase 10D — Living Map Projection
 
@@ -245,4 +256,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 10C — Generational Place Memory** only after this mandatory Phase 10B documentation sync certifies. Add bounded legacy context to meaningful existing places—especially inherited family homes, surviving family businesses, and significant life milestones whose established records already identify where they happened. Record milestones, not routine visits. Reuse existing Property/Residential Life, Business/Working Everthread, Estate/Dynasty, Timeline/NPC memory, relationship, and Town Place truth; do not create a second place-history, family-landmark, business, event, or memory authority. Browsing/projection must remain deterministic and RNG/runtime-ID neutral.
+Begin **Phase 10D — Living Map Projection** only after this mandatory Phase 10C documentation sync certifies. Project lightweight context from existing authorities onto the established Map: current home, workplace/school, owned property, player company, relevant child/school context, and bounded generational place legacy where useful. The Map remains a read-only navigation/presentation surface, not a second residence/work/school/business/memory authority. Keep pan/zoom/filter/selection ephemeral, preserve deterministic RNG-neutral browsing, and use relevance tiers, culling, filters, and progressive disclosure instead of rendering hundreds of background NPC pins.

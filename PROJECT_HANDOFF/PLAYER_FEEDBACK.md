@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67`**, save schema **17**. Phases 7, 8, and **9 — Shared Lives** are certified/closed; **Phase 10A — Residential Life** and **Phase 10B — Working Everthread** are certified/closed. Phase 10C — Generational Place Memory is the exact next implementation slice after this mandatory docs sync certifies.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #158 / `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`**, save schema **17**. Phases 7, 8, and **9 — Shared Lives** are certified/closed; **Phase 10A — Residential Life**, **Phase 10B — Working Everthread**, and **Phase 10C — Generational Place Memory** are certified/closed. Phase 10D — Living Map Projection is the exact next implementation slice after this mandatory docs sync certifies.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Fresh post-Run-#156 live central-inbox read found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` now points to certified **Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67`** at `2026-09-15 04:33:34.506272+00`.
+Fresh post-Run-#158 live central-inbox read found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` now points to certified **Run #158 / `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`** at `2026-09-15 05:17:22.77373+00`.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
@@ -102,6 +102,6 @@ Fresh post-Run-#156 live central-inbox read found **4 rows / 0 unresolved by `tr
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
 - Newest recorded report receipt remains **2026-09-13 19:51:36.119407 UTC**.
-- Review-state checkpoint key `main` is `a497aa1bbec357fe12755383acb7053ab5d0ea67`, checked at `2026-09-15 04:33:34.506272+00`, with four reviewed reports.
+- Review-state checkpoint key `main` is `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`, checked at `2026-09-15 05:17:22.77373+00`, with four reviewed reports.
 - Player-visible disposition read-back remains certified and deployed.
-- The fresh post-Run-#156 inbox read contains no actionable item that preempts **Phase 10C — Generational Place Memory** after the mandatory Phase 10B documentation sync certifies.
+- The fresh post-Run-#158 inbox read contains no actionable item that preempts **Phase 10D — Living Map Projection** after the mandatory Phase 10C documentation sync certifies.

@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #156** (`34927243187`) on expanded source **`a497aa1bbec357fe12755383acb7053ab5d0ea67`**. This is the certified Phase 10B Working Everthread baseline on schema 17. This mandatory documentation synchronization changes no gameplay; once it certifies, its expanded docs commit becomes the newest repository source while Run #156 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #158** (`34931959983`) on expanded source **`7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`**. This is the certified Phase 10C Generational Place Memory baseline on schema 17. This mandatory documentation synchronization changes no gameplay; once it certifies, its expanded docs commit becomes the newest repository source while Run #158 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -25,21 +25,44 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #156**
 - Phase 10 — Living Everthread: **ACTIVE APPROVED MACRO PHASE**
 - Phase 10A — Residential Life: **CERTIFIED / CLOSED**
 - Phase 10B — Working Everthread: **CERTIFIED / CLOSED**
-- Exact next implementation slice after this docs sync certifies: **Phase 10C — Generational Place Memory**
-- Fresh post-Run-#156 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
-- The stored review checkpoint successfully advanced to **`a497aa1bbec357fe12755383acb7053ab5d0ea67`** at **`2026-09-15 04:33:34.506272+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified Phase 10B gameplay baseline.
+- Phase 10C — Generational Place Memory: **CERTIFIED / CLOSED**
+- Exact next implementation slice after this docs sync certifies: **Phase 10D — Living Map Projection**
+- Fresh post-Run-#158 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
+- The stored review checkpoint successfully advanced to **`7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`** at **`2026-09-15 05:17:22.77373+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified Phase 10C gameplay baseline.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
 
-Last handoff synchronization: 2026-09-14
+Last handoff synchronization: 2026-09-15
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #156 — Phase 10B Working Everthread
+## Newest certified gameplay/source — Run #158 — Phase 10C Generational Place Memory
+
+- Upload wrapper: `9c4626ce19b4197609019bbcfde15b1ad2bbb8f0`.
+- Expanded certified source: `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`.
+- GitHub Actions Run #158: `34931959983`.
+- Net diff from synchronized repository source `0cd6ecfef5ded8256c22d7246f852b1c15728c68` is exactly **19 intended Phase 10C source/test/UI files** (**3 added, 16 modified**). Workflow import reports 20 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, authored-content-count, or save-schema drift is part of the committed gameplay diff.
+- Save schema remains **17**. Meaningful Timeline milestones may carry an optional canonical `placeId`; CompletedLife may carry a bounded derived `placeMilestones` index. This does not replace the full Timeline, and legacy schema-17 completed lives without the snapshot derive it on read.
+- Existing inherited property provenance remains family-home truth. Existing Business records now preserve optional founded/inherited provenance and immediate predecessor identity; inherited companies keep their Working Everthread base through NPC/player estate conversion. Unknown old family provenance is never invented.
+- `GenerationalPlaceMemorySystem` projects surviving family homes/businesses plus significant current/prior-generation milestones read-only. Bounds: **24 total memories**, **8 places**, **6 memories/place**, **12 completed-life place milestones**, recent **12 completed lives**. Family landmarks receive priority under caps.
+- Player Profile surfaces a compact place-legacy section and Assets identifies surviving inherited family companies. Map rendering remains Phase 10D responsibility; 10C adds no persisted map marker/filter/camera state.
+- Phase 10C regression **50/50**; canonical preflight **4/4**. Base **82/82**; People **57/57**; AI **82/82**; Rewind **16/16**; NPC Asset Ownership **82/82**; Dynasty **64/64**; Integrated Long-Life **105/105**; Phase 10A **69/69**; Phase 10B **50/50**; Phase 9A–9G remained Green; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build: Vite 7.3.6, **202 modules transformed**. People ~41.15 kB / 12.10 kB gzip; Player Profile ~10.29 kB / 2.97 kB gzip; Town Map ~6.97 kB / 2.82 kB gzip; main ~1,265.72 kB / 357.31 kB gzip. Established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `566b8e47ce302afc45653dc7c9efd6ad677957761f433a35373cbdec97708cad`.
+- Certified dependency SHA-256: `9dca2d20b81675b5e3f4de775a4f70869edbd527b9d93c5fe7891b17b93bbeb6`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10381209515`, digest `ddec7d0513401516b45c956218404d9d690f1558f63e087b631b8f1e66bb76ae`.
+- Pages artifact ID `10380859910`, digest `e21ed363a9c293e0574a02cf73b668ab128f467a690711e38ab3e7e374a0990d`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790` at `2026-09-15 05:17:22.77373+00`.
+- Fresh certified-source content audit remains **691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 NPC preference tags**.
+- Local canonical/deep wrappers were constrained by the development container execution ceiling and are not claimed as a local 6/6. Run #158 is the certification authority; independent local gates and matched baseline performance control were Green pre-upload.
+- **Phase 10C is CLOSED / CERTIFIED. Exact next slice after this docs sync certifies: Phase 10D — Living Map Projection.**
+
+## Prior certified gameplay/source — Run #156 — Phase 10B Working Everthread
 
 - Upload wrapper: `20b8359cb5bc306fbcb457a737027c56fb76fcc2`.
 - Expanded certified source: `a497aa1bbec357fe12755383acb7053ab5d0ea67`.
@@ -366,11 +389,11 @@ Run #150 certified one read-only cross-world context projection over existing sc
 
 Run #152 certified the test-only Shared Lives integration closeout at **41/41** with the full canonical wall Green. No production gameplay fix was required. Phase 9 is closed while preserving one Relationship authority, the shared preference/evaluation path, bounded exact-target memories/history, real inventory gifting, romantic momentum on existing relationships, social-world roster ownership, deterministic save/rewind behavior, and AI/player action parity.
 
-### Certified Phase 10B / approved next slice — Phase 10C Generational Place Memory
+### Certified Phase 10C / approved next slice — Phase 10D Living Map Projection
 
-Run #156 certified Working Everthread at **50/50** with the complete canonical wall Green. School/work/business location meaning remains a projection over existing SchoolWorld, Workplace/SocialWorld, Business, Town Place, and location truth; company physical-base provenance lives only on the business records that legitimately own it.
+Run #158 certified Generational Place Memory at **50/50** with the complete canonical wall Green. Meaningful place history remains bounded projection over Timeline/CompletedLife plus existing Property/Business/Estate/Working Everthread/Town Place truth; no global visited-place or family-landmark ledger exists.
 
-After this mandatory Phase 10B documentation sync certifies, begin **Phase 10C — Generational Place Memory**. Add bounded legacy context for meaningful places—such as inherited family homes, surviving family businesses, and significant life milestones that already identify where they happened—without recording every routine visit or creating a second place-history/event/memory authority. Preserve certified 10A residence meaning, certified 10B work/business provenance, estate integrity, exact-target NPC memories, rewind, descendant continuation, and RNG-neutral browsing.
+After this mandatory Phase 10C documentation sync certifies, begin **Phase 10D — Living Map Projection**. The existing Map may derive lightweight context such as You live here, You work here, Your child attends here, Property owned, Your company, Current school, and relevant family/place legacy. Map marker/filter/camera state remains presentation state, not durable simulation truth. Keep background NPC projection aggressively bounded/cullable; do not mount hundreds of NPC pins or duplicate residence/work/school/business/place-memory ownership.
 
 ## Historical feedback snapshot after Run #141 / `f1be1e6…`
 
