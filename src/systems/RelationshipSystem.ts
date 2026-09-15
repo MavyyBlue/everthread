@@ -20,6 +20,7 @@ import { evaluatePersonalGift, personalGiftAvailability } from './GiftSystem';
 import { takePersonalItemInstance } from './PersonalInventorySystem';
 import { crossWorldChemistryPlanFor } from './CrossWorldChemistrySystem';
 import { residentialPlanFor } from './ResidentialLifeSystem';
+import { assignNpcAppearanceParentage } from './NpcVisualSystem';
 
 export const DATING_MIN_AGE=14;
 
@@ -450,6 +451,7 @@ export function processFamilyPlanningYear(state:GameState):void {
     const firstName=pickChildName(state,rng);names.push(firstName);
     const child:Npc={id,firstName,lastName:state.character.lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,95),wealth:0,countryId:state.character.countryId,city:state.character.city,
       sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(55,90),memories:[],parentIds:[state.character.id,...(partner?[partner.id]:[])],childIds:[]};
+    assignNpcAppearanceParentage(child,[state.character.id,...(partner?[partner.id]:[])]);
     assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;ensureNpcLife(state,child);state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:'child',score:75,attraction:0,compatibility:rng.int(45,90),yearsKnown:0});
     if(partner&&!partner.childIds.includes(id))partner.childIds.push(id);
     state.legacy.familyTreeNpcIds.push(id);

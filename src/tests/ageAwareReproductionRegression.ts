@@ -82,12 +82,14 @@ export function runAgeAwareReproductionRegression(){
   verify(pregnancyState!.familyPlanning.pregnancy?.dueAge===pregnancyState!.character.age+1,'age-aware chance should not alter established one-year pregnancy timing');
   verify(actionUsesThisAge(pregnancyState!,'family.child_attempt')===1,'successful biological attempts should retain ordinary child-attempt action consumption');
 
-  let youngAutonomousBirth=false;
+  let youngAutonomousBirth=false,youngAutonomousVisualParentage=false;
   for(let index=0;index<20&&!youngAutonomousBirth;index++){
     const fixture=autonomousCouple(`age-aware-autonomous-young-${index}`,29,54);processNpcLives(fixture.state);
     youngAutonomousBirth=fixture.female.memories.some(memory=>memory.kind==='child_birth');
+    if(youngAutonomousBirth){const child=fixture.state.npcs[fixture.female.childIds[0]!];youngAutonomousVisualParentage=Boolean(child?.appearanceParentIds?.includes(fixture.female.id)&&child.appearanceParentIds.includes(fixture.male.id));}
   }
   verify(youngAutonomousBirth,'autonomous family pressure should still allow a younger female + older male couple to have a biological child');
+  verify(youngAutonomousVisualParentage,'autonomous biological births should record both visual contributors without materializing a separate genetics authority');
 
   let oldFemaleBiologicalBirth=false;
   for(let index=0;index<20;index++){

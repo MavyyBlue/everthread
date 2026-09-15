@@ -73,6 +73,7 @@ import { runPrePhase10EPlayerUxRegression } from './prePhase10EPlayerUxRegressio
 import { runPhase10EProgramCloseoutRegression } from './phase10EProgramCloseoutRegression';
 import { runUiIconographyRegression } from './uiIconographyRegression';
 import { runCharacterVisualRegression } from './characterVisualRegression';
+import { runFamilyVisualInheritanceRegression } from './familyVisualInheritanceRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -150,5 +151,6 @@ try{const checks=runPrePhase10EPlayerUxRegression();console.log(`Pre-Phase 10E p
 try{const checks=await runPhase10EProgramCloseoutRegression();console.log(`Phase 10E Program Closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runUiIconographyRegression();console.log(`UI iconography & theme reactivity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runCharacterVisualRegression();console.log(`Character Visual regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runFamilyVisualInheritanceRegression();console.log(`Family Visual Inheritance regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

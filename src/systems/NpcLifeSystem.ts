@@ -16,6 +16,7 @@ import { EXTENDED_FAMILY_RELATION_TYPE_SET, FAMILY_RELATIONSHIP_TYPE_SET, LEGACY
 import { npcNamePoolCountryId } from './SettingSystem';
 import { syncPlayerFamilyTopology } from './FamilyTopologySystem';
 import { advanceNpcPreferenceKnowledge } from './NpcPreferenceSystem';
+import { assignNpcAppearanceParentage } from './NpcVisualSystem';
 import type {
   GameState,
   Npc,
@@ -312,7 +313,7 @@ function partnershipCompatibility(a:Npc,b:Npc){
 function createPartnerChild(state:GameState,partner:Npc,rng:SeededRng){
   if(partner.age<25||rng.chance(.78))return;
   const maxAge=Math.max(0,Math.min(12,partner.age-18));if(maxAge<=0)return;
-  const id=makeStateId(state,'npc');const namePoolCountryId=npcNamePoolCountryId(state,partner);const {firstName,lastName}=pickCollisionAwareNpcName(state,rng,{namePoolCountryId,fixedLastName:partner.lastName});const child:Npc={id,firstName,lastName,age:rng.int(0,maxAge),alive:true,health:rng.int(65,100),happiness:rng.int(48,92),wealth:0,namePoolCountryId,countryId:partner.countryId,city:partner.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:0,memories:[],parentIds:[partner.id],childIds:[],simulationTier:'background'};assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;partner.childIds.push(id);ensureNpcLife(state,child);
+  const id=makeStateId(state,'npc');const namePoolCountryId=npcNamePoolCountryId(state,partner);const {firstName,lastName}=pickCollisionAwareNpcName(state,rng,{namePoolCountryId,fixedLastName:partner.lastName});const child:Npc={id,firstName,lastName,age:rng.int(0,maxAge),alive:true,health:rng.int(65,100),happiness:rng.int(48,92),wealth:0,namePoolCountryId,countryId:partner.countryId,city:partner.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:0,memories:[],parentIds:[partner.id],childIds:[],simulationTier:'background'};assignNpcAppearanceParentage(child,[partner.id]);assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;partner.childIds.push(id);ensureNpcLife(state,child);
 }
 
 function createAutonomousPartner(state:GameState,npc:Npc,rng:SeededRng){
@@ -380,6 +381,7 @@ function createNpcChild(state:GameState,npc:Npc,partner:Npc,rng:SeededRng,adopte
   // hundreds of full yearly simulations. They can still promote later if the relationship becomes close.
   const closeFamilyRelation=Boolean(relationType&&LEGACY_CLOSE_FAMILY_RELATION_TYPE_SET.has(relationType));
   const child:Npc={id,firstName,lastName,age:0,alive:true,health:rng.int(68,100),happiness:rng.int(65,96),wealth:0,namePoolCountryId,countryId:npc.countryId,city:npc.city,sexuality:rng.pick<Orientation>(['straight','straight','bisexual','pansexual','gay','lesbian','asexual']),fertility:rng.int(25,92),maritalStatus:'single',traits:rng.shuffle(['curious','calm','ambitious','witty','responsible','reckless','loyal']).slice(0,2),hiddenOpinion:rng.int(5,25),memories:[],parentIds:[npc.id,partner.id],childIds:[],simulationTier:closeFamilyRelation?'full':'background'};
+  if(!adopted)assignNpcAppearanceParentage(child,[npc.id,partner.id]);
   assignGeneratedNpcOrientation(state,child);state.npcs[id]=child;npc.childIds.push(id);partner.childIds.push(id);state.legacy.familyTreeNpcIds.push(id);ensureNpcLife(state,child);
   if(relationType&&!state.relationships.some(rel=>rel.npcId===id))state.relationships.push({id:makeStateId(state,'rel'),npcId:id,type:relationType,score:rng.int(42,72),attraction:0,compatibility:rng.int(40,80),yearsKnown:0});
   addNpcMemory(state,npc,adopted?'adoption':'child_birth',10,adopted?`Adopted ${firstName}.`:`${firstName} was born.`,true);addNpcMemory(state,partner,adopted?'adoption':'child_birth',10,adopted?`Adopted ${firstName}.`:`${firstName} was born.`,true);

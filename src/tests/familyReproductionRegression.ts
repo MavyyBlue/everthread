@@ -98,6 +98,7 @@ export function runFamilyReproductionRegression(){
   processNpcLives(autonomous);
   verify(sister.childIds.length===1&&wifeNpc.childIds.includes(sister.childIds[0]!),'biologically incompatible autonomous NPC couples should still be able to expand through linked adoption');
   verify(sister.memories.some(memory=>memory.kind==='adoption')&&!sister.memories.some(memory=>memory.kind==='child_birth'),'same-sex autonomous family expansion should be recorded as adoption rather than an offscreen biological birth');
+  verify(autonomous.npcs[sister.childIds[0]!]?.appearanceParentIds===undefined,'autonomous adoption must not create biological visual provenance');
 
   const descendantState=adult('descendant-identity-projection');const descendant:Npc={id:'descendant',firstName:'Avery',lastName:'Fixture',age:20,alive:true,health:90,happiness:80,wealth:0,countryId:'us',city:descendantState.character.city,sexuality:'bisexual',fertility:70,maritalStatus:'single',gender:'nonbinary',reproductiveSex:'male',traits:[],hiddenOpinion:0,memories:[],parentIds:[],childIds:[]};
   const projected=characterIdentityFromNpc(descendantState,descendant);
