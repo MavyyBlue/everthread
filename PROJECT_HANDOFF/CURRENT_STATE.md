@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #152** (`34916904879`) on expanded source **`14defab1761b1597bae584f9e0acc5d8bfe11483`**. This is the certified Phase 9G Shared Lives closeout baseline on schema 17 and closes **Phase 9 — Shared Lives** at the gameplay/source level. This mandatory documentation synchronization changes no gameplay; once it certifies, its expanded docs commit becomes the newest repository source while Run #152 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #154** (`34922633493`) on expanded source **`b4ef6f74f6d957a3109beb6b269ae86b37a7d351`**. This is the certified Phase 10A Residential Life baseline on schema 17. This mandatory documentation synchronization changes no gameplay; once it certifies, its expanded docs commit becomes the newest repository source while Run #154 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -22,10 +22,11 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #152**
 - Phase 9F — Cross-World Chemistry: **CERTIFIED / CLOSED**
 - Phase 9G — Shared Lives Closeout: **CERTIFIED / CLOSED**
 - Phase 9 — Shared Lives: **CLOSED / CERTIFIED**
-- Exact next implementation slice after this docs sync certifies: **Phase 10A — Residential Life**
-- Phase 10 — Living Everthread: **NEXT APPROVED MACRO PHASE**
-- Fresh post-Run-#152 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
-- The stored review checkpoint successfully advanced to **`14defab1761b1597bae584f9e0acc5d8bfe11483`** at **`2026-09-15 01:23:20.426476+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified Phase 9 closeout gameplay baseline.
+- Phase 10 — Living Everthread: **ACTIVE APPROVED MACRO PHASE**
+- Phase 10A — Residential Life: **CERTIFIED / CLOSED**
+- Exact next implementation slice after this docs sync certifies: **Phase 10B — Working Everthread**
+- Fresh post-Run-#154 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
+- The stored review checkpoint successfully advanced to **`b4ef6f74f6d957a3109beb6b269ae86b37a7d351`** at **`2026-09-15 02:51:23.125961+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified Phase 10A gameplay baseline.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -37,7 +38,28 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #152 — Phase 9G Shared Lives Closeout
+## Newest certified gameplay/source — Run #154 — Phase 10A Residential Life
+
+- Upload wrapper: `d04c958ed9085f22ba8f86878a1423cc93b7756d`.
+- Expanded certified source: `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`.
+- GitHub Actions Run #154: `34922633493`.
+- Net diff from the prior certified repository source is exactly **19 intended Phase 10A source/test/UI files** (4 added, 15 modified). Workflow import reports 20 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, content-catalog, or save-schema drift is part of the committed gameplay diff.
+- Save schema remains **17**. Residential identity is a projection over existing Property/NPC household/location/relationship truth; the only durable additions are optional primary-home and provenance metadata on the existing property records that own those concepts.
+- `ResidentialLifeSystem` projects the player residence and meaningful NPC households without a second residence/household ledger. Five residential plans reuse existing shared-experience activities, preference evaluation, RelationshipSystem consequences, bounded memories, gameplay RNG, and per-person social action budget.
+- Assets marks an exact eligible owned property as Home; Player Profile projects that residence; People projects exact NPC household/home context and visits; AI semantic commands call the same engine actions.
+- Inherited homes preserve exact provenance across estate conversion and can remain family landmarks. Existing successor homes outrank newly inherited property. Sale/foreclosure remove the property normally; rental and relocation clear only stale residential role. Minors retain property ownership/inheritance but cannot designate/project an independent owned home before adulthood.
+- Phase 10A regression **69/69**; canonical preflight **4/4**. Base **82/82**; People **57/57**; AI **72/72**; Relationship Microcopy **69/69**; NPC Asset Ownership **82/82**; Dynasty **64/64**; Estate Planning/Admin **46/46 + 63/63**; Asset Financing **77/77**; Delinquency **82/82**; Payment/Assets **81/81**; Integrated Long-Life **105/105**; Phase 9A **45/45**; 9B **53/53**; 9C **40/40**; 9D **61/61**; 9E **60/60**; 9F **43/43**; 9G **41/41**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Pre-upload local deep preflight **6/6** included content audit and a 1,000-life simulation with **0 anomalies / 0 forced terminal deaths**; macro profile remained aligned with the certified Phase 9 baseline.
+- Production build: Vite 7.3.6, **199 modules transformed**. People ~41.15 kB / 12.11 kB gzip; Player Profile ~9.34 kB / 2.73 kB gzip; main ~1,253.59 kB / 354.16 kB gzip. Established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `f5abf0879e5ad26013d5ce17fcceb70c07e6164ccf48d669ea7b3b4875250195`.
+- Certified dependency SHA-256: `6c6850bea55be7fa4649a6958f625515f02afa36f74ebe7dbfb514ad7f3279bb`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10377789622`, digest `2cc22e7d8105ee8e8bb4ad319dd438df0e50c600dd81d3c54d82482e851c1448`.
+- Pages artifact ID `10378158427`, digest `6cdde002c03756e59505fba58cea16b33710ba3af99df5e0e4d04d0b865b3263`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `b4ef6f74f6d957a3109beb6b269ae86b37a7d351` at `2026-09-15 02:51:23.125961+00`.
+- **Phase 10A is CLOSED / CERTIFIED. Exact next slice after this docs sync certifies: Phase 10B — Working Everthread.**
+
+## Prior certified gameplay/source — Run #152 — Phase 9G Shared Lives Closeout
 
 - Upload wrapper: `025e321a64191077941d0909c995362c8222eda8`.
 - Expanded certified source: `14defab1761b1597bae584f9e0acc5d8bfe11483`.
@@ -54,7 +76,7 @@ Candidate save schema: none
 - Certified preflight artifact ID `10376107622`, digest `9828561e3171a15946581e721094278eb5410977598fadb99233049d9a2ce6d5`.
 - Pages artifact ID `10376302016`, digest `9d02b2339c44003f26f7d5032a913bf120455c783983730b7fe0c560a3355031`; Pages deployment reported success.
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `14defab1761b1597bae584f9e0acc5d8bfe11483` at `2026-09-15 01:23:20.426476+00`.
-- **Phase 9G is CLOSED / CERTIFIED. Phase 9 — Shared Lives is CLOSED. Exact next slice after this docs sync certifies: Phase 10A — Residential Life.**
+- **Phase 9G is CLOSED / CERTIFIED. Phase 9 — Shared Lives is CLOSED. Historical handoff: Phase 10A Residential Life, now certified in Run #154.**
 
 ## Prior certified gameplay/source — Run #150 — Phase 9F Cross-World Chemistry
 
@@ -322,9 +344,11 @@ Run #150 certified one read-only cross-world context projection over existing sc
 
 Run #152 certified the test-only Shared Lives integration closeout at **41/41** with the full canonical wall Green. No production gameplay fix was required. Phase 9 is closed while preserving one Relationship authority, the shared preference/evaluation path, bounded exact-target memories/history, real inventory gifting, romantic momentum on existing relationships, social-world roster ownership, deterministic save/rewind behavior, and AI/player action parity.
 
-### Approved next slice — Phase 10A Residential Life
+### Certified Phase 10A / approved next slice — Phase 10B Working Everthread
 
-After this mandatory Phase 9 closeout documentation sync certifies, project the player residence and meaningful NPC households from existing Property/NPC household truth. Support coherent home visits, sleepovers, family visits, and inherited-home continuity without creating a second property, household, or residence ledger.
+Run #154 certified Residential Life at **69/69** with the complete canonical wall Green. Residence remains a projection over existing Property/NPC household/location/relationship truth; inherited-home provenance and primary-home metadata live only on the property records that own them, and residential visits reuse the certified Phase 9 social consequence path.
+
+After this mandatory Phase 10A documentation sync certifies, begin **Phase 10B — Working Everthread**. Project current workplaces, institutions, and player-founded businesses into appropriate districts from existing Workplace, Career, Education/SchoolWorld, Business, Town Place, and location truth. Do not create a second workplace/business/institution ledger or duplicate ownership, revenue, employment, bankruptcy, school membership, career result, or relationship state.
 
 ## Historical feedback snapshot after Run #141 / `f1be1e6…`
 

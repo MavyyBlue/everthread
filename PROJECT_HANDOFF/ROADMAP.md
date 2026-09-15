@@ -6,17 +6,17 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 The required post-Phase-7 brainstorm is complete. Mavyy approved the **Living World Program** as the next direction. The detailed authority, player-intent, migration, QA, and slice contract lives in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
 
-Current certified context: **Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483`**, save schema **17**. **Phase 8 — Everthread: Home** and **Phase 9 — Shared Lives** are closed/certified. The exact next slice after this mandatory documentation sync certifies is **Phase 10A — Residential Life**.
+Current certified context: **Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`**, save schema **17**. **Phase 8 — Everthread: Home** and **Phase 9 — Shared Lives** are closed/certified; **Phase 10A — Residential Life is certified/closed**. The exact next slice after this mandatory documentation sync certifies is **Phase 10B — Working Everthread**.
 
 1. **Phase 8 — Everthread: Home** — **CLOSED / CERTIFIED.** 8A Everthread Setting Foundation is CI Green in Run #125. 8B Town Place Registry & 2D Flat Map is CI Green in Run #127, with the authored-map presentation correction certified in Run #129. 8C Institution Routing is CI Green in Run #131. 8D Player Profile & Personal Inventory is CI Green in Run #133 on schema 16. Run #135 certified the critical lazy People/Map/Profile load-recovery hotfix, and Run #137 certified 8E access/migration/mobile closeout at 34/34 with no authority or schema change.
 2. **Phase 9 — Shared Lives** — **CLOSED / CERTIFIED in Run #152.** 9A–9F remain the feature slices; 9G closes the program with 41/41 integrated certification, standard preflight 4/4, and pre-upload deep preflight 6/6 including the 1,000-life simulation.
-3. **Phase 10 — Living Everthread** — **NEXT APPROVED MACRO PHASE.** Begin with **10A Residential Life** after the Phase 9 closeout docs sync certifies, then workplace projections, bounded generational place memory, and a living map that reflects meaningful current/dynasty context without becoming a second simulation.
+3. **Phase 10 — Living Everthread** — **ACTIVE APPROVED MACRO PHASE.** **10A Residential Life is certified in Run #154**; exact next slice is **10B Working Everthread** after the 10A docs sync certifies, followed by bounded generational place memory, living map projection, and program closeout without creating second simulation authorities.
 
 **Sequencing rule:** one certified slice at a time. After every certified gameplay/feature/fix/migration/architecture commit, complete the mandatory documentation synchronization before beginning the next slice.
 
 ## Closed macro phase — Phase 7: Persistent World Consequences
 
-Phases 4, 5, 6, **7, 8, and 9 are closed** and remain preserved under the Living World baseline. Run #91 established canonical pre-deployment certification; Run #122 closed Phase 7 on schema 14; Run #137 closed Phase 8 on schema **16**; Run #152 closes Phase 9 on schema **17**. The approved Living World Program now advances to Phase 10A Residential Life after the mandatory Phase 9 closeout docs sync certifies.
+Phases 4, 5, 6, **7, 8, and 9 are closed** and remain preserved under the Living World baseline. Run #91 established canonical pre-deployment certification; Run #122 closed Phase 7 on schema 14; Run #137 closed Phase 8 on schema **16**; Run #152 closes Phase 9 on schema **17**. The approved Living World Program has certified Phase 10A Residential Life in Run #154 and advances to Phase 10B Working Everthread after the mandatory 10A docs sync certifies.
 
 ### Phase 4A — Persistent career worlds
 Status: green.

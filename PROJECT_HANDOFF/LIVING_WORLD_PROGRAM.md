@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is the approved next macro phase, beginning with 10A Residential Life after the Phase 9 closeout documentation sync certifies.**
+Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life is certified / closed, and Phase 10B Working Everthread is next after the mandatory 10A documentation sync certifies.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483`;
+- newest certified gameplay/source: Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -23,7 +23,8 @@ Current certified program baseline:
 - Phase 9F: **certified / closed**;
 - Phase 9G: **certified / closed**;
 - Phase 9: **CLOSED**;
-- next slice after this mandatory docs sync certifies: **Phase 10A — Residential Life**.
+- Phase 10A: **certified / closed**;
+- next slice after this mandatory docs sync certifies: **Phase 10B — Working Everthread**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -185,9 +186,15 @@ Pre-upload local deep preflight passed **6/6**, including unchanged content audi
 
 Once place and shared experiences are independently stable, let the town accumulate generational meaning without becoming a city-management simulator.
 
-### Phase 10A — Residential Life
+### Phase 10A — Residential Life — CERTIFIED Run #154
 
-Project the player's residence and meaningful NPC households from existing Property/NPC household truth. Support coherent home visits, sleepovers, and family visits; allow inherited homes to remain recognizable family landmarks. Never create a second property/household ledger.
+Certified in Run #154 on expanded source `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`, save schema **17**, dedicated regression **69/69**, AI semantic interaction **72/72**, canonical preflight **4/4**, and a **199-module** production build. Pre-upload local deep preflight passed **6/6** including unchanged content audit and a 1,000-life simulation with **0 anomalies / 0 forced terminal deaths**.
+
+Residence is projected from existing Property/NPC household/location/relationship truth. Existing property records own only optional primary-home and inheritance provenance metadata; no parallel residence state, property ledger, household graph, or housing balance exists. Assets can designate an eligible exact owned property as Home; Player Profile projects the current residence; People projects exact NPC household/home context; current partners without their own residence share the player's projected home.
+
+Five residential plans reuse existing Phase 9 shared-experience activities/evaluator, RelationshipSystem consequences, bounded memories, gameplay RNG, and per-person social budget. Inherited-home provenance survives estate conversion so family landmarks remain recognizable; successor homes outrank newly inherited property; sale/foreclosure/rental/relocation keep property/debt authority coherent. Minors may own/inherit property but cannot designate/project an independent owned home before adulthood.
+
+**Phase 10A is CLOSED / CERTIFIED.** Preserve this authority split as later place-meaning slices build on residence context.
 
 ### Phase 10B — Working Everthread
 
@@ -231,4 +238,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 10A — Residential Life** only after this mandatory Phase 9 closeout documentation sync certifies. Project the player residence and meaningful NPC households from existing Property/NPC household truth; support coherent home visits, sleepovers, family visits, and inherited-home continuity without creating a second property, household, or residence ledger. Preserve the complete certified Phase 9 Shared Lives authority stack when residence context is added.
+Begin **Phase 10B — Working Everthread** only after this mandatory Phase 10A documentation sync certifies. Project current workplaces, institutions, and player-founded businesses into appropriate Everthread districts from existing Workplace, Career, Education/SchoolWorld, Business, Town Place, and location truth. Ownership, revenue, employment, bankruptcy, school membership, career results, and relationship state remain with their existing authorities; do not create a second workplace/business/institution ledger. Preserve certified 10A residence meaning and the complete Phase 9 Shared Lives authority stack while work-place context is added.

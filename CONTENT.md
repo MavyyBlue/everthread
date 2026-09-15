@@ -3,6 +3,10 @@
 Last audited: 2026-09-14
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 10A Residential Life content note
+
+Certified Phase 10A adds **5 residential plan definitions**: Visit their home, Invite them home, Visit family at home, Cook together at home, and youth-bounded Sleepover. They reuse the established shared-experience activities, preference vocabulary, relationship evaluator, social action economy, and Threadwell Residential place instead of creating parallel visit/event content. The ordinary/random event library remains **691**; town places remain **24**; routed institution services remain **28**; personal inventory items remain **24**; shared NPC preference tags remain **38**; shared-experience activities remain **12**; youth-social plans remain **11**; romantic date plans remain **8**; and cross-world chemistry plans remain **22 across 13 context families**.
+
 ## Phase 9G / Phase 9 closeout content note
 
 Certified Phase 9G adds **no executable content definitions**. It is integration/certification coverage only. Phase 9 therefore closes with **38 NPC preference tags**, **12 shared-experience activities**, **11 youth-social plans**, **8 romantic date plans**, **24 ordinary personal-item definitions** used by Real Gifts, and **22 cross-world chemistry plans across 13 context families**. Town places remain **24**, routed institution services remain **28**, valuable collectibles remain **40**, and the ordinary/random event library remains **691**.

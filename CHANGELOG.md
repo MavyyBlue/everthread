@@ -1,3 +1,25 @@
+## Phase 10A — Residential Life — CI Green Run #154 — 2026-09-14
+
+### Added / changed
+
+- Added one **Residential Life** projection/action layer over existing Property, NPC household/life, relationship, and location truth. No second property ledger, household graph, residence state, housing balance, or relationship outcome engine was introduced.
+- Existing `PropertyAsset` / `NpcPropertyHolding` records now carry only metadata those property authorities legitimately own: optional primary-home designation plus purchase/inheritance provenance. Player/NPC residence and household meaning is projected read-only from those records and existing character/NPC city, family, partner, incarceration, and financial-independence truth.
+- Added **5 residential plans**: Visit their home, Invite them home, Visit family at home, Cook together at home, and youth-bounded Sleepover. They reuse established Phase 9 shared-experience activities, preference evaluation, action economy, relationship/opinion/memory consequences, and Threadwell Residential place identity.
+- Assets can mark an exact eligible owned property as **Home**; Player Profile projects the current residence; People projects the selected NPC's actual household/residence and residential visit choices. Player and AI semantic surfaces execute the same `GameEngine` actions.
+- Inherited property retains exact provenance across NPC↔player estate conversion so family homes remain recognizable landmarks. A successor's existing home outranks newly inherited property; sale/foreclosure removes the property normally, rental clears its home role, and relocation clears remote NPC home designation without rewriting ownership/debt truth.
+- Minor protagonists may own/inherit property but cannot designate or project an independent owned home; stale minor primary-home markers are repaired deterministically while ownership/provenance remains intact. Current player partners/fiancés/spouses without their own residence project the player's exact home as their shared household.
+- Save schema remains **17**. Pre-upload local canonical standard preflight passed **4/4** and deep preflight passed **6/6**, including unchanged content audit and a 1,000-life simulation with **0 anomalies / 0 forced terminal deaths**.
+
+### Certification
+
+- GitHub Actions Run #154 (`34922633493`) certified expanded source `b4ef6f74f6d957a3109beb6b269ae86b37a7d351` from upload wrapper `d04c958ed9085f22ba8f86878a1423cc93b7756d`. Net diff from the prior certified repository source is exactly **19 intended Phase 10A source/test/UI files** (4 added, 15 modified); workflow import reports 20 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight PASS **4/4**; Phase 10A **69/69**; base **82/82**; People **57/57**; AI Interaction Testbench **72/72**; Relationship Microcopy **69/69**; Phase 9A **45/45**; 9B **53/53**; 9C **40/40**; 9D **61/61**; 9E **60/60**; 9F **43/43**; 9G **41/41**; Rewind **16/16**; Dynasty **64/64**; Integrated Long-Life **105/105**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **199 modules**. People remains lazy/code-split at ~41.15 kB JS / 12.11 kB gzip; Player Profile ~9.34 kB / 2.73 kB gzip; main JS ~1,253.59 kB / 354.16 kB gzip. The established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `f5abf0879e5ad26013d5ce17fcceb70c07e6164ccf48d669ea7b3b4875250195`; dependency SHA-256 `6c6850bea55be7fa4649a6958f625515f02afa36f74ebe7dbfb514ad7f3279bb`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10377789622`, digest `2cc22e7d8105ee8e8bb4ad319dd438df0e50c600dd81d3c54d82482e851c1448`; Pages artifact ID `10378158427`, digest `6cdde002c03756e59505fba58cea16b33710ba3af99df5e0e4d04d0b865b3263`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved by `triage_status`**, no new report after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `b4ef6f74f6d957a3109beb6b269ae86b37a7d351` at `2026-09-15 02:51:23.125961+00` with reviewed-report count 4.
+- **Phase 10A is CLOSED / CERTIFIED. Exact next slice after this mandatory documentation sync certifies: Phase 10B — Working Everthread.**
+
 ## Phase 9G — Shared Lives Closeout — CI Green Run #152 — 2026-09-14
 
 ### Added / changed

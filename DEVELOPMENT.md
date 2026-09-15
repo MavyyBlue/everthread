@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483`
-Certified gameplay baseline: Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483`
+Newest certified expanded gameplay/source: Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`
+Certified gameplay baseline: Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351`
 
 ## Product direction
 
@@ -26,7 +26,23 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Certified Phase 9 closeout / next implementation phase
+## Certified Phase 10A / next implementation phase
+
+### Phase 10A — Residential Life (CI Green Run #154)
+
+Run #154 / `b4ef6f74f6d957a3109beb6b269ae86b37a7d351` is the certified Phase 10A gameplay/source baseline on save schema **17**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- Residence is **projection over existing truth**, not a new top-level authority. `PropertyAsset` / `NpcPropertyHolding` own only primary-home and provenance metadata; Property/NPC household/location/relationship systems retain ownership, debt, household, city, family, partner, and consequence truth.
+- `ResidentialLifeSystem` projects player/NPC household residence read-only and exposes 5 contextual residential plans. Visit outcomes commit through the certified Phase 9 shared-experience / `RelationshipSystem` path and existing per-person social budget.
+- Assets exposes exact-property **Make Home**; Player Profile shows current residence; People shows exact NPC household/home and visit options. AI semantic parity uses the same production engine actions.
+- Inherited-home provenance survives estate conversion without overriding a successor's existing home. Sale/foreclosure/rental/relocation behavior preserves existing property/debt authorities. Minors may own inherited property but cannot project/designate it as an independent home before adulthood.
+- Dedicated Residential Life regression **69/69**; AI **72/72**; NPC Asset Ownership **82/82**; Dynasty **64/64**; Estate Planning/Admin **46/46 + 63/63**; Asset Financing **77/77**; Delinquency **82/82**; Payment/Assets **81/81**; Phase 8D **63/63**; Phase 9B **53/53**; 9C **40/40**; 9F **43/43**; 9G **41/41**; People **57/57**; Integrated Long-Life **105/105**.
+- Pre-upload local standard preflight **4/4** and deep preflight **6/6** passed, including unchanged content audit and a 1,000-life simulation with **0 anomalies / 0 forced terminal deaths**.
+- Production build transformed **199 modules**. People remains lazy/code-split at ~41.15 kB JS / 12.11 kB gzip; Player Profile ~9.34 kB / 2.73 kB gzip; main JS ~1,253.59 kB / 354.16 kB gzip; existing main-chunk warning remains nonblocking.
+- Certified source SHA-256 `f5abf0879e5ad26013d5ce17fcceb70c07e6164ccf48d669ea7b3b4875250195`; dependency SHA-256 `6c6850bea55be7fa4649a6958f625515f02afa36f74ebe7dbfb514ad7f3279bb`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10377789622` (`2cc22e7d8105ee8e8bb4ad319dd438df0e50c600dd81d3c54d82482e851c1448`); Pages artifact `10378158427` (`6cdde002c03756e59505fba58cea16b33710ba3af99df5e0e4d04d0b865b3263`).
+- Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the checkpoint to `b4ef6f74f6d957a3109beb6b269ae86b37a7d351` at `2026-09-15 02:51:23.125961+00`.
+
+**Exact next slice after this documentation sync certifies:** Phase 10B — Working Everthread. Project current workplaces, institutions, and player-founded businesses into the town from their existing authoritative systems; do not create a second workplace/business/institution ledger.
 
 ### Phase 9G — Shared Lives Closeout (CI Green Run #152)
 
@@ -41,7 +57,7 @@ Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483` is the certified Phase 9 c
 - Certified source SHA-256 `34f7dad87faae68d011b1dfba584dba2ca9aea799fa3e191e4790d325a179752`; dependency SHA-256 `d031866fb287b9d2065156f7dea85d0a21f5105f06b76f3941ce600c14d59518`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10376107622` (`9828561e3171a15946581e721094278eb5410977598fadb99233049d9a2ce6d5`); Pages artifact `10376302016` (`9d02b2339c44003f26f7d5032a913bf120455c783983730b7fe0c560a3355031`).
 - Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the checkpoint to `14defab1761b1597bae584f9e0acc5d8bfe11483` at `2026-09-15 01:23:20.426476+00`.
 
-**Exact next slice after this documentation sync certifies:** Phase 10A — Residential Life. Project residence/household place meaning from existing Property/NPC household truth; do not create a second property or household ledger.
+**Historical handoff from Phase 9G:** Phase 10A — Residential Life, now certified in Run #154. The live target is Phase 10B — Working Everthread after the mandatory 10A documentation sync certifies.
 
 ### Phase 9F — Cross-World Chemistry (CI Green Run #150)
 
