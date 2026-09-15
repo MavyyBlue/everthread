@@ -3,6 +3,10 @@
 Last audited: 2026-09-15
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 10E / final Phase 10 closeout content note
+
+Certified Runs #165–#166 add **no authored content definitions**. Phase 10E is integration/certification coverage, and the final Map-memory polish exposes existing bounded Generational Place Memory in existing place sheets. Current certified totals remain **691 events**, **306 career positions across 51 six-step ladders**, **51 education programs**, **112 illness/health definitions**, **199 relationship-focused events**, **90 career/work events**, **50 crimes**, **124 achievements**, **56 challenges**, **60 properties**, **50 pets**, **47 vehicles/boats/aircraft**, **18 fictional securities**, **20 business industries / 80 products**, **40 collectibles**, **33 country/profile definitions**, **25 Everthread town places**, **29 routed institution services**, **24 personal inventory items**, **38 NPC preference tags**, and **7 regional name pools** with 20 first + 20 last names each. Save schema remains **17**.
+
 ## Pre-Phase 10E player-tested correction content note
 
 The certified correction gate adds **1 authored town place** and **1 routed institution service**: **Threadtone Music Studio** in Eastworks routes to the already-established Music career owner. Current certified totals are **691 events**, **306 career positions across 51 six-step ladders**, **51 education programs**, **112 illness/health definitions**, **199 relationship-focused events**, **90 career/work events**, **50 crimes**, **124 achievements**, **56 challenges**, **60 properties**, **50 pets**, **47 vehicles/boats/aircraft**, **18 fictional securities**, **20 business industries / 80 products**, **40 collectibles**, **33 country/profile definitions**, **25 Everthread town places**, **29 routed institution services**, **24 personal inventory items**, **38 NPC preference tags**, and **7 regional name pools** with 20 first + 20 last names each.
@@ -127,7 +131,7 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Business industries | 20 | — | Functional base |
 | Business product lines | 80 | 50+ products/industries | Met combined target |
 | Collectible definitions | 40 | — | Needs expansion |
-| Countries / home jurisdictions | 33 | 30+ | Met; Everthread + 32 travel/emigration definitions |
+| Countries / home jurisdictions | 33 | 30+ | Met; Everthread + 32 external travel/naming-profile definitions |
 | Everthread town places | 24 | — | Phase 8B authored registry across 6 districts |
 | Everthread institution service doorways | 28 | — | Phase 8C routes into existing Life/Assets/Activities/Career owners |
 | Personal inventory item definitions | 24 | — | Phase 8D ordinary non-financial possessions / future giftable items |

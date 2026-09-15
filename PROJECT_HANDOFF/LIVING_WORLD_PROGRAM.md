@@ -1,36 +1,22 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life, Phase 10B Working Everthread, Phase 10C Generational Place Memory, and Phase 10D Living Map Projection are certified / closed; the player-tested pre-10E correction gate is certified / closed in Runs #162–#163; Phase 10E Program Closeout is next after this mandatory correction documentation sync certifies.**
+Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10. Phase 10E Program Closeout certified in Run #165 and the final player-requested Map-memory polish certified in Run #166. No successor macro phase is implied; Mavyy controls the next creative direction.**
 
-Approved: 2026-09-13 after Phase 7 closeout.
+Approved: 2026-09-13 after Phase 7 closeout. Closed: 2026-09-15 after Run #166.
 
-Current certified program baseline:
-- newest certified gameplay/source: Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`;
+Final certified program baseline:
+- newest certified gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
-- Phase 8A: **certified / closed**;
-- Phase 8B: **certified / closed**;
-- Phase 8C: **certified / closed**;
-- Phase 8D: **certified / closed**;
-- Phase 8E: **certified / closed**;
-- Phase 8: **CLOSED**;
-- Phase 9A: **certified / closed**;
-- Phase 9B: **certified / closed**;
-- Phase 9C: **certified / closed**;
-- Phase 9D: **certified / closed**;
-- Phase 9E: **certified / closed**;
-- Phase 9F: **certified / closed**;
-- Phase 9G: **certified / closed**;
-- Phase 9: **CLOSED**;
-- Phase 10A: **certified / closed**;
-- Phase 10B: **certified / closed**;
-- Phase 10C: **certified / closed**;
-- Phase 10D: **certified / closed**;
+- Phase 8A–8E / Phase 8: **certified / CLOSED**;
+- Phase 9A–9G / Phase 9: **certified / CLOSED**;
+- Phase 10A–10E / Phase 10: **certified / CLOSED**;
 - pre-10E player-tested correction gate: **certified / closed (Runs #162–#163)**;
-- next slice after this mandatory docs sync certifies: **Phase 10E — Program Closeout**.
+- final Map-memory feedback polish: **certified / closed (Run #166)**;
+- next macro direction: **not yet defined; requires Mavyy's creative approval**.
 
-This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
+This remains the authority-boundary record for the closed Living World Program. Future work must preserve these certified contracts unless Mavyy deliberately reopens a design decision with migration/QA coverage.
 
 ## North star
 
@@ -58,7 +44,7 @@ Turn Everthread from the title of the game into the canonical setting, then make
 
 Certified on expanded source `2596084575dd4288a0b549dc1a618736280f135b`, save schema **15**, dedicated regression **25/25**, canonical preflight 4/4, and 171-module production build.
 
-`countryId/city` remain the single physical/legal/economic location authority. New player-facing lives begin in Everthread. Hidden `namePoolCountryId` separately preserves procedural cultural/name diversity without becoming a second residence field. Schema-14 saves migrate current local context into Everthread deterministically while preserving remote NPCs and historical records; migration is idempotent, gameplay-RNG neutral, and runtime-ID neutral. Later emigration remains durable.
+`countryId/city` remain the single physical/legal/economic location authority. New player-facing lives begin in Everthread. Hidden `namePoolCountryId` separately preserves procedural cultural/name diversity without becoming a second residence field. Schema-14 saves migrate current local context into Everthread deterministically while preserving remote NPCs and historical records; migration is idempotent, gameplay-RNG neutral, and runtime-ID neutral. At the time of Run #125 later emigration remained durable; Run #163 superseded that rule by making Everthread the only permanent player residence while preserving temporary travel and naming/cultural provenance.
 
 Do not reopen this ownership split casually in later slices. Certified Phase 8B projects places over these authorities without a parallel home/location ledger; Phase 8C must preserve that boundary while adding routing.
 
@@ -68,7 +54,7 @@ Core 8B certified on expanded source `f3fcb537545c2a454d98db22600346baf54e194e` 
 
 One authored registry now defines **24 stable places across 6 districts** with identity, category, map/layout metadata, visibility, activity tags, importance, and optional routing metadata. `TownMapSystem` projects this data read-only over existing `GameState`; browsing is deterministic, gameplay-RNG neutral, runtime-ID neutral, and adds no durable map/camera/filter/discovery state.
 
-The lazy-loaded Map tab is mobile-first: the authored 1536×961 town artwork is the native coordinate surface; the workspace is edge-to-edge beneath the header and above bottom navigation like People Threadspace; initial view covers/fills the workspace while Fit Map exposes the complete-town overview; touch pan, pinch/wheel zoom, large markers, bottom-sheet details, search/category filters, progressive marker/label disclosure, and viewport culling remain supported. Blackline Freight Yard discovery derives from existing organized-crime/legal state. Players who have emigrated can still browse Everthread without rewriting their authoritative residence.
+The lazy-loaded Map tab is mobile-first: the authored 1536×961 town artwork is the native coordinate surface; the workspace is edge-to-edge beneath the header and above bottom navigation like People Threadspace; initial view covers/fills the workspace while Fit Map exposes the complete-town overview; touch pan, pinch/wheel zoom, large markers, bottom-sheet details, search/category filters, progressive marker/label disclosure, and viewport culling remain supported. Blackline Freight Yard discovery derives from existing organized-crime/legal state. At the time of Run #129 emigrated players could browse Everthread without relocation; Run #163 later retired permanent player emigration and preserves this projection rule for temporary/external context.
 
 Place routing metadata points only to mature existing screens; 8B deliberately does **not** execute institution mechanics. Finance, relationships, property, education, career, legal, and other results remain owned by their established systems.
 
@@ -98,7 +84,7 @@ Preserve this boundary in later work: People, Map, and Player Profile should rem
 
 Certified in Run #137 on expanded source `e1aa213fac4e03ab9a4af3039d9605852289b899`, save schema **16**, dedicated regression **34/34**, canonical preflight 4/4, and a 186-module production build.
 
-Closeout proves every established primary/Assets owner remains reachable; all 28 institution routes still terminate in mature reachable owners; canonical Assets gameplay families remain exposed; map/profile/route browsing is read-only and RNG/runtime-ID neutral; schema-14→16 migration is deterministic/idempotent; emigration and underworld visibility remain projections of existing truth; and 360/390/412/430px map-camera behavior remains finite and usable. Remaining People/Map secondary controls were raised to the established 44px touch target. No old navigation was retired, save schema remains 16, and no Phase 9 mechanics were introduced.
+Closeout proves every established primary/Assets owner remains reachable; all 28 institution routes still terminate in mature reachable owners; canonical Assets gameplay families remain exposed; map/profile/route browsing is read-only and RNG/runtime-ID neutral; schema-14→16 migration is deterministic/idempotent; then-current emigration and underworld visibility remained projections of existing truth; and 360/390/412/430px map-camera behavior remains finite and usable. Remaining People/Map secondary controls were raised to the established 44px touch target. No old navigation was retired, save schema remains 16, and no Phase 9 mechanics were introduced.
 
 **Phase 8 — Everthread: Home is CLOSED.** Preserve its authority boundaries throughout Shared Lives: Map is navigation/projection, Threadspace is relationship projection, Player Profile is identity/ownership projection, personal inventory owns only ordinary non-financial possessions, and mature system owners retain gameplay consequences.
 
@@ -230,7 +216,7 @@ Certified in Run #160 on expanded source `8ce87ad1e812ed94a9918684b3b52452826f0c
 
 `LivingMapSystem` is a bounded read-only composition layer over certified Residential Life, Working Everthread, Generational Place Memory, owned Property, child education, and the Town Place registry. It never persists marker/context/filter/camera/selection state into `GameState` and never becomes an ownership authority.
 
-Exact facts remain exact: current home/property, school, exact workplace/company anchors, child school, and legacy attach only to real existing place IDs. Work/company facts known only to a district remain district-level context rather than fabricating a specific building. External/emigrated truth stays external. Same-kind facts aggregate; hard bounds are **6 contexts per target / 32 contexts total**.
+Exact facts remain exact: current home/property, school, exact workplace/company anchors, child school, and legacy attach only to real existing place IDs. Work/company facts known only to a district remain district-level context rather than fabricating a specific building. External truth stays external; legacy emigrated state is normalized by the Run #163 compatibility rule. Same-kind facts aggregate; hard bounds are **6 contexts per target / 32 contexts total**.
 
 The existing 24 markers are decorated rather than multiplied. Exact places can show context count/ring treatment and a **Your life here** section in the existing bottom sheet; district-only context uses lightweight noninteractive labels. The Explore panel's **Your life on the map** toggle is ephemeral UI state. Existing discovery, search, category filtering, routing, viewport culling, gesture camera, and lazy loading remain intact.
 
@@ -248,9 +234,15 @@ Canonical Run #163 preflight passed **4/4** with the expanded pre-10E UX regress
 
 **The pre-10E correction gate is CLOSED / CERTIFIED.** Phase 10E must close the program from certified gameplay/source `ab40d66808e0950f041a72681d573401926de8c0` (or the docs-only descendant once this synchronization certifies), not from the older Run #160 source.
 
-### Phase 10E — Program Closeout
+### Phase 10E — Program Closeout — CERTIFIED Runs #165–#166
 
-Validate multi-generation behavior, migration/rewind, estate/accounting integrity, map performance, Threadspace ↔ Map ↔ Player Profile navigation, action-access parity, mobile/accessibility, and the complete CI/certification wall.
+Run #165 certified the integration closeout on expanded source `241276179e91df50796403376143b9404bf13ec4`, schema **17**, canonical preflight **4/4**, and dedicated Phase 10E regression **91/91**. The closeout adds no simulation authority: it proves multi-generation continuation, save/import/migration/rewind, estate/accounting integrity, Map ↔ Threadspace ↔ Player Profile identity/navigation, all routed owner access, Everthread-only residence with temporary travel, supported phone-width map behavior, deterministic projections, and bounded high-count stress.
+
+The immediate post-closeout Feedback Inbox sweep surfaced `ET-20260915-86A6BA86`: Map places with meaningful life history should expose the actual remembered event. Mavyy approved this as final player-facing polish before documentation closure. Run #166 certifies the narrow correction on expanded source `7523f6919ad808f7d826c42cd471d61e1f4f4678`. Existing place sheets now show bounded **Memories here** derived from Generational Place Memory, including event text and generation/age/year context. Importance-1 routine history stays excluded; family landmarks remain legacy context; hidden-place discovery remains authoritative; browsing is read-only/RNG-ID neutral.
+
+Run #166 canonical preflight passed **4/4** and expands Phase 10E to **103/103** while Integrated Long-Life remains **105/105**, Town Map **46/46**, Routing **42/42**, 10A **69/69**, 10B **50/50**, 10C **50/50**, 10D **50/50**, pre-10E UX **20/20**, Progressive Disclosure **25/25**, minigames **19/19**, and feedback **20/20 + 23/23**. Production remains **203 modules**. Save schema remains **17** and content remains **691 events / 25 town places / 29 routed services**.
+
+**Phase 10E is CLOSED / CERTIFIED. Phase 10 — Living Everthread is CLOSED / CERTIFIED. The Living World Program is CLOSED.**
 
 # Slice certification discipline
 
@@ -278,4 +270,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 10E — Program Closeout** only after this mandatory pre-10E correction documentation sync certifies. Validate the complete Living Everthread stack across multi-generation continuation, save/load/migration/rewind, estate/accounting integrity, Map ↔ Threadspace ↔ Player Profile navigation, action-access parity, mobile/accessibility, deterministic projection, bounded performance, and canonical CI. Closeout should harden and certify the integrated program rather than add a new simulation authority.
+There is **no automatic next implementation phase** after the certified Living World Program closeout. Begin a new macro program only after Mavyy chooses the creative direction. Concrete player-reported defects may still preempt planning through the established feedback gate.

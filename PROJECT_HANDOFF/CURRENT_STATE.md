@@ -2,39 +2,26 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #163** (`34937808322`) on expanded source **`ab40d66808e0950f041a72681d573401926de8c0`**. This is the certified pre-Phase-10E player-tested correction baseline on schema 17, layered narrowly over certified Phase 10D. This mandatory documentation synchronization changes no gameplay; once it certifies, its expanded docs commit becomes the newest repository source while Run #163 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #166** (`34941015941`) on expanded source **`7523f6919ad808f7d826c42cd471d61e1f4f4678`**, save schema **17**. Run #165 certified Phase 10E Program Closeout; Run #166 certified the final player-requested Map-memory polish and extends the Phase 10E integration regression to **103/103**. **Phase 10 — Living Everthread is CLOSED / CERTIFIED.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
-- Phase 7 — Persistent World Consequences: **CLOSED**
-- Current approved macro program: **Living World Program**
+- Phases 4–7: **CLOSED / preserved**
 - Phase 8 — Everthread: Home: **CLOSED / CERTIFIED**
-- Phase 8A — Everthread Setting Foundation: **CERTIFIED / CLOSED**
-- Phase 8B — Town Place Registry & 2D Flat Map: **CERTIFIED / CLOSED**
-- Phase 8C — Institution Routing: **CERTIFIED / CLOSED**
-- Phase 8D — Player Profile & Personal Inventory: **CERTIFIED / CLOSED**
-- Phase 8E — Phase 8 Closeout: **CERTIFIED / CLOSED**
-- Phase 9A — NPC Interests & Preferences: **CERTIFIED / CLOSED**
-- Phase 9B — Shared Experience Foundation: **CERTIFIED / CLOSED**
-- Phase 9C — Childhood & Youth Social Life: **CERTIFIED / CLOSED**
-- Phase 9D — Dating & Romantic Momentum: **CERTIFIED / CLOSED**
-- Phase 9E — Real Gifts: **CERTIFIED / CLOSED**
-- Phase 9F — Cross-World Chemistry: **CERTIFIED / CLOSED**
-- Phase 9G — Shared Lives Closeout: **CERTIFIED / CLOSED**
 - Phase 9 — Shared Lives: **CLOSED / CERTIFIED**
-- Phase 10 — Living Everthread: **ACTIVE APPROVED MACRO PHASE**
+- Phase 10 — Living Everthread: **CLOSED / CERTIFIED**
 - Phase 10A — Residential Life: **CERTIFIED / CLOSED**
 - Phase 10B — Working Everthread: **CERTIFIED / CLOSED**
 - Phase 10C — Generational Place Memory: **CERTIFIED / CLOSED**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
-- Pre-Phase 10E player-tested correction gate: **CERTIFIED / CLOSED in Runs #162–#163**
-- Exact next implementation slice after this docs sync certifies: **Phase 10E — Program Closeout**
-- Fresh post-Run-#163 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
-- The stored review checkpoint successfully advanced to **`ab40d66808e0950f041a72681d573401926de8c0`** at **`2026-09-15 06:46:01.03675+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the newest certified gameplay baseline.
-- Direct Android/player-side QA confirmed the Map sheet/navigation/Music Studio corrections and the Everthread-only Airport travel rule behave as intended.
-- Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
+- Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
+- Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
+- Fresh post-Run-#166 Supabase Feedback Inbox: **5 total / 0 unresolved**. New report `ET-20260915-86A6BA86` is resolved by the certified Map-memory correction.
+- Feedback review checkpoint points to `7523f6919ad808f7d826c42cd471d61e1f4f4678` at `2026-09-15 07:20:42.854732+00`, newest report receipt `2026-09-15 06:47:52.761298+00`, reviewed count **5**.
+- Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
+- No new macro phase is automatically queued. The next major development direction remains Mavyy's creative decision; certified player feedback may still interrupt with concrete defects/suggestions.
 
-If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
+If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
 Last handoff synchronization: 2026-09-15
 Repository: `MavyyBlue/everthread`
@@ -43,7 +30,20 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #163 — pre-Phase 10E player-tested corrections
+## Newest certified gameplay/source — Run #166 — Phase 10 final closeout
+
+- Run #165 upload wrapper `2c8dd8c39e8b8266f954d6549f9ebc61a28ac806`; expanded source `241276179e91df50796403376143b9404bf13ec4`; Actions Run ID `34939954283`. Run #165 certified the integration-only Phase 10E closeout at **91/91** with no production gameplay changes.
+- Run #166 upload wrapper `97b06be342eecfcd2d0fd23cfb0f3cd6d2baa061`; expanded certified source `7523f6919ad808f7d826c42cd471d61e1f4f4678`; Actions Run ID `34941015941`. Net diff from Run #165 is exactly **5 intended Map/projection/test files**.
+- Existing place sheets now expose bounded **Memories here** from Generational Place Memory: actual meaningful event text plus current/prior-generation age/year context when available. Importance-1 routine history is excluded, family landmarks remain distinct legacy context, and hidden-place discovery cannot be bypassed.
+- Run #166 canonical preflight **4/4**; Phase 10E **103/103**; base **82/82**; People **57/57**; AI **82/82**; Estate Administration **63/63**; Rewind **16/16**; NPC Assets **82/82**; Family Topology **40/40**; Dynasty **64/64**; Integrated Long-Life **105/105**; Town Map **46/46**; Routing **42/42**; 8E **34/34**; 9G **41/41**; 10A **69/69**; 10B **50/50**; 10C **50/50**; 10D **50/50**; pre-10E **20/20**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production: Vite 7.3.6, **203 modules**. Town Map ~9.58 / 3.52 gzip JS + ~12.25 / 2.59 gzip CSS; Player Profile ~10.29 / 2.98; People ~41.15 / 12.11; main ~1,270.14 / 358.72. Existing >700 kB warning remains nonblocking.
+- Certified source SHA-256 `881e1167d5fa0234f90a454ac3568d4c596c7e738f35b36c7850646d73e277b8`; dependency SHA-256 `34c67ece879908cb137cb8ef569cabe06010ff6a7a2afb3acf485a8ce971e4df`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10385013113`, digest `b417362907b8b8534ebb89f62e08dd0e07ccbcc947cace8c28486a05bee92a3a`; Pages artifact ID `10384973333`, digest `caca1bcdf7f4ade6940a27e61b4577432308cacc826d584c0a09a86bfe5f7e3b`; Pages deployment succeeded.
+- Certified content totals remain **691 events / 25 town places / 29 routed services / 24 personal inventory items / 38 preference tags**.
+- Feedback is **5 total / 0 unresolved**; `ET-20260915-86A6BA86` resolved as a deployed suggestion with fix commit `7523f691...` and certification Run #166.
+- **Phase 10E and Phase 10 are CLOSED / CERTIFIED.**
+
+## Prior certified gameplay/source — Run #163 — pre-Phase 10E player-tested corrections
 
 - Run #162 upload wrapper: `3c117cd69a4af99557e8c40e12a80b58ecb9737b`; expanded certified source: `5834f9fc6de6327797c969542eb3fdcd07b4e13b`; Actions Run ID `34936352466`.
 - Run #163 upload wrapper: `6dab74794cf7f0af3cc7ebcdb12a0a95693eba5e`; expanded certified source: `ab40d66808e0950f041a72681d573401926de8c0`; Actions Run ID `34937808322`.
@@ -57,7 +57,7 @@ Candidate save schema: none
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `ab40d66808e0950f041a72681d573401926de8c0` at `2026-09-15 06:46:01.03675+00`.
 - Certified content totals: **691 events / 25 town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**.
 - Direct player-side verification confirmed the Airport fix works.
-- **Pre-10E correction gate is CLOSED / CERTIFIED. Exact next slice after this docs sync certifies: Phase 10E — Program Closeout.**
+- **This historical pre-10E gate is CLOSED / CERTIFIED. Phase 10E subsequently closed in Runs #165–#166.**
 
 ## Prior certified gameplay/source — Run #160 — Phase 10D Living Map Projection
 
@@ -395,11 +395,11 @@ Phase 8A establishes Everthread as the canonical home setting without rewriting 
 - Everthread is a fictional `CountryDefinition` compatibility jurisdiction with canonical city label `Everthread`. New player-facing lives begin there; the New Life UI no longer asks the player to select a real-world country.
 - Cultural naming origin is now represented separately by hidden `namePoolCountryId`. It drives procedural name/gender-name inference where appropriate and is not presented as residence.
 - Existing saves migrate **14 → 15** deterministically: the protagonist's current local context moves to Everthread, local NPCs/current active SocialWorlds/current active country conditions follow that context, remote NPCs and archived/historical records remain historical, and old travel history is retained.
-- Migration and every-load naming normalization consume no gameplay RNG and allocate no runtime IDs. Remigration is idempotent; later emigration survives subsequent loads instead of being forced back to Everthread.
+- Migration and every-load naming normalization consume no gameplay RNG and allocate no runtime IDs. Run #163 later superseded permanent-emigration durability: legacy emigrated current-schema saves normalize back to Everthread while preserving travel/biography.
 - Dynasty continuation preserves the successor's naming profile separately from physical location.
 - Everthread uses the established North-American-style school profile as a compatibility bridge for current education rules.
 - Travel/location copy uses one `locationLabel` projection so Everthread is not rendered as `Everthread, Everthread`.
-- Executable country definitions increase **32 → 33**: Everthread plus the existing 32 real-world travel/emigration destinations and hidden naming-profile sources. Regional name-pool count remains 7.
+- Executable country/profile definitions increase **32 → 33**: Everthread plus the existing 32 external travel destinations and hidden naming-profile sources. Regional name-pool count remains 7.
 
 This setting ownership split remains a compatibility boundary beneath Phase 8B. Do not turn `namePoolCountryId` into a second residence field and do not replace `countryId/city` with a parallel town-state ledger in later map/routing work.
 
@@ -412,7 +412,7 @@ Phase 8B makes Everthread a first-class, mobile navigation surface without creat
 - `TownMapSystem` is a **read-only projection** owner for map discovery/filtering/camera math/culling/semantic view only. It does not mutate simulation truth, consume gameplay RNG, allocate runtime IDs, or persist camera/search/filter/selection state.
 - The Map is a sixth primary mobile tab and `TownMapScreen` lazy-loads separately. The player-supplied authored town artwork is the real visual map surface; the Threadspace workspace is edge-to-edge beneath the header and above bottom navigation, with cover/fill on entry plus Fit Map for full-town overview. Interaction supports touch pan, pinch zoom, wheel zoom, large markers, search/category filters, zoom-based marker/label disclosure, viewport culling, and bottom-sheet place details with no hover dependency.
 - Blackline Freight Yard discovery derives from existing organized-crime participation or meaningful legal state; there is no separate discovered-place ledger.
-- Players who emigrate can still browse Everthread as their hometown projection; the map never rewrites authoritative `countryId/city`.
+- Run #163 retired permanent player emigration. External trips remain temporary; the map never rewrites authoritative residence.
 - Place `route` metadata points only at mature existing screens. **Phase 8B does not execute bank/property/career/etc. actions from the map.** Those owners remain unchanged until 8C.
 - Save schema remains **15**. No migration was required.
 

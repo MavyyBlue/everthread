@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`
-Certified gameplay baseline: Run #163 / `ab40d66808e0950f041a72681d573401926de8c0`
+Newest certified expanded gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`
+Certified gameplay baseline: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`
 
 ## Product direction
 
@@ -26,7 +26,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Certified pre-10E correction gate / next implementation phase
+## Certified Phase 10 closeout / current baseline
+
+### Phase 10E + final Map-memory polish — CI Green Runs #165–#166
+
+Phase 10 is now **CLOSED / CERTIFIED**. Run #165 added integration-only closeout coverage and no production authority; Run #166 certified the final player-requested Map-memory presentation over existing 10C/10D projections.
+
+- Newest certified gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`, schema **17**. Phase 10E's initial closeout source is Run #165 / `241276179e91df50796403376143b9404bf13ec4`.
+- Run #166 canonical preflight: **4/4 Green**. Phase 10E **103/103**; base **82/82**; AI **82/82**; Estate Administration **63/63**; Rewind **16/16**; NPC Assets **82/82**; Family Topology **40/40**; Dynasty **64/64**; Long-Life **105/105**; Town Map **46/46**; Routing **42/42**; 8E **34/34**; 9G **41/41**; 10A **69/69**; 10B **50/50**; 10C **50/50**; 10D **50/50**; pre-10E UX **20/20**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- `Memories here` is a bounded read-only view of existing Generational Place Memory. It exposes meaningful event text plus generation/age/year context without adding a timeline ledger or Map state. Hidden-place discovery and importance thresholds remain authoritative.
+- Production build: Vite 7.3.6, **203 modules**. Town Map ~9.58 kB / 3.52 kB gzip JS + ~12.25 kB / 2.59 kB gzip CSS; Player Profile ~10.29 / 2.98; People ~41.15 / 12.11; main ~1,270.14 / 358.72. Existing >700 kB warning remains nonblocking technical debt.
+- Certified content remains **691 events / 25 town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**.
+- Feedback Inbox after Run #166: **5 total / 0 unresolved**. `ET-20260915-86A6BA86` is resolved by Run #166; checkpoint is `7523f6919ad808f7d826c42cd471d61e1f4f4678` at `2026-09-15 07:20:42.854732+00`.
+- No new macro implementation phase is active after this mandatory documentation sync. Mavyy controls the next major creative direction.
+
+## Historical pre-10E correction gate
 
 ### Player-tested Map/navigation/Music + Everthread-home corrections — CI Green Runs #162–#163
 
@@ -38,7 +52,7 @@ Runs #162/#163 preserve the certified Phase 10D architecture while fixing player
 - Certified content totals now include **25 town places / 29 routed institution services**; the only new authored place/service is Threadtone Music Studio. Other major catalog counts remain unchanged.
 - Fresh post-certification Feedback Inbox sweep: **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`; review checkpoint advanced to `ab40d66808e0950f041a72681d573401926de8c0` at `2026-09-15 06:46:01.03675+00`.
 - Direct player-side verification confirmed the Run #163 Airport behavior works as intended.
-- **Exact next slice after this docs sync certifies: Phase 10E — Program Closeout.**
+- **Historical next slice from this point was Phase 10E — Program Closeout; it is now certified/closed in Runs #165–#166.**
 
 ## Historical certified Phase 10D
 
@@ -281,7 +295,7 @@ Architecture:
 - Map camera, zoom, search, categories, and selection remain component-local UI state and are intentionally absent from save schema 15.
 - `TownMapScreen` is lazy-loaded as the sixth primary tab. It renders the player-supplied authored map artwork as the real visual surface and uses a People-Threadspace-style edge-to-edge workspace beneath the header and above bottom navigation, with cover/fill on entry plus Fit Map for the full-town view. Touch pan, pinch/wheel zoom, large markers, viewport culling, progressive disclosure, and place-detail bottom sheets remain 360/390/412/430px-first.
 - Blackline Freight Yard visibility derives from existing organized-crime/legal state; no parallel discovery ledger exists.
-- A player who emigrates remains physically located by `countryId/city`; browsing the Everthread map does not relocate them.
+- Permanent player emigration is retired by Run #163. External travel remains temporary and browsing the Everthread map does not rewrite residence.
 - Place routing metadata is descriptive/forward-compatible only in 8B and points to mature existing tabs. It does not execute institution actions or own finance/property/career/education/legal outcomes.
 - Phase 8A remains foundational: Everthread is canonical home and `namePoolCountryId` remains naming culture, never residence.
 
@@ -468,7 +482,7 @@ School is now the first consumer of a generic persisted Social World layer. Inst
 - Abstract crime, detection, legal cases, lawyer tiers, conviction, prison, prison activities, appeal, and abstract escape outcome.
 - Fame/social posting/publicity actions.
 - Pets with annual aging/health and interactions.
-- Travel, emigration, visited locations, and license checks.
+- Travel, legacy-emigration compatibility repair, visited locations, and license checks.
 - Acting, music, sports, combat sports, military, politics, royalty, modeling, racing, directing, organized-crime, museum, zoo, fictional intelligence agency, commune, and casino state tracks.
 - Achievements, challenges, progress UI, multi-slot Life Saves, aggregated past-life history, dynamic best-life Family Legacy showcase, death records, and descendant continuation.
 - Rewind snapshots for rewind-enabled saves.
