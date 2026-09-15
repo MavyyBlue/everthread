@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`
-Certified gameplay baseline: Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`
+Newest certified expanded gameplay/source: Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`
+Certified gameplay baseline: Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`
 
 ## Product direction
 
@@ -25,6 +25,23 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
+
+## Current Character Visual baseline
+
+### Player Character Creator + portrait foundation — CI Green Run #170
+
+Run #170 establishes the first certified Character Visual slice without creating a parallel person/avatar authority.
+
+- Newest certified gameplay/source: Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`, schema **17**. Upload wrapper `a620ac8b0a97458d05e66e11ac578163fb231dd1`; Actions Run ID `35001748216`; job `104491526661`.
+- `CharacterVisualSystem` enriches the existing authoritative appearance profile with stable optional art-component IDs and deterministic normalization. Current-schema old saves remain supported; normalization is idempotent and gameplay-RNG/runtime-ID neutral.
+- Historical appearance RNG draw positions are preserved; richer cosmetic detail derives from a separate cosmetic seed so identical seeded lives remain identical outside appearance.
+- `CharacterPortrait` renders Astra's 624 modular SVG components through a lazy runtime art pack. `CharacterCreator` is a mobile-first New Life draft editor; Back discards unsaved edits, Save commits the draft, and Avatar/Profile surfaces consume the same appearance identity.
+- Creator option groups are local collapsible accordions across Face/Hair/Style/Extras and never persist into GameState.
+- NPC portrait reveal, relationship familiarity, family resemblance/inheritance, and richer aging behavior are deliberately deferred to later certified slices over this foundation.
+- Canonical preflight **4/4 Green**. Character Visual **46/46**; base **82/82**; Visual Identity **12/12**; Player Profile **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build: **211 modules**; lazy character-art pack ~**971.11 / 69.18 kB gzip**; main ~**1,354.43 / 377.85**; existing large-chunk warning remains nonblocking.
+- Certified source SHA `072c290101bd8853dca4e3e16a6af7e8d9cdc4ecadb332747db4e66f0fe4be7f`; dependency SHA `7890670ea96fa0ba70b95d7fd86ab72fcd2f96fece67cf48efa0d4512b30042b`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10409358703`; Pages artifact `10408949701`; deployment succeeded.
+- Fresh post-Run-#170 Feedback Inbox sweep: **5 total / 0 unresolved**; no new report receipt after `2026-09-15 06:47:52.761298+00`. Durable feedback checkpoint remains on its previous stored value because the connector rejected the checkpoint write in this session.
 
 ## Current post-closeout player-facing polish baseline
 

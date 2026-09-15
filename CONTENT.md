@@ -1,5 +1,9 @@
 # Everthread — Content Inventory
 
+## Character Visual foundation — Run #170
+
+Run #170 adds **no gameplay/event/place/career/inventory definitions**. It adds a presentation asset library of **624 modular character-art SVG components** plus palette/catalog metadata used by the player Character Creator and portrait renderer. These assets are visual resources, not authored simulation content. Certified gameplay totals therefore remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, save schema **17**.
+
 ## Post-Phase-10 UI iconography / theme polish — Run #168
 
 Run #168 adds **no gameplay/content definitions**. The Astra-derived local vector library is presentation metadata only, and the Appearance reactivity correction changes render invalidation rather than content. Current certified gameplay totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, save schema **17**.

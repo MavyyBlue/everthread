@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #168** (`34973140255`) on expanded source **`f68ffacf47c1fd208f836666fca3b1010a517c85`**, save schema **17**. Run #168 is a post-closeout player-facing polish slice integrating the approved Astra iconography and fixing Appearance reactivity while preserving all established simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; no Phase 11 is implied.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #170** (`35001748216`) on expanded source **`ef87fb8011b8ec9d6dc606c328db9b1c0882d942`**, save schema **17**. Run #170 establishes the first approved Character Visual foundation: a mobile New Life character creator, deterministic portrait identity, lazy modular renderer, age-stage presentation, and backward-compatible appearance normalization. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this work is not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,10 +16,10 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #168**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Fresh post-Run-#168 Supabase Feedback Inbox: **5 total / 0 unresolved**. Review checkpoint now points to certified `f68ffacf47c1fd208f836666fca3b1010a517c85`; the prior Map-memory report remains resolved.
-- Feedback review checkpoint points to `7523f6919ad808f7d826c42cd471d61e1f4f4678` at `2026-09-15 07:20:42.854732+00`, newest report receipt `2026-09-15 06:47:52.761298+00`, reviewed count **5**.
+- Fresh post-Run-#170 Supabase Feedback Inbox: **5 total / 0 unresolved**; no new receipt after `2026-09-15 06:47:52.761298+00`. The prior Map-memory report remains resolved.
+- Durable feedback review-state row still points to Run #168 source `f68ffacf47c1fd208f836666fca3b1010a517c85` at `2026-09-15 13:10:53.355932+00`, reviewed count **5**. A post-Run-#170 checkpoint update was attempted but rejected by the database connector safety layer; do not infer unseen reports from this stale checkpoint.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- No new macro phase is automatically queued. The next major development direction remains Mavyy's creative decision; certified player feedback may still interrupt with concrete defects/suggestions.
+- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation; NPC visual identity/reveal and family resemblance/aging remain later slices. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -29,6 +29,18 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
+
+## Newest certified gameplay/source — Run #170 — Character Visual foundation
+
+- Upload wrapper `a620ac8b0a97458d05e66e11ac578163fb231dd1`; expanded certified source `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`; Actions Run ID `35001748216`; job `104491526661`. Net diff from synchronized baseline `2e94523a451454b94cbbee49179f0efbb62b0900` is exactly **15 intended source/test files**.
+- New Life now exposes a tappable portrait/silhouette that opens a mobile Character Creator. Back discards working edits; Save commits the draft and returns the resulting portrait to New Life. Creator option sections are collapsible local UI state with selected-value summaries.
+- Existing `character.appearance` remains the identity authority. Richer component IDs are optional/backward-compatible; deterministic normalization is idempotent and consumes no gameplay RNG/runtime IDs. Historical appearance RNG draw placement is preserved, with richer cosmetics derived separately so seeded gameplay outside appearance does not drift.
+- Astra's **624 modular SVG assets** are compiled into one lazy character-art runtime pack. The same stable portrait identity can render through six supplied age stages without creating a second character record. Player Avatar/Profile surfaces read the same appearance.
+- Save schema remains **17**. NPC reveal/familiarity, family resemblance/inheritance, and deeper aging are not implemented in this slice.
+- Canonical preflight **4/4**; Character Visual **46/46**; base **82/82**; Visual Identity **12/12**; Player Profile **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Integrated Long-Life **105/105**; Town Map **46/46**; Routing **42/42**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build **211 modules**. Lazy character-art pack ~**971.11/69.18 gzip kB**; main ~**1,354.43/377.85**; CSS ~**86.96/16.06**. Established >700 kB chunk warning remains nonblocking.
+- Certified source SHA `072c290101bd8853dca4e3e16a6af7e8d9cdc4ecadb332747db4e66f0fe4be7f`; dependency SHA `7890670ea96fa0ba70b95d7fd86ab72fcd2f96fece67cf48efa0d4512b30042b`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10409358703` (`cc14a60e8b90a825060b7176c623f1e7b805f2330e17b307157ee64ac6cf48c8`); Pages artifact `10408949701` (`4490a5915f52b189ce46e0f3bff5c1de42c1eb7931cd317555ccba55a0bb834e`); Pages deployment succeeded.
+- Fresh Feedback Inbox sweep: **5 total / 0 unresolved**; no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint remains at its prior stored value because the connector rejected the write in this session.
 
 ## Newest certified gameplay/source — Run #168 — post-closeout UI iconography / theme reactivity
 

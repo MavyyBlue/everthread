@@ -1,3 +1,23 @@
+## Character Visual foundation — player creator + portrait renderer — CI Green Run #170 — 2026-09-15
+
+### Added / changed
+
+- Added the first certified **Everthread Character Visual** slice using Astra's original modular manwha-inspired art kit. The New Life silhouette is now tappable and opens a mobile-first creator; **Back** discards unsaved edits, **Save appearance** commits the draft, and the resulting portrait returns to New Life and follows the same authoritative appearance into existing Avatar/Profile presentation.
+- Added a deterministic `CharacterVisualSystem` over the existing character appearance authority rather than a second avatar/person database. Existing physical traits remain authoritative; richer optional visual IDs are normalized deterministically for current-schema saves without gameplay RNG or runtime-ID consumption. Save schema remains **17**.
+- Preserved seeded-life compatibility by retaining the historical appearance RNG draw positions and deriving richer cosmetic detail from a separate cosmetic seed. Customizing or normalizing portrait data does not reshuffle downstream gameplay state.
+- Integrated Astra's **624 modular SVG components** into a single lazy-loaded runtime art pack instead of hundreds of asset requests. The renderer supports the six supplied age stages and shared palette/component IDs while keeping artwork presentation-only.
+- Added creator-local collapsible option sections across **Face / Hair / Style / Extras**. Collapsed sections show the current selection summary and do not persist into GameState/saves.
+- Added dedicated Character Visual regression coverage for deterministic generation, custom-draft isolation, save normalization/idempotence, valid art IDs, renderer/catalog contracts, and preservation of existing character state. No NPC reveal/family-resemblance authority is introduced in this slice.
+
+### Certification
+
+- GitHub Actions Run #170 (`35001748216`, job `104491526661`) certified expanded source `ef87fb8011b8ec9d6dc606c328db9b1c0882d942` from upload wrapper `a620ac8b0a97458d05e66e11ac578163fb231dd1`. Net source diff from synchronized baseline `2e94523a451454b94cbbee49179f0efbb62b0900` is exactly **15 intended source/test files**; workflow import reports 16 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4**. Character Visual **46/46**; base **82/82**; Visual Identity **12/12**; Player Profile/Inventory **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Integrated Long-Life **105/105**; Town Map **46/46**; Routing **42/42**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed at **211 modules**. Lazy `characterArtPack` is ~**971.11 kB / 69.18 kB gzip**; main JS ~**1,354.43 / 377.85 kB gzip**; CSS ~**86.96 / 16.06 kB gzip**. The established >700 kB chunk warning remains nonblocking technical debt.
+- Certified source SHA-256 `072c290101bd8853dca4e3e16a6af7e8d9cdc4ecadb332747db4e66f0fe4be7f`; dependency SHA-256 `7890670ea96fa0ba70b95d7fd86ab72fcd2f96fece67cf48efa0d4512b30042b`; package-lock SHA-256 remains `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10409358703` (`cc14a60e8b90a825060b7176c623f1e7b805f2330e17b307157ee64ac6cf48c8`); Pages artifact `10408949701` (`4490a5915f52b189ce46e0f3bff5c1de42c1eb7931cd317555ccba55a0bb834e`); Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep remains **5 total / 0 unresolved**, with no report newer than `2026-09-15 06:47:52.761298+00`. The durable review-state checkpoint could not be advanced in this session because the database connector rejected the write, so the existing stored checkpoint must not be mistaken for an unseen-report condition.
+- This is an approved post-closeout Character Visual feature slice, **not Phase 11** and not a reopening of the Living World Program.
+
 ## Post-Phase-10 UI iconography + theme reactivity polish — CI Green Run #168 — 2026-09-15
 
 ### Added / changed

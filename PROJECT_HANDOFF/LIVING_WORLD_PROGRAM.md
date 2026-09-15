@@ -1,12 +1,12 @@
 # Everthread — Living World Program
 
-Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10 in Run #166. Post-closeout Run #168 adds approved presentation polish (Astra iconography + Appearance reactivity) without reopening the program. No successor macro phase is implied; Mavyy controls the next creative direction.**
+Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10 in Run #166. Post-closeout Runs #168 and #170 add approved presentation/character-visual work without reopening the program. Character Visual is a separate approved feature direction, not Phase 11.**
 
 Approved: 2026-09-13 after Phase 7 closeout. Closed: 2026-09-15 after Run #166.
 
 Final certified program baseline:
 - final certified Living World Program gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`;
-- newest certified post-closeout gameplay/source: Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`;
+- newest certified post-closeout gameplay/source: Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -15,11 +15,11 @@ Final certified program baseline:
 - Phase 10A–10E / Phase 10: **certified / CLOSED**;
 - pre-10E player-tested correction gate: **certified / closed (Runs #162–#163)**;
 - final Map-memory feedback polish: **certified / closed (Run #166)**;
-- next macro direction: **not yet defined; requires Mavyy's creative approval**.
+- current approved feature direction: **Character Visual**, developed as certified slices outside the closed Living World Program; no Phase 11 label is implied.
 
 This remains the authority-boundary record for the closed Living World Program. Future work must preserve these certified contracts unless Mavyy deliberately reopens a design decision with migration/QA coverage.
 
-Post-closeout certification note: Run #168 (`34973140255`) integrates the approved Astra presentation iconography and repairs Appearance/theme reactivity over in-place settings mutation. It adds no simulation owner, save migration, content definition, route authority, or macro phase. Canonical preflight is 4/4, UI iconography/theme 183/183, Action VFX 58/58, and Pages Green on expanded source `f68ffacf47c1fd208f836666fca3b1010a517c85`.
+Post-closeout certification notes: Run #168 (`34973140255`) integrates the approved Astra presentation iconography and repairs Appearance/theme reactivity. Run #170 (`35001748216`) establishes the player Character Visual foundation on `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`: one existing appearance authority, deterministic/RNG-neutral enrichment, a mobile New Life creator, and a lazy modular portrait renderer. Neither slice reopens the Living World Program or creates a macro phase. Run #170 canonical preflight is 4/4 and Character Visual is 46/46.
 
 ## North star
 

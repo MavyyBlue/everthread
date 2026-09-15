@@ -13,7 +13,9 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`**, save schema **17**. Run #168 is post-closeout UI polish and does not reopen Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** are certified/closed. Phase 10E Program Closeout certified in Run #165, and Run #166 certified the final player-requested Map-memory polish before documentation closure. No successor macro phase is active without Mavyy approval.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #170 / `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`**, save schema **17**. Run #170 is the approved Character Visual foundation and does not reopen Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** remain certified/closed; no Phase 11 label is active.
+
+Post-Run-#170 review sweep on 2026-09-15 found **5 total / 0 unresolved** reports and no receipt newer than `2026-09-15 06:47:52.761298+00`. The stored `main` review-state checkpoint still points to Run #168 source `f68ffacf47c1fd208f836666fca3b1010a517c85` because the connector rejected the checkpoint write during this review session. Treat the explicit Run #170 sweep as the newest review evidence; do not interpret the stale row as proof of unseen reports.
 
 Central Feedback Inbox infrastructure:
 
