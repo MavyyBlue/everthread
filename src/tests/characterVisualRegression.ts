@@ -5,7 +5,9 @@ import {
   createAppearanceDraft, describeAppearanceProfile, normalizeAppearanceProfile, normalizeCharacterAppearance,
   portraitAssetIds, randomizeAppearanceDraft,
 } from '../systems/CharacterVisualSystem';
-import type { AppearanceProfile, CharacterVisualIdentity, GameState } from '../types/game';
+import type { AppearanceProfile, CharacterVisualIdentity, GameState, Npc } from '../types/game';
+import { meetPotentialPartner } from '../systems/RelationshipSystem';
+import { normalizeNpcVisualState, npcPortraitRevealMode, projectNpcAppearance } from '../systems/NpcVisualSystem';
 
 export function runCharacterVisualRegression(){
   let checks=0;const verify=(condition:unknown,message:string)=>{checks+=1;if(!condition)throw new Error(`Character Visual regression failed: ${message}`);};
@@ -80,6 +82,39 @@ export function runCharacterVisualRegression(){
   verify(normalized.visual?.hairId==='hair.curly-bob-13','legacy curly hair should map to the approved modular curly hairstyle family');
   const roundTrip=appearanceFromVisual(normalized.visual!);
   verify(roundTrip.hairStyle===normalized.hairStyle&&roundTrip.eyeColor===normalized.eyeColor,'visual-to-profile projection should preserve display labels from the same selected identity');
+
+  const npcState=createNewGame({seed:'character-visual-npc-identity'});
+  const npcRng=npcState.rngCounter,npcIds=npcState.idCounter;
+  const visualChanges=normalizeNpcVisualState(npcState);
+  const parentRels=npcState.relationships.filter(rel=>rel.type==='parent');
+  const parentVisuals=parentRels.map(rel=>npcState.npcs[rel.npcId]?.appearance?.visual);
+  verify(visualChanges>0&&parentRels.every(rel=>npcPortraitRevealMode(npcState,rel.npcId)==='portrait'),'close-family relationships should reveal through the existing relationship authority without redundant relationship flags');
+  verify(parentVisuals.every(Boolean),'revealed family NPCs should receive one stable portrait identity on their existing NPC record');
+  verify(JSON.stringify(parentVisuals[0])!==JSON.stringify(parentVisuals[1]),'separate NPC ids should deterministically produce distinct portrait identities rather than cloned faces');
+  verify(npcState.rngCounter===npcRng&&npcState.idCounter===npcIds,'NPC portrait normalization must consume neither gameplay RNG nor runtime ids');
+  const normalizedNpcSnapshot=JSON.stringify(npcState);verify(normalizeNpcVisualState(npcState)===0&&JSON.stringify(npcState)===normalizedNpcSnapshot,'NPC portrait normalization should be idempotent');
+
+  const backgroundSource=npcState.npcs[parentRels[0]!.npcId]!;
+  const backgroundNpc: Npc={...structuredClone(backgroundSource),id:'background-visual-lazy',firstName:'Background',appearance:undefined,parentIds:[],childIds:[],partnerId:undefined,simulationTier:'background'};
+  npcState.npcs[backgroundNpc.id]=backgroundNpc;
+  normalizeNpcVisualState(npcState);
+  verify(backgroundNpc.appearance===undefined,'background-only NPCs should stay visually lazy instead of inflating long-life saves');
+
+  const acquaintance=createNewGame({seed:'character-visual-acquaintance'});acquaintance.character.age=22;verify(meetPotentialPartner(acquaintance).success,'fixture should create a new relationship candidate');
+  const acquaintanceRel=acquaintance.relationships.find(rel=>rel.type==='friend'&&rel.yearsKnown===0)!;const acquaintanceNpc=acquaintance.npcs[acquaintanceRel.npcId]!;
+  const projectionBefore=JSON.stringify(acquaintance);const projectionRng=acquaintance.rngCounter,projectionIds=acquaintance.idCounter;
+  verify(npcPortraitRevealMode(acquaintance,acquaintanceNpc.id)==='silhouette','a brand-new low-familiarity relationship should begin as a silhouette');
+  projectNpcAppearance(acquaintance,acquaintanceNpc);
+  verify(JSON.stringify(acquaintance)===projectionBefore&&acquaintance.rngCounter===projectionRng&&acquaintance.idCounter===projectionIds,'read-only NPC portrait projection must not mutate state, RNG, or ids');
+  normalizeNpcVisualState(acquaintance);
+  verify(acquaintanceNpc.appearance===undefined&&acquaintanceRel.portraitRevealed!==true,'unrevealed acquaintances should not persist hidden portrait payloads');
+  acquaintanceRel.yearsKnown=1;const revealRng=acquaintance.rngCounter,revealIds=acquaintance.idCounter;normalizeNpcVisualState(acquaintance);
+  verify(acquaintanceRel.portraitRevealed===true&&npcPortraitRevealMode(acquaintance,acquaintanceNpc.id)==='portrait'&&Boolean(acquaintanceNpc.appearance?.visual),'relationship familiarity should durably reveal the exact NPC portrait');
+  verify(acquaintance.rngCounter===revealRng&&acquaintance.idCounter===revealIds,'familiarity reveal must remain gameplay-RNG and runtime-id neutral');
+  acquaintanceRel.score=0;acquaintanceRel.yearsKnown=0;normalizeNpcVisualState(acquaintance);
+  verify(npcPortraitRevealMode(acquaintance,acquaintanceNpc.id)==='portrait','once learned, portrait knowledge should not disappear when a relationship later worsens');
+  const acquaintanceRoundTrip=migrateSave(structuredClone(acquaintance));
+  verify(JSON.stringify(acquaintanceRoundTrip.npcs[acquaintanceNpc.id]?.appearance)===JSON.stringify(acquaintanceNpc.appearance)&&acquaintanceRoundTrip.relationships.find(rel=>rel.npcId===acquaintanceNpc.id)?.portraitRevealed===true,'save normalization should preserve exact revealed NPC identity and player-specific portrait knowledge');
 
   return checks;
 }

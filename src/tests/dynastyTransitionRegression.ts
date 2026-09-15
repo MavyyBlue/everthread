@@ -6,6 +6,7 @@ import { previewEstate, setEstateAssetBequest, setWill } from '../systems/Estate
 import { continueAsChild } from '../systems/GenerationSystem';
 import { addNpcBusinessHolding, addNpcPropertyHolding } from '../systems/NpcAssetSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
+import { normalizeNpcVisualState } from '../systems/NpcVisualSystem';
 import type { GameState, Npc, PropertyAsset, Relationship } from '../types/game';
 import type { NpcBusinessHolding, NpcPropertyHolding } from '../types/npcAssets';
 
@@ -49,7 +50,10 @@ export function runDynastyTransitionRegression(){
   verify(manyReview.successors.every(candidate=>candidate.projectedInheritance>=0),'large-heir projection produces finite non-negative successor inheritance values');
   verify(manyReview.successors[0]!.age>=manyReview.successors.at(-1)!.age,'successor projection uses deterministic oldest-first ordering for a stable large-family decision list');
 
+  normalizeNpcVisualState(state);const adultPortrait=JSON.stringify(state.npcs[adult.id]!.appearance);const priorPlayerPortrait=JSON.stringify(state.character.appearance);
   const continuation=structuredClone(state);const projected=buildDynastyTransitionReview(continuation).successors.find(item=>item.npcId===adult.id)!;verify(continueAsChild(continuation,adult.id).success,'reviewed adult successor can be explicitly continued');approx(Number(continuation.flags.inheritanceReceived),projected.projectedInheritance,1,'confirmed continuation receives the inheritance shown in the pre-choice review');
+  verify(JSON.stringify(continuation.character.appearance)===adultPortrait,'descendant continuation preserves the successor existing NPC portrait instead of regenerating their face');
+  verify(Object.values(continuation.npcs).some(npc=>npc.id!==continuation.character.id&&JSON.stringify(npc.appearance)===priorPlayerPortrait),'the previous protagonist keeps their established portrait when converted into family-history NPC state');
   verify(continuation.assets.properties.some(item=>item.id==='avery-home')&&continuation.assets.properties.some(item=>item.id==='family-home'),'confirmed continuation preserves the successor own property and the previewed inherited property');
   verify(continuation.character.namePoolCountryId==='jp','descendant continuation preserves the successor established naming profile instead of inheriting the prior protagonist profile');
   verify(continuation.timeline.some(item=>item.text.includes('Other family heirs received')),'new protagonist timeline records what happened to the rest of the family estate');

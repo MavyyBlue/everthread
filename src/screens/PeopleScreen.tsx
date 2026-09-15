@@ -24,6 +24,8 @@ import type { PersonalGiftEvaluation } from '../types/gifts';
 import { projectCrossWorldChemistryPlans } from '../systems/CrossWorldChemistrySystem';
 import type { CrossWorldChemistryPlan } from '../types/crossWorldChemistry';
 import { npcHouseholdResidenceProjection, projectResidentialPlans } from '../systems/ResidentialLifeSystem';
+import { CharacterPortrait, CharacterSilhouette } from '../components/CharacterPortrait';
+import { npcPortraitRevealMode, projectNpcAppearance } from '../systems/NpcVisualSystem';
 import type { ResidentialPlan } from '../types/residentialLife';
 
 const CURRENT_ROMANTIC_TYPES=new Set<GameState['relationships'][number]['type']>(['partner','fiance','spouse']);
@@ -65,6 +67,8 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const selectedIsCurrentPartner=Boolean(selected&&!selected.estranged&&npc?.alive&&CURRENT_ROMANTIC_TYPES.has(selected.type));
   const selectedFamilyGate=selectedIsCurrentPartner&&npc?biologicalChildGate(state,npc.id):undefined;
   const selectedGender=npc?npcGender(state,npc):undefined;
+  const portraitMode=npc?npcPortraitRevealMode(state,npc.id):'silhouette';
+  const portraitAppearance=npc&&portraitMode==='portrait'?projectNpcAppearance(state,npc):undefined;
   const feedback=(result:EngineResult)=>onResult(result,{derive:true});
   const shareYouthExperience=(plan:YouthSocialPlan)=>{const result=gameEngine.shareExperience(plan.npcId,plan.placeId,plan.activityId);if(result.experience)setLastSharedExperience(result.experience);feedback(result);};
   const completeDate=(option:RomanticDateOption)=>{const result=gameEngine.romanticDate(npc!.id,option.placeId,option.activityId);if(result.experience)setLastRomanticDate(result.experience);feedback(result);};
@@ -73,6 +77,10 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const shareResidentialExperience=(plan:ResidentialPlan)=>{const result=gameEngine.residentialExperience(plan.npcId,plan.id);if(result.experience)setLastResidentialExperience(result.experience);feedback(result);};
 
   const personSheet=<BottomSheet open={!!selected} title={npc?`${npc.firstName} ${npc.lastName}`:'Relationship'} onClose={()=>{setSelectedNpcId(undefined);setGiftPickerOpen(false);}}>{selected&&npc&&<>
+    <div className={`npc-visual-identity npc-visual-identity--${portraitMode}`}>
+      {portraitAppearance?<CharacterPortrait appearance={portraitAppearance} age={npc.age} size={112} frame="people" label={`${npc.firstName} ${npc.lastName} portrait`}/>:<CharacterSilhouette age={npc.age} size={112} frame="people" label={`${npc.firstName} ${npc.lastName} silhouette`}/>} 
+      <div><p className="eyebrow">{portraitMode==='portrait'?'Portrait revealed':'Familiarity'}</p><h3>{portraitMode==='portrait'?'A face you know':'Still coming into focus'}</h3><p className="muted">{portraitMode==='portrait'?'Their stable portrait now follows this person through Threadspace and future life stages.':'As this relationship becomes more familiar, their portrait will reveal without changing who they are.'}</p></div>
+    </div>
     <div className="sheet-stat-grid">
       <div><small>Relationship</small><strong>{Math.round(selected.score)}</strong></div>
       <div><small>Compatibility</small><strong>{Math.round(selected.compatibility)}</strong></div>

@@ -11,6 +11,7 @@ import { NPC_PREFERENCE_TAG_IDS } from '../data/npcPreferences';
 import { NPC_PREFERENCE_AVERSION_LIMIT, NPC_PREFERENCE_DISLIKE_LIMIT, NPC_PREFERENCE_KNOWLEDGE_LIMIT, NPC_PREFERENCE_LIKE_LIMIT, NPC_PREFERENCE_PROFILE_VERSION, normalizeNpcPreferenceState } from '../systems/NpcPreferenceSystem';
 import { ROMANTIC_DATE_HISTORY_LIMIT } from '../data/romanticDates';
 import { TOWN_PLACES } from '../data/townPlaces';
+import { normalizeNpcVisualState, validateNpcVisualState } from '../systems/NpcVisualSystem';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -180,6 +181,8 @@ export function enforceStateInvariants(state: GameState): GameState {
     }
   }
 
+  normalizeNpcVisualState(state);
+
   const npcPropertyIds=new Set<string>();
   const npcBusinessIds=new Set<string>();
   for (const npc of Object.values(state.npcs)) {
@@ -320,6 +323,7 @@ export function validateState(state: GameState): string[] {
   const spouses = state.relationships.filter(r => r.type === 'spouse' && !r.estranged);
   if (spouses.length > 1) errors.push('Multiple active spouses');
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
+  errors.push(...validateNpcVisualState(state));
   const playerPrimaryResidences=state.assets.properties.filter(property=>property.primaryResidence===true);
   if(playerPrimaryResidences.length>1)errors.push('Multiple player primary residences');
   if(state.character.age<18&&playerPrimaryResidences.length)errors.push('Minor player cannot have an independent primary residence');

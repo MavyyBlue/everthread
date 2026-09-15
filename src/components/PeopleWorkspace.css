@@ -94,3 +94,7 @@ button.threadspace-node{cursor:pointer}
 
 .threadspace-deceased-stamp{position:absolute;z-index:4;right:-10px;top:-17px;width:88px;height:auto;pointer-events:none;user-select:none;filter:drop-shadow(0 3px 7px rgba(0,0,0,.28));opacity:.94}
 @media(max-width:370px){.threadspace-deceased-stamp{right:-8px;top:-15px;width:80px}}
+
+/* Character Visual: Threadspace portraits remain inside the existing compact person node. */
+.threadspace-person-mark{overflow:hidden;padding:0}
+.threadspace-person-mark>.character-portrait{width:37px!important;height:37px!important;border-radius:12px}

@@ -19,19 +19,25 @@ import { createEmptyPersonalInventoryState } from './PersonalInventorySystem';
 import { initializeNpcPreferenceKnowledge } from './NpcPreferenceSystem';
 import { EVERTHREAD_CITY } from '../data/countries';
 import { businessWorkLocation } from './WorkingEverthreadSystem';
-import { normalizeAppearanceProfile } from './CharacterVisualSystem';
+import { projectNpcAppearance } from './NpcVisualSystem';
 
 export { previewEstate, setEstateAssetBequest, setEstateRetentionPreferences, setWill } from './EstateSystem';
 
 function npcToCharacter(state:GameState,npc:Npc):Character {
   const rng=createRng(`${state.seed}-descendant-${npc.id}`,state.rngCounter);
   const identity=characterIdentityFromNpc(state,npc);
-  const legacyAppearance={skinTone:rng.pick(['fair','light','medium','olive','tan','brown','deep brown','dark']),hairColor:rng.pick(['black','brown','auburn','blonde','red']),hairStyle:rng.pick(['straight','wavy','curly','coiled','cropped']),eyeColor:rng.pick(['brown','hazel','green','blue','gray']),accessories:[]};
+  // Preserve the historical continuation RNG draw positions even though the successor now keeps
+  // the portrait identity they already had as an NPC. These draws still feed downstream stats exactly as before.
+  rng.pick(['fair','light','medium','olive','tan','brown','deep brown','dark']);
+  rng.pick(['black','brown','auburn','blonde','red']);
+  rng.pick(['straight','wavy','curly','coiled','cropped']);
+  rng.pick(['brown','hazel','green','blue','gray']);
+  const preservedAppearance=projectNpcAppearance(state,npc);
   return {
     id:npc.id,firstName:npc.firstName,lastName:npc.lastName,
     sex:identity.sex,genderIdentity:identity.genderIdentity,orientation:npc.sexuality,
     namePoolCountryId:npcNamePoolCountryId(state,npc),countryId:npc.countryId,city:npc.city,birthYear:state.currentYear-npc.age,age:npc.age,alive:true,
-    appearance:normalizeAppearanceProfile(legacyAppearance,`${state.seed}:descendant-visual:${npc.id}`,identity.sex,identity.genderIdentity),
+    appearance:preservedAppearance,
     stats:{health:npc.health,happiness:npc.happiness,intelligence:clamp((npc.life?.aptitude??50)*.72+state.character.stats.intelligence*.18+rng.int(0,12)),appearance:clamp(state.character.stats.appearance*.45+rng.int(20,55))},
     secondary:{athleticism:clamp((npc.life?.health.fitness??50)*.62+state.character.secondary.athleticism*.18+rng.int(0,18)),discipline:clamp((npc.life?.education.performance??50)*.45+rng.int(20,45)),willpower:rng.int(25,80),karma:0,reputation:clamp(npc.life?.publicLife.reputation??50),stress:rng.int(0,25),fertility:npc.fertility,charisma:rng.int(25,85),creativity:rng.int(25,85),confidence:rng.int(20,80),addictionSusceptibility:rng.int(5,75),criminalNotoriety:clamp(npc.life?.legal.recordSeverity??0),academicPerformance:clamp(npc.life?.education.performance??50),workPerformance:clamp(npc.careerId?60+(npc.traits.includes('responsible')?8:0)+(npc.traits.includes('ambitious')?5:0):50)},
     talents:{music:clamp(state.character.talents.music*.35+rng.int(10,55)),acting:clamp(state.character.talents.acting*.35+rng.int(10,55)),athletics:clamp(state.character.talents.athletics*.35+rng.int(10,55)),business:clamp(state.character.talents.business*.35+rng.int(10,55)),crime:clamp(state.character.talents.crime*.35+rng.int(10,55)),social:clamp(state.character.talents.social*.35+rng.int(10,55)),combat:clamp(state.character.talents.combat*.35+rng.int(10,55))},
@@ -84,7 +90,7 @@ export function continueAsChild(state:GameState,childId:string):EngineResult {
   for(const property of settlement.properties){property.origin='inherited';property.inheritedFromNpcId=previousPlayerId;delete property.primaryResidence;}
   for(const business of settlement.businesses){business.origin='inherited';business.inheritedFromNpcId=previousPlayerId;}
 
-  const parentNpc:Npc={id:previousPlayerId,firstName:previousCharacter.firstName,lastName:previousCharacter.lastName,age:previousCharacter.age,alive:false,health:0,happiness:previousCharacter.stats.happiness,wealth:0,namePoolCountryId:previousCharacter.namePoolCountryId,countryId:previousCharacter.countryId,city:previousCharacter.city,sexuality:previousCharacter.orientation,fertility:previousCharacter.secondary.fertility,gender:npcGenderFromCharacterIdentity(previousCharacter.genderIdentity),...(previousCharacter.sex==='female'||previousCharacter.sex==='male'?{reproductiveSex:previousCharacter.sex}:{}),maritalStatus:survivingSpouseRel?'married':'single',traits:[...previousCharacter.traits],hiddenOpinion:80,memories:[],parentIds:state.relationships.filter(r=>['parent','stepparent'].includes(r.type)&&state.npcs[r.npcId]).map(r=>r.npcId),childIds:livingChildren.map(r=>r.npcId)};
+  const parentNpc:Npc={id:previousPlayerId,firstName:previousCharacter.firstName,lastName:previousCharacter.lastName,age:previousCharacter.age,alive:false,health:0,happiness:previousCharacter.stats.happiness,wealth:0,appearance:structuredClone(previousCharacter.appearance),namePoolCountryId:previousCharacter.namePoolCountryId,countryId:previousCharacter.countryId,city:previousCharacter.city,sexuality:previousCharacter.orientation,fertility:previousCharacter.secondary.fertility,gender:npcGenderFromCharacterIdentity(previousCharacter.genderIdentity),...(previousCharacter.sex==='female'||previousCharacter.sex==='male'?{reproductiveSex:previousCharacter.sex}:{}),maritalStatus:survivingSpouseRel?'married':'single',traits:[...previousCharacter.traits],hiddenOpinion:80,memories:[],parentIds:state.relationships.filter(r=>['parent','stepparent'].includes(r.type)&&state.npcs[r.npcId]).map(r=>r.npcId),childIds:livingChildren.map(r=>r.npcId)};
   state.npcs[parentNpc.id]=parentNpc;delete state.npcs[childId];state.character=newCharacter;state.currentYear=newCharacter.birthYear+newCharacter.age;state.relationships=rebuildDescendantRelationships(state,originalChild,previousPlayerId);syncPlayerFamilyTopology(state);state.education=descendantEducation(originalChild);state.socialWorlds=[];state.employment=descendantEmployment(state,originalChild);migrateLegacySchoolWorlds(state);migrateLegacyWorkplaceWorlds(state);
 
   const npcLife=originalChild.life!;const inheritedImmediately=newCharacter.age>=18;const ownPropertyConversions=(originalChild.assetPortfolio?.properties??[]).map(holding=>playerPropertyFromNpcHolding(state,holding));const ownProperties=ownPropertyConversions.map(item=>item.property);const ownMortgages=ownPropertyConversions.flatMap(item=>item.mortgage?[item.mortgage]:[]);const ownBusinesses=(originalChild.assetPortfolio?.businesses??[]).filter(item=>item.active).map(holding=>playerBusinessFromNpcHolding(state,holding));const personalDebt=Math.max(0,Math.round(npcLife.finance.debt-npcMortgageDebt(originalChild)));const personalDebtLoan=personalDebt>0?{id:makeStateId(state,'loan'),kind:'personal' as const,principal:personalDebt,balance:personalDebt,annualRate:.08,annualPayment:Math.max(500,Math.round(personalDebt/8)),remainingYears:8}:undefined;
