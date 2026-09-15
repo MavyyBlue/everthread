@@ -1,4 +1,5 @@
 import type { EngineResult, GameState } from '../types/game';
+import type { EverthreadIconName } from './everthreadIcons';
 
 export type ActionVfxKind =
   | 'acting'
@@ -11,10 +12,17 @@ export type ActionVfxKind =
   | 'chemistryGain'
   | 'followersGain'
   | 'relationshipGain'
+  | 'relationshipLoss'
   | 'stressReduction'
   | 'stressIncrease'
+  | 'moneyGain'
   | 'moneyLoss'
-  | 'relationshipLoss';
+  | 'healthGain'
+  | 'knowledgeGain'
+  | 'giftGiven'
+  | 'yearAdvanced'
+  | 'actionBlocked'
+  | 'milestone';
 
 export type ActionResultHandler = (result: EngineResult, request?: ActionVfxRequest) => void;
 
@@ -26,13 +34,16 @@ export interface ActionVfxRequest {
 
 export interface ActionVfxSnapshot {
   cash: number;
+  age: number;
+  health: number;
+  intelligence: number;
   stress: number;
   followers: number;
   relationshipScores: Record<string, number>;
   timelineLength: number;
 }
 
-export const ACTION_VFX_ASSETS: Record<ActionVfxKind, string> = {
+export const ACTION_VFX_ASSETS: Partial<Record<ActionVfxKind, string>> = {
   acting: './vfx/action/acting.png',
   music: './vfx/action/music.png',
   professionalSports: './vfx/action/professional-sports.png',
@@ -42,11 +53,22 @@ export const ACTION_VFX_ASSETS: Record<ActionVfxKind, string> = {
   organizedCrime: './vfx/action/organized-crime.png',
   chemistryGain: './vfx/action/chemistry-followers.png',
   followersGain: './vfx/action/chemistry-followers.png',
-  relationshipGain: './vfx/action/relationship-gain.png',
-  stressReduction: './vfx/action/stress-reduction.png',
-  stressIncrease: './vfx/action/stress-increase.png',
-  moneyLoss: './vfx/action/money-loss.png',
-  relationshipLoss: './vfx/action/relationship-loss.png',
+};
+
+/** Semantic result glyphs from the Astra design kit; these remain presentation-only. */
+export const ACTION_VFX_ICON_NAMES: Partial<Record<ActionVfxKind, EverthreadIconName>> = {
+  relationshipGain:'heart',
+  relationshipLoss:'heart-broken',
+  stressReduction:'calm',
+  stressIncrease:'stress',
+  moneyGain:'coin-up',
+  moneyLoss:'coin-down',
+  healthGain:'health',
+  knowledgeGain:'knowledge',
+  giftGiven:'gift',
+  yearAdvanced:'leaf',
+  actionBlocked:'lock',
+  milestone:'spark',
 };
 
 export const EVERTHREAD_UI_ICONS = {
@@ -73,6 +95,9 @@ export function captureActionVfxSnapshot(state: GameState): ActionVfxSnapshot {
   for (const relationship of state.relationships) relationshipScores[relationship.npcId] = relationship.score;
   return {
     cash: state.finances.cash,
+    age: state.character.age,
+    health: state.character.stats.health,
+    intelligence: state.character.stats.intelligence,
     stress: state.character.secondary.stress,
     followers: state.fame.followers,
     relationshipScores,
@@ -82,7 +107,11 @@ export function captureActionVfxSnapshot(state: GameState): ActionVfxSnapshot {
 
 export function deriveActionVfxKinds(before: ActionVfxSnapshot, after: GameState): ActionVfxKind[] {
   const kinds: ActionVfxKind[] = [];
-  if (after.finances.cash < before.cash - 0.001) kinds.push('moneyLoss');
+  if (after.finances.cash > before.cash + 0.001) kinds.push('moneyGain');
+  else if (after.finances.cash < before.cash - 0.001) kinds.push('moneyLoss');
+  if (after.character.stats.health > before.health + 0.001) kinds.push('healthGain');
+  if (after.character.stats.intelligence > before.intelligence + 0.001) kinds.push('knowledgeGain');
+  if (after.character.age > before.age) kinds.push('yearAdvanced');
   if (after.character.secondary.stress > before.stress + 0.001) kinds.push('stressIncrease');
   else if (after.character.secondary.stress < before.stress - 0.001) kinds.push('stressReduction');
   if (after.fame.followers > before.followers) kinds.push('followersGain');
@@ -105,6 +134,7 @@ export function deriveActionVfxKinds(before: ActionVfxSnapshot, after: GameState
     if ((entry.relationshipDelta ?? 0) > 0.001) relationshipGain = true;
     if ((entry.relationshipDelta ?? 0) < -0.001) relationshipLoss = true;
   }
+  if (after.timeline.slice(Math.max(0, before.timelineLength)).some(entry=>entry.importance===3)) kinds.push('milestone');
   if (relationshipGain) kinds.push('relationshipGain');
   if (relationshipLoss) kinds.push('relationshipLoss');
   return kinds;

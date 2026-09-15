@@ -1,3 +1,4 @@
+import { EverthreadIcon } from './EverthreadIcon';
 import { useState } from 'react';
 import type { EngineResult, GameState } from '../types/game';
 import { gameEngine } from '../stores/gameStore';
@@ -27,7 +28,7 @@ export function AssetPurchaseSheet({state,target,onResult,onClose}:{state:GameSt
   const finance=(offerId:string)=>{const result=target.kind==='home'?gameEngine.financeProperty(target.typeId,offerId,downPaymentRate):gameEngine.financeVehicle(target.typeId,offerId,downPaymentRate);onResult(result);if(result.success)onClose();};
   return <div className="sheet-backdrop asset-finance-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)onClose();}}>
     <section className="bottom-sheet bottom-sheet--wide asset-finance-sheet" role="dialog" aria-modal="true" aria-label={`Purchase ${target.name}`}>
-      <header className="sheet-header"><span className="sheet-handle"/><h2>{target.name}</h2><button className="icon-button" onClick={onClose} aria-label="Close purchase options">×</button></header>
+      <header className="sheet-header"><span className="sheet-handle"/><h2>{target.name}</h2><button className="icon-button" onClick={onClose} aria-label="Close purchase options"><EverthreadIcon name="close" size={20}/></button></header>
       <div className="sheet-body asset-finance-body">
         <section className="hero-card asset-finance-summary"><p className="eyebrow">{target.kind==='home'?'Home purchase':'Vehicle purchase'}</p><h2 title={exactMoney(target.price)}>{money(target.price)}</h2><p>Choose cash or compare installment offers. Revolving Credit Available is borrowing capacity for cards and is not cash for this purchase.</p></section>
         <div className="segmented"><button className={mode==='outright'?'active':''} onClick={()=>setMode('outright')}>Buy Outright</button><button className={mode==='finance'?'active':''} disabled={!financingAllowed} onClick={()=>setMode('finance')}>{financingAllowed?'Finance':'Finance unavailable'}</button></div>

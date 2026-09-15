@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
-import { ACTION_VFX_ASSETS, type ActionVfxKind } from '../core/actionVfx';
+import { ACTION_VFX_ASSETS, ACTION_VFX_ICON_NAMES, type ActionVfxKind } from '../core/actionVfx';
+import { EverthreadIcon } from './EverthreadIcon';
 
 export interface ActionVfxBurst {
   id: number;
@@ -38,14 +39,24 @@ export function ActionVfxLayer({ bursts, reducedMotion }: { bursts: ActionVfxBur
       return <div className="action-vfx-burst" key={burst.id} style={{ left: burst.x, top: burst.y }}>
         {burst.kinds.flatMap((kind, kindIndex) => Array.from({ length: perKind }, (_, particleIndex) => {
           const seed = burst.id * 13 + kindIndex * 17 + particleIndex * 7;
-          return <img
+          const style=particleStyle(seed);
+          const iconName=ACTION_VFX_ICON_NAMES[kind];
+          if(iconName)return <EverthreadIcon
+            className={`action-vfx-particle action-vfx-particle--vector action-vfx-particle--${kind}`}
+            key={`${kind}-${particleIndex}`}
+            name={iconName}
+            size={30}
+            style={style}
+          />;
+          const src=ACTION_VFX_ASSETS[kind];
+          return src?<img
             className="action-vfx-particle"
             key={`${kind}-${particleIndex}`}
-            src={ACTION_VFX_ASSETS[kind]}
+            src={src}
             alt=""
-            style={particleStyle(seed)}
+            style={style}
             draggable={false}
-          />;
+          />:null;
         }))}
       </div>;
     })}

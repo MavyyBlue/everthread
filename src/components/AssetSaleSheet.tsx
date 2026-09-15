@@ -1,3 +1,4 @@
+import { EverthreadIcon } from './EverthreadIcon';
 import type { EngineResult, GameState } from '../types/game';
 import { exactMoney, formatMoney } from '../core/format';
 import { getPropertySaleQuote, getVehicleSaleQuote } from '../systems/PropertySystem';
@@ -11,7 +12,7 @@ export function AssetSaleSheet({state,target,onResult,onClose}:{state:GameState;
   const confirm=()=>{const result=target.kind==='property'?gameEngine.sellProperty(target.id):gameEngine.sellVehicle(target.id);onResult(result);if(result.success)onClose();};
   return <div className="sheet-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)onClose();}}>
     <section className="bottom-sheet asset-sale-sheet" role="dialog" aria-modal="true" aria-label={`Sell ${quote.name}`}>
-      <header className="sheet-header"><span className="sheet-handle"/><h2>Sell {quote.name}</h2><button className="icon-button" onClick={onClose} aria-label="Close sale details">×</button></header>
+      <header className="sheet-header"><span className="sheet-handle"/><h2>Sell {quote.name}</h2><button className="icon-button" onClick={onClose} aria-label="Close sale details"><EverthreadIcon name="close" size={20}/></button></header>
       <div className="sheet-body">
         <section className="hero-card asset-sale-summary"><p className="eyebrow">Sale preview</p><h2 title={exactMoney(quote.marketValue)}>{formatMoney(quote.marketValue)}</h2><p>Review the lender payoff and selling costs before confirming. This preview does not change your save.</p></section>
         <div className="finance-grid asset-sale-grid"><div><small>Current value</small><strong>{formatMoney(quote.marketValue)}</strong></div><div><small>Selling costs</small><strong>{formatMoney(quote.sellingCosts)}</strong></div><div><small>Lender payoff</small><strong>{quote.loanPayoff?formatMoney(quote.loanPayoff):'None'}</strong></div><div><small>{quote.deficiency>0?'Deficiency debt':'Cash proceeds'}</small><strong>{formatMoney(quote.deficiency>0?quote.deficiency:quote.cashProceeds)}</strong></div></div>

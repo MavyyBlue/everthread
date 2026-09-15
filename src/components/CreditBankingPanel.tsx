@@ -1,3 +1,4 @@
+import { EverthreadIcon } from './EverthreadIcon';
 import { useState } from 'react';
 import type { EngineResult, GameState } from '../types/game';
 import { gameEngine } from '../stores/gameStore';
@@ -32,7 +33,7 @@ export function CreditBankingPanel({state,onResult,onClose,initialView}:{state:G
 
   return <div className="sheet-backdrop banking-backdrop" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget)onClose();}}>
     <section className="bottom-sheet bottom-sheet--wide banking-sheet" role="dialog" aria-modal="true" aria-label="Credit and banking">
-      <header className="sheet-header"><span className="sheet-handle"/><h2>Credit & Banking</h2><button className="icon-button banking-close" onClick={onClose} aria-label="Close credit and banking">×</button></header>
+      <header className="sheet-header"><span className="sheet-handle"/><h2>Credit & Banking</h2><button className="icon-button banking-close" onClick={onClose} aria-label="Close credit and banking"><EverthreadIcon name="close" size={20}/></button></header>
       <div className="sheet-body">
         {showPayments?<PaymentsView state={state} onResult={onResult} onBack={()=>setShowPayments(false)}/>:selectedOffer?<ContractView state={state} offer={selectedOffer} onBack={()=>setSelectedProductId(undefined)} onApply={apply}/>:selectedAccount?<AccountView state={state} account={selectedAccount} amount={amount} setAmount={setAmount} onBack={()=>setSelectedAccountId(undefined)} onPayment={doPayment} onPurchase={doPurchase} onCloseAccount={doClose}/>:<>
           <div className="segmented segmented--scroll banking-tabs">

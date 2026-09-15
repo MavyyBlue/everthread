@@ -16,6 +16,8 @@ import {
 } from '../systems/TownMapSystem';
 import type { GameState } from '../types/game';
 import townMapArtwork from '../assets/everthread-town-map.png';
+import { EverthreadIcon } from '../components/EverthreadIcon';
+import { townPlaceIconName } from '../core/everthreadIcons';
 import './TownMapScreen.css';
 
 type PointerPoint={x:number;y:number};
@@ -92,12 +94,12 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
 
   return <main className="town-map-screen" aria-label="Everthread town map">
     <div className="town-map-status" aria-live="polite"><strong>Everthread</strong><small>{projection.playerInEverthread?'You currently live in Everthread.':`Hometown map · you currently live in ${projection.playerLocationLabel}.`}</small></div>
-    <button className={`town-map-explore-toggle ${panelOpen?'active':''}`} onClick={()=>setPanelOpen(value=>!value)} aria-expanded={panelOpen} aria-controls="town-map-explore-panel">Explore</button>
+    <button className={`town-map-explore-toggle ${panelOpen?'active':''}`} onClick={()=>setPanelOpen(value=>!value)} aria-expanded={panelOpen} aria-controls="town-map-explore-panel"><EverthreadIcon name="filter" size={17}/>Explore</button>
     {panelOpen&&<aside id="town-map-explore-panel" className="town-map-explore-panel" aria-label="Map filters and view controls">
       <div className="town-map-panel-heading"><strong>Explore Everthread</strong><small>{projection.places.length} places</small></div>
       <label className="town-map-living-toggle"><input type="checkbox" checked={showLiving} onChange={event=>setShowLiving(event.target.checked)}/><span><strong>Your life on the map</strong><small>{projection.living.connectedPlaceCount} places · {projection.living.connectedDistrictCount} districts connected</small></span></label>
       <div className="town-map-view-controls"><button onClick={fitMap}>Fit Map</button><button onClick={()=>zoomCenter(.84)}>−</button><span>{Math.round(camera.scale*100)}%</span><button onClick={()=>zoomCenter(1.18)}>+</button></div>
-      <label className="town-map-search"><span>Find a place or activity</span><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="Bank, park, racing…"/></label>
+      <label className="town-map-search"><span><EverthreadIcon name="search" size={15}/>Find a place or activity</span><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="Bank, park, racing…"/></label>
       <div className="town-map-category-grid"><strong>Show categories</strong>{TOWN_PLACE_CATEGORIES.map(item=><label key={item.id}><input type="checkbox" checked={categories.includes(item.id)} onChange={()=>toggleCategory(item.id)}/><span>{item.label}</span></label>)}</div>
       <button className="town-map-reset" onClick={resetFilters}>Reset filters</button>
       {projection.hiddenPlaceCount>0&&<p className="town-map-panel-note">Some places are discovered through the life you lead.</p>}
@@ -106,7 +108,7 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
       <div className="town-map-world" style={{width:TOWN_MAP_WIDTH,height:TOWN_MAP_HEIGHT,transform:`translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`}}>
         <img className="town-map-artwork" src={townMapArtwork} width={TOWN_MAP_WIDTH} height={TOWN_MAP_HEIGHT} draggable={false} alt="" aria-hidden="true"/>
         {renderedPlaces.map(place=>{const living=showLiving?livingByPlace.get(place.id):undefined;return <button key={place.id} className={`town-map-place town-map-place--${place.category} ${selectedId===place.id?'selected':''} ${living?'has-living-context':''}`} style={{left:place.map.x,top:place.map.y,transform:`translate(-50%,-50%) scale(${placeScale})`}} onClick={()=>setSelectedId(place.id)} aria-label={`Open ${place.label}${living?` · ${living.contexts.map(item=>item.label).join(', ')}`:''}`}>
-          <span className="town-map-place-glyph" aria-hidden="true">{place.map.glyph}{living&&<b className="town-map-context-count">{living.contexts.length}</b>}</span>
+          <span className="town-map-place-glyph" aria-hidden="true">{townPlaceIconName(place.id)?<EverthreadIcon name={townPlaceIconName(place.id)!} size={27}/>:<span>{place.map.glyph}</span>}{living&&<b className="town-map-context-count">{living.contexts.length}</b>}</span>
           {townMapLabelVisible(place,camera.scale)&&<span className="town-map-place-label">{place.shortLabel}{living&&<small>{living.contexts[0]?.label}</small>}</span>}
         </button>})}
         {renderedDistrictContexts.map(item=>{const district=TOWN_DISTRICTS.find(candidate=>candidate.id===item.districtId)!;const x=district.map.x+district.map.width/2,y=district.map.y+district.map.height/2;return <div key={`living-${item.districtId}`} className="town-map-district-context" style={{left:x,top:y,transform:`translate(-50%,-50%) scale(${placeScale})`}} aria-label={`${item.districtLabel}: ${item.contexts.map(context=>context.label).join(', ')}`}>
@@ -123,7 +125,7 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
         <div className="town-place-tags">{selected.activityTags.map(tag=><span key={tag}>{tag}</span>)}</div>
         {showLiving&&selectedLiving&&<section className="town-place-living"><small>Your life here</small><div className="town-place-living-list">{selectedLiving.contexts.map(context=><div key={context.id}><span className={`town-place-living-icon town-place-living-icon--${context.kind}`} aria-hidden="true"></span><span><strong>{context.label}</strong><small>{context.detail}</small></span>{context.count>1&&<b>{context.count}</b>}</div>)}</div></section>}
         {showLiving&&selectedMemories.length>0&&<section className="town-place-memories" aria-label="Memories from this place"><small>Memories here</small><p>Meaningful moments your thread remembers at this location.</p><div className="town-place-memory-list">{selectedMemories.map(memory=><article key={memory.id}><div><strong>{memory.current?'Current life':`Generation ${memory.generation}`}</strong><small>{[Number.isFinite(memory.age)?`Age ${memory.age}`:undefined,Number.isFinite(memory.year)?String(memory.year):undefined].filter(Boolean).join(' · ')}</small></div><p>{memory.text}</p></article>)}</div></section>}
-        {selected.routes?.length?<div className="town-place-services"><small>Available here</small><div className="town-place-service-list">{selected.routes.map(route=><button key={route.id} onClick={()=>onNavigate(selected.id,route.id)}><span><strong>{route.label}</strong><small>{route.description}</small></span><b aria-hidden="true">›</b></button>)}</div><p>These open established Everthread screens. The destination system still owns eligibility, costs, limits, and outcomes.</p></div>:<div className="town-place-route"><small>Map landmark</small><strong>No routed mechanic yet</strong><p>This place remains part of Everthread without inventing a duplicate or fake system. Later world-life phases can add experiences when an authoritative owner exists.</p></div>}
+        {selected.routes?.length?<div className="town-place-services"><small>Available here</small><div className="town-place-service-list">{selected.routes.map(route=><button key={route.id} onClick={()=>onNavigate(selected.id,route.id)}><span><strong>{route.label}</strong><small>{route.description}</small></span><b aria-hidden="true"><EverthreadIcon name="chevron" size={18}/></b></button>)}</div><p>These open established Everthread screens. The destination system still owns eligibility, costs, limits, and outcomes.</p></div>:<div className="town-place-route"><small>Map landmark</small><strong>No routed mechanic yet</strong><p>This place remains part of Everthread without inventing a duplicate or fake system. Later world-life phases can add experiences when an authoritative owner exists.</p></div>}
       </div>}
     </BottomSheet>
   </main>;

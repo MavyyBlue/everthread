@@ -1,4 +1,4 @@
-import type { GenderIdentity } from '../types/game';
+import type { GenderIdentity, SettingsState } from '../types/game';
 
 export type EverthreadFontFamily = 'sans' | 'serif' | 'rounded' | 'mono';
 
@@ -33,4 +33,17 @@ export function playerCrestForGender(gender: GenderIdentity | undefined): string
 
 export function normalizeEverthreadFont(value: unknown): EverthreadFontFamily {
   return EVERTHREAD_FONT_OPTIONS.some(option => option.value === value) ? value as EverthreadFontFamily : 'sans';
+}
+
+/** Changes whenever a root-level visual preference changes, even though GameState settings mutate in place. */
+export function visualSettingsSignature(settings: SettingsState): string {
+  return [
+    settings.theme,
+    normalizeEverthreadFont(settings.fontFamily),
+    settings.accent,
+    settings.textScale,
+    settings.textColor??'',
+    settings.highContrast?'1':'0',
+    settings.reducedMotion?'1':'0',
+  ].join('|');
 }

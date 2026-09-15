@@ -1,3 +1,4 @@
+import { EverthreadIcon } from './EverthreadIcon';
 import { useState } from 'react';
 import type { EngineResult, GameState } from '../types/game';
 import { gameEngine } from '../stores/gameStore';

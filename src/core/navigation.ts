@@ -1,14 +1,18 @@
+import type { EverthreadIconName } from './everthreadIcons';
+
+type NavigationItem={id:string;label:string;icon:EverthreadIconName};
+
 export const PRIMARY_NAVIGATION=[
-  {id:'life',label:'Life',icon:'◉'},
-  {id:'people',label:'People',icon:'♡'},
-  {id:'map',label:'Map',icon:'⌖'},
-] as const;
+  {id:'life',label:'Life',icon:'leaf'},
+  {id:'people',label:'People',icon:'people'},
+  {id:'map',label:'Map',icon:'map'},
+] as const satisfies readonly NavigationItem[];
 
 export const CONTEXTUAL_NAVIGATION=[
-  {id:'activities',label:'Activities',icon:'＋'},
-  {id:'career',label:'Career',icon:'▣'},
-  {id:'assets',label:'Assets',icon:'◆'},
-] as const;
+  {id:'activities',label:'Activities',icon:'plus'},
+  {id:'career',label:'Career',icon:'flag'},
+  {id:'assets',label:'Assets',icon:'inventory'},
+] as const satisfies readonly NavigationItem[];
 
 export type PrimaryNavigationTab=(typeof PRIMARY_NAVIGATION)[number]['id']|(typeof CONTEXTUAL_NAVIGATION)[number]['id'];
 

@@ -1,5 +1,6 @@
 import {
   ACTION_VFX_ASSETS,
+  ACTION_VFX_ICON_NAMES,
   EVERTHREAD_UI_ICONS,
   captureActionVfxSnapshot,
   careerActionVfx,
@@ -20,17 +21,19 @@ export function runActionVfxRegression(){
   for(const [path,kind] of careerCases) verify(careerActionVfx(path)===kind,`${path} should resolve to its supplied action icon`);
   verify(careerActionVfx('politics')===undefined,'unsupported paths should not invent an unrelated icon');
 
-  const expectedAssets:Record<ActionVfxKind,string>={
-    acting:'./vfx/action/acting.png',music:'./vfx/action/music.png',professionalSports:'./vfx/action/professional-sports.png',combatSports:'./vfx/action/combat-sports.png',modeling:'./vfx/action/modeling.png',motorsport:'./vfx/action/motorsport.png',organizedCrime:'./vfx/action/organized-crime.png',chemistryGain:'./vfx/action/chemistry-followers.png',followersGain:'./vfx/action/chemistry-followers.png',relationshipGain:'./vfx/action/relationship-gain.png',stressReduction:'./vfx/action/stress-reduction.png',stressIncrease:'./vfx/action/stress-increase.png',moneyLoss:'./vfx/action/money-loss.png',relationshipLoss:'./vfx/action/relationship-loss.png',
+  const expectedAssets:Partial<Record<ActionVfxKind,string>>={
+    acting:'./vfx/action/acting.png',music:'./vfx/action/music.png',professionalSports:'./vfx/action/professional-sports.png',combatSports:'./vfx/action/combat-sports.png',modeling:'./vfx/action/modeling.png',motorsport:'./vfx/action/motorsport.png',organizedCrime:'./vfx/action/organized-crime.png',chemistryGain:'./vfx/action/chemistry-followers.png',followersGain:'./vfx/action/chemistry-followers.png',
   };
   for(const [kind,path] of Object.entries(expectedAssets) as Array<[ActionVfxKind,string]>) verify(ACTION_VFX_ASSETS[kind]===path,`${kind} should point at the intended supplied asset`);
   verify(EVERTHREAD_UI_ICONS.cash==='./icons/cash.png','Life cash should use the supplied static cash icon');
   verify(EVERTHREAD_UI_ICONS.deceased==='./icons/deceased-stamp.png','Threadspace deaths should use the supplied deceased stamp');
+  const expectedSemanticIcons:Partial<Record<ActionVfxKind,string>>={relationshipGain:'heart',relationshipLoss:'heart-broken',stressReduction:'calm',stressIncrease:'stress',moneyGain:'coin-up',moneyLoss:'coin-down',healthGain:'health',knowledgeGain:'knowledge',giftGiven:'gift',yearAdvanced:'leaf',actionBlocked:'lock',milestone:'spark'};
+  for(const [kind,name] of Object.entries(expectedSemanticIcons) as Array<[ActionVfxKind,string]>) verify(ACTION_VFX_ICON_NAMES[kind]===name,`${kind} should use the Astra semantic result glyph`);
 
   const state=createNewGame({seed:'action-vfx-regression'});state.character.age=30;state.finances.cash=5000;state.character.secondary.stress=40;state.fame.followers=1200;
   const relationship=state.relationships[0]!;relationship.score=55;
   const before=captureActionVfxSnapshot(state);
-  verify(before.cash===5000&&before.stress===40&&before.followers===1200,'snapshot should capture UI-relevant scalar values before an action');
+  verify(before.cash===5000&&before.age===30&&before.health===state.character.stats.health&&before.intelligence===state.character.stats.intelligence&&before.stress===40&&before.followers===1200,'snapshot should capture UI-relevant scalar values before an action');
   verify(before.relationshipScores[relationship.npcId]===55,'snapshot should capture existing relationship scores by NPC');
 
   state.finances.cash=4400;state.character.secondary.stress=49;state.fame.followers=1280;relationship.score=61;
@@ -44,6 +47,14 @@ export function runActionVfxRegression(){
   derived=deriveActionVfxKinds(second,state);
   verify(derived.includes('stressReduction')&&!derived.includes('stressIncrease'),'stress recovery should emit the supplied reduction icon');
   verify(derived.includes('relationshipLoss')&&!derived.includes('relationshipGain'),'relationship decreases should emit adverse relationship feedback');
+
+  const positive=captureActionVfxSnapshot(state);state.finances.cash+=250;state.character.stats.health+=1;state.character.stats.intelligence+=1;state.character.age+=1;state.timeline.push({id:'vfx-major',year:2075,age:state.character.age,category:'random',text:'A major test milestone.',importance:3});
+  derived=deriveActionVfxKinds(positive,state);
+  verify(derived.includes('moneyGain'),'cash increases should emit money-gain feedback');
+  verify(derived.includes('healthGain'),'health increases should emit health-gain feedback');
+  verify(derived.includes('knowledgeGain'),'intelligence increases should emit knowledge-gain feedback');
+  verify(derived.includes('yearAdvanced'),'age increases should emit year-advanced feedback');
+  verify(derived.includes('milestone'),'new importance-3 timeline entries should emit milestone feedback');
 
   const third=captureActionVfxSnapshot(state);const priorIds=new Set(state.relationships.map(item=>item.npcId));
   state.relationships.push({id:'vfx-new-rel',npcId:'vfx-new-npc',type:'friend',score:90,attraction:0,compatibility:50,yearsKnown:0});

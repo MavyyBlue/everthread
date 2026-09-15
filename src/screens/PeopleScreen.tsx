@@ -68,7 +68,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const feedback=(result:EngineResult)=>onResult(result,{derive:true});
   const shareYouthExperience=(plan:YouthSocialPlan)=>{const result=gameEngine.shareExperience(plan.npcId,plan.placeId,plan.activityId);if(result.experience)setLastSharedExperience(result.experience);feedback(result);};
   const completeDate=(option:RomanticDateOption)=>{const result=gameEngine.romanticDate(npc!.id,option.placeId,option.activityId);if(result.experience)setLastRomanticDate(result.experience);feedback(result);};
-  const giveGift=(instanceId:string)=>{const result=gameEngine.giftPersonalItem(npc!.id,instanceId);if(result.gift)setLastGift(result.gift);if(result.success)setGiftPickerOpen(false);feedback(result);};
+  const giveGift=(instanceId:string)=>{const result=gameEngine.giftPersonalItem(npc!.id,instanceId);if(result.gift)setLastGift(result.gift);if(result.success)setGiftPickerOpen(false);onResult(result,{primary:'giftGiven',derive:true});};
   const shareCrossWorldExperience=(plan:CrossWorldChemistryPlan)=>{const result=gameEngine.crossWorldExperience(plan.npcId,plan.id);if(result.experience)setLastCrossWorldExperience(result.experience);feedback(result);};
   const shareResidentialExperience=(plan:ResidentialPlan)=>{const result=gameEngine.residentialExperience(plan.npcId,plan.id);if(result.experience)setLastResidentialExperience(result.experience);feedback(result);};
 
