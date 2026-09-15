@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 Shared Lives is active with 9A, 9B, 9C, 9D, and 9E certified and 9F next.**
+Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is the approved next macro phase, beginning with 10A Residential Life after the Phase 9 closeout documentation sync certifies.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`;
+- newest certified gameplay/source: Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -21,7 +21,9 @@ Current certified program baseline:
 - Phase 9D: **certified / closed**;
 - Phase 9E: **certified / closed**;
 - Phase 9F: **certified / closed**;
-- next slice: **Phase 9G — Phase 9 Closeout**.
+- Phase 9G: **certified / closed**;
+- Phase 9: **CLOSED**;
+- next slice after this mandatory docs sync certifies: **Phase 10A — Residential Life**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -167,9 +169,15 @@ Committed actions reuse the certified shared-experience evaluator and `Relations
 
 No cross-world relationship state, second affiliation graph, chemistry score, or durable outing ledger was added. Save/rewind/determinism, stale/dead/estranged safety, exact-target identity, AI/player action parity, and all established career-world regressions remain Green.
 
-### Phase 9G — Phase 9 Closeout — NEXT
+### Phase 9G — Shared Lives Closeout — CERTIFIED Run #152
 
-Close Phase 9 as an integrated program rather than adding another feature family. Cover good/bad outings, date rejection/retry and momentum, incompatible targets, stale/dead IDs, gift duplication/loss, same-year limits, preference discovery, youth/adult boundaries, cross-world context precedence, save/load/rewind, descendant continuation, exact-target consequences, determinism, bounded histories, mobile touch/accessibility, AI testbench parity, long-life behavior, and the full canonical wall. Fix genuine integration gaps only; do not create new authorities or inflate content merely for closeout.
+Certified in Run #152 on expanded source `14defab1761b1597bae584f9e0acc5d8bfe11483`, save schema **17**, dedicated integration regression **41/41**, canonical preflight 4/4, and a **197-module** production build. The committed 9G diff is test-only: one new closeout regression plus runner wiring, with no production gameplay, UI, schema, content, package, workflow, or asset change.
+
+The closeout drives one exact NPC through the complete Phase 9 stack—preference discovery, ordinary shared experience, exact-item gift, cross-world chemistry, three real dates, and Become Partners—while a decoy target verifies no consequence leakage. Combined coverage proves save/load normalized idempotence, deterministic replay, rewind recovery, descendant-continuation boundaries, stale/dead target handling, same-year social-budget contention, duplicate item-instance safety, bounded memories/history, and existing player/AI authority parity.
+
+Pre-upload local deep preflight passed **6/6**, including unchanged content audit and a **1,000-life simulation with 0 anomalies / 0 forced terminal deaths**. No production integration defect required a 9G gameplay patch.
+
+**Phase 9 — Shared Lives is CLOSED.** Preserve the single relationship graph, shared preference vocabulary/evaluator, exact-target memories, action economy, personal-inventory authority, romance metadata bounds, social-world roster ownership, deterministic save/rewind behavior, and player/AI action parity as Phase 10 begins.
 
 # Phase 10 — Living Everthread
 
@@ -223,4 +231,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 9F — Cross-World Chemistry** from certified Run #148 / schema-17 Phase 9E and the certified documentation baseline that follows it. Reuse the single shared-experience evaluator and the existing Relationship/NPC preference stack across school peers, family, friends, coworkers/managers, teammates/coaches, actors, musicians, models, racers, combat peers, military peers, and political contacts. Do not create a cross-world chemistry score or parallel relationship graph. Any school/work/career-specific chemistry consequence must flow through the authority that already owns that concept, while exact-NPC targeting, action economy, bounded memory/history, deterministic save/rewind behavior, and AI/player action parity remain preserved.
+Begin **Phase 10A — Residential Life** only after this mandatory Phase 9 closeout documentation sync certifies. Project the player residence and meaningful NPC households from existing Property/NPC household truth; support coherent home visits, sleepovers, family visits, and inherited-home continuity without creating a second property, household, or residence ledger. Preserve the complete certified Phase 9 Shared Lives authority stack when residence context is added.

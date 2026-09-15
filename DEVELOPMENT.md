@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`
-Certified gameplay baseline: Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`
+Newest certified expanded gameplay/source: Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483`
+Certified gameplay baseline: Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483`
 
 ## Product direction
 
@@ -26,11 +26,26 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Active implementation phase
+## Certified Phase 9 closeout / next implementation phase
+
+### Phase 9G — Shared Lives Closeout (CI Green Run #152)
+
+Run #152 / `14defab1761b1597bae584f9e0acc5d8bfe11483` is the certified Phase 9 closeout gameplay/test baseline on save schema **17**. Canonical preflight passed 4/4 stages and Pages deployment succeeded. Phase 9 is now **CLOSED** at the gameplay/source level; the mandatory documentation sync is the final boundary before Phase 10A implementation.
+
+- Phase 9G adds **no production gameplay code**. The committed diff is exactly one new integrated closeout regression plus runner wiring. No new authority, durable state, schema migration, content catalog, UI surface, package, workflow, or asset change was introduced.
+- Dedicated Shared Lives closeout regression is **41/41**. It proves one exact NPC can accumulate coherent Phase 9A→9F history through preferences, shared experiences, exact-item gifting, cross-world chemistry, dating momentum, and partnership without leaking consequences to a decoy target.
+- Save/load normalized idempotence, deterministic cloned replay, rewind, descendant continuation, stale/dead IDs, same-year action-budget contention, duplicate gift copies, bounded memories/history, and existing AI/player paths are covered together rather than only per-feature.
+- Canonical CI remained Green: base **82/82**, People **57/57**, AI **64/64**, Relationship Microcopy **69/69**, Phase 9A **45/45**, 9B **53/53**, 9C **40/40**, 9D **61/61**, 9E **60/60**, 9F **43/43**, 9G **41/41**, Rewind **16/16**, Dynasty **64/64**, Integrated Long-Life **105/105**, Progressive Disclosure **25/25**, minigames **19/19**, and feedback **20/20 + 23/23**.
+- Pre-upload local deep preflight passed **6/6**, including content audit and a 1,000-life simulation with **0 anomalies / 0 forced terminal deaths**; NPC population remained bounded at 125 average peak / 629 maximum.
+- Production build remains **197 modules**. People stays lazy/code-split at ~39.51 kB JS / 11.90 kB gzip; main JS stays ~1,240.49 kB / 350.95 kB gzip; existing main-chunk warning remains nonblocking.
+- Certified source SHA-256 `34f7dad87faae68d011b1dfba584dba2ca9aea799fa3e191e4790d325a179752`; dependency SHA-256 `d031866fb287b9d2065156f7dea85d0a21f5105f06b76f3941ce600c14d59518`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10376107622` (`9828561e3171a15946581e721094278eb5410977598fadb99233049d9a2ce6d5`); Pages artifact `10376302016` (`9d02b2339c44003f26f7d5032a913bf120455c783983730b7fe0c560a3355031`).
+- Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the checkpoint to `14defab1761b1597bae584f9e0acc5d8bfe11483` at `2026-09-15 01:23:20.426476+00`.
+
+**Exact next slice after this documentation sync certifies:** Phase 10A — Residential Life. Project residence/household place meaning from existing Property/NPC household truth; do not create a second property or household ledger.
 
 ### Phase 9F — Cross-World Chemistry (CI Green Run #150)
 
-Run #150 / `20b3026f577db86d821e82129b5c76fa09060413` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9F**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+Run #150 / `20b3026f577db86d821e82129b5c76fa09060413` is the certified Phase 9F historical gameplay/source baseline on save schema **17** and closes **Phase 9F**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
 
 - `CrossWorldChemistrySystem` is projection-only over authoritative Relationship, SchoolWorld, Workplace, family/friend, and special-career membership. It owns no chemistry score, affiliation graph, relationship state, or durable outing ledger.
 - The authored layer contains **22 contextual plans across 13 context families**. Promoted coworkers/classmates retain their real world context from the owning roster; professional rivals/opposition are deliberately excluded from friendly chemistry plans.
@@ -43,7 +58,7 @@ Run #150 / `20b3026f577db86d821e82129b5c76fa09060413` is the active certified ga
 - Certified preflight artifact `10373864256` (`57aabc641c42c8f34d0dc445207e73754708e5bc838b9aca71b3975251684a7d`); Pages artifact `10373799331` (`a02716ee961aa25819cece73d3e4f86e1e75e72dfbe28c108058e6c6f734c75c`).
 - Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the review checkpoint to `20b3026f577db86d821e82129b5c76fa09060413` at `2026-09-15 00:01:27.362759+00`.
 
-**Exact next slice:** Phase 9G — Phase 9 Closeout. Prove the complete Shared Lives stack as one coherent system; add no new feature breadth unless closeout QA exposes a genuine integration gap.
+**Historical handoff from 9F:** Phase 9G — Shared Lives Closeout, now certified in Run #152. The live target is Phase 10A — Residential Life after this mandatory documentation sync certifies.
 
 ### Phase 9E — Real Gifts (CI Green Run #148)
 
@@ -61,7 +76,7 @@ Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` is the active certified ga
 - Certified preflight artifact `10372914569` (`3aba83994b203611a9c09d0f201b76a5c220bea35ff84c4d955b2cfe210b68d3`); Pages artifact `10373447865` (`5b1860077132ff8d3cfb947e77d12c44523604b388fe071f0885ef7a71fe2340`).
 - Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the review checkpoint to `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` at `2026-09-14 23:22:00.588163+00`.
 
-**Historical handoff from 9E:** Phase 9F — Cross-World Chemistry, now certified in Run #150. The active target is Phase 9G — Phase 9 Closeout.
+**Historical handoff from 9E:** Phase 9F — Cross-World Chemistry, certified in Run #150 and followed by certified 9G closeout in Run #152. The live target is Phase 10A — Residential Life after the mandatory Phase 9 closeout docs sync certifies.
 
 ### Phase 9D — Dating & Romantic Momentum (CI Green Run #146)
 

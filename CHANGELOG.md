@@ -1,3 +1,23 @@
+## Phase 9G — Shared Lives Closeout — CI Green Run #152 — 2026-09-14
+
+### Added / changed
+
+- Added the dedicated **Phase 9G Shared Lives closeout regression** at **41/41** and wired it into the canonical regression runner. The closeout is deliberately test-only: no production gameplay, UI, state schema, content catalog, package, workflow, or asset source changed.
+- The integrated path drives one exact NPC through preference discovery, an ordinary shared experience, an exact owned-item gift, cross-world chemistry, real dating momentum, and the real Become Partners milestone while a decoy NPC verifies exact-target isolation.
+- Closeout coverage proves save/load semantic preservation and normalized idempotence, deterministic cloned replay, rewind recovery, descendant-continuation boundaries, stale/dead target safety, same-year social action-budget contention, duplicate gift-instance handling, bounded memories/history, AI/player authority parity, and long-horizon compatibility across the complete Phase 9 stack.
+- Pre-upload local **deep preflight passed 6/6**, including the unchanged content audit and a 1,000-life simulation with **0 anomalies / 0 forced terminal deaths**. Aggregate remained healthy at 79.3 average lifespan / 82 median, 63.0% married, 0.31 children per life, 77.3% millionaires, and bounded NPC population (125 average peak / 629 maximum).
+- Save schema remains **17**. Phase 9G introduced no new simulation authority and no new durable state.
+
+### Certification
+
+- GitHub Actions Run #152 (`34916904879`) certified expanded source `14defab1761b1597bae584f9e0acc5d8bfe11483` from upload wrapper `025e321a64191077941d0909c995362c8222eda8`. Net diff from the prior certified repository source is exactly **2 intended test files** (1 added, 1 modified); workflow import reports 3 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight PASS **4/4**; Phase 9G **41/41**; base **82/82**; People **57/57**; AI Interaction Testbench **64/64**; Relationship Microcopy **69/69**; Phase 9A **45/45**; Phase 9B **53/53**; Phase 9C **40/40**; Phase 9D **61/61**; Phase 9E **60/60**; Phase 9F **43/43**; Rewind **16/16**; Dynasty **64/64**; Integrated Long-Life **105/105**; Progressive Disclosure **25/25**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **197 modules**. People remains lazy/code-split at ~39.51 kB JS / 11.90 kB gzip; main JS is ~1,240.49 kB / 350.95 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `34f7dad87faae68d011b1dfba584dba2ca9aea799fa3e191e4790d325a179752`; dependency SHA-256 `d031866fb287b9d2065156f7dea85d0a21f5105f06b76f3941ce600c14d59518`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10376107622`, digest `9828561e3171a15946581e721094278eb5410977598fadb99233049d9a2ce6d5`; Pages artifact ID `10376302016`, digest `9d02b2339c44003f26f7d5032a913bf120455c783983730b7fe0c560a3355031`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved by `triage_status`**, no new report after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `14defab1761b1597bae584f9e0acc5d8bfe11483` at `2026-09-15 01:23:20.426476+00` with reviewed-report count 4.
+- **Phase 9G is CLOSED / CERTIFIED. Phase 9 — Shared Lives is CLOSED. Exact next slice after this mandatory documentation sync certifies: Phase 10A — Residential Life.**
+
 ## Phase 9F — Cross-World Chemistry — CI Green Run #150 — 2026-09-14
 
 ### Added / changed

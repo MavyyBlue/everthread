@@ -3,6 +3,10 @@
 Last audited: 2026-09-14
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
+## Phase 9G / Phase 9 closeout content note
+
+Certified Phase 9G adds **no executable content definitions**. It is integration/certification coverage only. Phase 9 therefore closes with **38 NPC preference tags**, **12 shared-experience activities**, **11 youth-social plans**, **8 romantic date plans**, **24 ordinary personal-item definitions** used by Real Gifts, and **22 cross-world chemistry plans across 13 context families**. Town places remain **24**, routed institution services remain **28**, valuable collectibles remain **40**, and the ordinary/random event library remains **691**.
+
 ## Phase 9E real-gifts content note
 
 Certified Phase 9E adds **no new item definitions** and no gift-only content catalog. The existing **24 authored ordinary personal items** become exact-instance gift choices through their established `preferenceTags`, evaluated against the existing **38-tag** NPC preference vocabulary. Valuable collectibles/assets remain outside ordinary gifting. Shared-experience activities remain **12**, romantic date plans remain **8**, youth-social plans remain **11**, town places remain **24**, routed institution services remain **28**, and the ordinary/random event library remains **691**.
