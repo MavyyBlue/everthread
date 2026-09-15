@@ -26,8 +26,8 @@ export function ensureNpcNamePoolCountryId(state:GameState,npc:Npc){
 }
 
 /**
- * Normalize naming-profile metadata only. This is safe on every load and deliberately
- * does not change residence; a schema-15 player who later emigrates must stay there.
+ * Normalize naming-profile metadata only. This remains separate from physical residence
+ * so cultural naming context survives the canonical Everthread-home rule.
  */
 export function normalizeNamePoolCountries(state:GameState){
   state.character.namePoolCountryId=characterNamePoolCountryId(state.character);
@@ -35,12 +35,13 @@ export function normalizeNamePoolCountries(state:GameState){
 }
 
 /**
- * Schema-14 -> 15 setting migration. It moves only the protagonist's current local
- * simulation context into Everthread. Historical names, archived social worlds,
- * education/career history, assets, relationships, timeline entries and resolved
- * world-condition history stay untouched. No RNG or runtime IDs are consumed.
+ * Canonical Everthread residence normalization. Schema-14 -> 15 used this to establish
+ * the fictional home setting; current-schema loads also reuse it to repair saves from
+ * the retired emigration mechanic. Current co-located family/local worlds move home,
+ * while historical names, archived worlds, assets, relationships, timeline entries and
+ * resolved world-condition history stay untouched. No RNG or runtime IDs are consumed.
  */
-export function migrateEverthreadSetting(state:GameState){
+export function normalizeEverthreadResidence(state:GameState){
   const previousCountryId=state.character.countryId;
   const previousCity=state.character.city;
   normalizeNamePoolCountries(state);
@@ -62,3 +63,5 @@ export function migrateEverthreadSetting(state:GameState){
   state.travel.visitedCountries=[...new Set([...(state.travel.visitedCountries??[]),EVERTHREAD_COUNTRY_ID])];
   state.travel.visitedCities=[...new Set([...(state.travel.visitedCities??[]),EVERTHREAD_CITY])];
 }
+
+export const migrateEverthreadSetting=normalizeEverthreadResidence;

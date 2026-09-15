@@ -87,8 +87,8 @@ export function runPhase8BTownMapRegression(){
 
   state.character.countryId='jp';state.character.city='Tokyo';
   const abroad=buildTownMapProjection(state);
-  verify(!abroad.playerInEverthread&&abroad.playerLocationLabel==='Tokyo, Japan','34 the Everthread map must remain a browseable hometown projection after authoritative emigration rather than rewriting residence');
-  verify(state.saveVersion===17,'35 browsing Everthread after emigration must not alter the save schema or location authority');
+  verify(!abroad.playerInEverthread&&abroad.playerLocationLabel==='Tokyo, Japan','34 the Everthread map must remain a browseable hometown projection for an out-of-setting fixture without rewriting residence');
+  verify(state.saveVersion===17,'35 browsing Everthread from an out-of-setting fixture must not alter save schema or location authority');
 
   return checks;
 }

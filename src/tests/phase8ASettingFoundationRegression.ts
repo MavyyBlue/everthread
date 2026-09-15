@@ -63,8 +63,8 @@ export function runPhase8ASettingFoundationRegression(){
 
   const remigrated=migrateSave(structuredClone(migrated));
   verify(JSON.stringify(remigrated)===JSON.stringify(migrated),'current-schema normalization must be idempotent after the one-time setting migration');
-  const emigrated=structuredClone(migrated);emigrated.character.countryId='jp';emigrated.character.city='Tokyo';const normalized=migrateSave(emigrated);
-  verify(normalized.character.countryId==='jp'&&normalized.character.city==='Tokyo'&&normalized.character.namePoolCountryId===oldCountry,'current-schema loads must preserve later emigration instead of forcing the protagonist back to Everthread');
+  const legacyExternal=structuredClone(migrated);legacyExternal.character.countryId='jp';legacyExternal.character.city='Tokyo';const normalized=migrateSave(legacyExternal);
+  verify(normalized.character.countryId===EVERTHREAD_COUNTRY_ID&&normalized.character.city===EVERTHREAD_CITY&&normalized.character.namePoolCountryId===oldCountry,'current-schema saves from the retired emigration mechanic must deterministically return the protagonist to Everthread while preserving naming context');
 
   return checks;
 }

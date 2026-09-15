@@ -1,6 +1,10 @@
 import { primaryNavigationItems } from '../core/navigation';
 import { createInstitutionRouteRequest, resolveInstitutionDestination } from '../core/institutionRouting';
+import { EVERTHREAD_CITY, EVERTHREAD_COUNTRY_ID } from '../data/countries';
 import { TOWN_MAP_HEIGHT, TOWN_MAP_WIDTH, TOWN_PLACES } from '../data/townPlaces';
+import { migrateSave } from '../services/SaveSystem';
+import { createNewGame } from '../systems/CharacterSystem';
+import { emigrate, travel } from '../systems/TravelSystem';
 
 export function runPrePhase10EPlayerUxRegression(){
   let checks=0;
@@ -22,6 +26,30 @@ export function runPrePhase10EPlayerUxRegression(){
   verify(JSON.stringify(resolveInstitutionDestination('music'))===JSON.stringify({tab:'career',careerTab:'special',specialPath:'music'}),'8 Music routing must focus the established Career special-path authority');
   const requestA=createInstitutionRouteRequest('threadtone-music-studio','music',901);const requestB=createInstitutionRouteRequest('threadtone-music-studio','music',901);
   verify(Boolean(requestA&&requestA.placeId==='threadtone-music-studio'&&requestA.resolved.tab==='career'&&JSON.stringify(requestA)===JSON.stringify(requestB)),'9 Music Studio route requests must preserve authored place identity and resolve deterministically');
+
+  const airport=TOWN_PLACES.find(place=>place.id==='everthread-air-terminal');
+  const airportRoute=airport?.routes?.find(route=>route.id==='travel');
+  verify(Boolean(airport&&airportRoute&&airportRoute.destination==='travel'&&!airport.activityTags.includes('emigration')),'10 the Airport must remain a travel doorway without advertising permanent relocation');
+  verify(Boolean(airportRoute&&!/emigra/i.test(`${airportRoute.label} ${airportRoute.description}`)),'11 Airport route copy must describe temporary trips only');
+
+  const vacation=createNewGame({seed:'pre10e-everthread-vacation'});vacation.character.age=30;vacation.finances.cash=1_000_000;const vacationHome=`${vacation.character.countryId}|${vacation.character.city}`;
+  const vacationResult=travel(vacation,'jp');
+  verify(vacationResult.success&&`${vacation.character.countryId}|${vacation.character.city}`===vacationHome&&vacation.travel.visitedCountries.includes('jp'),'12 an international vacation must record the destination without changing canonical residence');
+
+  const familyTrip=createNewGame({seed:'pre10e-everthread-family-trip'});familyTrip.character.age=12;for(const npc of Object.values(familyTrip.npcs))npc.wealth=1_000_000;const familyHome=`${familyTrip.character.countryId}|${familyTrip.character.city}`;
+  const familyResult=travel(familyTrip,'ca',undefined,true);
+  verify(familyResult.success&&`${familyTrip.character.countryId}|${familyTrip.character.city}`===familyHome&&familyTrip.travel.visitedCountries.includes('ca'),'13 a family trip must stay temporary and leave the family home authority in Everthread');
+
+  const blocked=createNewGame({seed:'pre10e-retired-emigration'});blocked.character.age=30;blocked.finances.cash=1_000_000;blocked.character.stats.intelligence=100;blocked.character.secondary.reputation=100;const blockedBefore=JSON.stringify(blocked);
+  const blockedResult=emigrate(blocked,'jp');
+  verify(!blockedResult.success&&/permanent home/i.test(blockedResult.messages[0]?.text??'')&&JSON.stringify(blocked)===blockedBefore,'14 the retired engine-level emigration action must fail without consuming or mutating gameplay state');
+
+  const legacyExternal=createNewGame({seed:'pre10e-legacy-external'});legacyExternal.character.age=32;legacyExternal.character.countryId='jp';legacyExternal.character.city='Tokyo';legacyExternal.travel.visitedCountries=[EVERTHREAD_COUNTRY_ID,'jp'];legacyExternal.travel.visitedCities=[EVERTHREAD_CITY,'Tokyo, Japan'];const colocatedParent=legacyExternal.npcs[legacyExternal.relationships.find(rel=>rel.type==='parent')!.npcId]!;colocatedParent.countryId='jp';colocatedParent.city='Tokyo';const migrationRng=legacyExternal.rngCounter,migrationId=legacyExternal.idCounter;
+  const normalized=migrateSave(legacyExternal);
+  verify(normalized.character.countryId===EVERTHREAD_COUNTRY_ID&&normalized.character.city===EVERTHREAD_CITY,'15 current-schema saves left abroad by the retired mechanic must normalize back to Everthread');
+  verify(normalized.npcs[colocatedParent.id]?.countryId===EVERTHREAD_COUNTRY_ID&&normalized.npcs[colocatedParent.id]?.city===EVERTHREAD_CITY,'16 a co-located family member from a retired-emigration save must return with the protagonist instead of remaining in an impossible household split');
+  verify(normalized.travel.visitedCountries.includes('jp')&&normalized.travel.visitedCities.includes('Tokyo, Japan'),'17 normalization must preserve historical trip/location history rather than erasing where the life has been');
+  verify(normalized.rngCounter===migrationRng&&normalized.idCounter===migrationId&&JSON.stringify(migrateSave(structuredClone(normalized)))===JSON.stringify(normalized),'18 residence normalization must be RNG/ID-neutral and idempotent');
 
   return checks;
 }

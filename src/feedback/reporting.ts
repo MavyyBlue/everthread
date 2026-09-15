@@ -21,7 +21,7 @@ export const FEEDBACK_INTERFACES:FeedbackInterfaceDefinition[]=[
     {id:'threadspace',label:'Threadspace'},{id:'person-profile',label:'Person profile'},{id:'relationship-action',label:'Relationship action'},{id:'family-planning',label:'Family planning'},{id:'search-filter',label:'Search, filters & navigation'},
   ]},
   {id:'activities',label:'Activities',actions:[
-    {id:'wellness',label:'Health & wellness'},{id:'social',label:'Social activities'},{id:'travel',label:'Travel & emigration'},{id:'licenses',label:'Licenses'},{id:'crime-prison',label:'Crime & prison'},{id:'pets',label:'Pets'},{id:'collectibles',label:'Collectibles'},
+    {id:'wellness',label:'Health & wellness'},{id:'social',label:'Social activities'},{id:'travel',label:'Travel'},{id:'licenses',label:'Licenses'},{id:'crime-prison',label:'Crime & prison'},{id:'pets',label:'Pets'},{id:'collectibles',label:'Collectibles'},
   ]},
   {id:'career',label:'Career',actions:[
     {id:'education',label:'Education'},{id:'job-search',label:'Job search & applications'},{id:'workplace',label:'Workplace'},{id:'career-world',label:'Career Worlds'},{id:'special-career',label:'Special career action'},{id:'retirement',label:'Retirement / leaving a path'},

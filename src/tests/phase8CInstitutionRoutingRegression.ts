@@ -35,7 +35,7 @@ export function runPhase8CInstitutionRoutingRegression(){
   verify(JSON.stringify(resolved('everthread-college','admissions'))===JSON.stringify({tab:'career',careerTab:'education',careerAnchor:'education-admissions'}),'16 the college must route to established post-secondary admissions with owner-side eligibility intact');
   verify(JSON.stringify(resolved('everthread-general-hospital','healthcare'))===JSON.stringify({tab:'activities',activitySheet:'health'}),'17 the hospital must route directly to established healthcare treatment');
   verify(JSON.stringify(resolved('pulseworks-gym','wellness'))===JSON.stringify({tab:'activities',activityAnchor:'wellness'}),'19 the gym must route to established wellness actions without copying their limits or effects');
-  verify(JSON.stringify(resolved('everthread-air-terminal','travel'))===JSON.stringify({tab:'activities',activitySheet:'travel'}),'20 the air terminal must route to established travel/emigration controls');
+  verify(JSON.stringify(resolved('everthread-air-terminal','travel'))===JSON.stringify({tab:'activities',activitySheet:'travel'}),'20 the air terminal must route to established temporary travel controls');
 
   for(const justiceId of ['everthread-courthouse','public-safety-center','everthread-correctional']){
     const route=place(justiceId).routes?.[0];

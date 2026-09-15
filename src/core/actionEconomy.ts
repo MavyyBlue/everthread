@@ -60,7 +60,6 @@ export const ACTION_POLICIES = {
   'fame.activity.total': { maxPerAge: 2, message: 'You have already taken on several major publicity opportunities this year.' },
   'fame.activity.kind': { maxPerAge: 1, message: 'You already completed that kind of publicity opportunity this year.' },
   'travel.trip': { maxPerAge: 3, message: 'You have already taken several substantial trips this year.' },
-  'travel.emigrate': { maxPerAge: 1, message: 'You already made an emigration decision this year.' },
   'license.test': { maxPerAge: 1, message: 'You already attempted that license test this year.' },
   'crime.total': { maxPerAge: 3, message: 'You have already committed or attempted several crimes this year.' },
   'crime.kind': { maxPerAge: 1, message: 'You already attempted that crime this year.' },

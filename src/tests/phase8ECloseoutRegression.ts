@@ -77,9 +77,9 @@ export async function runPhase8ECloseoutRegression(){
   const remigrated=migrateSave(structuredClone(migratedA));
   verify(JSON.stringify(remigrated)===JSON.stringify(migratedA),'24 current-schema normalization must be idempotent after the complete Phase 8 migration chain');
 
-  const emigrated=createNewGame({seed:'phase8e-emigrated'});emigrated.character.countryId='jp';emigrated.character.city='Tokyo';const emigratedBefore=JSON.stringify(emigrated);const hometown=buildTownMapProjection(emigrated);const profile=projectPlayerProfile(emigrated);
-  verify(!hometown.playerInEverthread&&profile.location==='Tokyo, Japan','25 map browsing must not rewrite authoritative residence after emigration');
-  verify(JSON.stringify(emigrated)===emigratedBefore,'26 hometown browsing and player-profile projection must remain non-mutating while abroad');
+  const externalFixture=createNewGame({seed:'phase8e-external-fixture'});externalFixture.character.countryId='jp';externalFixture.character.city='Tokyo';const fixtureBefore=JSON.stringify(externalFixture);const hometown=buildTownMapProjection(externalFixture);const profile=projectPlayerProfile(externalFixture);
+  verify(!hometown.playerInEverthread&&profile.location==='Tokyo, Japan','25 read-only projections must tolerate an out-of-setting fixture without silently mutating it');
+  verify(JSON.stringify(externalFixture)===fixtureBefore,'26 hometown browsing and player-profile projection must remain non-mutating even for an invalid external fixture');
 
   const hidden=createNewGame({seed:'phase8e-hidden'});const hiddenBefore=JSON.stringify(hidden);const normal=buildTownMapProjection(hidden),inclusive=buildTownMapProjection(hidden,{includeUndiscovered:true});
   verify(normal.hiddenPlaceCount===1&&inclusive.places.length===TOWN_PLACES.length,'27 underworld visibility must remain a projection of existing state rather than durable map discovery state');

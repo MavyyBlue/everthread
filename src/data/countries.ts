@@ -5,7 +5,7 @@ export const EVERTHREAD_CITY='Everthread';
 
 // Economic values are intentionally simplified game-balance values, not claims of real-world precision.
 // Everthread is the fictional home jurisdiction used by the life simulation; the remaining
-// entries stay available as travel/emigration destinations and as hidden naming profiles.
+// entries stay available as temporary travel destinations and as hidden naming profiles.
 export const countries: CountryDefinition[] = [
   { id:EVERTHREAD_COUNTRY_ID, name:'Everthread', cities:[EVERTHREAD_CITY], currency:'E$', taxRate:.24, universityCost:16000, healthcareModel:'mixed', salaryMultiplier:1, lifeExpectancyModifier:2, crimeModifier:.85, royalFamily:false, militaryBranches:['Civic Defense Corps','Air Service','Maritime Service'] },
   { id:'us', name:'United States', cities:['Boston','Chicago','Austin','Seattle','Atlanta','Denver'], currency:'$', taxRate:.24, universityCost:28000, healthcareModel:'insurance-heavy', salaryMultiplier:1.12, lifeExpectancyModifier:0, crimeModifier:1.02, royalFamily:false, militaryBranches:['Army','Navy','Air Service','Marine Service','Coast Service'] },

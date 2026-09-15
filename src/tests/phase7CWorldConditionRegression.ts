@@ -66,8 +66,8 @@ export function runPhase7CWorldConditionRegression(){
   check(expiry.rngCounter===expiryRng,'17 expiration/bookkeeping must remain RNG-neutral');
 
   const locality=adult('phase7c-locality','us');attachCondition(locality,'housing_squeeze',2,'us');attachCondition(locality,'travel_disruption');locality.character.countryId='ca';
-  const caModifiers=worldConditionModifiers(locality);check(caModifiers.housingGrowthRateDelta===0&&caModifiers.travelCostMultiplier>1,'18 emigrating away must stop old-country modifiers while global conditions continue');
-  check(relevantWorldConditions(locality).length===1&&relevantWorldConditions(locality)[0]?.definitionId==='travel_disruption','19 relevant-condition projection must filter out conditions from a former country');
+  const caModifiers=worldConditionModifiers(locality);check(caModifiers.housingGrowthRateDelta===0&&caModifiers.travelCostMultiplier>1,'18 an external-country fixture must stop old-country modifiers while global conditions continue');
+  check(relevantWorldConditions(locality).length===1&&relevantWorldConditions(locality)[0]?.definitionId==='travel_disruption','19 relevant-condition projection must filter out conditions from a non-current fixture country');
   const caCards=activeWorldConditionCards(locality);check(caCards.length===1&&caCards[0]?.scopeLabel==='Global'&&caCards[0].remainingYears===3,'20 player-facing condition cards must show only relevant scope with remaining duration');
   locality.character.countryId='us';const usCards=activeWorldConditionCards(locality);check(usCards.length===2&&usCards.some(card=>card.scopeLabel==='United States'),'21 returning to the affected country must reveal its still-active national condition');
 
