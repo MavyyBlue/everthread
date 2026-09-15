@@ -20,6 +20,7 @@ import { projectRomanticDateOptions } from '../systems/RomanticDateSystem';
 import { projectPersonalGiftOptions } from '../systems/GiftSystem';
 import { projectCrossWorldChemistryPlans } from '../systems/CrossWorldChemistrySystem';
 import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from '../systems/ResidentialLifeSystem';
+import { businessWorkLocation, workingEverthreadProjection } from '../systems/WorkingEverthreadSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -276,6 +277,7 @@ function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
   };
   if(screen==='career')return{
     employment:{current:state.employment.current?structuredClone(state.employment.current):undefined,history:state.employment.history.slice(-6).map(item=>structuredClone(item)),partTimeJobs:state.employment.partTimeJobs.map(item=>structuredClone(item))},
+    workingEverthread:workingEverthreadProjection(state),
     lifecycles:specialCareerLifecycleViews(state),
     worlds:persistentCareerWorlds(state).map(world=>({id:world.id,name:world.name,active:world.active,startedAge:world.startedAge,endedAge:world.endedAge,memberCount:world.members.length})),
     tracks:structuredClone(state.specialCareers),
@@ -287,7 +289,7 @@ function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
     vehicles:state.assets.vehicles.map(item=>({id:item.id,typeId:item.typeId,name:item.name,value:item.value,condition:item.condition,category:item.category})),
     collectibles:state.assets.collectibles.map(item=>({id:item.id,itemId:item.itemId,name:item.name,estimatedValue:item.estimatedValue,rarity:item.rarity})),
     investments:state.investments.positions.map(item=>structuredClone(item)),
-    businesses:state.businesses.map(item=>({id:item.id,name:item.name,industryId:item.industryId,profit:item.profit,valuation:item.valuation,bankrupt:item.bankrupt,productIds:[...item.productIds]})),
+    businesses:state.businesses.map(item=>({id:item.id,name:item.name,industryId:item.industryId,countryId:item.countryId,city:item.city,profit:item.profit,valuation:item.valuation,bankrupt:item.bankrupt,productIds:[...item.productIds],workLocation:businessWorkLocation(state,item)})),
   };
 }
 

@@ -174,5 +174,22 @@ export async function runAiInteractionRegression(){
     verify(residentialSleepovers.length===1&&genericSleepovers.length===0,'72 AI People parity must deduplicate the 9C generic sleepover when the residence-aware 10A sleepover is available for the same exact youth NPC');
   });
 
+  const workingState=createNewGame({seed:'ai-test-working-everthread'});workingState.character.age=30;workingState.currentYear=2070;workingState.education=[];
+  const aiSchoolWorld:SocialWorld={id:'ai-working-school',kind:'school',name:'Everthread College World',countryId:'everthread',city:'Everthread',startedAge:29,active:true,members:[],groups:[],school:{stage:'university',educationKey:'ai-college',attendance:92,conduct:95,socialStanding:60,honors:1,disciplinaryActions:0}};
+  const aiWorkWorld:SocialWorld={id:'ai-working-office',kind:'workplace',name:'Threadline Finance',countryId:'everthread',city:'Everthread',startedAge:28,active:true,members:[],groups:[],workplace:{employmentKey:'full_time|28|Threadline Finance',employmentKind:'full_time',industry:'Finance',department:'Operations',morale:65,culture:62,tension:18,reputation:58,layoffs:0,disputes:0}};
+  const aiPartWorld:SocialWorld={id:'ai-working-retail',kind:'workplace',name:'Crossroads Retail',countryId:'everthread',city:'Everthread',startedAge:29,active:true,members:[],groups:[],workplace:{employmentKey:'part_time|29|Crossroads Retail',employmentKind:'part_time',industry:'Retail',department:'Sales',morale:62,culture:60,tension:20,reputation:55,layoffs:0,disputes:0}};
+  workingState.socialWorlds.push(aiSchoolWorld,aiWorkWorld,aiPartWorld);workingState.businesses.push({id:'ai-working-business',industryId:'software',name:'Blue Loom Labs',foundedAge:27,countryId:'everthread',city:'Everthread',capital:200_000,revenue:100_000,expenses:70_000,profit:30_000,employees:5,demand:60,reputation:58,valuation:350_000,productIds:['software_product_1'],priceIndex:1,marketingBudget:5_000,compensationIndex:1,bankrupt:false});
+  workingState.character.countryId='us';workingState.character.city='Seattle';
+  await withEverthreadAiTestbench({state:workingState,screen:'career'},async workingBench=>{
+    const career=workingBench.observe('career');const working=career.data.workingEverthread as {institution?:{anchorPlaceId?:string;districtId?:string};workplaces:Array<{sourceId:string;anchorPlaceId?:string;districtId?:string}>;businesses:Array<{sourceId:string;countryId:string;city:string;districtId?:string}>};
+    verify(working.institution?.anchorPlaceId==='everthread-college'&&working.institution?.districtId==='campus-green','73 Career semantic observation must expose the exact local institution anchor from SchoolWorld truth');
+    verify(working.workplaces.some(item=>item.sourceId==='ai-working-office'&&item.anchorPlaceId==='central-everthread-bank'&&item.districtId==='central-weave'),'74 Career semantic observation must project the active finance workplace to its exact Everthread work anchor');
+    verify(working.workplaces.some(item=>item.sourceId==='ai-working-retail'&&item.anchorPlaceId==='crossroads-mall'&&item.districtId==='market-row')&&working.workplaces.length===2,'75 Career semantic observation must preserve distinct full-time and part-time workplace locations instead of merging work truth');
+    const before=JSON.stringify(workingBench.getState());workingBench.observe('career');verify(JSON.stringify(workingBench.getState())===before,'76 Working Everthread semantic observation must remain read-only');
+    const assets=workingBench.observe('assets');const business=(assets.data.businesses as Array<{id:string;countryId?:string;city?:string;workLocation?:{inEverthread?:boolean;districtId?:string;anchorPlaceId?:string;locationLabel?:string}}>).find(item=>item.id==='ai-working-business');
+    verify(business?.countryId==='everthread'&&business.city==='Everthread'&&business.workLocation?.inEverthread===true&&business.workLocation.districtId==='eastworks','77 Assets semantic observation must expose the company-owned founding location even after the player relocates');
+    verify(business?.workLocation?.anchorPlaceId==='loomworks-business-district'&&business.workLocation.locationLabel?.includes('Loomworks Business District'),'78 business semantic location must reuse the deterministic existing-town anchor rather than a synthetic workplace place');
+  });
+
   return checks;
 }

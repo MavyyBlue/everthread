@@ -24,6 +24,9 @@ export interface NpcBusinessHolding {
   industryId: Id;
   name: string;
   foundedYear: number;
+  /** Business-base provenance preserved when ownership crosses generations. */
+  countryId?: Id;
+  city?: string;
   acquiredAge: number;
   valuation: Money;
   annualProfit: Money;

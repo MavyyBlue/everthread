@@ -66,6 +66,7 @@ import { runPhase9ERealGiftsRegression } from './phase9ERealGiftsRegression';
 import { runPhase9FCrossWorldChemistryRegression } from './phase9FCrossWorldChemistryRegression';
 import { runPhase9GSharedLivesCloseoutRegression } from './phase9GSharedLivesCloseoutRegression';
 import { runPhase10AResidentialLifeRegression } from './phase10AResidentialLifeRegression';
+import { runPhase10BWorkingEverthreadRegression } from './phase10BWorkingEverthreadRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -136,5 +137,6 @@ try{const checks=runPhase9ERealGiftsRegression();console.log(`Phase 9E real-gift
 try{const checks=runPhase9FCrossWorldChemistryRegression();console.log(`Phase 9F cross-world chemistry regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase9GSharedLivesCloseoutRegression();console.log(`Phase 9G Shared Lives closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runPhase10AResidentialLifeRegression();console.log(`Phase 10A Residential Life regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runPhase10BWorkingEverthreadRegression();console.log(`Phase 10B Working Everthread regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;

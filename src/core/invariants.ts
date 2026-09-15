@@ -152,6 +152,11 @@ export function enforceStateInvariants(state: GameState): GameState {
     for (const duplicate of spouseRelations.slice(1)) duplicate.type = 'ex';
   }
 
+  for (const business of state.businesses ?? []) {
+    if(typeof business.countryId!=='string'||!business.countryId)business.countryId=state.character.countryId;
+    if(typeof business.city!=='string'||!business.city)business.city=state.character.city;
+  }
+
   for (const rel of state.relationships) {
     rel.score = clamp(rel.score);
     rel.attraction = clamp(rel.attraction);
@@ -201,7 +206,7 @@ export function enforceStateInvariants(state: GameState): GameState {
     const boundedBusinesses=[];
     for(const business of npc.assetPortfolio.businesses??[]){
       if(!business?.id||npcBusinessIds.has(business.id))continue;
-      business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
+      business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.countryId=typeof business.countryId==='string'&&business.countryId?business.countryId:npc.countryId;business.city=typeof business.city==='string'&&business.city?business.city:npc.city;business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
       npcBusinessIds.add(business.id);
       if(boundedBusinesses.length<NPC_ASSET_LIMITS.portfolioBusinesses)boundedBusinesses.push(business);
       else if(business.active)npc.wealth+=Math.max(0,Math.round(business.valuation));
@@ -223,7 +228,7 @@ export function enforceStateInvariants(state: GameState): GameState {
       const trustBusinesses=[];
       for(const business of Array.isArray(trust.businesses)?trust.businesses:[]){
         if(!business?.id||npcBusinessIds.has(business.id))continue;
-        business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
+        business.valuation=Math.max(0,Number.isFinite(business.valuation)?business.valuation:0);business.annualProfit=Number.isFinite(business.annualProfit)?business.annualProfit:0;business.employees=Math.max(0,Math.floor(business.employees??0));business.reputation=clamp(business.reputation);business.foundedYear=Math.max(1900,Math.floor(business.foundedYear??state.currentYear));business.countryId=typeof business.countryId==='string'&&business.countryId?business.countryId:npc.countryId;business.city=typeof business.city==='string'&&business.city?business.city:npc.city;business.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(business.acquiredAge??npc.age)));business.active=Boolean(business.active);
         npcBusinessIds.add(business.id);
         if(trustBusinesses.length<NPC_ASSET_LIMITS.portfolioBusinesses)trustBusinesses.push(business);else if(business.active)liquid+=Math.max(0,Math.round(business.valuation));
       }

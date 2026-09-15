@@ -460,6 +460,9 @@ export interface Business {
   industryId: Id;
   name: string;
   foundedAge: number;
+  /** Physical base owned by the business record so companies do not teleport when the player relocates. */
+  countryId?: Id;
+  city?: string;
   capital: Money;
   revenue: Money;
   expenses: Money;
