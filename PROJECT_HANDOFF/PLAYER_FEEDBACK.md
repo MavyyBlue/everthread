@@ -13,7 +13,7 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`**, save schema **17**. Phases 7 and 8 are closed; **Phase 9A**, **9B**, **9C**, **9D — Dating & Romantic Momentum**, and **9E — Real Gifts** are certified/closed; Phase 9F — Cross-World Chemistry is next.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`**, save schema **17**. Phases 7 and 8 are closed; **Phase 9A–9F** are certified/closed; Phase 9G — Phase 9 Closeout is next.
 
 Central Feedback Inbox infrastructure:
 
@@ -94,7 +94,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Fresh post-Run-#148 live central-inbox read found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` now points to certified **Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`** at `2026-09-14 23:22:00.588163+00`.
+Fresh post-Run-#150 live central-inbox read found **4 rows / 0 unresolved by `triage_status`**, with no new report row after `2026-09-13 19:51:36.119407+00`. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` now points to certified **Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`** at `2026-09-15 00:01:27.362759+00`.
 
 - Reviewed reports in checkpoint: **4**.
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
@@ -102,6 +102,6 @@ Fresh post-Run-#148 live central-inbox read found **4 rows / 0 unresolved by `tr
 - `ET-20260913-0AA876B7`: **resolved → backend_defect**, fixed/deployed in Run #114.
 - `ET-20260913-BE8649B9`: **resolved → suggestion**, fixed/deployed in Run #117. Early-life Activities and Career/Life Paths hide age-ineligible choices until unlock while gameplay guards remain authoritative.
 - Newest recorded report receipt remains **2026-09-13 19:51:36.119407 UTC**.
-- Review-state checkpoint key `main` is `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`, checked at `2026-09-14 23:22:00.588163+00`, with four reviewed reports.
+- Review-state checkpoint key `main` is `20b3026f577db86d821e82129b5c76fa09060413`, checked at `2026-09-15 00:01:27.362759+00`, with four reviewed reports.
 - Player-visible disposition read-back remains certified and deployed.
-- The fresh post-Run-#148 inbox read contains no actionable item that preempts **Phase 9F — Cross-World Chemistry**.
+- The fresh post-Run-#150 inbox read contains no actionable item that preempts **Phase 9G — Phase 9 Closeout**.

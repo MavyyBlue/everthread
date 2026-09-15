@@ -5,7 +5,7 @@ Status: **Active Mavyy-approved program. Phase 8 is certified / closed; Phase 9 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`;
+- newest certified gameplay/source: Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -20,7 +20,8 @@ Current certified program baseline:
 - Phase 9C: **certified / closed**;
 - Phase 9D: **certified / closed**;
 - Phase 9E: **certified / closed**;
-- next slice: **Phase 9F — Cross-World Chemistry**.
+- Phase 9F: **certified / closed**;
+- next slice: **Phase 9G — Phase 9 Closeout**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -156,13 +157,19 @@ Gift is now inventory-driven. The player chooses an exact owned Phase 8D persona
 
 Failed/stale/dead/ineligible attempts preserve ownership; a successful committed gift—good or bad—removes exactly one instance. Duplicate copies remain independent, stale instance replay cannot duplicate transfer, rewind restores inventory and consequences atomically, and descendants do not inherit the prior protagonist's ordinary possessions by accident. Valuable collectibles/assets stay with their existing authorities. No broad durable NPC inventory was added.
 
-### Phase 9F — Cross-World Chemistry
+### Phase 9F — Cross-World Chemistry — CERTIFIED Run #150
 
-Reuse shared experiences with school peers, family, friends, coworkers/managers, teammates/coaches, actors, musicians, models, racers, combat peers, military peers, and political contacts. Any school/work/career chemistry effect must flow through the authority that already owns that concept.
+Certified in Run #150 on expanded source `20b3026f577db86d821e82129b5c76fa09060413`, save schema **17**, dedicated regression **43/43**, AI semantic parity **64/64**, canonical preflight 4/4, and a **197-module** production build.
 
-### Phase 9G — Phase 9 Closeout
+`CrossWorldChemistrySystem` is a read-only projection over existing school, family/friend, workplace, and special-career memberships. The authored layer contains **22 contextual plans across 13 context families** and uses the exact active world the selected NPC genuinely shares with the player. Promoted classmates/coworkers retain their real world context through the authoritative rosters; professional rivals/opposition are excluded from friendly chemistry plans.
 
-Cover good/bad outings, rejection/retry, incompatible targets, stale/dead IDs, gift duplication/loss, same-year limits, save/load/rewind, descendant continuation, exact-target consequences, determinism, bounded histories, testbench parity, and the full canonical wall.
+Committed actions reuse the certified shared-experience evaluator and `RelationshipSystem`, consume the established per-person social budget, use existing places/activities/preferences, and write bounded exact-target memories. No school/work/career stat is mutated directly by the projection. Instead, SchoolWorld, Workplace, and special-career owners continue deriving standing/morale/chemistry/support/cohesion from the authoritative relationships they already own. A music-world regression proves that the existing career chemistry projection rises from the same real relationship changed by the contextual outing.
+
+No cross-world relationship state, second affiliation graph, chemistry score, or durable outing ledger was added. Save/rewind/determinism, stale/dead/estranged safety, exact-target identity, AI/player action parity, and all established career-world regressions remain Green.
+
+### Phase 9G — Phase 9 Closeout — NEXT
+
+Close Phase 9 as an integrated program rather than adding another feature family. Cover good/bad outings, date rejection/retry and momentum, incompatible targets, stale/dead IDs, gift duplication/loss, same-year limits, preference discovery, youth/adult boundaries, cross-world context precedence, save/load/rewind, descendant continuation, exact-target consequences, determinism, bounded histories, mobile touch/accessibility, AI testbench parity, long-life behavior, and the full canonical wall. Fix genuine integration gaps only; do not create new authorities or inflate content merely for closeout.
 
 # Phase 10 — Living Everthread
 

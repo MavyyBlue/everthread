@@ -1,3 +1,24 @@
+## Phase 9F — Cross-World Chemistry — CI Green Run #150 — 2026-09-14
+
+### Added / changed
+
+- Added one read-only `CrossWorldChemistrySystem` that projects contextual shared experiences from existing school, family/friend, workplace, and special-career memberships without creating a second relationship graph, chemistry score, affiliation ledger, or durable outing history.
+- Added **22 contextual plans across 13 context families**. The exact active world the selected NPC genuinely shares with the player determines available plans; promoted classmates/coworkers retain context through their authoritative rosters, while professional rivals/opposition are excluded from friendly chemistry plans.
+- Contextual outings commit through the existing Phase 9B shared-experience evaluator and `RelationshipSystem`, consume the same per-person social opportunity budget, reuse established places/activities/preferences, and write bounded exact-target NPC memories.
+- School/work/career domain state is not directly mutated by 9F. Existing SchoolWorld, Workplace, and special-career owners continue deriving standing, morale/tension/performance, chemistry/support/cohesion, and related projections from the authoritative relationships they already own.
+- People Threadspace and AI semantic interactions use the same production `crossWorldExperience` action. The AI music scenario proves the real relationship change is immediately visible to the existing career-world chemistry projection.
+- Save schema remains **17**; no migration, package, workflow, asset, or content-catalog change was required.
+
+### Certification
+
+- GitHub Actions Run #150 (`34911249505`) certified expanded source `20b3026f577db86d821e82129b5c76fa09060413` from upload wrapper `40de88d080262ee062b58410def64a13c3eee0aa`. Net diff from the prior certified repository source is exactly **10 intended Phase 9F source/test/UI files**; workflow import reports 11 changes only because it removes `everthread-source.zip`.
+- Canonical preflight PASS **4/4**; Phase 9F **43/43**; base **82/82**; People **57/57**; AI Interaction Testbench **64/64**; Relationship Microcopy **69/69**; Phase 9A **45/45**; Phase 9B **53/53**; Phase 9C **40/40**; Phase 9D **61/61**; Phase 9E **60/60**; Rewind **16/16**; Dynasty **64/64**; Integrated Long-Life **105/105**; special-career world **77/77**; combat **51/51**; military **65/65**; politics **80/80**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build PASS with Vite 7.3.6 at **197 modules**. People remains lazy/code-split at ~39.51 kB JS / 11.90 kB gzip; main JS is ~1,240.49 kB / 350.95 kB gzip; the established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `4df9280b04a99dc30ad25363f235c69fc71f147bc2000099280582d9634ee68e`; dependency SHA-256 `03680451a3a9add1209e03c646df5de6d82e1fd44f83426fe715838c1ca2041e`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10373864256`, digest `57aabc641c42c8f34d0dc445207e73754708e5bc838b9aca71b3975251684a7d`; Pages artifact ID `10373799331`, digest `a02716ee961aa25819cece73d3e4f86e1e75e72dfbe28c108058e6c6f734c75c`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved by `triage_status`**, no new report after `2026-09-13 19:51:36.119407+00`, and successfully advanced the stored review checkpoint to `20b3026f577db86d821e82129b5c76fa09060413` at `2026-09-15 00:01:27.362759+00`.
+- **Phase 9F is CLOSED / CERTIFIED. Next slice:** Phase 9G — Phase 9 Closeout.
+
 ## Phase 9E — Real Gifts — CI Green Run #148 — 2026-09-14
 
 ### Added / changed

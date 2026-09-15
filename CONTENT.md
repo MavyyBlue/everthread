@@ -109,6 +109,7 @@ No executable content-database counts change in Phase 6B3. Bills & Payments, ann
 | Shared experience activity definitions | 12 | — | Phase 9B foundation + Phase 9C youth-bounded Sleepover and School Social |
 | Youth-social plan definitions | 11 | — | Phase 9C contextual plans over existing relationships/shared experiences |
 | Romantic date plan definitions | 8 | — | Phase 9D authored date contexts reusing existing places/activities |
+| Cross-world chemistry plan definitions | 22 | — | Phase 9F contextual plans across 13 existing social/career world families |
 | Regional name pools | 7 | hundreds of names per region | Expanded; country/subregion depth still useful |
 | First names per regional pool | 120 | hundreds/region | 6× increase; 840 total active first-name entries |
 | Last names per regional pool | 120 | hundreds/region | 6× increase; 840 total surname entries |

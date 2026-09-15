@@ -3,8 +3,8 @@
 Last updated: 2026-09-14
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`
-Certified gameplay baseline: Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`
+Newest certified expanded gameplay/source: Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`
+Certified gameplay baseline: Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`
 
 ## Product direction
 
@@ -28,6 +28,23 @@ The project is intentionally data-driven. React renders and requests actions; si
 
 ## Active implementation phase
 
+### Phase 9F — Cross-World Chemistry (CI Green Run #150)
+
+Run #150 / `20b3026f577db86d821e82129b5c76fa09060413` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9F**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
+
+- `CrossWorldChemistrySystem` is projection-only over authoritative Relationship, SchoolWorld, Workplace, family/friend, and special-career membership. It owns no chemistry score, affiliation graph, relationship state, or durable outing ledger.
+- The authored layer contains **22 contextual plans across 13 context families**. Promoted coworkers/classmates retain their real world context from the owning roster; professional rivals/opposition are deliberately excluded from friendly chemistry plans.
+- Contextual outings commit through the certified shared-experience/`RelationshipSystem` path and consume the existing per-person social budget. Existing place/activity/preference definitions are reused; no parallel experience evaluator was added.
+- School/work/career progression is not directly mutated by 9F. Existing SchoolWorld, Workplace, and special-career projections respond because they already derive social standing, morale/tension/performance, chemistry/support/cohesion, and related context from real relationships.
+- People Threadspace and AI semantic interactions expose the same exact contextual plan/action. The AI music scenario proves a real relationship improvement immediately raises the existing career-world chemistry projection.
+- Save schema remains **17**. Dedicated Phase 9F regression is **43/43**. AI interaction testbench is **64/64**, Relationship Microcopy **69/69**, Phase 9A **45/45**, Phase 9B **53/53**, Phase 9C **40/40**, Phase 9D **61/61**, Phase 9E **60/60**, People **57/57**, Rewind **16/16**, Dynasty **64/64**, Integrated Long-Life **105/105**, special-career world **77/77**, combat **51/51**, military **65/65**, politics **80/80**, base **82/82**, minigames **19/19**, and feedback **20/20 + 23/23**; the complete established wall remained Green.
+- Production build transformed **197 modules**. People remains lazy/code-split at ~39.51 kB JS / 11.90 kB gzip; main JS is ~1,240.49 kB / 350.95 kB gzip; the established main-chunk warning remains nonblocking.
+- Certified source SHA-256 `4df9280b04a99dc30ad25363f235c69fc71f147bc2000099280582d9634ee68e`; dependency SHA-256 `03680451a3a9add1209e03c646df5de6d82e1fd44f83426fe715838c1ca2041e`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact `10373864256` (`57aabc641c42c8f34d0dc445207e73754708e5bc838b9aca71b3975251684a7d`); Pages artifact `10373799331` (`a02716ee961aa25819cece73d3e4f86e1e75e72dfbe28c108058e6c6f734c75c`).
+- Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the review checkpoint to `20b3026f577db86d821e82129b5c76fa09060413` at `2026-09-15 00:01:27.362759+00`.
+
+**Exact next slice:** Phase 9G — Phase 9 Closeout. Prove the complete Shared Lives stack as one coherent system; add no new feature breadth unless closeout QA exposes a genuine integration gap.
+
 ### Phase 9E — Real Gifts (CI Green Run #148)
 
 Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` is the active certified gameplay/source baseline on save schema **17** and closes **Phase 9E**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
@@ -44,7 +61,7 @@ Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` is the active certified ga
 - Certified preflight artifact `10372914569` (`3aba83994b203611a9c09d0f201b76a5c220bea35ff84c4d955b2cfe210b68d3`); Pages artifact `10373447865` (`5b1860077132ff8d3cfb947e77d12c44523604b388fe071f0885ef7a71fe2340`).
 - Post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt, and advanced the review checkpoint to `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` at `2026-09-14 23:22:00.588163+00`.
 
-**Exact next slice:** Phase 9F — Cross-World Chemistry. Reuse the certified shared-experience/gift/preference foundation across school, family, workplace, and special-career relationships; any school/work/career-specific chemistry consequence must flow through the system that already owns that concept.
+**Historical handoff from 9E:** Phase 9F — Cross-World Chemistry, now certified in Run #150. The active target is Phase 9G — Phase 9 Closeout.
 
 ### Phase 9D — Dating & Romantic Momentum (CI Green Run #146)
 

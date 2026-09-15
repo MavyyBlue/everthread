@@ -6,10 +6,10 @@ This is sequencing guidance, not a rigid promise. Mavyy controls creative direct
 
 The required post-Phase-7 brainstorm is complete. Mavyy approved the **Living World Program** as the next direction. The detailed authority, player-intent, migration, QA, and slice contract lives in `PROJECT_HANDOFF/LIVING_WORLD_PROGRAM.md`.
 
-Current certified context: **Run #148 / `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`**, save schema **17**. **Phase 8 — Everthread: Home is closed/certified**; **Phase 9A**, **9B**, **9C**, **9D — Dating & Romantic Momentum**, and **9E — Real Gifts** are certified/closed. The exact next slice is **9F Cross-World Chemistry**.
+Current certified context: **Run #150 / `20b3026f577db86d821e82129b5c76fa09060413`**, save schema **17**. **Phase 8 — Everthread: Home is closed/certified**; **Phase 9A**, **9B**, **9C**, **9D — Dating & Romantic Momentum**, **9E — Real Gifts**, and **9F — Cross-World Chemistry** are certified/closed. The exact next slice is **9G Phase 9 Closeout**.
 
 1. **Phase 8 — Everthread: Home** — **CLOSED / CERTIFIED.** 8A Everthread Setting Foundation is CI Green in Run #125. 8B Town Place Registry & 2D Flat Map is CI Green in Run #127, with the authored-map presentation correction certified in Run #129. 8C Institution Routing is CI Green in Run #131. 8D Player Profile & Personal Inventory is CI Green in Run #133 on schema 16. Run #135 certified the critical lazy People/Map/Profile load-recovery hotfix, and Run #137 certified 8E access/migration/mobile closeout at 34/34 with no authority or schema change.
-2. **Phase 9 — Shared Lives** — **active; 9A, 9B, 9C, 9D, and 9E certified, next 9F Cross-World Chemistry.** Then Phase 9 closeout.
+2. **Phase 9 — Shared Lives** — **active; 9A–9F certified, next 9G Phase 9 Closeout.** Close only after integration, determinism, save/rewind/dynasty, mobile/AI parity, long-life, and full-wall evidence are Green.
 3. **Phase 10 — Living Everthread** — residential/workplace projections, bounded generational place memory, and a living map that reflects meaningful current/dynasty context without becoming a second simulation.
 
 **Sequencing rule:** one certified slice at a time. After every certified gameplay/feature/fix/migration/architecture commit, complete the mandatory documentation synchronization before beginning the next slice.

@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #148** (`34908361877`) on expanded source **`a9e53a6840d0fa05790acb3e20ce963a2df51f0e`**. This is the certified Phase 9E Real Gifts baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #148 remains the gameplay baseline.
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #150** (`34911249505`) on expanded source **`20b3026f577db86d821e82129b5c76fa09060413`**. This is the certified Phase 9F Cross-World Chemistry baseline on schema 17. The mandatory documentation synchronization that follows changes no gameplay; after that docs-only sync certifies, its expanded docs commit becomes the newest repository source while Run #150 remains the gameplay baseline.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -19,11 +19,12 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #148**
 - Phase 9C — Childhood & Youth Social Life: **CERTIFIED / CLOSED**
 - Phase 9D — Dating & Romantic Momentum: **CERTIFIED / CLOSED**
 - Phase 9E — Real Gifts: **CERTIFIED / CLOSED**
-- Exact next implementation slice: **Phase 9F — Cross-World Chemistry**
+- Phase 9F — Cross-World Chemistry: **CERTIFIED / CLOSED**
+- Exact next implementation slice: **Phase 9G — Phase 9 Closeout**
 - Phase 9 — Shared Lives: **ACTIVE**
 - Planned Phase 10: **Living Everthread**
-- Fresh post-Run-#148 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
-- The stored review checkpoint successfully advanced to **`a9e53a6840d0fa05790acb3e20ce963a2df51f0e`** at **`2026-09-14 23:22:00.588163+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified 9E gameplay baseline.
+- Fresh post-Run-#150 Supabase Feedback Inbox read: **4 total reports / 0 unresolved by `triage_status`; no new report rows since 2026-09-13 19:51:36.119407+00**.
+- The stored review checkpoint successfully advanced to **`20b3026f577db86d821e82129b5c76fa09060413`** at **`2026-09-15 00:01:27.362759+00`** with reviewed-report count **4**. Feedback bookkeeping is synchronized with the certified 9F gameplay baseline.
 - Real-device player QA after the Run #135 critical recovery hotfix confirmed the original Android failure path works again: Map and People Threadspace load normally, and Player Profile is healthy.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing or implementing the next slice.
@@ -35,7 +36,28 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #148 — Phase 9E Real Gifts
+## Newest certified gameplay/source — Run #150 — Phase 9F Cross-World Chemistry
+
+- Upload wrapper: `40de88d080262ee062b58410def64a13c3eee0aa`.
+- Expanded certified source: `20b3026f577db86d821e82129b5c76fa09060413`.
+- GitHub Actions Run #150: `34911249505`.
+- Net diff from the prior certified repository source is exactly **10 intended Phase 9F source/test/UI files** (4 added, 6 modified). Workflow import reports 11 changed files only because it removes `everthread-source.zip`; no documentation, package, workflow, asset, content-catalog, or save-schema drift is part of the committed gameplay diff.
+- Save schema remains **17**. `CrossWorldChemistrySystem` is a read-only projection over existing Relationship, SchoolWorld, Workplace, family/friend, and special-career world membership; it creates no second affiliation graph, chemistry score, relationship state, or durable outing ledger.
+- The authored layer contains **22 cross-world plans across 13 context families**. It chooses the exact active world the selected NPC genuinely shares with the player, including promoted classmates/coworkers that retain real world membership, while professional rivals/opposition are excluded from friendly chemistry plans.
+- Committed contextual outings reuse the certified shared-experience path and `RelationshipSystem`; they consume the same per-person social budget, use existing places/activities/preferences, and write bounded exact-target memories. No school/work/career stat is mutated directly by the projection layer.
+- Existing world owners observe the changed authoritative relationship naturally: SchoolWorld social standing, Workplace morale/tension/performance, and special-career chemistry/support/cohesion continue to derive from their own established relationship inputs rather than receiving duplicate hidden bonuses.
+- People Threadspace exposes contextual shared-world plans only when appropriate. AI semantic parity discovers and executes the same exact professional plan through `GameEngine.crossWorldExperience`; a music-world regression proves the existing career chemistry projection rises from the real relationship change.
+- Phase 9F regression **43/43**; canonical preflight **4/4**. Base **82/82**; People **57/57**; AI **64/64**; Relationship Microcopy **69/69**; Phase 9A **45/45**; Phase 9B **53/53**; Phase 9C **40/40**; Phase 9D **61/61**; Phase 9E **60/60**; Rewind **16/16**; Dynasty **64/64**; Integrated Long-Life **105/105**; Progressive Disclosure **25/25**; special-career world **77/77**; combat **51/51**; military **65/65**; politics **80/80**; minigames **19/19**; feedback **20/20 + 23/23**; all established suites remained Green.
+- Production build: Vite 7.3.6, **197 modules transformed**. People remains lazy/code-split at ~39.51 kB JS / 11.90 kB gzip; main JS ~1,240.49 kB / 350.95 kB gzip. Established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256: `4df9280b04a99dc30ad25363f235c69fc71f147bc2000099280582d9634ee68e`.
+- Certified dependency SHA-256: `03680451a3a9add1209e03c646df5de6d82e1fd44f83426fe715838c1ca2041e`.
+- Certified package-lock SHA-256: `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`.
+- Certified preflight artifact ID `10373864256`, digest `57aabc641c42c8f34d0dc445207e73754708e5bc838b9aca71b3975251684a7d`.
+- Pages artifact ID `10373799331`, digest `a02716ee961aa25819cece73d3e4f86e1e75e72dfbe28c108058e6c6f734c75c`; Pages deployment reported success.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `20b3026f577db86d821e82129b5c76fa09060413` at `2026-09-15 00:01:27.362759+00`.
+- **Phase 9F is CLOSED / CERTIFIED. Exact next slice: Phase 9G — Phase 9 Closeout.**
+
+## Prior certified gameplay/source — Run #148 — Phase 9E Real Gifts
 
 - Upload wrapper: `d2f4ee0f052387f6a91fec78210f0efc69b0b7ba`.
 - Expanded certified source: `a9e53a6840d0fa05790acb3e20ce963a2df51f0e`.
@@ -54,7 +76,7 @@ Candidate save schema: none
 - Certified preflight artifact ID `10372914569`, digest `3aba83994b203611a9c09d0f201b76a5c220bea35ff84c4d955b2cfe210b68d3`.
 - Pages artifact ID `10373447865`, digest `5b1860077132ff8d3cfb947e77d12c44523604b388fe071f0885ef7a71fe2340`; Pages deployment reported success.
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the stored review checkpoint to `a9e53a6840d0fa05790acb3e20ce963a2df51f0e` at `2026-09-14 23:22:00.588163+00`.
-- **Phase 9E is CLOSED / CERTIFIED. Exact next slice: Phase 9F — Cross-World Chemistry.**
+- **Phase 9E is CLOSED / CERTIFIED. It was succeeded by certified Phase 9F in Run #150.**
 
 ## Prior certified gameplay/source — Run #146 — Phase 9D Dating & Romantic Momentum
 
@@ -272,11 +294,13 @@ Phase 9B is certified. Reuse the single shared-experience evaluator for age-appr
 
 Do not create a youth-only relationship score, shadow social ledger, duplicate friend state, or a second experience evaluator. Phase 9C is now certified and closed.
 
-### Approved next slice — Phase 9F Cross-World Chemistry
+### Certified Phase 9F — Cross-World Chemistry
 
-Reuse the certified Phase 9B shared-experience evaluator and the Phase 9A/9E preference context across existing school, family, workplace, and special-career relationships. Do not create cross-world relationship state, chemistry scores, or a second affiliation graph. Any effect on school standing, workplace standing, team/career chemistry, public-life standing, or other domain-specific progression must be applied through the system that already owns that concept. Exact NPC identity, action economy, RNG, bounded memories, save/rewind/dynasty integrity, and AI/player action parity remain mandatory.
+Run #150 certified one read-only cross-world context projection over existing school, family/friend, workplace, and special-career membership. Contextual outings commit through the certified shared-experience/Relationship path; domain owners continue deriving school/work/career chemistry from the authoritative relationships they already own. No cross-world relationship state, second affiliation graph, chemistry score, or durable outing ledger exists. Dedicated regression is **43/43** and AI semantic parity is **64/64**.
 
-Do not begin Phase 9G Closeout until 9F is independently certified and synchronized.
+### Approved next slice — Phase 9G Phase 9 Closeout
+
+Close Phase 9 by proving the entire Shared Lives stack remains coherent as one system: preferences, shared experiences, youth social life, dating/momentum, real gifts, and cross-world chemistry. Re-test good/bad outcomes, rejection/retry, incompatible/stale/dead targets, same-year limits, save/load/rewind, descendant continuation, exact-target consequences, determinism, bounded histories, mobile/AI parity, long-life behavior, and the full canonical wall. Do not add new gameplay breadth merely to make the closeout look larger; fix only real integration gaps found by closeout QA.
 
 ## Historical feedback snapshot after Run #141 / `f1be1e6…`
 
