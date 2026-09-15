@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #176 / `f01d1847ba943b285c61d2fb787298ecb76d08ff`
-Certified gameplay baseline: Run #176 / `f01d1847ba943b285c61d2fb787298ecb76d08ff`
+Newest certified expanded gameplay/source: Run #178 / `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`
+Certified gameplay baseline: Run #178 / `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`
 
 ## Product direction
 
@@ -26,7 +26,22 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified Character Visual slice — Run #176 — Family resemblance + visual inheritance
+## Newest certified post-closeout slice — Run #178 — Secret Yuki / Hidden Threadroom
+
+Run #178 gives the Sandbox secret-origin Yuki one authored visual identity and one unique People interaction surface without creating a parallel NPC, relationship, affection, family, or save authority.
+
+- Expanded certified source: `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`, schema **17**. Upload wrapper `ef2d29fea290d6d23b7e3ae310fada6e58a356eb`; Actions Run ID `35025458317`; job `104571277415`. Base synchronized source was `73512a2666290c980ba6841528bf811cd45fe932`; net diff is exactly **9 intended source/test files**.
+- Secret code `9426` still creates one ordinary persistent NPC + Relationship. `SecretCodeSystem` now materializes the authored Yuki portrait and stamps a permanent `secret_yuki_9426` memory used as the durable secret-origin identity marker. Name matching alone never grants special routing.
+- `normalizeSecretYukiState` repairs already-spawned pre-curation Yuki saves deterministically/idempotently on current-schema load: same NPC, same relationship/history, curated portrait + reveal restored, no gameplay RNG/runtime IDs consumed. Save schema remains **17**.
+- `YukiThreadroomSystem.peopleSurfaceForNpc` owns the routing projection. Secret-origin Yuki opens a dedicated full-screen Hidden Threadroom from Threadspace; ordinary NPCs, including decoys with the same name/identity fields but no origin memory, keep the normal People profile.
+- The Threadroom is presentation over existing authorities: `CharacterPortrait`, NPC memories, Relationship, action-economy gates, and `GameEngine.interactWithCharacter`. Six conversation topics plus greetings/status are read-only projections; quick interactions use ordinary engine actions; mature dates/gifts/milestones/family/residential systems remain reachable through the existing profile actions doorway.
+- Canonical preflight **4/4 Green**. Secret-code/Threadroom **32/32**; Character Visual **60/60**; Family Visual **27/27**; base **82/82**; People **57/57**; Threadspace recovery **10/10**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback regressions **20/20 + 23/23**.
+- Production build: **215 modules**; People lazy surface ~**50.76/15.18 kB gzip**; lazy character-art pack ~**971.11/69.18**; main ~**1,358.35/379.57**; CSS ~**87.92/16.19**. Existing large-chunk warning remains nonblocking.
+- Certified source SHA `c91e04d2fa246a4af4421ea48fe32b7fea543c5d48160a8afa4fc0d7e78f6fe2`; dependency SHA `d5a1c173c3bffb7ae194d1c7b0beaa07ebbdf086ee7a35d718cacde7ead62fa6`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10418778648`; Pages artifact `10419241565`; deployment succeeded.
+- Feedback refresh after Run #178 could not complete because the Supabase connector returned repeated upstream HTTP 502 errors. Do **not** infer a fresh inbox state from the Green backend regressions; the last verified checkpoint remains Run #176 at **5 total / 0 unresolved** until the next successful sweep.
+- Next planned Character Visual work remains richer aging/presentation behavior over the same stable identities, after documentation synchronization and feedback refresh. No Phase 11 label is implied.
+
+## Prior certified Character Visual slice — Run #176 — Family resemblance + visual inheritance
 
 Run #176 extends the certified NPC portrait authority into biological family resemblance without introducing a genetics database or changing family/legal topology ownership.
 
@@ -40,7 +55,7 @@ Run #176 extends the certified NPC portrait authority into biological family res
 - Production build: **212 modules**; lazy character-art pack ~**971.11/69.18 kB gzip**; People ~**42.29/12.50**; main ~**1,357.50/379.07**; CSS ~**87.92/16.19**. Existing large-chunk warning remains nonblocking.
 - Certified source SHA `8ec0d5d05f48d28539a75e99582c84ebf171d04c0ec8d0c3080c171aeb1046b6`; dependency SHA `40193bb92ce6e8f4a27ea713d5c2a6c2aa20499ccf455c118d9e2a564ee7abc9`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10417129753`; Pages artifact `10418125056`; deployment succeeded.
 - Feedback sweep: **5 total / 0 unresolved**. Review checkpoint `main` successfully advanced to Run #176 source at `2026-09-15 20:42:29.766439+00`, reviewed count **5**.
-- Next planned Character Visual slice is richer aging/presentation behavior over the same stable identities. No Phase 11 label is implied.
+- Run #178 now certifies the narrow Secret Yuki / Hidden Threadroom slice over this visual foundation. Richer aging/presentation remains the next planned Character Visual slice. No Phase 11 label is implied.
 
 ## Prior certified Character Visual slice — Run #174 — NPC identity + relationship reveal
 

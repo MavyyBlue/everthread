@@ -1,3 +1,23 @@
+## Secret Yuki / Hidden Threadroom — CI Green Run #178 — 2026-09-15
+
+### Added / changed
+
+- Upgraded Sandbox secret code `9426` from a generic randomized NPC spawn into one authored **Yuki Aster** identity while preserving the existing NPC/Relationship simulation authorities. The secret NPC still lives in ordinary `GameState`, ages normally, keeps memories, participates in relationships/family systems, and receives consequences through the same systems as every other person.
+- `SecretCodeSystem` now owns one curated modular appearance for the secret-origin Yuki: heart/soft facial structure, long wavy white hair, rose-ivory skin, ice-blue eyes, and a dark pullover-hoodie presentation. A permanent `secret_yuki_9426` NPC memory is the durable identity marker; routing never depends on the display name alone.
+- Added deterministic/idempotent current-schema repair for already-spawned pre-curation Yuki saves. Repair restores the authored portrait, permanent secret flag, and immediate portrait reveal without consuming gameplay RNG or allocating runtime IDs. Save schema remains **17**.
+- Added `YukiThreadroomSystem` and a dedicated full-screen `YukiThreadroom` surface. Selecting the secret-origin Yuki in People Threadspace routes to the Hidden Threadroom instead of the ordinary NPC profile. Ordinary/decoy NPCs named Yuki continue to use the normal profile.
+- The Threadroom uses the existing `CharacterPortrait`, Relationship, NPC memories, and engine interaction authority. It provides a large authored portrait, relationship-aware greeting/status, six original conversation threads, recent memories, relationship summary, and bounded quick interactions. Conversation-topic reading is explicitly state/RNG neutral.
+- Existing dates, gifts, milestones, marriage, family planning, residential experiences, work links, and other mature relationship systems remain reachable through a secondary **Life & relationship actions** doorway rather than being duplicated or removed. Childhood redemption remains age-matched and friendship-appropriate, with normal dating/family gates preserved.
+
+### Certification
+
+- GitHub Actions Run #178 (`35025458317`, job `104571277415`) certified expanded source `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2` from upload wrapper `ef2d29fea290d6d23b7e3ae310fada6e58a356eb`. Net source diff from synchronized baseline `73512a2666290c980ba6841528bf811cd45fe932` is exactly **9 intended source/test files**; workflow import reports 10 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4**. Secret-code / Hidden Threadroom regression **32/32**; Character Visual **60/60**; Family Visual Inheritance **27/27**; base **82/82**; People **57/57**; Threadspace recovery **10/10**; Family Reproduction **52/52**; Age-Aware Reproduction **22/22**; Family Topology **40/40**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Integrated Long-Life **105/105**; 10E **103/103**; New Life responsive **8/8**; minigames **19/19**; feedback regressions **20/20 + 23/23**.
+- Production build passed at **215 modules**. People lazy surface ~**50.76/15.18 kB gzip**; lazy `characterArtPack` remains ~**971.11/69.18**; main ~**1,358.35/379.57**; CSS ~**87.92/16.19**. The established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `c91e04d2fa246a4af4421ea48fe32b7fea543c5d48160a8afa4fc0d7e78f6fe2`; dependency SHA-256 `d5a1c173c3bffb7ae194d1c7b0beaa07ebbdf086ee7a35d718cacde7ead62fa6`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10418778648` (`d3179b417effdcf6d57f13651b94fd4445d40d2c749ad86d17e18a2e9e49c0e9`); Pages artifact `10419241565` (`e1d8ece084efb23bd17f8bdf3935c4e3da2d2ed864bd9758126ad086c1198a3b`); Pages deployment reported success.
+- Post-certification Feedback Inbox refresh was attempted three times, but the Supabase connector returned upstream HTTP 502 errors even for a minimal connectivity query. Therefore no fresh inbox claim or review-state advancement is recorded for Run #178. The last verified durable feedback checkpoint remains Run #176 (`f01d1847ba943b285c61d2fb787298ecb76d08ff`), **5 total / 0 unresolved**, pending the next successful inbox sweep.
+- This is a narrow post-closeout Character Visual/People interaction slice, **not Phase 11** and not a reopening of the Living World Program. Richer aging/presentation remains the next planned Character Visual slice after documentation synchronization and a successful feedback refresh.
+
 ## Family resemblance + visual inheritance — CI Green Run #176 — 2026-09-15
 
 ### Added / changed

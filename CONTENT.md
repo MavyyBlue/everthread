@@ -1,3 +1,7 @@
+## Secret Yuki / Hidden Threadroom — Run #178
+
+Run #178 adds **6 bespoke Hidden Threadroom conversation topics** plus reactive greeting/status/presentation copy for the secret-origin Yuki NPC. These are local character-surface copy, not `GameEventDefinition`s and not additions to the global event/place/career/education/inventory/preference catalogs. The slice reuses the existing **624 modular Character Visual SVG components**; no new portrait art asset definitions were added. Certified tracked totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.
+
 ## Family Visual inheritance — Run #176
 
 Run #176 adds **no authored gameplay/event/place/career/inventory/art definitions**. It reuses the existing **624 modular Character Visual SVG components** and existing family/NPC records to derive deterministic biological resemblance. Optional visual provenance and the new regression suite are systems/QA metadata, not content-catalog growth. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.

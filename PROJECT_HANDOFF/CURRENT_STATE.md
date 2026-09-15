@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #176** (`35021096077`) on expanded source **`f01d1847ba943b285c61d2fb787298ecb76d08ff`**, save schema **17**. Run #176 extends the certified Character Visual stack with deterministic biological family resemblance and visual inheritance while preserving Family Topology as the sole family/legal authority and keeping background descendants portrait-lazy. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #178** (`35025458317`) on expanded source **`7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`**, save schema **17**. Run #178 adds the authored secret-origin Yuki identity and dedicated Hidden Threadroom over the existing NPC/Relationship/Character Visual authorities without creating parallel simulation state. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,10 +16,10 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #176**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Fresh post-Run-#176 Supabase Feedback Inbox: **5 total / 0 unresolved**; no new receipt after `2026-09-15 06:47:52.761298+00`. The prior Map-memory report remains resolved.
-- Durable feedback review-state row now points to Run #176 source `f01d1847ba943b285c61d2fb787298ecb76d08ff` at `2026-09-15 20:42:29.766439+00`, reviewed count **5**.
+- Post-Run-#178 feedback refresh was attempted three times, but the Supabase connector returned upstream HTTP 502 errors even for a minimal connectivity query. **No fresh inbox state is claimed for Run #178.**
+- Last verified Feedback Inbox state remains **5 total / 0 unresolved** with durable review-state pointing to Run #176 source `f01d1847ba943b285c61d2fb787298ecb76d08ff` at `2026-09-15 20:42:29.766439+00`, reviewed count **5**. Refresh this before the next implementation slice.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, Run #174 deterministic NPC identity/reveal plus descendant portrait continuity, and Run #176 biological family resemblance/inheritance. Richer aging/presentation remains the next planned slice. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
+- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, Run #174 deterministic NPC identity/reveal plus descendant portrait continuity, Run #176 biological family resemblance/inheritance, and Run #178 the narrow secret-origin Yuki identity/Hidden Threadroom slice. Richer aging/presentation remains the next planned Character Visual slice after a successful feedback refresh. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -30,7 +30,21 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #176 — Family resemblance + visual inheritance
+## Newest certified gameplay/source — Run #178 — Secret Yuki / Hidden Threadroom
+
+- Upload wrapper `ef2d29fea290d6d23b7e3ae310fada6e58a356eb`; expanded certified source `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`; Actions Run ID `35025458317`; job `104571277415`. Net diff from synchronized baseline `73512a2666290c980ba6841528bf811cd45fe932` is exactly **9 intended source/test files**.
+- Secret code `9426` creates the same single persistent Yuki Aster NPC + Relationship as before, but now materializes one curated stable portrait. A permanent `secret_yuki_9426` NPC memory is the secret-origin marker; display name alone is never sufficient for special behavior.
+- `normalizeSecretYukiState` repairs already-spawned randomized/current-schema Yuki saves to the authored identity and portrait reveal without recreating the NPC, changing relationship/history, consuming gameplay RNG, or allocating runtime IDs. Save schema remains **17**.
+- People selection routes the exact secret-origin Yuki to the dedicated full-screen Hidden Threadroom. Ordinary NPCs—including a decoy with the same name/visual fields but no secret-origin memory—continue to use the ordinary profile.
+- Hidden Threadroom presentation consumes the existing `CharacterPortrait`, Relationship, NPC memory, action-economy, and GameEngine authorities. Six authored conversation topics plus relationship-aware greeting/status are read-only projections. Quick interactions call ordinary engine social actions; mature dates, gifts, milestones, family planning, residential experiences, and other systems remain available through the existing profile actions doorway.
+- Childhood redemption remains age-matched/friendship-appropriate and all established dating/reproduction age/sex gates remain authoritative.
+- Secret-code / Hidden Threadroom regression **32/32**; Character Visual **60/60**; Family Visual **27/27**; base **82/82**; People **57/57**; Threadspace recovery **10/10**; Family Reproduction **52/52**; Age-Aware Reproduction **22/22**; Family Topology **40/40**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life responsive **8/8**; minigames **19/19**; feedback regressions **20/20 + 23/23**. Canonical preflight **4/4 Green**.
+- Production build **215 modules**. Lazy character-art pack ~**971.11/69.18 gzip kB**; People ~**50.76/15.18**; main ~**1,358.35/379.57**; CSS ~**87.92/16.19**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `c91e04d2fa246a4af4421ea48fe32b7fea543c5d48160a8afa4fc0d7e78f6fe2`; dependency SHA `d5a1c173c3bffb7ae194d1c7b0beaa07ebbdf086ee7a35d718cacde7ead62fa6`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10418778648` (`d3179b417effdcf6d57f13651b94fd4445d40d2c749ad86d17e18a2e9e49c0e9`); Pages artifact `10419241565` (`e1d8ece084efb23bd17f8bdf3935c4e3da2d2ed864bd9758126ad086c1198a3b`); deployment succeeded.
+- Feedback refresh after certification is **pending** because three Supabase connector attempts returned upstream HTTP 502. Last verified checkpoint remains Run #176 at **5 total / 0 unresolved**; retry before the next implementation slice.
+- Next planned Character Visual slice: richer aging/presentation behavior over the same stable identities, after feedback refresh.
+
+## Prior certified gameplay/source — Run #176 — Family resemblance + visual inheritance
 
 - Upload wrapper `8e2ad27b7f37f759dcfbb20fd975334c8b93fdb1`; expanded certified source `f01d1847ba943b285c61d2fb787298ecb76d08ff`; Actions Run ID `35021096077`; job `104556658034`. Net diff from synchronized baseline `3c6b781fada2deb7894e98fc0f9baf25dfcec9e0` is exactly **8 intended source/test files**.
 - Existing family topology remains authoritative. Optional `Npc.appearanceParentIds` stores only biological visual provenance for new modeled biological children; adoption does not set it, and old saves do not infer biological provenance from historical `parentIds`.
