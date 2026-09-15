@@ -1,3 +1,7 @@
+## Family Visual inheritance — Run #176
+
+Run #176 adds **no authored gameplay/event/place/career/inventory/art definitions**. It reuses the existing **624 modular Character Visual SVG components** and existing family/NPC records to derive deterministic biological resemblance. Optional visual provenance and the new regression suite are systems/QA metadata, not content-catalog growth. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.
+
 ## NPC Character Visual identity + reveal — Run #174
 
 Run #174 adds **no authored gameplay/event/place/career/inventory/art definitions**. It reuses the certified **624 modular Character Visual SVG components** for deterministic NPC portraits and relationship-based reveal. Background-only NPCs remain visually lazy, so this feature does not inflate the content catalog merely to populate unseen faces. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.

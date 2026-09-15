@@ -1,12 +1,12 @@
 # Everthread — Living World Program
 
-Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10 in Run #166. Post-closeout Runs #168, #170, #172, and #174 add approved presentation/character-visual/mobile-UX work without reopening the program. Character Visual is a separate approved feature direction, not Phase 11.**
+Status: **CLOSED / CERTIFIED. The Mavyy-approved Living World Program completed Phases 8, 9, and 10 in Run #166. Post-closeout Runs #168, #170, #172, #174, and #176 add approved presentation/character-visual/mobile-UX work without reopening the program. Character Visual is a separate approved feature direction, not Phase 11.**
 
 Approved: 2026-09-13 after Phase 7 closeout. Closed: 2026-09-15 after Run #166.
 
 Final certified program baseline:
 - final certified Living World Program gameplay/source: Run #166 / `7523f6919ad808f7d826c42cd471d61e1f4f4678`;
-- newest certified post-closeout gameplay/source: Run #174 / `69117c363124615a35683d03cbc0ab7a06472c06`;
+- newest certified post-closeout gameplay/source: Run #176 / `f01d1847ba943b285c61d2fb787298ecb76d08ff`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -19,7 +19,7 @@ Final certified program baseline:
 
 This remains the authority-boundary record for the closed Living World Program. Future work must preserve these certified contracts unless Mavyy deliberately reopens a design decision with migration/QA coverage.
 
-Post-closeout certification notes: Run #168 (`34973140255`) integrates the approved Astra presentation iconography and repairs Appearance/theme reactivity. Run #170 (`35001748216`) establishes the player Character Visual foundation on `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`: one existing appearance authority, deterministic/RNG-neutral enrichment, a mobile New Life creator, and a lazy modular portrait renderer. Run #172 (`35006276096`) certifies the narrow-phone New Life responsive-width hotfix on `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` with a dedicated 8/8 layout regression and no simulation/save/schema changes. Run #174 (`35016561442`) certifies deterministic NPC portrait identity and relationship-based reveal on `69117c363124615a35683d03cbc0ab7a06472c06` while keeping identity on existing NPC records, learned reveal knowledge on existing Relationships, background visuals lazy, and descendant portrait continuity intact. None of these slices reopens the Living World Program or creates a macro phase.
+Post-closeout certification notes: Run #168 (`34973140255`) integrates the approved Astra presentation iconography and repairs Appearance/theme reactivity. Run #170 (`35001748216`) establishes the player Character Visual foundation on `ef87fb8011b8ec9d6dc606c328db9b1c0882d942`: one existing appearance authority, deterministic/RNG-neutral enrichment, a mobile New Life creator, and a lazy modular portrait renderer. Run #172 (`35006276096`) certifies the narrow-phone New Life responsive-width hotfix on `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` with a dedicated 8/8 layout regression and no simulation/save/schema changes. Run #174 (`35016561442`) certifies deterministic NPC portrait identity and relationship-based reveal on `69117c363124615a35683d03cbc0ab7a06472c06` while keeping identity on existing NPC records, learned reveal knowledge on existing Relationships, background visuals lazy, and descendant portrait continuity intact. Run #176 (`35021096077`) certifies biological family visual inheritance on `f01d1847ba943b285c61d2fb787298ecb76d08ff`: family/legal topology stays authoritative, optional NPC visual provenance is biological-only, adoption never fabricates genetics, background descendants remain portrait-lazy, and inheritance is deterministic/RNG-neutral. None of these slices reopens the Living World Program or creates a macro phase.
 
 ## North star
 

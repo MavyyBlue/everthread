@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #174 / `69117c363124615a35683d03cbc0ab7a06472c06`
-Certified gameplay baseline: Run #174 / `69117c363124615a35683d03cbc0ab7a06472c06`
+Newest certified expanded gameplay/source: Run #176 / `f01d1847ba943b285c61d2fb787298ecb76d08ff`
+Certified gameplay baseline: Run #176 / `f01d1847ba943b285c61d2fb787298ecb76d08ff`
 
 ## Product direction
 
@@ -26,7 +26,23 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified Character Visual slice — Run #174 — NPC identity + relationship reveal
+## Newest certified Character Visual slice — Run #176 — Family resemblance + visual inheritance
+
+Run #176 extends the certified NPC portrait authority into biological family resemblance without introducing a genetics database or changing family/legal topology ownership.
+
+- Expanded certified source: `f01d1847ba943b285c61d2fb787298ecb76d08ff`, schema **17**. Upload wrapper `8e2ad27b7f37f759dcfbb20fd975334c8b93fdb1`; Actions Run ID `35021096077`; job `104556658034`. Base synchronized source was `3c6b781fada2deb7894e98fc0f9baf25dfcec9e0`; net diff is exactly **8 intended source/test files**.
+- Optional `Npc.appearanceParentIds` records only biological **visual provenance** at child creation. Existing `parentIds` / `childIds` and Family Topology remain the sole family/legal relationship authority. Adoption intentionally receives no biological visual provenance, and old schema-17 saves do not infer it retroactively from ambiguous historical parent links.
+- `NpcVisualSystem` deterministically mixes nine structural/color traits from available biological visual contributors: face, eyes, brows, nose, mouth, ears, skin palette, hair-color palette, and iris palette. Hair style, body, clothing, facial hair, details, eyewear, accessories, and expression remain the child's individual presentation.
+- Siblings share a deterministic family anchor while child-specific variation prevents clone-like portraits. One-known-parent cases mix that parent's traits with the child's independent deterministic base rather than fabricating an unknown contributor.
+- Visual inheritance remains lazy. Background descendants can retain provenance without materializing `Npc.appearance`; the first materialized portrait becomes permanent, so later parent styling/customization cannot rewrite an existing child. Multi-generation resemblance flows naturally through each generation's stored/projected identity without grandparent lookup or a parallel genetics ledger.
+- Biological player/NPC and autonomous NPC births record provenance at the owning creation paths; autonomous adoption explicitly does not. Read-only inheritance projection consumes no gameplay RNG and allocates no runtime IDs. Save schema remains **17**.
+- Canonical preflight **4/4 Green**. Family Visual Inheritance **27/27**; Character Visual **60/60**; base **82/82**; People **57/57**; Visual Identity **12/12**; Family Reproduction **52/52**; Age-Aware Reproduction **22/22**; Family Topology **40/40**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build: **212 modules**; lazy character-art pack ~**971.11/69.18 kB gzip**; People ~**42.29/12.50**; main ~**1,357.50/379.07**; CSS ~**87.92/16.19**. Existing large-chunk warning remains nonblocking.
+- Certified source SHA `8ec0d5d05f48d28539a75e99582c84ebf171d04c0ec8d0c3080c171aeb1046b6`; dependency SHA `40193bb92ce6e8f4a27ea713d5c2a6c2aa20499ccf455c118d9e2a564ee7abc9`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10417129753`; Pages artifact `10418125056`; deployment succeeded.
+- Feedback sweep: **5 total / 0 unresolved**. Review checkpoint `main` successfully advanced to Run #176 source at `2026-09-15 20:42:29.766439+00`, reviewed count **5**.
+- Next planned Character Visual slice is richer aging/presentation behavior over the same stable identities. No Phase 11 label is implied.
+
+## Prior certified Character Visual slice — Run #174 — NPC identity + relationship reveal
 
 Run #174 extends the Run #170 player Character Visual foundation to exact NPCs without creating a second person, relationship, or portrait authority.
 
@@ -40,7 +56,7 @@ Run #174 extends the Run #170 player Character Visual foundation to exact NPCs w
 - Production build: **212 modules**; lazy character-art pack ~**971.11/69.18 kB gzip**; People ~**42.29/12.50**; main ~**1,355.82/378.21**; CSS ~**87.92/16.19**. Existing large-chunk warning remains nonblocking.
 - Certified source SHA `480f726cb369600aca7e1b391ac2fe20cdae6e6ae8d6526ec35e8b773b3b0828`; dependency SHA `5e3657ac306c699139c79de6d2107fbf3de60371e83fc69a33412b9b1cc3cab9`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10416325194`; Pages artifact `10415871928`; deployment succeeded.
 - Feedback sweep: **5 total / 0 unresolved**. Review checkpoint `main` successfully advanced to Run #174 source at `2026-09-15 19:59:39.246769+00`, reviewed count **5**.
-- Next planned Character Visual work is family resemblance/inheritance, then richer aging/presentation behavior. Neither is implemented in Run #174, and no Phase 11 label is implied.
+- Run #176 now certifies family resemblance/inheritance over this identity/reveal foundation. Richer aging/presentation behavior remains the next planned Character Visual slice; no Phase 11 label is implied.
 
 ## Newest certified hotfix — Run #172 — New Life responsive width
 
@@ -65,7 +81,7 @@ Run #170 establishes the first certified Character Visual slice without creating
 - Historical appearance RNG draw positions are preserved; richer cosmetic detail derives from a separate cosmetic seed so identical seeded lives remain identical outside appearance.
 - `CharacterPortrait` renders Astra's 624 modular SVG components through a lazy runtime art pack. `CharacterCreator` is a mobile-first New Life draft editor; Back discards unsaved edits, Save commits the draft, and Avatar/Profile surfaces consume the same appearance identity.
 - Creator option groups are local collapsible accordions across Face/Hair/Style/Extras and never persist into GameState.
-- Run #174 now certifies NPC portrait identity/reveal over this foundation. Family resemblance/inheritance and richer aging behavior remain deferred to later certified slices.
+- Run #174 certifies NPC portrait identity/reveal over this foundation, and Run #176 certifies family resemblance/inheritance. Richer aging/presentation behavior remains deferred to the next certified slice.
 - Canonical preflight **4/4 Green**. Character Visual **46/46**; base **82/82**; Visual Identity **12/12**; Player Profile **63/63**; Rewind **16/16**; Dynasty **64/64**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; UI iconography/theme **183/183**; Action VFX **58/58**; minigames **19/19**; feedback **20/20 + 23/23**.
 - Production build: **211 modules**; lazy character-art pack ~**971.11 / 69.18 kB gzip**; main ~**1,354.43 / 377.85**; existing large-chunk warning remains nonblocking.
 - Certified source SHA `072c290101bd8853dca4e3e16a6af7e8d9cdc4ecadb332747db4e66f0fe4be7f`; dependency SHA `7890670ea96fa0ba70b95d7fd86ab72fcd2f96fece67cf48efa0d4512b30042b`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10409358703`; Pages artifact `10408949701`; deployment succeeded.

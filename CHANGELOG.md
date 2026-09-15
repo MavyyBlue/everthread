@@ -1,3 +1,23 @@
+## Family resemblance + visual inheritance — CI Green Run #176 — 2026-09-15
+
+### Added / changed
+
+- Added deterministic biological family resemblance over the already-certified Character Visual/NPC identity authority. Optional `Npc.appearanceParentIds` records only biological visual contributors at new child creation; existing `parentIds` / `childIds` and Family Topology remain the sole family/legal authority. Adoption deliberately receives no biological visual provenance, and old schema-17 saves do not fabricate it from ambiguous historical links.
+- `NpcVisualSystem` now derives nine heritable structural/color traits from available biological visual contributors: face, eye, brow, nose, mouth, ear, skin palette, hair-color palette, and iris palette. Hairstyle, body, clothing, facial hair, details, eyewear, accessories, and expression remain individual presentation.
+- Siblings share a deterministic family anchor while child-specific variation prevents cloned portraits. One-known-parent cases blend that contributor with the child's independent deterministic base. Multi-generation resemblance propagates through each generation's actual visual identity; there is no direct grandparent lookup, allele ledger, genetics database, gameplay-RNG consumption, or runtime-ID allocation.
+- Background descendants remain portrait-lazy. Visual provenance can persist without forcing `Npc.appearance`; once a portrait materializes, it becomes permanent, so later parent styling/customization cannot retroactively alter the child's established face.
+- Player biological births and autonomous NPC biological births record visual provenance at their owning creation paths. Autonomous adoption explicitly does not. Save schema remains **17**.
+- Added dedicated Family Visual Inheritance regression coverage for deterministic/idempotent projection, sibling resemblance without cloning, one/two-parent inheritance, adoption isolation, lazy background storage, valid renderer component IDs, save stability, descendant continuation, and natural multi-generation feature propagation.
+
+### Certification
+
+- GitHub Actions Run #176 (`35021096077`, job `104556658034`) certified expanded source `f01d1847ba943b285c61d2fb787298ecb76d08ff` from upload wrapper `8e2ad27b7f37f759dcfbb20fd975334c8b93fdb1`. Net source diff from synchronized baseline `3c6b781fada2deb7894e98fc0f9baf25dfcec9e0` is exactly **8 intended source/test files**; workflow import reports 9 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4**. Family Visual Inheritance **27/27**; Character Visual **60/60**; base **82/82**; People **57/57**; Visual Identity **12/12**; Family Reproduction **52/52**; Age-Aware Reproduction **22/22**; Family Topology **40/40**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Integrated Long-Life **105/105**; 10E **103/103**; New Life responsive **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed at **212 modules**. People ~**42.29/12.50 kB gzip**; lazy `characterArtPack` ~**971.11/69.18**; main ~**1,357.50/379.07**; CSS ~**87.92/16.19**. The established >700 kB warning remains nonblocking technical debt.
+- Certified source SHA-256 `8ec0d5d05f48d28539a75e99582c84ebf171d04c0ec8d0c3080c171aeb1046b6`; dependency SHA-256 `40193bb92ce6e8f4a27ea713d5c2a6c2aa20499ccf455c118d9e2a564ee7abc9`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10417129753` (`836f6e4ba345c6c48d059e093ded8fbaf2d3ee78767bb3b32bf3308c496da2dd`); Pages artifact `10418125056` (`d5e2136e1c533e7ddac5d57e80bb1eca07f067468133b64f4e4c176835000e33`); Pages deployment reported success.
+- Post-certification Feedback Inbox remains **5 total / 0 unresolved**, with no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint `main` now points to `f01d1847ba943b285c61d2fb787298ecb76d08ff` at `2026-09-15 20:42:29.766439+00`, reviewed count **5**.
+- This is an approved post-closeout Character Visual feature slice, **not Phase 11** and not a reopening of the Living World Program. Richer aging/presentation remains the next planned Character Visual slice.
+
 ## Character Visual NPC identity + relationship reveal — CI Green Run #174 — 2026-09-15
 
 ### Added / changed
@@ -17,7 +37,7 @@
 - Production build passed at **212 modules**. Lazy `characterArtPack` remains ~**971.11 / 69.18 kB gzip**; People ~**42.29 / 12.50**; main JS ~**1,355.82 / 378.21**; CSS ~**87.92 / 16.19**. The established >700 kB chunk warning remains nonblocking technical debt.
 - Certified source SHA-256 `480f726cb369600aca7e1b391ac2fe20cdae6e6ae8d6526ec35e8b773b3b0828`; dependency SHA-256 `5e3657ac306c699139c79de6d2107fbf3de60371e83fc69a33412b9b1cc3cab9`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10416325194` (`6d41bc18a628d0e0ce55de43612d4d4b6389d15e488226c914b82295e8154ff6`); Pages artifact `10415871928` (`b0ea1db2735c03925ba0c29845ac2272dfa3bdf6b6f58e98cda3e65e88281f95`); deployment succeeded.
 - Post-Run-#174 Feedback Inbox remains **5 total / 0 unresolved**, with no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint `main` now points to `69117c363124615a35683d03cbc0ab7a06472c06` at `2026-09-15 19:59:39.246769+00`, reviewed count **5**.
-- This remains an approved Character Visual slice outside the closed Living World Program; it does **not** create Phase 11. The next planned Character Visual slice is family resemblance/inheritance, followed by richer aging/presentation behavior, subject to player feedback and separate certification.
+- This remains an approved Character Visual slice outside the closed Living World Program; it does **not** create Phase 11. Run #176 now certifies family resemblance/inheritance; richer aging/presentation remains the next planned Character Visual slice, subject to player feedback and separate certification.
 
 ## New Life mobile-width overflow hotfix — CI Green Run #172 — 2026-09-15
 
