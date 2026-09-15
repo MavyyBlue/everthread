@@ -1,11 +1,11 @@
 # Everthread — Living World Program
 
-Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life, Phase 10B Working Everthread, and Phase 10C Generational Place Memory are certified / closed; Phase 10D Living Map Projection is next after the mandatory 10C documentation sync certifies.**
+Status: **Active Mavyy-approved program. Phases 8 and 9 are certified / closed; Phase 10 — Living Everthread is active. Phase 10A Residential Life, Phase 10B Working Everthread, Phase 10C Generational Place Memory, and Phase 10D Living Map Projection are certified / closed; Phase 10E Program Closeout is next after the mandatory 10D documentation sync certifies.**
 
 Approved: 2026-09-13 after Phase 7 closeout.
 
 Current certified program baseline:
-- newest certified gameplay/source: Run #158 / `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`;
+- newest certified gameplay/source: Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`;
 - package: `everthread-life-unwritten@0.12.0`;
 - certified save schema: **17**;
 - Phase 7: **closed**;
@@ -26,7 +26,8 @@ Current certified program baseline:
 - Phase 10A: **certified / closed**;
 - Phase 10B: **certified / closed**;
 - Phase 10C: **certified / closed**;
-- next slice after this mandatory docs sync certifies: **Phase 10D — Living Map Projection**.
+- Phase 10D: **certified / closed**;
+- next slice after this mandatory docs sync certifies: **Phase 10E — Program Closeout**.
 
 This is the authoritative roadmap chosen by Mavyy and Yuki after the required post-Phase-7 brainstorm.
 
@@ -222,9 +223,19 @@ Fresh certified-source content audit remains unchanged at 691 events / 24 town p
 
 **Phase 10C is CLOSED / CERTIFIED.** Preserve this ownership split when 10D adds living map context.
 
-### Phase 10D — Living Map Projection
+### Phase 10D — Living Map Projection — CERTIFIED Run #160
 
-The map may highlight lightweight derived context such as: You live here, You work here, Your child attends here, Property owned, Your company, Current school, or a relevant social location. Do not render hundreds of background NPC pins; use relevance, simulation tiers, filters, culling, and progressive disclosure.
+Certified in Run #160 on expanded source `8ce87ad1e812ed94a9918684b3b52452826f0ce9`, save schema **17**, dedicated regression **50/50**, AI semantic interaction **82/82**, canonical preflight **4/4**, and a **203-module** production build.
+
+`LivingMapSystem` is a bounded read-only composition layer over certified Residential Life, Working Everthread, Generational Place Memory, owned Property, child education, and the Town Place registry. It never persists marker/context/filter/camera/selection state into `GameState` and never becomes an ownership authority.
+
+Exact facts remain exact: current home/property, school, exact workplace/company anchors, child school, and legacy attach only to real existing place IDs. Work/company facts known only to a district remain district-level context rather than fabricating a specific building. External/emigrated truth stays external. Same-kind facts aggregate; hard bounds are **6 contexts per target / 32 contexts total**.
+
+The existing 24 markers are decorated rather than multiplied. Exact places can show context count/ring treatment and a **Your life here** section in the existing bottom sheet; district-only context uses lightweight noninteractive labels. The Explore panel's **Your life on the map** toggle is ephemeral UI state. Existing discovery, search, category filtering, routing, viewport culling, gesture camera, and lazy loading remain intact.
+
+Fresh certified-source content audit remains unchanged at 691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 preference tags. GitHub Run #160 is the certification authority; the pre-upload local wrapper was container-time-limited rather than treated as Green.
+
+**Phase 10D is CLOSED / CERTIFIED.** Preserve this projection-only boundary during Phase 10E closeout.
 
 ### Phase 10E — Program Closeout
 
@@ -256,4 +267,4 @@ This replaces the older practice of waiting for the next meaningful bundle to ca
 
 # Next implementation target
 
-Begin **Phase 10D — Living Map Projection** only after this mandatory Phase 10C documentation sync certifies. Project lightweight context from existing authorities onto the established Map: current home, workplace/school, owned property, player company, relevant child/school context, and bounded generational place legacy where useful. The Map remains a read-only navigation/presentation surface, not a second residence/work/school/business/memory authority. Keep pan/zoom/filter/selection ephemeral, preserve deterministic RNG-neutral browsing, and use relevance tiers, culling, filters, and progressive disclosure instead of rendering hundreds of background NPC pins.
+Begin **Phase 10E — Program Closeout** only after this mandatory Phase 10D documentation sync certifies. Validate the complete Living Everthread stack across multi-generation continuation, save/load/migration/rewind, estate/accounting integrity, Map ↔ Threadspace ↔ Player Profile navigation, action-access parity, mobile/accessibility, deterministic projection, bounded performance, and canonical CI. Closeout should harden and certify the integrated program rather than add a new simulation authority.

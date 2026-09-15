@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #158 / `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`
-Certified gameplay baseline: Run #158 / `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790`
+Newest certified expanded gameplay/source: Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`
+Certified gameplay baseline: Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9`
 
 ## Product direction
 
@@ -26,25 +26,25 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Certified Phase 10C / next implementation phase
+## Certified Phase 10D / next implementation phase
 
-### Phase 10C — Generational Place Memory (CI Green Run #158)
+### Phase 10D — Living Map Projection (CI Green Run #160)
 
-Run #158 / `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790` is the certified Phase 10C gameplay/source baseline on save schema **17**. Canonical preflight passed **4/4** stages and Pages deployment succeeded.
+Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9` is the certified Phase 10D gameplay/source baseline on save schema **17**. Canonical preflight passed **4/4** stages and Pages deployment succeeded.
 
-- `GenerationalPlaceMemorySystem` is a read-only bounded projection over Timeline/CompletedLife milestone history plus existing Property/Business provenance and Working Everthread/Town Place mapping. There is no global visited-place ledger, second event history, or shadow family-landmark state.
-- Meaningful importance-2/3 timeline entries may carry an optional canonical `placeId`. Routine browsing/visits are not recorded. Completed lives snapshot at most **12** place milestones derived from their authoritative timeline; legacy schema-17 lives without that optional snapshot derive from the timeline on read.
-- Existing inherited property provenance remains the family-home authority. Business records now own optional founded/inherited provenance and immediate predecessor identity so surviving companies remain recognizable across estate conversion without moving their existing physical base. Unknown old provenance is not fabricated.
-- Projection bounds are **24 total memories / 8 places / 6 memories per place / 12 place milestones per completed life / 12 recent completed lives**. Surviving inherited family homes/businesses get priority over historical milestones. Projection reads consume no gameplay RNG/runtime IDs and do not mutate state.
-- Player Profile surfaces the compact legacy projection; Assets labels inherited surviving companies. Phase 10D remains the owner of Map visualization.
-- Canonical CI: base **82/82**, AI **82/82**, People **57/57**, Rewind **16/16**, NPC Asset Ownership **82/82**, Dynasty **64/64**, Integrated Long-Life **105/105**, 10A **69/69**, 10B **50/50**, 10C **50/50**, Progressive Disclosure **25/25**, minigames **19/19**, feedback **20/20 + 23/23**.
-- Production build transformed **202 modules**. Player Profile ~10.29 kB / 2.97 kB gzip; Town Map remains ~6.97 kB / 2.82 kB gzip; People ~41.15 kB / 12.10 kB gzip; main ~1,265.72 kB / 357.31 kB gzip. Existing main-chunk warning remains nonblocking.
-- Certified source SHA-256 `566b8e47ce302afc45653dc7c9efd6ad677957761f433a35373cbdec97708cad`; dependency SHA-256 `9dca2d20b81675b5e3f4de775a4f70869edbd527b9d93c5fe7891b17b93bbeb6`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10381209515` (`ddec7d0513401516b45c956218404d9d690f1558f63e087b631b8f1e66bb76ae`); Pages artifact `10380859910` (`e21ed363a9c293e0574a02cf73b668ab128f467a690711e38ab3e7e374a0990d`).
+- `LivingMapSystem` is a read-only bounded composition over certified Residential Life, Working Everthread, Generational Place Memory, owned Property, child education, and Town Place truth. It writes no map/context state into `GameState`.
+- Exact authoritative anchors become place context; district-only work/business mappings remain district context rather than fabricating exact buildings. External/emigrated contexts remain external.
+- Seven context kinds are supported: home, property, school, work, business, child school, and legacy. Repeated same-kind context aggregates instead of creating duplicate markers. Hard bounds are **6 contexts per target / 32 contexts total**.
+- The existing 24 map markers are decorated rather than duplicated. Context count/ring treatment, the **Your life here** sheet section, district labels, and the **Your life on the map** Explore toggle are presentation only. The toggle, camera, filters, and selection remain ephemeral UI state.
+- Existing discovery/search/routing/culling behavior stays authoritative; hidden Blackline discovery is not bypassed by context. Projection reads consume no gameplay RNG/runtime IDs and save schema remains **17**.
+- Canonical CI: base **82/82**, AI **82/82**, People **57/57**, Town Map **46/46**, Routing **41/41**, Phase 8E **34/34**, Rewind **16/16**, NPC Asset Ownership **82/82**, Dynasty **64/64**, Integrated Long-Life **105/105**, 10A **69/69**, 10B **50/50**, 10C **50/50**, 10D **50/50**, Progressive Disclosure **25/25**, minigames **19/19**, feedback **20/20 + 23/23**.
+- Production build transformed **203 modules**. Town Map ~8.92 kB / 3.32 kB gzip JS and ~11.25 kB / 2.46 kB gzip CSS; Player Profile ~10.29 kB / 2.97 kB gzip; People ~41.15 kB / 12.11 kB gzip; main ~1,270.49 kB / 358.71 kB gzip. Existing main-chunk warning remains nonblocking.
+- Certified source SHA-256 `d9ffad5a5b7edbdd898a7726eb3c4616b706eddecd0ecc6bc69820aa2073686d`; dependency SHA-256 `d9509533484e7c6a7cf2f824fbbd69bbe0c320d9b9c131b4df4f6bc6251444bd`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10382985407` (`35d4493836c5befd621f31117b8fbae225bb5d7abe65879455c55ef7f20b1fac`); Pages artifact `10382109382` (`9d8e8a62cda11a198b43442eda4d53b54f0deff87e2cc8b41b2237e156c655bb`).
 - Fresh post-certification content audit is unchanged at **691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 NPC preference tags**.
-- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `7efd45e1320a86fd84fa7dbd59e7c8f1cea9d790` at `2026-09-15 05:17:22.77373+00`.
-- Local wrapper/deep execution was container-time-limited and is not claimed as 6/6; GitHub Run #158 is certification authority. Independent local typecheck/wall/build gates and a matched 10-life baseline control were Green before upload.
+- Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `8ce87ad1e812ed94a9918684b3b52452826f0ce9` at `2026-09-15 05:38:31.538933+00`.
+- Pre-upload local canonical wrapper was container-time-limited and is not claimed as a completed canonical preflight; GitHub Run #160 is certification authority.
 
-**Exact next slice after this documentation sync certifies:** Phase 10D — Living Map Projection. Project lightweight current/legacy context onto the existing Map from established authorities; do not persist map marker state or render hundreds of background NPC pins.
+**Exact next slice after this documentation sync certifies:** Phase 10E — Program Closeout. Prove the entire Living Everthread stack across generations, save/load/rewind/dynasty, navigation/access parity, mobile/accessibility, bounded map performance, and the complete canonical CI wall without adding a second simulation authority.
 
 ## Prior certified Phase 10B
 
@@ -63,7 +63,7 @@ Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67` is the certified Phase 10B
 - Fresh post-certification Feedback Inbox sweep found **4 total / 0 unresolved**, no new receipt after `2026-09-13 19:51:36.119407+00`, and advanced the checkpoint to `a497aa1bbec357fe12755383acb7053ab5d0ea67` at `2026-09-15 04:33:34.506272+00`.
 - Fresh local content audit after certification remained unchanged at 691 events / 24 town places / 28 routed institution services / 24 personal inventory items / 38 NPC preference tags.
 
-**Historical handoff from Phase 10B:** Phase 10C — Generational Place Memory, now certified in Run #158. The live target is Phase 10D — Living Map Projection after the mandatory Phase 10C documentation sync certifies.
+**Historical handoff from Phase 10B:** Phase 10C and Phase 10D are now certified. The live target is Phase 10E — Program Closeout after the mandatory Phase 10D documentation sync certifies.
 
 ### Phase 10A — Residential Life (CI Green Run #154)
 
