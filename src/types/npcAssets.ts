@@ -15,6 +15,8 @@ export interface NpcPropertyHolding {
   acquiredAge: number;
   origin: NpcAssetOrigin;
   inheritedFromNpcId?: Id;
+  /** Optional household-home designation owned by this property record, never a separate residence ledger. */
+  primaryResidence?: boolean;
 }
 
 export interface NpcBusinessHolding {

@@ -423,7 +423,7 @@ export function relocateNpcHousehold(state:GameState,npcId:string,destination:st
   for(const parentId of parentIds){for(const childId of state.npcs[parentId]?.childIds??[]){const child=state.npcs[childId];if(child?.alive&&child.age<18&&ensureNpcLife(state,child).legal.sentenceRemaining<=0)members.set(child.id,child);}}
   const moved:string[]=[];
   for(const member of members.values()){
-    if(member.city===destination)continue;const old=member.city;member.city=destination;const life=ensureNpcLife(state,member);life.household.moves+=1;life.household.lastMoveAge=member.age;addNpcMemory(state,member,'move',2,`Moved from ${old} to ${destination}.`,true);moved.push(member.id);
+    if(member.city===destination)continue;const old=member.city;member.city=destination;for(const property of member.assetPortfolio?.properties??[])if(property.primaryResidence&&property.location!==destination)delete property.primaryResidence;const life=ensureNpcLife(state,member);life.household.moves+=1;life.household.lastMoveAge=member.age;addNpcMemory(state,member,'move',2,`Moved from ${old} to ${destination}.`,true);moved.push(member.id);
   }
   return moved;
 }

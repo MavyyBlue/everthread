@@ -2,9 +2,10 @@ import { createNewGame } from '../systems/CharacterSystem';
 import { ensureSpecialCareerRelationships } from '../systems/SpecialCareerRelationshipSystem';
 import { ensureSpecialCareerWorld } from '../systems/SpecialCareerWorldSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
+import { addNpcPropertyHolding } from '../systems/NpcAssetSystem';
 import { specialCareerWorldView } from '../systems/SpecialCareerEcosystemSystem';
 import { personalItemById } from '../data/personalItems';
-import type { Npc, SocialWorld } from '../types/game';
+import type { Npc, PropertyAsset, SocialWorld } from '../types/game';
 import { EverthreadAiTestbench, withEverthreadAiTestbench } from './aiInteractionTestbench';
 
 export async function runAiInteractionRegression(){
@@ -142,6 +143,35 @@ export async function runAiInteractionRegression(){
     verify(afterChem>beforeChem,'62 AI cross-world execution must be observed by the existing career-world chemistry projection through that same relationship, with no parallel score');
     verify(step.diff.some(diff=>diff.path.includes('relationships'))&&step.invariantIssues.length===0,'63 AI cross-world execution must expose authoritative relationship mutation and leave shared state invariant-clean');
     verify(afterState.npcs[chemistryNpc.id]?.memories.some(memory=>memory.kind==='cross_world:music:music-home-session')===true,'64 the AI path must write the same bounded exact-context NPC memory as the player path');
+  });
+
+
+  const residenceAssetState=createNewGame({seed:'ai-test-residence-assets'});residenceAssetState.character.age=28;residenceAssetState.currentYear=2068;residenceAssetState.education=[];residenceAssetState.flags.financiallyIndependent=true;
+  const aiHomeA:PropertyAsset={id:'ai-home-a',typeId:'starter_house_standard',name:'Juniper House',location:residenceAssetState.character.city,purchasePrice:150_000,marketValue:170_000,condition:90,age:4,amenities:['yard'],origin:'purchased',primaryResidence:true};
+  const aiHomeB:PropertyAsset={id:'ai-home-b',typeId:'starter_house_value',name:'Willow House',location:residenceAssetState.character.city,purchasePrice:180_000,marketValue:205_000,condition:88,age:6,amenities:['garage'],origin:'purchased'};residenceAssetState.assets.properties.push(aiHomeA,aiHomeB);
+  await withEverthreadAiTestbench({state:residenceAssetState,screen:'assets'},async residenceBench=>{
+    const assets=residenceBench.observe('assets');const residence=assets.data.residence as {propertyId?:string;label?:string};
+    verify(residence.propertyId==='ai-home-a'&&assets.actions.some(action=>action.id==='assets.property.set_home'&&action.enabled),'65 Assets semantic observation must expose the authoritative projected home plus the existing property-home action');
+    const switched=residenceBench.execute({id:'assets.property.set_home',args:{assetId:'ai-home-b'}});const after=residenceBench.observe('assets').data.residence as {propertyId?:string;label?:string};
+    verify(switched.result.success&&after.propertyId==='ai-home-b','66 semantic Make Home must call GameEngine/PropertySystem for the exact owned property and update the projected residence');
+    verify(switched.diff.some(diff=>diff.path.includes('assets'))&&switched.invariantIssues.length===0,'67 semantic home designation must expose authoritative property mutation and leave shared state invariant-clean');
+  });
+
+  const residencePeopleState=createNewGame({seed:'ai-test-residence-people'});residencePeopleState.character.age=28;residencePeopleState.currentYear=2068;residencePeopleState.education=[];residencePeopleState.character.stats.happiness=90;
+  const homeNpc:Npc={id:'ai-home-friend',firstName:'Jordan',lastName:'Thread',age:28,alive:true,health:95,happiness:90,wealth:65_000,countryId:residencePeopleState.character.countryId,city:residencePeopleState.character.city,sexuality:'pansexual',fertility:65,maritalStatus:'single',traits:['loyal','playful'],hiddenOpinion:90,memories:[],parentIds:[],childIds:[],simulationTier:'full',preferences:{version:1,likes:['home','cozy','social'],dislikes:[],aversions:[]}};residencePeopleState.npcs[homeNpc.id]=homeNpc;residencePeopleState.relationships.push({id:'ai-home-rel',npcId:homeNpc.id,type:'friend',score:88,attraction:15,compatibility:90,yearsKnown:4});ensureNpcLife(residencePeopleState,homeNpc);homeNpc.assetPortfolio={properties:[],businesses:[]};addNpcPropertyHolding(residencePeopleState,homeNpc,{id:'ai-npc-home',typeId:'starter_house_standard',name:'Maple Cottage',location:homeNpc.city,purchasePrice:120_000,marketValue:145_000,mortgageBalance:15_000,condition:91,propertyAge:5,acquiredAge:23,origin:'purchased',primaryResidence:true});
+  await withEverthreadAiTestbench({state:residencePeopleState,screen:'people'},async residencePeopleBench=>{
+    const people=residencePeopleBench.observe('people');const action=people.actions.find(item=>item.id==='people.residential_experience'&&item.targetId===homeNpc.id&&item.label.includes('Maple Cottage'));
+    verify(Boolean(action?.enabled&&action.args?.join(',')==='npcId,planId'),'68 People semantic parity must expose an exact-NPC residential visit at that NPC actual household/home');
+    const inspected=residencePeopleBench.inspectNpc(homeNpc.id);verify(inspected?.residence?.propertyId==='ai-npc-home'&&inspected?.residence?.label?.includes('Maple Cottage'),'69 inspectNpc must expose the same authoritative household residence projected for the player-facing person sheet');
+    const beforeScore=residencePeopleBench.getState().relationships.find(rel=>rel.npcId===homeNpc.id)!.score;const visit=residencePeopleBench.execute({id:'people.residential_experience',args:{npcId:homeNpc.id,planId:'visit-their-home'}});const afterScore=residencePeopleBench.getState().relationships.find(rel=>rel.npcId===homeNpc.id)!.score;
+    verify(visit.result.success&&afterScore>=beforeScore&&visit.result.messages.some(message=>message.text.includes('Maple Cottage')),'70 semantic residential execution must reuse the real relationship/shared-experience path while preserving the exact home context in player-visible prose');
+    verify(residencePeopleBench.getState().npcs[homeNpc.id]?.memories.some(memory=>memory.kind.startsWith('residential:visit-their-home:ai-npc-home'))===true&&visit.invariantIssues.length===0,'71 residential AI execution must write the same bounded exact-property NPC memory and leave shared state invariant-clean');
+  });
+
+  const youthResidenceState=createNewGame({seed:'ai-test-residence-youth'});youthResidenceState.character.age=15;youthResidenceState.currentYear=2055;youthResidenceState.education=[];const youthHomeNpc:Npc={id:'ai-youth-home-friend',firstName:'Taylor',lastName:'Thread',age:15,alive:true,health:95,happiness:90,wealth:1000,countryId:youthResidenceState.character.countryId,city:youthResidenceState.character.city,sexuality:'pansexual',fertility:0,maritalStatus:'single',traits:['playful','loyal'],hiddenOpinion:90,memories:[],parentIds:[],childIds:[],simulationTier:'full',preferences:{version:1,likes:['home','cozy','games','social'],dislikes:[],aversions:[]}};youthResidenceState.npcs[youthHomeNpc.id]=youthHomeNpc;youthResidenceState.relationships.push({id:'ai-youth-home-rel',npcId:youthHomeNpc.id,type:'friend',score:90,attraction:0,compatibility:90,yearsKnown:5});ensureNpcLife(youthResidenceState,youthHomeNpc);
+  await withEverthreadAiTestbench({state:youthResidenceState,screen:'people'},async youthResidenceBench=>{
+    const actions=youthResidenceBench.observe('people').actions.filter(action=>action.targetId===youthHomeNpc.id);const residentialSleepovers=actions.filter(action=>action.id==='people.residential_experience'&&action.label.toLowerCase().includes('sleepover'));const genericSleepovers=actions.filter(action=>action.id==='people.shared_experience'&&action.label.toLowerCase().includes('sleepover'));
+    verify(residentialSleepovers.length===1&&genericSleepovers.length===0,'72 AI People parity must deduplicate the 9C generic sleepover when the residence-aware 10A sleepover is available for the same exact youth NPC');
   });
 
   return checks;

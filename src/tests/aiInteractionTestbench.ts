@@ -19,6 +19,7 @@ import { projectYouthSocialPlans } from '../systems/YouthSocialSystem';
 import { projectRomanticDateOptions } from '../systems/RomanticDateSystem';
 import { projectPersonalGiftOptions } from '../systems/GiftSystem';
 import { projectCrossWorldChemistryPlans } from '../systems/CrossWorldChemistrySystem';
+import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from '../systems/ResidentialLifeSystem';
 
 export type AiScreen = 'life' | 'people' | 'activities' | 'career' | 'assets';
 
@@ -138,11 +139,16 @@ function relationshipActions(state:GameState):AiActionView[]{
     for(const gift of projectPersonalGiftOptions(state,npc.id)){
       actions.push(boolGate('people.gift',`Give ${gift.itemName} to ${target}`,Boolean(!blocked&&gift.allowed),blocked??gift.reason,['npcId','itemInstanceId'],npc.id));
     }
-    for(const plan of projectYouthSocialPlans(state,npc.id)){
+    const residentialPlans=projectResidentialPlans(state,npc.id);
+    const residentialSleepover=residentialPlans.some(plan=>plan.activityId==='sleepover');
+    for(const plan of projectYouthSocialPlans(state,npc.id).filter(plan=>!(residentialSleepover&&plan.activityId==='sleepover'))){
       actions.push(boolGate('people.shared_experience',`${plan.label} with ${target} · ${plan.placeLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','placeId','activityId'],npc.id));
     }
     for(const plan of projectCrossWorldChemistryPlans(state,npc.id)){
       actions.push(boolGate('people.cross_world_experience',`${plan.label} with ${target} · ${plan.context.roleLabel} · ${plan.placeLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','planId'],npc.id));
+    }
+    for(const plan of residentialPlans){
+      actions.push(boolGate('people.residential_experience',`${plan.label} with ${target} · ${plan.residenceLabel}`,Boolean(!blocked&&plan.allowed),blocked??plan.reason,['npcId','planId'],npc.id));
     }
     if(canAskNpcOnDate(state,npc.id)){
       const inviteGate=actionGateStatus(state,{policy:'relationship.date.invite',target:npc.id});
@@ -232,6 +238,7 @@ function screenActions(state:GameState,screen:AiScreen):AiActionView[]{
   if(screen==='career')return careerActions(state);
   return[
     primaryAction('assets.property.purchase','Purchase property',state,['typeId','mortgage']),
+    primaryAction('assets.property.set_home','Make property the current home',state,['assetId']),
     primaryAction('assets.property.rent','Rent out property',state,['assetId']),
     primaryAction('assets.property.renovate','Renovate property',state,['assetId']),
     primaryAction('assets.property.sell','Sell property',state,['assetId']),
@@ -248,7 +255,8 @@ function screenActions(state:GameState,screen:AiScreen):AiActionView[]{
 function npcView(state:GameState,npcId:string){
   const npc=state.npcs[npcId];if(!npc)return undefined;const rel=state.relationships.find(item=>item.npcId===npcId);
   const affiliations=state.socialWorlds.filter(world=>world.members.some(member=>member.npcId===npcId)).map(world=>({id:world.id,name:world.name,kind:world.kind,active:world.active,startedAge:world.startedAge,endedAge:world.endedAge,role:world.members.find(member=>member.npcId===npcId)?.role}));
-  return{id:npc.id,name:`${npc.firstName} ${npc.lastName}`,age:npc.age,alive:npc.alive,relationship:rel?{type:rel.type,score:rel.score,attraction:rel.attraction,compatibility:rel.compatibility,estranged:Boolean(rel.estranged)}:undefined,hiddenOpinion:npc.hiddenOpinion,careerId:npc.careerId,affiliations,memories:npc.memories.slice(-8).map(memory=>({age:memory.age,kind:memory.kind,sentiment:memory.sentiment,summary:memory.summary}))};
+  const residential=npcHouseholdResidenceProjection(state,npcId);
+  return{id:npc.id,name:`${npc.firstName} ${npc.lastName}`,age:npc.age,alive:npc.alive,relationship:rel?{type:rel.type,score:rel.score,attraction:rel.attraction,compatibility:rel.compatibility,estranged:Boolean(rel.estranged)}:undefined,hiddenOpinion:npc.hiddenOpinion,careerId:npc.careerId,affiliations,residence:residential?{...residential.residence,memberIds:residential.memberIds}:undefined,memories:npc.memories.slice(-8).map(memory=>({age:memory.age,kind:memory.kind,sentiment:memory.sentiment,summary:memory.summary}))};
 }
 
 function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
@@ -274,7 +282,8 @@ function observeData(state:GameState,screen:AiScreen):Record<string,unknown>{
   };
   return{
     cash:state.finances.cash,liabilities:state.finances.liabilities.map(item=>structuredClone(item)),
-    properties:state.assets.properties.map(item=>({id:item.id,typeId:item.typeId,name:item.name,marketValue:item.marketValue,condition:item.condition,rental:item.rental})),
+    residence:playerResidenceProjection(state),
+    properties:state.assets.properties.map(item=>({id:item.id,typeId:item.typeId,name:item.name,location:item.location,marketValue:item.marketValue,condition:item.condition,rental:item.rental,origin:item.origin,inheritedFromNpcId:item.inheritedFromNpcId,primaryResidence:item.primaryResidence})),
     vehicles:state.assets.vehicles.map(item=>({id:item.id,typeId:item.typeId,name:item.name,value:item.value,condition:item.condition,category:item.category})),
     collectibles:state.assets.collectibles.map(item=>({id:item.id,itemId:item.itemId,name:item.name,estimatedValue:item.estimatedValue,rarity:item.rarity})),
     investments:state.investments.positions.map(item=>structuredClone(item)),
@@ -365,6 +374,7 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     case'people.interact.insult':return engine.interactWithCharacter(argString(command,'npcId'),'insult');
     case'people.shared_experience':return engine.shareExperience(argString(command,'npcId'),argString(command,'placeId'),argString(command,'activityId'));
     case'people.cross_world_experience':return engine.crossWorldExperience(argString(command,'npcId'),argString(command,'planId'));
+    case'people.residential_experience':return engine.residentialExperience(argString(command,'npcId'),argString(command,'planId'));
     case'people.meet':return engine.performActivity('meet_date');
     case'people.report_workplace':return engine.reportCoworker(argString(command,'npcId'));
     case'people.have_child':{
@@ -408,6 +418,7 @@ function dispatch(engine:GameEngine,command:AiCommand):EngineResult{
     case'career.special.leave':return engine.leaveSpecialCareer(argString(command,'path') as SpecialCareerPathKey);
     case'career.special.retire':return engine.retireSpecialCareer(argString(command,'path') as DeepCareerPath);
     case'assets.property.purchase':return engine.purchaseProperty(argString(command,'typeId'),argBoolean(command,'mortgage',true));
+    case'assets.property.set_home':return engine.setHome(argString(command,'assetId'));
     case'assets.property.rent':return engine.rentProperty(argString(command,'assetId'));
     case'assets.property.renovate':return engine.renovateProperty(argString(command,'assetId'));
     case'assets.property.sell':return engine.sellProperty(argString(command,'assetId'));

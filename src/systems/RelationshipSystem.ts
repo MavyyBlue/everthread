@@ -19,6 +19,7 @@ import { sharedExperienceActivityById } from '../data/sharedExperiences';
 import { evaluatePersonalGift, personalGiftAvailability } from './GiftSystem';
 import { takePersonalItemInstance } from './PersonalInventorySystem';
 import { crossWorldChemistryPlanFor } from './CrossWorldChemistrySystem';
+import { residentialPlanFor } from './ResidentialLifeSystem';
 
 export const DATING_MIN_AGE=14;
 
@@ -258,6 +259,21 @@ export function shareCrossWorldExperienceWithNpc(state:GameState,npcId:string,pl
     memoryKind:`cross_world:${plan.context.kind}:${plan.id}`,
   });
   if(result.experience)result.experience.activityLabel=plan.label;
+  return result;
+}
+
+export function shareResidentialExperienceWithNpc(state:GameState,npcId:string,planId:string):SharedExperienceActionResult {
+  const plan=residentialPlanFor(state,npcId,planId);
+  if(!plan)return{success:false,messages:[{text:'That residential plan is not available for this person.'}]};
+  if(!plan.allowed)return{success:false,messages:[{text:plan.reason??'That residential plan is not available right now.'}]};
+  const result=commitSharedExperience(state,npcId,plan.placeId,plan.activityId,{
+    actionKey:`residential:${plan.id}`,
+    context:{preferenceTags:plan.preferenceTags,enjoymentModifier:plan.enjoymentModifier??0},
+    memoryKind:`residential:${plan.id}:${plan.residence.propertyId??plan.residence.kind}`,
+    formatProse:experience=>experience.prose.replace(experience.placeLabel,plan.residenceLabel),
+    formatMemory:experience=>experience.memorySummary.replace(experience.placeLabel,plan.residenceLabel),
+  });
+  if(result.experience){result.experience.activityLabel=plan.label;result.experience.placeLabel=plan.residenceLabel;}
   return result;
 }
 

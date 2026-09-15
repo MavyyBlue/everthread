@@ -371,6 +371,8 @@ export interface FinancesState {
   };
 }
 
+export type PropertyAssetOrigin = 'purchased' | 'inherited';
+
 export interface PropertyAsset {
   id: Id;
   typeId: Id;
@@ -382,6 +384,11 @@ export interface PropertyAsset {
   age: number;
   amenities: string[];
   mortgageId?: Id;
+  /** Ownership provenance stays on the property authority so inherited homes can remain recognizable across generations. */
+  origin?: PropertyAssetOrigin;
+  inheritedFromNpcId?: Id;
+  /** Optional player-designated current home. Residential projections fall back deterministically when absent. */
+  primaryResidence?: boolean;
   rental?: {
     tenantId?: Id;
     annualRent: Money;

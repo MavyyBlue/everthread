@@ -29,7 +29,7 @@ function nearestPropertyDefinition(value:number){
 function legacyPropertyFromProjection(npc:Npc):NpcPropertyHolding|undefined {
   const value=safeMoney(npc.life?.finance.propertyValue??0);if(!value)return undefined;
   const def=nearestPropertyDefinition(value);const mortgage=Math.min(value,safeMoney(npc.life?.finance.debt??0));
-  return{id:stableLegacyPropertyId(npc),typeId:def.id,name:def.name,location:npc.city,purchasePrice:value,marketValue:value,mortgageBalance:mortgage,condition:78,propertyAge:Math.max(0,Math.min(40,npc.age-24)),acquiredAge:Math.max(18,npc.age-Math.max(1,Math.min(12,npc.age-18))),origin:'generated'};
+  return{id:stableLegacyPropertyId(npc),typeId:def.id,name:def.name,location:npc.city,purchasePrice:value,marketValue:value,mortgageBalance:mortgage,condition:78,propertyAge:Math.max(0,Math.min(40,npc.age-24)),acquiredAge:Math.max(18,npc.age-Math.max(1,Math.min(12,npc.age-18))),origin:'generated',primaryResidence:true};
 }
 
 export function ensureNpcAssetPortfolio(_state:GameState,npc:Npc):NpcAssetPortfolio {
@@ -90,7 +90,7 @@ function maybeBuyNpcProperty(state:GameState,npc:Npc,rng:ReturnType<typeof creat
   const income=Math.max(0,npc.life?.finance.annualIncome??0);const budget=Math.max(90_000,Math.min(2_500_000,npc.wealth*(first?1.8:1.3)+income*2.4));
   const options=propertyDefinitions.filter(def=>def.basePrice*state.economy.housingIndex<=budget);if(!options.length)return;
   const def=rng.pick(options);const price=safeMoney(def.basePrice*state.economy.housingIndex*rng.int(92,108)/100);const down=safeMoney(price*(first ? .22 : .30));if(npc.wealth<down+12_000)return;
-  npc.wealth-=down;portfolio.properties.push({id:makeStateId(state,'npc-property'),typeId:def.id,name:def.name,location:npc.city,purchasePrice:price,marketValue:price,mortgageBalance:Math.max(0,price-down),condition:rng.int(80,96),propertyAge:0,acquiredAge:npc.age,origin:'purchased'});
+  npc.wealth-=down;portfolio.properties.push({id:makeStateId(state,'npc-property'),typeId:def.id,name:def.name,location:npc.city,purchasePrice:price,marketValue:price,mortgageBalance:Math.max(0,price-down),condition:rng.int(80,96),propertyAge:0,acquiredAge:npc.age,origin:'purchased',...(first?{primaryResidence:true}:{})});
   syncNpcAssetProjection(npc);addAssetMemory(state,npc,first?'home':'property',5,first?`Bought a ${def.name}.`:`Bought an additional ${def.name}.`);
 }
 
@@ -123,13 +123,13 @@ export function npcBusinessFromPlayerBusiness(state:GameState,owner:Npc,business
 }
 
 export function playerPropertyFromNpcHolding(state:GameState,property:NpcPropertyHolding):{property:PropertyAsset;mortgage?:Loan}{
-  const mortgageId=property.mortgageBalance>0?makeStateId(state,'loan'):undefined;const converted:PropertyAsset={id:property.id,typeId:property.typeId,name:property.name,location:property.location,purchasePrice:safeMoney(property.purchasePrice),marketValue:safeMoney(property.marketValue),condition:clamp(property.condition),age:Math.max(0,Math.floor(property.propertyAge)),amenities:[...(PROPERTY_BY_ID.get(property.typeId)?.amenities??[])],...(mortgageId?{mortgageId}:{})};
+  const mortgageId=property.mortgageBalance>0?makeStateId(state,'loan'):undefined;const inherited=property.origin==='inherited';const converted:PropertyAsset={id:property.id,typeId:property.typeId,name:property.name,location:property.location,purchasePrice:safeMoney(property.purchasePrice),marketValue:safeMoney(property.marketValue),condition:clamp(property.condition),age:Math.max(0,Math.floor(property.propertyAge)),amenities:[...(PROPERTY_BY_ID.get(property.typeId)?.amenities??[])],origin:inherited?'inherited':'purchased',...(inherited&&property.inheritedFromNpcId?{inheritedFromNpcId:property.inheritedFromNpcId}:{}),...(property.primaryResidence&&property.location===state.character.city?{primaryResidence:true}:{}),...(mortgageId?{mortgageId}:{})};
   const mortgage=mortgageId?{id:mortgageId,kind:'mortgage' as const,principal:safeMoney(property.mortgageBalance),balance:safeMoney(property.mortgageBalance),annualRate:.052,annualPayment:Math.max(1000,Math.round(property.mortgageBalance/25+property.mortgageBalance*.052)),remainingYears:25,assetId:property.id}:undefined;return{property:converted,...(mortgage?{mortgage}:{})};
 }
 export function playerBusinessFromNpcHolding(state:GameState,business:NpcBusinessHolding):Business {
   const years=Math.max(0,state.currentYear-business.foundedYear);const foundedAge=Math.max(18,state.character.age-years);const profit=Math.round(business.annualProfit);const revenue=Math.max(Math.abs(profit)*3,Math.round(business.valuation*.28),1);return{id:business.id,industryId:business.industryId,name:business.name,foundedAge,capital:Math.round(business.valuation*.32),revenue,expenses:Math.max(0,revenue-profit),profit,employees:Math.max(1,Math.floor(business.employees)),demand:clamp(50+(state.economy.businessDemandIndex-1)*35),reputation:clamp(business.reputation),valuation:safeMoney(business.valuation),productIds:[],priceIndex:1,marketingBudget:0,compensationIndex:1,bankrupt:!business.active};
 }
 
-export function addNpcPropertyHolding(state:GameState,npc:Npc,holding:NpcPropertyHolding){const portfolio=ensureNpcAssetPortfolio(state,npc);if(portfolio.properties.some(item=>item.id===holding.id))return false;if(portfolio.properties.length>=MAX_NPC_PROPERTIES){npc.wealth=Math.max(0,Math.round(npc.wealth+propertyNet(holding)));return false;}portfolio.properties.push(structuredClone(holding));syncNpcAssetProjection(npc);return true;}
+export function addNpcPropertyHolding(state:GameState,npc:Npc,holding:NpcPropertyHolding){const portfolio=ensureNpcAssetPortfolio(state,npc);if(portfolio.properties.some(item=>item.id===holding.id))return false;if(portfolio.properties.length>=MAX_NPC_PROPERTIES){npc.wealth=Math.max(0,Math.round(npc.wealth+propertyNet(holding)));return false;}const copy=structuredClone(holding);if(copy.primaryResidence&&portfolio.properties.some(item=>item.primaryResidence))delete copy.primaryResidence;portfolio.properties.push(copy);syncNpcAssetProjection(npc);return true;}
 export function addNpcBusinessHolding(state:GameState,npc:Npc,holding:NpcBusinessHolding){const portfolio=ensureNpcAssetPortfolio(state,npc);if(portfolio.businesses.some(item=>item.id===holding.id))return false;if(portfolio.businesses.length>=MAX_NPC_BUSINESSES){npc.wealth=Math.max(0,Math.round(npc.wealth+businessNet(holding)));return false;}portfolio.businesses.push(structuredClone(holding));return true;}
 export function clearNpcAssetPortfolio(npc:Npc){npc.assetPortfolio={properties:[],businesses:[]};syncNpcAssetProjection(npc);}

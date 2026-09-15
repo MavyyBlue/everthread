@@ -3,6 +3,7 @@ import type { EngineResult, GameState } from '../types/game';
 import { BottomSheet } from './BottomSheet';
 import { Avatar } from './Avatar';
 import { projectPlayerProfile } from '../systems/PlayerProfileSystem';
+import { playerResidenceProjection } from '../systems/ResidentialLifeSystem';
 import { personalItemDefinitions } from '../data/personalItems';
 import { TOWN_PLACES } from '../data/townPlaces';
 import { personalItemPurchaseStatus } from '../systems/PersonalInventorySystem';
@@ -17,6 +18,7 @@ export function PlayerProfileSheet({open,state,onClose,onResult}:{open:boolean;s
   const[view,setView]=useState<ProfileView>('profile');
   const[pendingDiscard,setPendingDiscard]=useState<string>();
   const profile=projectPlayerProfile(state);
+  const residence=playerResidenceProjection(state);
   const inventoryCount=profile.personalItems.length+profile.valuableCollectibles.length;
   const close=()=>{setPendingDiscard(undefined);onClose();};
   return <BottomSheet open={open} title="Your profile" onClose={close} wide>
@@ -35,6 +37,7 @@ export function PlayerProfileSheet({open,state,onClose,onResult}:{open:boolean;s
         <div><small>Relationship</small><strong>{profile.relationship}</strong></div>
         <div><small>Achievements</small><strong>{profile.completedAchievements}</strong></div>
       </section>
+      <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Residence</p><h3>{residence.label}</h3></div>{residence.familyLandmark&&<span>Family landmark</span>}</div><p className="profile-muted">{residence.detail}</p></section>
       <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Identity</p><h3>Traits & appearance</h3></div></div><div className="profile-chip-list">{profile.traits.map(trait=><span key={trait}>{trait}</span>)}{profile.appearance.map(value=><span key={value}>{value}</span>)}</div></section>
       <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Licenses</p><h3>Personal credentials</h3></div></div>{profile.licenses.length?<div className="profile-chip-list">{profile.licenses.map(license=><span key={license}>{license}</span>)}</div>:<p className="profile-muted">No travel or vehicle licenses yet.</p>}</section>
       <section className="player-profile-section"><div className="section-heading"><div><p className="eyebrow">Owned elsewhere</p><h3>Authoritative asset summary</h3></div></div><div className="player-profile-assets"><div><strong>{profile.assetSummary.homes}</strong><small>Homes</small></div><div><strong>{profile.assetSummary.vehicles}</strong><small>Vehicles</small></div><div><strong>{profile.assetSummary.businesses}</strong><small>Businesses</small></div><div><strong>{profile.assetSummary.collectibles}</strong><small>Collectibles</small></div></div><p className="profile-muted">These are projections only. Property, vehicles, companies, financing, collectibles, net worth, and estate ownership remain managed by their existing systems.</p></section>

@@ -32,7 +32,8 @@ export function buyProperty(state:GameState,typeId:string,useMortgage=true,offer
   if(!useMortgage)state.finances.cash-=price;
   const propertyId=makeStateId(state,'property');
   if(mortgageId){const loan=state.finances.liabilities.find(item=>item.id===mortgageId);if(loan)loan.assetId=propertyId;}
-  state.assets.properties.push({id:propertyId,typeId:def.id,name:def.name,location:state.character.city,purchasePrice:price,marketValue:price,condition:90,age:0,amenities:[...def.amenities],mortgageId});
+  const becomesHome=!state.assets.properties.some(item=>item.location===state.character.city&&!item.rental);
+  state.assets.properties.push({id:propertyId,typeId:def.id,name:def.name,location:state.character.city,purchasePrice:price,marketValue:price,condition:90,age:0,amenities:[...def.amenities],mortgageId,origin:'purchased',...(becomesHome?{primaryResidence:true}:{})});
   state.flags.financiallyIndependent=true;state.flags.financialSupportChoiceMade=true;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:3,text:useMortgage?`You purchased a ${def.name} in ${state.character.city} with financing.`:`You purchased a ${def.name} in ${state.character.city} outright.`,moneyDelta:-amountDue,...(financeDetail?{detail:financeDetail}:{})});
   return{success:true,stateChanges:useMortgage?['property','financingLiability','creditInquiry']:['property'],messages:[...(financeMessage?[{text:financeMessage}]:[]),{text:`Purchased ${def.name} for ${price.toLocaleString()}${useMortgage?` with ${amountDue.toLocaleString()} down`:' outright'}.`}]};
@@ -55,9 +56,24 @@ export function renovateProperty(state:GameState,propertyId:string):EngineResult
   state.finances.cash-=cost;p.condition=clamp(p.condition+25);p.marketValue=Math.round(p.marketValue*1.025);schedulePropertyRenovationStory(state,p.id);return{success:true,messages:[{text:`Renovation complete. Condition is now ${p.condition}%.`}]};
 }
 
+export function setPrimaryResidence(state:GameState,propertyId:string):EngineResult {
+  const p=state.assets.properties.find(item=>item.id===propertyId);if(!p)return{success:false,messages:[{text:'Property not found.'}]};
+  if(state.character.age<18)return{success:false,messages:[{text:'A guardian household remains responsible for your residence until adulthood.'}]};
+  if(p.location!==state.character.city)return{success:false,messages:[{text:`You currently live in ${state.character.city}. Move there before making ${p.name} your home.`}]};
+  if(p.rental?.occupied)return{success:false,messages:[{text:`${p.name} is occupied by a tenant. You cannot move in while the tenancy is active.`}]};
+  const removedListing=Boolean(p.rental);if(removedListing)delete p.rental;
+  for(const property of state.assets.properties)property.primaryResidence=property.id===p.id||undefined;
+  state.flags.financiallyIndependent=true;state.flags.financialSupportChoiceMade=true;
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:2,text:`You made ${p.name} your home in ${p.location}.${removedListing?' You took it off the rental market first.':''}`});
+  return{success:true,stateChanges:['property.residence'],messages:[{text:`${p.name} is now your home${removedListing?' and is no longer listed for rent':''}.`}]};
+}
+
 export function rentOutProperty(state:GameState,propertyId:string):EngineResult {
   const p=state.assets.properties.find(p=>p.id===propertyId);if(!p)return{success:false,messages:[{text:'Property not found.'}]};
-  p.rental={annualRent:Math.round(p.marketValue*.065),reliability:60,occupied:false};return{success:true,messages:[{text:`${p.name} is now listed for rent.`}]};
+  const movedOut=Boolean(p.primaryResidence);if(movedOut)delete p.primaryResidence;
+  p.rental={annualRent:Math.round(p.marketValue*.065),reliability:60,occupied:false};
+  if(movedOut)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',importance:2,text:`You moved out of ${p.name} and listed it for rent.`});
+  return{success:true,stateChanges:['property','property.residence'],messages:[{text:`${p.name} is now listed for rent.${movedOut?' It is no longer your current home.':''}`}]};
 }
 
 export function getPropertySaleQuote(state:GameState,propertyId:string):AssetSaleQuote|undefined{

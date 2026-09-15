@@ -136,6 +136,17 @@ export function enforceStateInvariants(state: GameState): GameState {
   state.fame.fame = clamp(state.fame.fame);
   state.fame.publicReputation = clamp(state.fame.publicReputation);
 
+  // Residential identity stays on the existing property records. Legacy/current-schema saves
+  // may omit the optional Phase 10A metadata, so normalize it deterministically without RNG/ids.
+  let playerPrimaryResidenceSeen=false;
+  for(const property of state.assets.properties){
+    if(property.origin!=='purchased'&&property.origin!=='inherited')property.origin='purchased';
+    if(property.origin!=='inherited')delete property.inheritedFromNpcId;
+    if(state.character.age<18||property.rental)delete property.primaryResidence;
+    else if(property.primaryResidence===true){if(playerPrimaryResidenceSeen)delete property.primaryResidence;else playerPrimaryResidenceSeen=true;}
+    else delete property.primaryResidence;
+  }
+
   const spouseRelations = state.relationships.filter(r => r.type === 'spouse' && !r.estranged);
   if (spouseRelations.length > 1) {
     for (const duplicate of spouseRelations.slice(1)) duplicate.type = 'ex';
@@ -170,6 +181,7 @@ export function enforceStateInvariants(state: GameState): GameState {
     npc.wealth = Math.max(0, Number.isFinite(npc.wealth) ? Math.round(npc.wealth) : 0);
     npc.assetPortfolio ??= {properties:[],businesses:[]};
 
+    let npcPrimaryResidenceSeen=false;
     const boundedProperties=[];
     for(const property of npc.assetPortfolio.properties??[]){
       if(!property?.id||npcPropertyIds.has(property.id))continue;
@@ -177,6 +189,9 @@ export function enforceStateInvariants(state: GameState): GameState {
       property.marketValue=Math.max(0,Number.isFinite(property.marketValue)?property.marketValue:0);
       property.mortgageBalance=Math.max(0,Math.min(property.marketValue,Number.isFinite(property.mortgageBalance)?property.mortgageBalance:0));
       property.condition=clamp(property.condition);property.propertyAge=Math.max(0,Math.floor(property.propertyAge??0));property.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(property.acquiredAge??npc.age)));
+      if(!['generated','purchased','inherited'].includes(property.origin))property.origin='generated';
+      if(property.origin!=='inherited')delete property.inheritedFromNpcId;
+      if(property.primaryResidence===true&&property.location===npc.city){if(npcPrimaryResidenceSeen)delete property.primaryResidence;else npcPrimaryResidenceSeen=true;}else delete property.primaryResidence;
       npcPropertyIds.add(property.id);
       if(boundedProperties.length<NPC_ASSET_LIMITS.portfolioProperties)boundedProperties.push(property);
       else npc.wealth+=Math.max(0,Math.round(property.marketValue-property.mortgageBalance));
@@ -199,6 +214,9 @@ export function enforceStateInvariants(state: GameState): GameState {
       for(const property of Array.isArray(trust.properties)?trust.properties:[]){
         if(!property?.id||npcPropertyIds.has(property.id))continue;
         property.purchasePrice=Math.max(0,Number.isFinite(property.purchasePrice)?property.purchasePrice:0);property.marketValue=Math.max(0,Number.isFinite(property.marketValue)?property.marketValue:0);property.mortgageBalance=Math.max(0,Math.min(property.marketValue,Number.isFinite(property.mortgageBalance)?property.mortgageBalance:0));property.condition=clamp(property.condition);property.propertyAge=Math.max(0,Math.floor(property.propertyAge??0));property.acquiredAge=Math.max(0,Math.min(npc.age,Math.floor(property.acquiredAge??npc.age)));
+        if(!['generated','purchased','inherited'].includes(property.origin))property.origin='generated';
+        if(property.origin!=='inherited')delete property.inheritedFromNpcId;
+        delete property.primaryResidence;
         npcPropertyIds.add(property.id);
         if(trustProperties.length<NPC_ASSET_LIMITS.portfolioProperties)trustProperties.push(property);else liquid+=Math.max(0,Math.round(property.marketValue-property.mortgageBalance));
       }
@@ -292,6 +310,14 @@ export function validateState(state: GameState): string[] {
   const spouses = state.relationships.filter(r => r.type === 'spouse' && !r.estranged);
   if (spouses.length > 1) errors.push('Multiple active spouses');
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
+  const playerPrimaryResidences=state.assets.properties.filter(property=>property.primaryResidence===true);
+  if(playerPrimaryResidences.length>1)errors.push('Multiple player primary residences');
+  if(state.character.age<18&&playerPrimaryResidences.length)errors.push('Minor player cannot have an independent primary residence');
+  for(const property of state.assets.properties){
+    if(property.origin!==undefined&&property.origin!=='purchased'&&property.origin!=='inherited')errors.push(`Property ${property.id} has invalid origin`);
+    if(property.origin!=='inherited'&&property.inheritedFromNpcId)errors.push(`Property ${property.id} has invalid inheritance provenance`);
+    if(property.primaryResidence&&property.rental)errors.push(`Property ${property.id} is both a primary residence and rental`);
+  }
   const preferenceTagIds=new Set<string>(NPC_PREFERENCE_TAG_IDS);
   for(const rel of state.relationships){const known=rel.knownPreferenceTags??[];if(known.length>NPC_PREFERENCE_KNOWLEDGE_LIMIT)errors.push(`Relationship ${rel.id} preference knowledge is unbounded`);if(new Set(known).size!==known.length)errors.push(`Relationship ${rel.id} has duplicate preference knowledge`);for(const tag of known)if(!preferenceTagIds.has(tag))errors.push(`Relationship ${rel.id} has unknown preference tag ${tag}`);const romance=rel.romance;if(romance){const history=romance.dateHistory??[];if(history.length>ROMANTIC_DATE_HISTORY_LIMIT)errors.push(`Relationship ${rel.id} romantic date history is unbounded`);for(const entry of history){if(entry.approval<0||entry.approval>100)errors.push(`Relationship ${rel.id} has invalid romantic date approval`);if(entry.age<0)errors.push(`Relationship ${rel.id} has invalid romantic date age`);}if(romance.pendingDate&&romance.pendingDate.acceptedAge<0)errors.push(`Relationship ${rel.id} has invalid pending-date age`);}}
   if (state.legal.sentenceRemaining < 0) errors.push('Negative prison sentence');
@@ -330,14 +356,16 @@ export function validateState(state: GameState): string[] {
       if(npc.assetPortfolio.properties.length>NPC_ASSET_LIMITS.portfolioProperties)errors.push(`NPC ${npc.id} property portfolio is unbounded`);
       if(npc.assetPortfolio.businesses.length>NPC_ASSET_LIMITS.portfolioBusinesses)errors.push(`NPC ${npc.id} business portfolio is unbounded`);
       const projected=npc.assetPortfolio.properties.reduce((sum,property)=>sum+property.marketValue,0);if(npc.life&&Math.abs(projected-npc.life.finance.propertyValue)>.5)errors.push(`NPC ${npc.id} property projection is inconsistent`);
-      for(const property of npc.assetPortfolio.properties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC property ${property.id} has invalid value/debt`);}
+      let npcPrimaryResidences=0;
+      for(const property of npc.assetPortfolio.properties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC property ${property.id} has invalid value/debt`);if(!['generated','purchased','inherited'].includes(property.origin))errors.push(`NPC property ${property.id} has invalid origin`);if(property.origin!=='inherited'&&property.inheritedFromNpcId)errors.push(`NPC property ${property.id} has invalid inheritance provenance`);if(property.primaryResidence){npcPrimaryResidences++;if(property.location!==npc.city)errors.push(`NPC property ${property.id} is a remote primary residence`);}}
+      if(npcPrimaryResidences>1)errors.push(`NPC ${npc.id} has multiple primary residences`);
       for(const business of npc.assetPortfolio.businesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC business ${business.id} has invalid values`);}
     }
     if(npc.inheritanceTrust){
       const trustProperties=npc.inheritanceTrust.properties??[];const trustBusinesses=npc.inheritanceTrust.businesses??[];
       if(trustProperties.length>NPC_ASSET_LIMITS.portfolioProperties)errors.push(`NPC ${npc.id} inheritance trust property portfolio is unbounded`);
       if(trustBusinesses.length>NPC_ASSET_LIMITS.portfolioBusinesses)errors.push(`NPC ${npc.id} inheritance trust business portfolio is unbounded`);
-      for(const property of trustProperties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC trust property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC trust property ${property.id} has invalid value/debt`);}
+      for(const property of trustProperties){if(seenNpcPropertyIds.has(property.id))errors.push(`NPC trust property ${property.id} has duplicate ownership`);seenNpcPropertyIds.add(property.id);if(property.marketValue<0||property.mortgageBalance<0||property.mortgageBalance>property.marketValue)errors.push(`NPC trust property ${property.id} has invalid value/debt`);if(property.primaryResidence)errors.push(`NPC trust property ${property.id} cannot be a primary residence`);}
       for(const business of trustBusinesses){if(seenNpcBusinessIds.has(business.id))errors.push(`NPC trust business ${business.id} has duplicate ownership`);seenNpcBusinessIds.add(business.id);if(business.valuation<0||business.employees<0)errors.push(`NPC trust business ${business.id} has invalid values`);}
     }
     if (!npc.partnerId) continue;
