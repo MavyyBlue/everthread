@@ -7,6 +7,7 @@ import {
   constrainTownMapCamera,
   coverTownMapCamera,
   fitTownMapCamera,
+  townMapInspectableMemories,
   townMapLabelVisible,
   townMapMarkerVisible,
   townMapPlacesInBounds,
@@ -35,6 +36,7 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
   const livingByPlace=useMemo(()=>new Map(projection.living.places.map(item=>[item.placeId,item] as const)),[projection.living.places]);
   const selected=TOWN_PLACES.find(place=>place.id===selectedId);
   const selectedLiving=selected?livingByPlace.get(selected.id):undefined;
+  const selectedMemories=selected?townMapInspectableMemories(projection,selected.id):[];
 
   useLayoutEffect(()=>{
     const element=viewportRef.current;if(!element)return;
@@ -120,6 +122,7 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
         <h2>{selected.label}</h2><p>{selected.description}</p>
         <div className="town-place-tags">{selected.activityTags.map(tag=><span key={tag}>{tag}</span>)}</div>
         {showLiving&&selectedLiving&&<section className="town-place-living"><small>Your life here</small><div className="town-place-living-list">{selectedLiving.contexts.map(context=><div key={context.id}><span className={`town-place-living-icon town-place-living-icon--${context.kind}`} aria-hidden="true"></span><span><strong>{context.label}</strong><small>{context.detail}</small></span>{context.count>1&&<b>{context.count}</b>}</div>)}</div></section>}
+        {showLiving&&selectedMemories.length>0&&<section className="town-place-memories" aria-label="Memories from this place"><small>Memories here</small><p>Meaningful moments your thread remembers at this location.</p><div className="town-place-memory-list">{selectedMemories.map(memory=><article key={memory.id}><div><strong>{memory.current?'Current life':`Generation ${memory.generation}`}</strong><small>{[Number.isFinite(memory.age)?`Age ${memory.age}`:undefined,Number.isFinite(memory.year)?String(memory.year):undefined].filter(Boolean).join(' · ')}</small></div><p>{memory.text}</p></article>)}</div></section>}
         {selected.routes?.length?<div className="town-place-services"><small>Available here</small><div className="town-place-service-list">{selected.routes.map(route=><button key={route.id} onClick={()=>onNavigate(selected.id,route.id)}><span><strong>{route.label}</strong><small>{route.description}</small></span><b aria-hidden="true">›</b></button>)}</div><p>These open established Everthread screens. The destination system still owns eligibility, costs, limits, and outcomes.</p></div>:<div className="town-place-route"><small>Map landmark</small><strong>No routed mechanic yet</strong><p>This place remains part of Everthread without inventing a duplicate or fake system. Later world-life phases can add experiences when an authoritative owner exists.</p></div>}
       </div>}
     </BottomSheet>

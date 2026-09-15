@@ -33,6 +33,7 @@ import {
   buildTownMapProjection,
   coverTownMapCamera,
   fitTownMapCamera,
+  townMapInspectableMemories,
   townMapSemanticView,
 } from '../systems/TownMapSystem';
 import { emigrate, travel } from '../systems/TravelSystem';
@@ -193,6 +194,20 @@ export async function runPhase10EProgramCloseoutRegression(){
   const finalStates=[integrated,hidden,stress,loaded,normalized,rewind,trip,dynasty,dynastyLoaded];
   const finalStateErrors=finalStates.map((value,index)=>({index,errors:validateState(value)})).filter(item=>item.errors.length>0);
   verify(finalStateErrors.length===0,`91 all representative home/work/map/threadspace/profile/save/rewind/travel/dynasty states are invariant-clean at program closeout: ${JSON.stringify(finalStateErrors)}`);
+
+  const memoryMap=buildTownMapProjection(integrated);const parkMemories=townMapInspectableMemories(memoryMap,'weaver-park');
+  verify(parkMemories.length===1&&parkMemories[0]?.text==='Closeout milestone park','92 a clicked public Map location can expose the exact meaningful timeline event that happened there');
+  verify(parkMemories[0]?.current===true&&parkMemories[0]?.generation===integrated.legacy.generation&&parkMemories[0]?.age===36&&parkMemories[0]?.year===2080,'93 inspectable Map memories preserve current/prior generation, age, and year context instead of flattening biography');
+  const dinerMemories=townMapInspectableMemories(memoryMap,'nightjar-diner');verify(dinerMemories.length===1&&dinerMemories[0]?.text==='Closeout milestone diner','94 importance-two meaningful events are inspectable from their exact Map location');
+  const routineMemory=state('10e-memory-routine');routineMemory.timeline.push(milestone('routine-map-memory','weaver-park',36,1));verify(townMapInspectableMemories(buildTownMapProjection(routineMemory),'weaver-park').length===0,'95 routine importance-one visits remain excluded from Map memory inspection');
+  verify(townMapInspectableMemories(hiddenMap,'blackline-freight-yard').length===0&&!hiddenMap.placeMemory.places.some(place=>place.placeId==='blackline-freight-yard'),'96 an undiscovered hidden place cannot leak its remembered event through the new inspection projection');
+  const discoveredMemoryMap=buildTownMapProjection(hidden);const hiddenMemories=townMapInspectableMemories(discoveredMemoryMap,'blackline-freight-yard');verify(hiddenMemories.length===1&&hiddenMemories[0]?.text==='Closeout milestone blackline-memory','97 once existing discovery truth reveals a place, its already-authoritative memory becomes inspectable normally');
+  const semanticMemory=townMapSemanticView(integrated).places.find(place=>place.id==='weaver-park')?.memories;verify(semanticMemory?.length===1&&semanticMemory[0]?.text===parkMemories[0]?.text&&semanticMemory[0]?.id===parkMemories[0]?.id,'98 visual Map projection and semantic Map view expose the same exact inspectable memory identity/text');
+  const precomputedLegacy=generationalPlaceMemoryProjection(integrated);verify(JSON.stringify(livingMapProjection(integrated,precomputedLegacy))===JSON.stringify(livingMapProjection(integrated)),'99 Living Map composition remains identical when TownMapSystem reuses the already-computed place-memory projection');
+  const memoryReadOnlyBefore=JSON.stringify(integrated),memoryRng=integrated.rngCounter,memoryIds=integrated.idCounter;buildTownMapProjection(integrated);verify(JSON.stringify(integrated)===memoryReadOnlyBefore&&integrated.rngCounter===memoryRng&&integrated.idCounter===memoryIds,'100 exposing readable Map memories remains strictly browsing-only and RNG/runtime-ID neutral');
+  const stressMap=buildTownMapProjection(stress);verify(stressMap.placeMemory.totalMemories<=PLACE_LEGACY_TOTAL_LIMIT&&stressMap.placeMemory.places.every(place=>place.memories.length<=PLACE_LEGACY_PER_PLACE_LIMIT),'101 inspectable Map memory data inherits the certified generational-memory bounds under stress');
+  const familyMap=buildTownMapProjection(dynasty);const familyThreadwell=familyMap.placeMemory.places.find(place=>place.placeId==='threadwell-residential');const familyInspectable=townMapInspectableMemories(familyMap,'threadwell-residential');verify(familyThreadwell?.memories.some(memory=>memory.kind==='family_home')===true&&familyInspectable.every(memory=>memory.kind==='milestone'),'102 family landmarks remain available to Living Map context while the event reader shows only actual timeline milestones');
+  const copyProbe=townMapInspectableMemories(memoryMap,'weaver-park');copyProbe[0]!.text='mutated projection copy';verify(townMapInspectableMemories(memoryMap,'weaver-park')[0]?.text==='Closeout milestone park','103 callers receive memory copies and cannot mutate the authoritative Town Map projection through presentation code');
 
   return checks;
 }

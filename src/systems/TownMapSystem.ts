@@ -8,6 +8,8 @@ import {
 } from '../data/townPlaces';
 import type { GameState } from '../types/game';
 import type { LivingMapProjection } from '../types/livingMap';
+import type { GenerationalPlaceMemoryProjection, PlaceLegacyMemory } from '../types/placeMemory';
+import { generationalPlaceMemoryProjection } from './GenerationalPlaceMemorySystem';
 import { livingMapProjection } from './LivingMapSystem';
 
 export interface TownMapBounds {left:number;right:number;top:number;bottom:number}
@@ -20,6 +22,7 @@ export interface TownMapProjection {
   playerInEverthread:boolean;
   playerLocationLabel:string;
   living:LivingMapProjection;
+  placeMemory:GenerationalPlaceMemoryProjection;
 }
 
 export const TOWN_MAP_MIN_SCALE=.2;
@@ -37,10 +40,17 @@ export function townPlaceDiscovered(state:GameState,place:TownPlaceDefinition){
 export function buildTownMapProjection(state:GameState,options:TownMapProjectionOptions={}):TownMapProjection{
   const query=(options.query??'').trim().toLowerCase();
   const categorySet=options.categories===undefined?undefined:new Set(options.categories);
-  const livingRaw=livingMapProjection(state);
+  const placeMemoryRaw=generationalPlaceMemoryProjection(state);
+  const livingRaw=livingMapProjection(state,placeMemoryRaw);
   const discoveredIds=new Set(TOWN_PLACES.filter(place=>townPlaceDiscovered(state,place)||options.includeUndiscovered).map(place=>place.id));
   const living:LivingMapProjection={...livingRaw,places:livingRaw.places.filter(item=>discoveredIds.has(item.placeId))};
   living.connectedPlaceCount=living.places.length;living.totalContexts=living.places.reduce((sum,item)=>sum+item.contexts.length,0)+living.districts.reduce((sum,item)=>sum+item.contexts.length,0);
+  const placeMemoryPlaces=placeMemoryRaw.places.filter(item=>discoveredIds.has(item.placeId));
+  const placeMemory:GenerationalPlaceMemoryProjection={
+    places:placeMemoryPlaces,
+    totalMemories:placeMemoryPlaces.reduce((sum,item)=>sum+item.memories.length,0),
+    familyLandmarks:placeMemoryPlaces.reduce((sum,item)=>sum+item.familyHomes+item.familyBusinesses,0),
+  };
   const livingByPlace=new Map(living.places.map(item=>[item.placeId,item] as const));
   let hiddenPlaceCount=0;
   const places=TOWN_PLACES.filter(place=>{
@@ -59,7 +69,14 @@ export function buildTownMapProjection(state:GameState,options:TownMapProjection
     playerInEverthread:state.character.countryId===EVERTHREAD_COUNTRY_ID&&state.character.city===EVERTHREAD_CITY,
     playerLocationLabel:locationLabel(state.character.countryId,state.character.city),
     living,
+    placeMemory,
   };
+}
+
+export function townMapInspectableMemories(projection:TownMapProjection,placeId:string):PlaceLegacyMemory[]{
+  const place=projection.placeMemory.places.find(item=>item.placeId===placeId);
+  if(!place)return[];
+  return place.memories.filter(memory=>memory.kind==='milestone').map(memory=>({...memory}));
 }
 
 export function clampTownMapScale(value:number){
@@ -121,6 +138,7 @@ export function townMapSemanticView(state:GameState){
       id:place.id,label:place.label,category:place.category,districtId:place.districtId,
       x:place.map.x,y:place.map.y,activityTags:[...place.activityTags],routes:place.routes?.map(route=>({...route})),
       contexts:livingByPlace.get(place.id)?.contexts.map(context=>({...context,sourceIds:[...context.sourceIds]}))??[],
+      memories:townMapInspectableMemories(projection,place.id),
     })),
   };
 }

@@ -2,6 +2,7 @@ import { EVERTHREAD_CITY, EVERTHREAD_COUNTRY_ID } from '../data/countries';
 import { POST_SECONDARY_STAGES } from '../data/workingEverthread';
 import { TOWN_DISTRICTS, TOWN_PLACES } from '../data/townPlaces';
 import type { GameState, Npc } from '../types/game';
+import type { GenerationalPlaceMemoryProjection } from '../types/placeMemory';
 import type { LivingMapContext, LivingMapContextKind, LivingMapDistrictContext, LivingMapPlaceContext, LivingMapProjection } from '../types/livingMap';
 import { generationalPlaceMemoryProjection } from './GenerationalPlaceMemorySystem';
 import { playerResidenceProjection } from './ResidentialLifeSystem';
@@ -46,7 +47,7 @@ function childSchoolPlaceId(npc:Npc){
   return POST_SECONDARY_STAGES.has(record.stage)||Boolean(record.credential)?'everthread-college':'everthread-school';
 }
 
-export function livingMapProjection(state:GameState):LivingMapProjection{
+export function livingMapProjection(state:GameState,placeMemory=generationalPlaceMemoryProjection(state)):LivingMapProjection{
   const placeMap=new Map<string,LivingMapContext[]>();
   const districtMap=new Map<string,LivingMapContext[]>();
   const addPlace=(placeId:string,seed:ContextSeed)=>{if(!PLACE_IDS.has(placeId))return;const list=placeMap.get(placeId)??[];mergeContext(list,'place',placeId,seed);placeMap.set(placeId,list);};
@@ -71,7 +72,7 @@ export function livingMapProjection(state:GameState):LivingMapProjection{
     addPlace(placeId,{kind:'child_school',label:'Your child attends here',detail:`${child.firstName} ${child.lastName} currently studies here.`,priority:82,sourceId:child.id});
   }
 
-  for(const legacy of generationalPlaceMemoryProjection(state).places){
+  for(const legacy of placeMemory.places){
     if(!legacy.memories.length)continue;
     const family=legacy.familyHomes+legacy.familyBusinesses+legacy.priorGenerationMilestones>0;
     const detail=family
