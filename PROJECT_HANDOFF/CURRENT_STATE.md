@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #183** (`35040783887`) on expanded source **`ecd7e58c32a3145e8354f7397b70fc14d1feaf64`**, save schema **17**. Run #183 adds deterministic richer aging/presentation over the existing stable Character Visual identity while preserving Runs #178–#181 Yuki/Threadroom presentation and all established NPC/relationship/family authorities without parallel simulation state. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #185** (`35121435267`) on expanded source **`d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`**, save schema **17**. Run #185 is a narrow Secret Yuki provenance-routing hotfix over Run #183 richer aging/presentation: the durable secret-code flag now owns special identity routing, while bounded NPC narrative memory remains bounded and ordinary NPC/relationship/family authorities remain unchanged. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,20 +16,31 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #183**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Feedback Inbox is verified **5 total / 0 unresolved**; durable review-state points to newest gameplay source `ecd7e58c32a3145e8354f7397b70fc14d1feaf64` at `2026-09-16 00:39:27.036715+00`, reviewed count **5**.
+- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4` at `2026-09-16 16:25:10.400372+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, Run #174 deterministic NPC identity/reveal plus descendant portrait continuity, Run #176 biological family resemblance/inheritance, Run #178 the secret-origin Yuki identity/Hidden Threadroom slice, Run #180 reactive Astra Threadroom presentation, Run #181 its viewport/fallback hotfix, and Run #183 richer general aging/presentation. The next visual slice is intentionally selected after player review/feedback; additional bespoke Yuki age-stage art may extend the existing visual-stage contract later without blocking the roadmap. No Phase 11 label is implied.
+- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, Run #174 deterministic NPC identity/reveal plus descendant portrait continuity, Run #176 biological family resemblance/inheritance, Run #178 the secret-origin Yuki identity/Hidden Threadroom slice, Run #180 reactive Astra Threadroom presentation, Run #181 its viewport/fallback hotfix, Run #183 richer general aging/presentation, and Run #185 the durable Secret Yuki provenance-routing hotfix. The next visual slice is intentionally selected after player review/feedback; additional bespoke Yuki age-stage art may extend the existing visual-stage contract later without blocking the roadmap. No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
-Last handoff synchronization: 2026-09-15
+Last handoff synchronization: 2026-09-16
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #183 — Character Visual richer aging/presentation
+## Newest certified gameplay/source — Run #185 — Secret Yuki durable provenance-routing hotfix
+
+- Upload wrapper `6bbd4a7aef2dc876748f056d2fcecdcb040ba0ce`; expanded certified source `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`; Actions Run ID `35121435267`; job `104879924533`. Net diff from synchronized Run #184 `f8842340b36dc69e10c5481449576927c9f7fab7` is exactly **5 intended source/test files**.
+- Player reproduction exposed an authority bug rather than save corruption: the exact secret Yuki NPC and `secretCode:yuki:9426` flag still existed, but the old `secret_yuki_9426` origin memory had been pruned after the NPC reached the intentional 36-entry relationship-memory ceiling. Because routing still inspected that bounded memory, Threadspace opened the ordinary profile.
+- `secretYukiNpcId(state)` now resolves the existing durable secret-code flag first and only uses the origin memory as a legacy-recovery fallback. `isSecretYukiNpc(state,npc)` and `peopleSurfaceForNpc(state,npc)` route the exact flagged NPC. Ordinary/decoy Yukis remain ordinary even if names or visual fields match.
+- Font family, text color, theme, and other presentation settings cannot affect provenance. No memory cap was weakened, no new identity ledger was added, no save schema/migration/content change was introduced, and normalization remains deterministic/RNG- and runtime-ID-neutral.
+- Secret-code regression **36/36**; People **57/57**; Character Visual **76/76**; Visual Identity **12/12**; Yuki Art **19/19**; base **82/82**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**. Canonical preflight **4/4 Green**, **66,135 ms** total.
+- Production build **218 modules**. People ~**58.82/17.86 gzip kB**; Player Profile ~**10.20/2.95**; character-art pack ~**971.11/69.18**; main ~**1,360.69/380.17**; CSS ~**87.92/16.19**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `12235fce17c4bf551887937413767cb9dc4071cbfb2add27167fc6fb6fdc74dc`; dependency SHA `e240824d278b823e095058fed93dc02c18da4915bf38709b696a16982b2a958b`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10457241561` (`afe8df394ead5d1c583828814393c065595497f609d3bfb100521b32c3f0558e`); Pages artifact `10457561283` (`38863e6d029dd864df9e978e34706810369c36759735b78fc34688c47751106b`); deployment succeeded.
+- Feedback Inbox: **5 total / 0 unresolved by triage**; checkpoint `main` → `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4` at `2026-09-16 16:25:10.400372+00`.
+
+## Prior certified gameplay/source — Run #183 — Character Visual richer aging/presentation
 
 - Upload wrapper `8988105410ed6af26e5ddc505cbf5b571db6f511`; expanded certified source `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`; Actions Run ID `35040783887`; job `104619936027`. Net diff from synchronized Run #182 `948b7f3bda7fcbe7d801ec1994b36a50ac7b447c` is exactly **4 intended source/test files**.
 - One pure `characterAgePresentation` projection derives visible stage presentation from authoritative person age + stable visual identity. No age shadow field, save mutation, migration, runtime-ID allocation, or gameplay-RNG consumption is introduced. Save schema stays **17**.
@@ -60,9 +71,9 @@ Candidate save schema: none
 ## Prior certified gameplay/source — Run #178 — Secret Yuki / Hidden Threadroom
 
 - Upload wrapper `ef2d29fea290d6d23b7e3ae310fada6e58a356eb`; expanded certified source `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`; Actions Run ID `35025458317`; job `104571277415`. Net diff from synchronized baseline `73512a2666290c980ba6841528bf811cd45fe932` is exactly **9 intended source/test files**.
-- Secret code `9426` creates the same single persistent Yuki Aster NPC + Relationship as before, but now materializes one curated stable portrait. A permanent `secret_yuki_9426` NPC memory is the secret-origin marker; display name alone is never sufficient for special behavior.
+- Secret code `9426` creates the same single persistent Yuki Aster NPC + Relationship as before, but now materializes one curated stable portrait. A `secret_yuki_9426` NPC memory records the secret origin, but Run #185 supersedes it as the live routing authority: the already-existing `secretCode:yuki:9426` flag is durable provenance because NPC narrative memory is bounded. Display name alone is never sufficient for special behavior.
 - `normalizeSecretYukiState` repairs already-spawned randomized/current-schema Yuki saves to the authored identity and portrait reveal without recreating the NPC, changing relationship/history, consuming gameplay RNG, or allocating runtime IDs. Save schema remains **17**.
-- People selection routes the exact secret-origin Yuki to the dedicated full-screen Hidden Threadroom. Ordinary NPCs—including a decoy with the same name/visual fields but no secret-origin memory—continue to use the ordinary profile.
+- People selection routes the exact secret-origin Yuki to the dedicated full-screen Hidden Threadroom. Ordinary NPCs—including decoys with the same name/visual fields that are not the flagged secret NPC—continue to use the ordinary profile.
 - Hidden Threadroom presentation consumes the existing `CharacterPortrait`, Relationship, NPC memory, action-economy, and GameEngine authorities. Six authored conversation topics plus relationship-aware greeting/status are read-only projections. Quick interactions call ordinary engine social actions; mature dates, gifts, milestones, family planning, residential experiences, and other systems remain available through the existing profile actions doorway.
 - Childhood redemption remains age-matched/friendship-appropriate and all established dating/reproduction age/sex gates remain authoritative.
 - Secret-code / Hidden Threadroom regression **32/32**; Character Visual **60/60**; Family Visual **27/27**; base **82/82**; People **57/57**; Threadspace recovery **10/10**; Family Reproduction **52/52**; Age-Aware Reproduction **22/22**; Family Topology **40/40**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life responsive **8/8**; minigames **19/19**; feedback regressions **20/20 + 23/23**. Canonical preflight **4/4 Green**.

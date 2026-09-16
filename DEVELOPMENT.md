@@ -1,10 +1,10 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-15
+Last updated: 2026-09-16
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #183 / `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`
-Certified gameplay baseline: Run #183 / `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`
+Newest certified expanded gameplay/source: Run #185 / `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`
+Certified gameplay baseline: Run #185 / `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`
 
 ## Product direction
 
@@ -26,7 +26,22 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified Character Visual slice — Run #183 — richer aging/presentation
+## Newest certified post-closeout hotfix — Run #185 — Secret Yuki durable provenance routing
+
+Run #185 fixes a player-reproduced Hidden Threadroom routing failure without changing saves, bounded-memory policy, or ordinary NPC simulation.
+
+- Expanded certified source: `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`, schema **17**. Upload wrapper `6bbd4a7aef2dc876748f056d2fcecdcb040ba0ce`; Actions Run ID `35121435267`; job `104879924533`. Base synchronized source was Run #184 `f8842340b36dc69e10c5481449576927c9f7fab7`; net diff is exactly **5 intended source/test files**.
+- Root cause: Secret Yuki routing treated the bounded `secret_yuki_9426` NPC memory as the live identity test. Relationship/NPC memories are intentionally capped; once a long-running Yuki reached the 36-entry relationship-memory ceiling, that old origin memory could be pruned even though `state.flags['secretCode:yuki:9426']` still pointed to the exact authored NPC. Threadspace then fell back to the ordinary profile.
+- `SecretCodeSystem.secretYukiNpcId(state)` now makes the durable secret-code flag the primary provenance authority. The origin memory remains only a legacy-recovery fallback for older saves whose flag must be repaired. `isSecretYukiNpc` and `peopleSurfaceForNpc` are state-aware, so display name, copied appearance, font, and text-color choices cannot grant or revoke special routing.
+- The fix preserves bounded narrative history instead of making old memories immortal. It introduces no second NPC identity store: the flag already existed and simply becomes the routing authority it was meant to be. Save schema stays **17**; no migration or content change is required. Existing deterministic normalization still repairs portrait/reveal/flag state without consuming gameplay RNG or allocating runtime IDs.
+- Secret-code regression expands **32 → 36 checks**, including bounded-memory pruning, font/text-color presentation changes, decoy isolation, pruned-history repair, legacy recovery, and RNG/runtime-ID neutrality. The reported exported life was also reproduced directly: the same NPC routes to `profile` before the correction and `yuki-threadroom` after it without editing the save.
+- Canonical preflight is **4/4 Green** in **66,135 ms**: Engine TypeScript **5,109 ms**, Test TypeScript **6,635 ms**, complete regression wall **37,816 ms**, production build **16,570 ms**. Connected gates include base **82/82**, People **57/57**, Character Visual **76/76**, Visual Identity **12/12**, Yuki Art **19/19**, Dynasty **66/66**, Long-Life **105/105**, 10E **103/103**, New Life **8/8**, minigames **19/19**, and feedback **20/20 + 23/23**.
+- Production: **218 modules**; People ~**58.82/17.86 kB gzip**, Player Profile ~**10.20/2.95**, character-art pack ~**971.11/69.18**, main ~**1,360.69/380.17**, CSS ~**87.92/16.19**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `12235fce17c4bf551887937413767cb9dc4071cbfb2add27167fc6fb6fdc74dc`; dependency SHA `e240824d278b823e095058fed93dc02c18da4915bf38709b696a16982b2a958b`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10457241561` (`afe8df394ead5d1c583828814393c065595497f609d3bfb100521b32c3f0558e`); Pages artifact `10457561283` (`38863e6d029dd864df9e978e34706810369c36759735b78fc34688c47751106b`); deployment succeeded.
+- Feedback Inbox remains **5 total / 0 unresolved by triage**, with no report newer than `2026-09-15 06:47:52.761298+00`. Durable checkpoint `main` advanced to Run #185 source at `2026-09-16 16:25:10.400372+00`, reviewed count **5**.
+- After the mandatory documentation sync, feature sequencing returns to player review/feedback. No new macro phase is implied.
+
+## Prior certified Character Visual slice — Run #183 — richer aging/presentation
 
 Run #183 makes the existing modular portrait identity visibly age without creating a second aging authority or mutating saved appearance.
 
@@ -63,7 +78,7 @@ Run #181 closes the player-facing cutoff found after Run #180 without changing s
 Run #178 gives the Sandbox secret-origin Yuki one authored visual identity and one unique People interaction surface without creating a parallel NPC, relationship, affection, family, or save authority.
 
 - Expanded certified source: `7eb71a218a2f35cfe807df9d2caaf7b2a86ff9b2`, schema **17**. Upload wrapper `ef2d29fea290d6d23b7e3ae310fada6e58a356eb`; Actions Run ID `35025458317`; job `104571277415`. Base synchronized source was `73512a2666290c980ba6841528bf811cd45fe932`; net diff is exactly **9 intended source/test files**.
-- Secret code `9426` still creates one ordinary persistent NPC + Relationship. `SecretCodeSystem` now materializes the authored Yuki portrait and stamps a permanent `secret_yuki_9426` memory used as the durable secret-origin identity marker. Name matching alone never grants special routing.
+- Secret code `9426` still creates one ordinary persistent NPC + Relationship. `SecretCodeSystem` materializes the authored Yuki portrait and records a permanent `secret_yuki_9426` origin memory. Run #185 supersedes that bounded narrative memory as the live routing authority: the existing `secretCode:yuki:9426` flag is durable provenance. Name matching alone never grants special routing.
 - `normalizeSecretYukiState` repairs already-spawned pre-curation Yuki saves deterministically/idempotently on current-schema load: same NPC, same relationship/history, curated portrait + reveal restored, no gameplay RNG/runtime IDs consumed. Save schema remains **17**.
 - `YukiThreadroomSystem.peopleSurfaceForNpc` owns the routing projection. Secret-origin Yuki opens a dedicated full-screen Hidden Threadroom from Threadspace; ordinary NPCs, including decoys with the same name/identity fields but no origin memory, keep the normal People profile.
 - The Threadroom is presentation over existing authorities: `CharacterPortrait`, NPC memories, Relationship, action-economy gates, and `GameEngine.interactWithCharacter`. Six conversation topics plus greetings/status are read-only projections; quick interactions use ordinary engine actions; mature dates/gifts/milestones/family/residential systems remain reachable through the existing profile actions doorway.

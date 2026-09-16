@@ -1,3 +1,20 @@
+## Secret Yuki durable provenance-routing hotfix — CI Green Run #185 — 2026-09-16
+
+### Fixed
+
+- Fixed a player-reproduced Hidden Threadroom regression where the correct Yuki NPC could eventually open as an ordinary People profile in a long-running life. The save itself remained intact: the `secretCode:yuki:9426` flag still pointed to the exact NPC, but the old `secret_yuki_9426` narrative origin memory had been pruned after the intentionally bounded relationship-memory history reached its 36-entry ceiling.
+- Moved live special-identity resolution to `SecretCodeSystem.secretYukiNpcId(state)`: the existing durable secret-code flag is primary, while the origin memory is retained as a legacy-recovery fallback for older/current-schema saves that need flag repair. No new identity ledger, unbounded-memory exception, save migration, or schema bump was introduced.
+- Updated People Threadspace and Hidden Threadroom routing to use state-aware `isSecretYukiNpc(state,npc)` / `peopleSurfaceForNpc(state,npc)`. Ordinary/decoy NPCs cannot gain the special room through matching name or appearance fields, and visual settings such as font family/text color cannot revoke it.
+- Expanded Secret-code regression **32 → 36 checks** with bounded-memory pruning, font/text-color presentation isolation, pruned-history deterministic repair, decoy isolation, and RNG/runtime-ID neutrality. The player-exported life was also used to reproduce the before/after routing failure without modifying the save.
+
+### Certification
+
+- GitHub Actions Run #185 (`35121435267`, job `104879924533`) certified expanded source `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4` from upload wrapper `6bbd4a7aef2dc876748f056d2fcecdcb040ba0ce`. Net diff from synchronized Run #184 source `f8842340b36dc69e10c5481449576927c9f7fab7` is exactly **5 intended source/test files**; workflow import reports 6 changed files because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4** in **66,135 ms**: Engine TypeScript **5,109 ms**, Test TypeScript **6,635 ms**, complete regression wall **37,816 ms**, production build **16,570 ms**. Secret-code **36/36**; People **57/57**; Character Visual **76/76**; Visual Identity **12/12**; Yuki Art **19/19**; base **82/82**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed at **218 modules**. People ~**58.82/17.86 kB gzip**; Player Profile ~**10.20/2.95**; lazy `characterArtPack` ~**971.11/69.18**; main ~**1,360.69/380.17**; CSS ~**87.92/16.19**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA-256 `12235fce17c4bf551887937413767cb9dc4071cbfb2add27167fc6fb6fdc74dc`; dependency SHA-256 `e240824d278b823e095058fed93dc02c18da4915bf38709b696a16982b2a958b`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10457241561` (`afe8df394ead5d1c583828814393c065595497f609d3bfb100521b32c3f0558e`); Pages artifact `10457561283` (`38863e6d029dd864df9e978e34706810369c36759735b78fc34688c47751106b`); Pages deployment reported success.
+- Post-certification Feedback Inbox remains **5 total / 0 unresolved by triage**, with no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint `main` advanced to `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4` at `2026-09-16 16:25:10.400372+00`, reviewed count **5**.
+
 ## Character Visual richer aging/presentation — CI Green Run #183 — 2026-09-15
 
 ### Added / changed

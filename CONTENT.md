@@ -1,3 +1,7 @@
+## Secret Yuki provenance-routing hotfix — Run #185
+
+Run #185 adds **no gameplay/event/place/career/education/inventory/preference/portrait-art definitions** and no new durable simulation authority. It changes which already-existing provenance field owns Hidden Threadroom routing after bounded NPC memory pruning: the `secretCode:yuki:9426` flag is primary and the historical origin memory is fallback/recovery evidence. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged.
+
 ## Character Visual richer aging/presentation — Run #183
 
 Run #183 adds **no gameplay/event/place/career/education/inventory/portrait-art definitions** and no durable simulation authority. It projects age-appropriate clothing/facial-hair visibility, mature/elder facial details, and deterministic natural-hair graying from the existing **624 modular Character Visual SVG components** and stable stored identity. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.
@@ -33,7 +37,7 @@ Run #170 adds **no gameplay/event/place/career/inventory definitions**. It adds 
 Run #168 adds **no gameplay/content definitions**. The Astra-derived local vector library is presentation metadata only, and the Appearance reactivity correction changes render invalidation rather than content. Current certified gameplay totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, save schema **17**.
 
 
-Last audited: 2026-09-15
+Last audited: 2026-09-16
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
 ## Phase 10E / final Phase 10 closeout content note
