@@ -46,7 +46,7 @@ export function projectPlayerProfile(state:GameState):PlayerProfileProjection{
     education:latestEducation?`${latestEducation.institution}${latestEducation.graduated?' · graduated':latestEducation.droppedOut?' · left early':' · current'}`:'No formal education record yet',
     relationship,
     traits:[...character.traits],
-    appearance:describeAppearanceProfile(character.appearance),
+    appearance:describeAppearanceProfile(character.appearance,character.age),
     licenses,
     completedAchievements:state.achievements.filter(item=>item.completed).length,
     assetSummary:{homes:state.assets.properties.length,vehicles:state.assets.vehicles.length,businesses:state.businesses.filter(item=>!item.bankrupt).length,collectibles:state.assets.collectibles.length},

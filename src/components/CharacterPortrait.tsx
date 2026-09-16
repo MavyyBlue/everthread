@@ -21,7 +21,7 @@ export function CharacterPortrait({appearance,age=18,size=96,label='Character po
   useEffect(()=>{let active=true;if(!pack)void loadPack().then(module=>{if(active)setPack(module);});return()=>{active=false;};},[pack]);
   const normalized=useMemo(()=>normalizeAppearanceProfile(appearance,`portrait:${appearance.hairStyle}:${appearance.eyeColor}`),[appearance]);
   const visual=normalized.visual!;
-  const tokens=useMemo(()=>paletteTokens(visual),[visual]);
+  const tokens=useMemo(()=>paletteTokens(visual,age),[visual,age]);
   const layers=useMemo(()=>portraitAssetIds(visual,age),[visual,age]);
   const style=useMemo(()=>{
     const next:PortraitStyle={width:size,height:size};

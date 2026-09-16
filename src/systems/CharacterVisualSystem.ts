@@ -3,6 +3,14 @@ import type { AppearanceProfile, Character, CharacterVisualIdentity, GenderIdent
 
 export type CharacterAgeStage='infant-toddler'|'child'|'teen'|'adult'|'mature-adult'|'elder';
 
+export interface CharacterAgePresentation {
+  stage:CharacterAgeStage;
+  hairPaletteId:string;
+  clothingId:string;
+  facialHairId?:string;
+  detailIds:string[];
+}
+
 type PaletteEntry={id:string;label:string;colors:Record<string,string>};
 type CatalogShape={
   kitId:string;version:string;
@@ -48,7 +56,8 @@ const irisMap:Record<string,string>={brown:'iris.brown','dark brown':'iris.dark-
 const hairStyleMap:Record<string,string>={straight:'hair.straight-long-15',wavy:'hair.wavy-medium-12',curly:'hair.curly-bob-13',coiled:'hair.coily-crop-08','short textured':'hair.textured-crop-03','long layered':'hair.wavy-long-16',cropped:'hair.buzzed-01'};
 
 export function characterAgeStage(age:number):CharacterAgeStage{
-  if(age<=4)return'infant-toddler';if(age<=12)return'child';if(age<=17)return'teen';if(age<=44)return'adult';if(age<=64)return'mature-adult';return'elder';
+  const safeAge=Number.isFinite(age)?Math.max(0,Math.floor(age)):0;
+  if(safeAge<=4)return'infant-toddler';if(safeAge<=12)return'child';if(safeAge<=17)return'teen';if(safeAge<=44)return'adult';if(safeAge<=64)return'mature-adult';return'elder';
 }
 
 export function characterVisualLabel(id:string|undefined):string{
@@ -56,6 +65,68 @@ export function characterVisualLabel(id:string|undefined):string{
 }
 
 export function bodyKind(bodyId:string):string{return bodyId.replace(/^body\./,'').replace(/-\d+$/,'');}
+
+const NATURAL_HAIR_PALETTES=new Set([
+  'hair-color.ink','hair-color.soft-black','hair-color.espresso','hair-color.chestnut','hair-color.walnut','hair-color.warm-brown',
+  'hair-color.caramel','hair-color.honey-blonde','hair-color.sandy-blonde','hair-color.platinum','hair-color.auburn','hair-color.copper',
+]);
+const UNDERAGE_WORK_CLOTHING=new Set(['clothing.scrubs-21','clothing.lab-coat-22','clothing.work-shirt-23']);
+const YOUTH_CASUAL_CLOTHING=[
+  'clothing.crew-tee-01','clothing.pullover-hoodie-04','clothing.knit-sweater-06','clothing.track-jacket-14',
+  'clothing.sport-jersey-15','clothing.youth-polo-19','clothing.school-cardigan-20',
+] as const;
+const TEEN_FACIAL_HAIR=['facial-hair.chin-stubble-01','facial-hair.light-mustache-02'] as const;
+const DETAIL_MIN_AGE:Record<string,number>={
+  'detail.under-eye-soft-12':13,'detail.under-eye-defined-13':13,'detail.mature-lines-14':45,'detail.elder-lines-15':65,'detail.elder-age-marks-16':65,
+};
+
+function agePresentationSeed(visual:CharacterVisualIdentity):string{
+  return [visual.faceFamily,visual.eyeFamily,visual.browFamily,visual.noseId,visual.mouthFamily,visual.earId,visual.skinPaletteId,visual.irisPaletteId].join('|');
+}
+
+function ageProjectedHairPalette(visual:CharacterVisualIdentity,age:number,seed:string):string{
+  if(!NATURAL_HAIR_PALETTES.has(visual.hairPaletteId))return visual.hairPaletteId;
+  const grayOnset=48+(hashString(`${seed}:gray-onset`)%17);
+  if(age<grayOnset)return visual.hairPaletteId;
+  return age<grayOnset+12?'hair-color.silver':'hair-color.white';
+}
+
+function ageProjectedClothing(visual:CharacterVisualIdentity,age:number,seed:string):string{
+  if(age>=18||!UNDERAGE_WORK_CLOTHING.has(visual.clothingId))return visual.clothingId;
+  return pick(YOUTH_CASUAL_CLOTHING,`${seed}:youth-clothing`,YOUTH_CASUAL_CLOTHING[0]);
+}
+
+function ageProjectedFacialHair(visual:CharacterVisualIdentity,age:number,seed:string):string|undefined{
+  if(!visual.facialHairId||age<15)return undefined;
+  if(age<18)return pick(TEEN_FACIAL_HAIR,`${seed}:teen-facial-hair`,TEEN_FACIAL_HAIR[0]);
+  return visual.facialHairId;
+}
+
+function ageProjectedDetailIds(visual:CharacterVisualIdentity,age:number,seed:string):string[]{
+  const ids:string[]=[];
+  if(visual.detailId&&age>=(DETAIL_MIN_AGE[visual.detailId]??0))ids.push(visual.detailId);
+  if(age>=75)ids.push('detail.elder-lines-15','detail.elder-age-marks-16');
+  else if(age>=65)ids.push('detail.elder-lines-15');
+  else if(age>=55)ids.push('detail.mature-lines-14');
+  else if(age>=45)ids.push(pick(['detail.under-eye-soft-12','detail.under-eye-defined-13'],`${seed}:mature-detail`,'detail.under-eye-soft-12'));
+  return [...new Set(ids)].filter(id=>Boolean(CHARACTER_ART_CATALOG.assets[id]));
+}
+
+/**
+ * Read-only age presentation over one stable visual identity.
+ * Character/NPC age remains authoritative; this projection never mutates saves or consumes gameplay RNG.
+ */
+export function characterAgePresentation(visual:CharacterVisualIdentity,age:number):CharacterAgePresentation{
+  const safeAge=Number.isFinite(age)?Math.max(0,Math.floor(age)):0;
+  const seed=agePresentationSeed(visual);
+  return {
+    stage:characterAgeStage(safeAge),
+    hairPaletteId:ageProjectedHairPalette(visual,safeAge,seed),
+    clothingId:ageProjectedClothing(visual,safeAge,seed),
+    facialHairId:ageProjectedFacialHair(visual,safeAge,seed),
+    detailIds:ageProjectedDetailIds(visual,safeAge,seed),
+  };
+}
 
 function generatedVisual(seed:string,legacy:AppearanceProfile,sex:Sex='female',gender:GenderIdentity='woman'):CharacterVisualIdentity{
   const opts=CHARACTER_VISUAL_OPTIONS;
@@ -119,26 +190,33 @@ export function randomizeAppearanceDraft(current:AppearanceProfile,seed:string,s
   return appearanceFromVisual(generatedVisual(seed,current,sex,gender));
 }
 
-export function describeAppearanceProfile(appearance:AppearanceProfile):string[]{
+export function describeAppearanceProfile(appearance:AppearanceProfile,age?:number):string[]{
   const visual=appearance.visual;if(!visual)return[appearance.skinTone,appearance.hairColor,appearance.hairStyle,`${appearance.eyeColor} eyes`,appearance.facialHair,...appearance.accessories].filter((value):value is string=>Boolean(value));
+  const presentation=age===undefined?undefined:characterAgePresentation(visual,age);
+  const hairPaletteId=presentation?.hairPaletteId??visual.hairPaletteId;
+  const hairColor=age===undefined?appearance.hairColor:CHARACTER_ART_CATALOG.hairPalettes.find(item=>item.id===hairPaletteId)?.label??characterVisualLabel(hairPaletteId);
+  const facialHair=age===undefined?appearance.facialHair:presentation?.facialHairId?characterVisualLabel(presentation.facialHairId):undefined;
+  const extras=age===undefined?appearance.accessories:[visual.eyewearId,visual.accessoryId,...(presentation?.detailIds??[])].filter((value):value is string=>Boolean(value)).map(characterVisualLabel);
   return [
     `${appearance.skinTone} skin`,`${characterVisualLabel(visual.faceFamily)} face`,`${characterVisualLabel(visual.eyeFamily)} ${appearance.eyeColor.toLowerCase()} eyes`,
-    `${appearance.hairColor} ${appearance.hairStyle.toLowerCase()} hair`,`${characterVisualLabel(visual.bodyId)} frame`,appearance.facialHair,...appearance.accessories,
+    `${hairColor} ${appearance.hairStyle.toLowerCase()} hair`,`${characterVisualLabel(visual.bodyId)} frame`,facialHair,...extras,
   ].filter((value):value is string=>Boolean(value));
 }
 
-export function paletteTokens(visual:CharacterVisualIdentity):Record<string,string>{
+export function paletteTokens(visual:CharacterVisualIdentity,age?:number):Record<string,string>{
   const tokens={...CHARACTER_ART_CATALOG.defaultTokens};
-  for(const entry of [CHARACTER_ART_CATALOG.skinPalettes.find(x=>x.id===visual.skinPaletteId),CHARACTER_ART_CATALOG.hairPalettes.find(x=>x.id===visual.hairPaletteId),CHARACTER_ART_CATALOG.irisPalettes.find(x=>x.id===visual.irisPaletteId)])if(entry)Object.assign(tokens,entry.colors);
+  const hairPaletteId=age===undefined?visual.hairPaletteId:characterAgePresentation(visual,age).hairPaletteId;
+  for(const entry of [CHARACTER_ART_CATALOG.skinPalettes.find(x=>x.id===visual.skinPaletteId),CHARACTER_ART_CATALOG.hairPalettes.find(x=>x.id===hairPaletteId),CHARACTER_ART_CATALOG.irisPalettes.find(x=>x.id===visual.irisPaletteId)])if(entry)Object.assign(tokens,entry.colors);
   return tokens;
 }
 
 export function portraitAssetIds(visual:CharacterVisualIdentity,age:number):Array<{id:string;transform?:string;layer:number}>{
-  const stage=characterAgeStage(age),profile=CHARACTER_ART_CATALOG.ageProfiles[stage]??{};const kind=bodyKind(visual.bodyId);const expression=visual.expressionId||'neutral';
+  const presentation=characterAgePresentation(visual,age),stage=presentation.stage,profile=CHARACTER_ART_CATALOG.ageProfiles[stage]??{};const kind=bodyKind(visual.bodyId);const expression=visual.expressionId||'neutral';
+  const ageDetails=presentation.detailIds.map(id=>({id}));
   const candidates:Array<{id:string;transform?:string}>=[
-    {id:`${visual.hairId}.back`},{id:visual.bodyId,transform:profile.torso},{id:`${visual.clothingId}.${kind}`,transform:profile.torso},{id:visual.earId},
-    {id:`${visual.faceFamily}.${stage}`},{id:visual.detailId??''},{id:`${visual.eyeFamily}.${expression}`,transform:profile.eye},{id:`${visual.browFamily}.${expression}`,transform:profile.brow},
-    {id:visual.noseId,transform:profile.nose},{id:`${visual.mouthFamily}.${expression}`,transform:profile.mouth},{id:visual.facialHairId??''},
+    {id:`${visual.hairId}.back`},{id:visual.bodyId,transform:profile.torso},{id:`${presentation.clothingId}.${kind}`,transform:profile.torso},{id:visual.earId},
+    {id:`${visual.faceFamily}.${stage}`},...ageDetails,{id:`${visual.eyeFamily}.${expression}`,transform:profile.eye},{id:`${visual.browFamily}.${expression}`,transform:profile.brow},
+    {id:visual.noseId,transform:profile.nose},{id:`${visual.mouthFamily}.${expression}`,transform:profile.mouth},{id:presentation.facialHairId??''},
     {id:`${visual.hairId}.front`},{id:visual.eyewearId??'',transform:profile.eye},{id:visual.accessoryId??''},{id:`expression-overlay.${expression}`},
   ];
   return candidates.filter(item=>Boolean(item.id)&&Boolean(CHARACTER_ART_CATALOG.assets[item.id])).map(item=>({...item,layer:CHARACTER_ART_CATALOG.assets[item.id]!.layer})).sort((a,b)=>a.layer-b.layer);

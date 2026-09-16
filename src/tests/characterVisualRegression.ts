@@ -1,8 +1,8 @@
 import { createNewGame } from '../systems/CharacterSystem';
 import { migrateSave } from '../services/SaveSystem';
 import {
-  CHARACTER_ART_CATALOG, CHARACTER_VISUAL_OPTIONS, appearanceFromVisual, characterAgeStage, characterVisualLabel,
-  createAppearanceDraft, describeAppearanceProfile, normalizeAppearanceProfile, normalizeCharacterAppearance,
+  CHARACTER_ART_CATALOG, CHARACTER_VISUAL_OPTIONS, appearanceFromVisual, characterAgePresentation, characterAgeStage, characterVisualLabel,
+  createAppearanceDraft, describeAppearanceProfile, normalizeAppearanceProfile, normalizeCharacterAppearance, paletteTokens,
   portraitAssetIds, randomizeAppearanceDraft,
 } from '../systems/CharacterVisualSystem';
 import type { AppearanceProfile, CharacterVisualIdentity, GameState, Npc } from '../types/game';
@@ -50,6 +50,42 @@ export function runCharacterVisualRegression(){
   verify(describeAppearanceProfile(draft).some(value=>value.includes('face'))&&describeAppearanceProfile(draft).some(value=>value.includes('eyes')),'profile description should expose physical portrait traits from the same appearance authority');
   verify(portraitAssetIds(draft.visual!,18).length>=10&&portraitAssetIds(draft.visual!,18).every(item=>Boolean(assets[item.id])),'adult portrait projection should resolve only existing art assets');
   verify(stages.every((_,index)=>portraitAssetIds(draft.visual!,[0,7,15,25,52,75][index]!).every(item=>Boolean(assets[item.id]))),'the same stable visual identity should render through all age stages');
+
+
+  const agingVisual:CharacterVisualIdentity={
+    ...structuredClone(draft.visual!),
+    hairPaletteId:'hair-color.warm-brown',
+    clothingId:'clothing.lab-coat-22',
+    facialHairId:'facial-hair.full-beard-11',
+    detailId:'detail.elder-age-marks-16',
+  };
+  const agingSnapshot=JSON.stringify(agingVisual);
+  const infantPresentation=characterAgePresentation(agingVisual,0);
+  verify(infantPresentation.stage==='infant-toddler'&&infantPresentation.clothingId!=='clothing.lab-coat-22'&&!infantPresentation.facialHairId&&!infantPresentation.detailIds.includes('detail.elder-age-marks-16'),'infant presentation should suppress occupational clothing, facial hair, and elder-only details without changing identity');
+  verify(JSON.stringify(characterAgePresentation(agingVisual,0))===JSON.stringify(infantPresentation),'age presentation should be deterministic for the same stable identity and age');
+  const teenPresentation=characterAgePresentation(agingVisual,16);
+  verify(teenPresentation.clothingId!=='clothing.lab-coat-22'&&['facial-hair.chin-stubble-01','facial-hair.light-mustache-02'].includes(teenPresentation.facialHairId??''),'teen presentation should remain youth-safe while allowing only light projected facial hair');
+  const adultPresentation=characterAgePresentation(agingVisual,18);
+  verify(adultPresentation.clothingId==='clothing.lab-coat-22'&&adultPresentation.facialHairId==='facial-hair.full-beard-11'&&!adultPresentation.detailIds.includes('detail.elder-age-marks-16'),'adult presentation should restore the stored personal style while keeping elder-only details hidden');
+  verify(characterAgePresentation(agingVisual,45).detailIds.some(id=>id==='detail.under-eye-soft-12'||id==='detail.under-eye-defined-13'),'mature presentation should add a deterministic subtle 45+ facial-aging detail');
+  verify(characterAgePresentation(agingVisual,55).detailIds.includes('detail.mature-lines-14'),'later mature-adult presentation should add mature facial lines');
+  verify(characterAgePresentation(agingVisual,65).detailIds.includes('detail.elder-lines-15'),'elder presentation should add elder facial lines');
+  const lateElder=characterAgePresentation(agingVisual,75);
+  verify(lateElder.detailIds.includes('detail.elder-lines-15')&&lateElder.detailIds.includes('detail.elder-age-marks-16'),'later elder presentation should layer elder lines and age marks');
+  const grayAge=Array.from({length:40},(_,index)=>45+index).find(age=>characterAgePresentation(agingVisual,age).hairPaletteId!==agingVisual.hairPaletteId);
+  verify(grayAge!==undefined&&grayAge>=48&&grayAge<=64,'natural hair should begin deterministic graying within the mature-life window instead of rerolling from gameplay RNG');
+  verify(characterAgePresentation(agingVisual,grayAge!).hairPaletteId==='hair-color.silver'&&characterAgePresentation(agingVisual,grayAge!+12).hairPaletteId==='hair-color.white','natural hair aging should progress from the stored color to silver and then white predictably');
+  const dyedVisual={...agingVisual,hairPaletteId:'hair-color.midnight-blue'};
+  verify(characterAgePresentation(dyedVisual,95).hairPaletteId==='hair-color.midnight-blue','stylized/dyed hair palettes should remain authored presentation instead of being forcibly grayed');
+  const infantAssets=portraitAssetIds(agingVisual,0).map(item=>item.id),adultAssets=portraitAssetIds(agingVisual,18).map(item=>item.id);
+  verify(!infantAssets.includes('facial-hair.full-beard-11')&&!infantAssets.some(id=>id.startsWith('clothing.lab-coat-22.'))&&!infantAssets.includes('detail.elder-age-marks-16'),'portrait asset projection should enforce infant-safe presentation at render time');
+  verify(adultAssets.includes('facial-hair.full-beard-11')&&adultAssets.some(id=>id.startsWith('clothing.lab-coat-22.')),'adult portrait assets should return to the stored facial-hair and clothing identity');
+  const silverTokens=paletteTokens(agingVisual,grayAge!),silverPalette=CHARACTER_ART_CATALOG.hairPalettes.find(item=>item.id==='hair-color.silver')!;
+  verify(silverTokens['hair.base']===silverPalette.colors['hair.base'],'age-aware palette tokens should render the projected silver hair palette without rewriting the saved palette');
+  const agingAppearance=appearanceFromVisual(agingVisual);
+  const infantDescription=describeAppearanceProfile(agingAppearance,0).map(value=>value.toLowerCase()),adultDescription=describeAppearanceProfile(agingAppearance,18).map(value=>value.toLowerCase());
+  verify(!infantDescription.some(value=>value.includes('beard'))&&!infantDescription.some(value=>value.includes('elder age marks'))&&adultDescription.some(value=>value.includes('full beard')),'age-aware profile copy should match visible facial-hair/detail presentation');
+  verify(JSON.stringify(agingVisual)===agingSnapshot,'all age presentation projections must leave the stable visual identity byte-for-byte unchanged');
 
   const randomizedA=randomizeAppearanceDraft(draft,'same-cosmetic-seed','female','woman');
   const randomizedB=randomizeAppearanceDraft(draft,'same-cosmetic-seed','female','woman');
