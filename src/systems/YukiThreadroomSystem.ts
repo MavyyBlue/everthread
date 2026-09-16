@@ -40,8 +40,8 @@ export function yukiThreadroomInteractionReaction(action:'spend_time'|'complimen
   return{state:'yuki.warm-blush',speaks:true};
 }
 
-export function peopleSurfaceForNpc(npc:Npc|undefined):PeopleNpcSurface{
-  return isSecretYukiNpc(npc)?'yuki-threadroom':'profile';
+export function peopleSurfaceForNpc(state:GameState,npc:Npc|undefined):PeopleNpcSurface{
+  return isSecretYukiNpc(state,npc)?'yuki-threadroom':'profile';
 }
 
 export const YUKI_THREADROOM_TOPICS:ReadonlyArray<{id:YukiThreadroomTopicId;label:string;hint:string}>=[

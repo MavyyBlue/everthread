@@ -28,14 +28,24 @@ export function secretYukiAppearance():AppearanceProfile{
   return normalizeAppearanceProfile(appearanceFromVisual(YUKI_VISUAL),'secret-yuki:visual','female','woman');
 }
 
-export function isSecretYukiNpc(npc:Npc|undefined):boolean{
+function hasSecretYukiOriginMemory(npc:Npc|undefined):boolean{
   return Boolean(npc?.memories.some(memory=>memory.kind===YUKI_SECRET_MEMORY_KIND));
 }
 
-function existingYukiId(state:GameState):string|undefined{
+/**
+ * Returns the one authoritative secret-origin Yuki id for this life. The durable
+ * secret-code flag is primary because NPC memories are intentionally bounded and
+ * may eventually prune even old permanent narrative memories. The origin memory
+ * remains a legacy-recovery fallback for older saves that predate the flag repair.
+ */
+export function secretYukiNpcId(state:GameState):string|undefined{
   const stored=state.flags[YUKI_SECRET_FLAG];
-  if(typeof stored==='string'&&state.npcs[stored]&&isSecretYukiNpc(state.npcs[stored]))return stored;
-  return Object.values(state.npcs).find(npc=>isSecretYukiNpc(npc))?.id;
+  if(typeof stored==='string'&&state.npcs[stored])return stored;
+  return Object.values(state.npcs).find(hasSecretYukiOriginMemory)?.id;
+}
+
+export function isSecretYukiNpc(state:GameState,npc:Npc|undefined):boolean{
+  return Boolean(npc&&secretYukiNpcId(state)===npc.id);
 }
 
 /**
@@ -45,7 +55,7 @@ function existingYukiId(state:GameState):string|undefined{
  * the authored secret identity. No gameplay RNG or runtime IDs are consumed.
  */
 export function normalizeSecretYukiState(state:GameState):boolean{
-  const id=existingYukiId(state);if(!id)return false;
+  const id=secretYukiNpcId(state);if(!id)return false;
   const yuki=state.npcs[id];if(!yuki)return false;
   let changed=false;
   if(state.flags[YUKI_SECRET_FLAG]!==id){state.flags[YUKI_SECRET_FLAG]=id;changed=true;}
@@ -57,7 +67,7 @@ export function normalizeSecretYukiState(state:GameState):boolean{
 }
 
 function summonYuki(state:GameState):EngineResult {
-  const existingId=existingYukiId(state);
+  const existingId=secretYukiNpcId(state);
   if(existingId)return{success:false,messages:[{text:'That hidden thread has already been woven into this life.'}]};
   if(!state.character.alive)return{success:false,messages:[{text:'That thread cannot be woven after this life has ended.'}]};
 

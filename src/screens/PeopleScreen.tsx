@@ -43,7 +43,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   const[showYukiDetails,setShowYukiDetails]=useState(false);
   const selected=selectedNpcId?state.relationships.find(r=>r.npcId===selectedNpcId):undefined;
   const npc=selected?state.npcs[selected.npcId]:undefined;
-  const selectedIsSecretYuki=peopleSurfaceForNpc(npc)==='yuki-threadroom';
+  const selectedIsSecretYuki=peopleSurfaceForNpc(state,npc)==='yuki-threadroom';
   const npcWorlds=npc?state.socialWorlds.filter(world=>world.members.some(member=>member.npcId===npc.id)):[];
   const currentWorkRole=npc?workplaceRoleForNpc(state,npc.id):undefined;
   const lifeSummary=npc?npcLifeSummary(npc):undefined;
