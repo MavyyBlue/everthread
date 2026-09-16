@@ -1,3 +1,7 @@
+## Character Visual richer aging/presentation — Run #183
+
+Run #183 adds **no gameplay/event/place/career/education/inventory/portrait-art definitions** and no durable simulation authority. It projects age-appropriate clothing/facial-hair visibility, mature/elder facial details, and deterministic natural-hair graying from the existing **624 modular Character Visual SVG components** and stable stored identity. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with save schema **17** unchanged.
+
 ## Yuki Threadroom reactive presentation + cutoff hotfix — Runs #180–#181
 
 Runs #180–#181 add **no gameplay/event/place/career/education/inventory/preference definitions** and no new durable simulation authority. Run #180 imports **41 selected presentation assets** (room PNGs, adult Yuki PNG/face patches, and UI icons) plus reactive presentation code; these are visual resources, not content-catalog definitions. Run #181 adds no assets or definitions and only hardens full-screen/fallback layout plus QA. The existing **624 modular Character Visual SVG components** remain the fallback for non-adult Yuki stages. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, save schema **17**.

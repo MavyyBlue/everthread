@@ -1,3 +1,21 @@
+## Character Visual richer aging/presentation — CI Green Run #183 — 2026-09-15
+
+### Added / changed
+
+- Added one deterministic, read-only `characterAgePresentation` projection over the existing stable `CharacterVisualIdentity`. `Character.age` / `Npc.age` remain the only aging authority; birthdays do not rewrite saved appearance, allocate runtime IDs, or consume gameplay RNG.
+- Mature/elder rendering now uses the supplied facial-aging detail assets at deterministic age thresholds while preserving the same face/eye/brow/nose/mouth/ear/body/hair-style identity. Natural hair palettes gain deterministic individual graying onset (48–64), then progress silver → white; already silver/white and stylized/dyed palettes remain authored rather than being forcibly recolored.
+- Age-inappropriate stored presentation is projected safely without mutating saves: under-18 characters cannot visibly wear the adult work-only scrub/lab-coat/work-shirt set; facial hair is hidden below 15 and reduced to light teen presentation at 15–17 before the stored adult style returns at 18+.
+- Player Profile appearance copy now consumes the same age-aware projection as the portrait, preventing text/portrait contradictions such as visible silver hair with an adult stored-color description or hidden elder details still appearing in profile copy.
+- Character Visual regression expands **60 → 76 checks** and covers stage boundaries, safe invalid-age normalization, read-only/RNG-neutral projection, natural-vs-stylized hair aging, youth clothing/facial-hair gating, mature/elder details, portrait layer behavior, and age-aware profile description parity. Save schema remains **17** and no art assets/content definitions were added.
+
+### Certification
+
+- GitHub Actions Run #183 (`35040783887`, job `104619936027`) certified expanded source `ecd7e58c32a3145e8354f7397b70fc14d1feaf64` from upload wrapper `8988105410ed6af26e5ddc505cbf5b571db6f511`. Net diff from synchronized Run #182 source `948b7f3bda7fcbe7d801ec1994b36a50ac7b447c` is exactly **4 intended source/test files**; workflow import reports 5 changed files only because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4** including the single-command complete regression wall that exceeded the local container execution ceiling. Base **82/82**; Character Visual **76/76**; Player Profile **63/63**; People **57/57**; Family Visual **27/27**; Secret-code **32/32**; Yuki Threadroom Art **19/19**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Integrated Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed at **218 modules**. Player Profile ~**10.20/2.95 kB gzip**; People ~**58.81/17.86**; lazy `characterArtPack` unchanged at ~**971.11/69.18**; main ~**1,360.67/380.18**. Existing >700 kB chunk warning remains nonblocking.
+- Certified source SHA-256 `dd824f03b0ad2095a6f254f7afba2d63fb094237b1324cfd214bd0fde86d498d`; dependency SHA-256 `fdd414a7d14e6fcba1d0d667bc840208faa7df9de0771c6ed0aab4eaa985a362`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10424553271` (`c9c7460178067d9eabb4cb944c4ec3378827ae93c9d23a76661726c1952d8e49`); Pages artifact `10424359343` (`5a20b80bcf345df9644945a1f5c0a5b389549169402680ccfa42b250cf29800f`); Pages deployment reported success.
+- Post-certification Feedback Inbox remains **5 total / 0 unresolved**; durable review checkpoint `main` advanced to `ecd7e58c32a3145e8354f7397b70fc14d1feaf64` at `2026-09-16 00:39:27.036715+00`, reviewed count **5**.
+
 ## Yuki Threadroom viewport/fallback hotfix — CI Green Run #181 — 2026-09-15
 
 ### Fixed

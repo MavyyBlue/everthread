@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #181** (`35035042349`) on expanded source **`fd304ae097dbb5fccab52085fd32ab838b011887`**, save schema **17**. Runs #180–#181 add Astra-derived reactive Hidden Threadroom presentation plus the full-screen/fallback-layout hotfix over the existing Run #178 Yuki NPC/Relationship/Character Visual authorities without creating parallel simulation state. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #183** (`35040783887`) on expanded source **`ecd7e58c32a3145e8354f7397b70fc14d1feaf64`**, save schema **17**. Run #183 adds deterministic richer aging/presentation over the existing stable Character Visual identity while preserving Runs #178–#181 Yuki/Threadroom presentation and all established NPC/relationship/family authorities without parallel simulation state. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,9 +16,9 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #181**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Feedback Inbox is verified **5 total / 0 unresolved**; durable review-state points to newest gameplay source `fd304ae097dbb5fccab52085fd32ab838b011887` at `2026-09-15 23:20:12.674778+00`, reviewed count **5**.
+- Feedback Inbox is verified **5 total / 0 unresolved**; durable review-state points to newest gameplay source `ecd7e58c32a3145e8354f7397b70fc14d1feaf64` at `2026-09-16 00:39:27.036715+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, Run #174 deterministic NPC identity/reveal plus descendant portrait continuity, Run #176 biological family resemblance/inheritance, Run #178 the secret-origin Yuki identity/Hidden Threadroom slice, Run #180 reactive Astra Threadroom presentation, and Run #181 its viewport/fallback hotfix. Richer general aging/presentation remains the next planned Character Visual slice; additional bespoke Yuki age-stage art may extend the existing visual-stage contract later without blocking the roadmap. No Phase 11 label is implied, and certified player feedback may still interrupt with concrete defects/suggestions.
+- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, Run #174 deterministic NPC identity/reveal plus descendant portrait continuity, Run #176 biological family resemblance/inheritance, Run #178 the secret-origin Yuki identity/Hidden Threadroom slice, Run #180 reactive Astra Threadroom presentation, Run #181 its viewport/fallback hotfix, and Run #183 richer general aging/presentation. The next visual slice is intentionally selected after player review/feedback; additional bespoke Yuki age-stage art may extend the existing visual-stage contract later without blocking the roadmap. No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -29,7 +29,18 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #181 — Yuki Threadroom viewport/fallback hotfix
+## Newest certified gameplay/source — Run #183 — Character Visual richer aging/presentation
+
+- Upload wrapper `8988105410ed6af26e5ddc505cbf5b571db6f511`; expanded certified source `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`; Actions Run ID `35040783887`; job `104619936027`. Net diff from synchronized Run #182 `948b7f3bda7fcbe7d801ec1994b36a50ac7b447c` is exactly **4 intended source/test files**.
+- One pure `characterAgePresentation` projection derives visible stage presentation from authoritative person age + stable visual identity. No age shadow field, save mutation, migration, runtime-ID allocation, or gameplay-RNG consumption is introduced. Save schema stays **17**.
+- Natural hair colors gray on a deterministic person-specific 48–64 onset and then progress silver → white; already silver/white and stylized/dyed colors remain authored. Underage work clothing is projected to youth-casual clothing, facial hair is hidden below 15/light-only at 15–17, and mature/elder ages layer the supplied facial-aging details.
+- `CharacterPortrait` and Player Profile now share the same age-aware visual/palette/description projection, preventing mismatched visible age details or hair-color copy.
+- Character Visual **76/76**; Player Profile **63/63**; People **57/57**; Family Visual **27/27**; Secret-code **32/32**; Yuki Art **19/19**; base **82/82**; Rewind **16/16**; Dynasty **66/66**; AI **82/82**; Long-Life **105/105**; 10E **103/103**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**. Canonical preflight **4/4 Green**.
+- Production build **218 modules**. Player Profile ~**10.20/2.95 gzip kB**; People ~**58.81/17.86**; character-art pack ~**971.11/69.18**; main ~**1,360.67/380.18**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `dd824f03b0ad2095a6f254f7afba2d63fb094237b1324cfd214bd0fde86d498d`; dependency SHA `fdd414a7d14e6fcba1d0d667bc840208faa7df9de0771c6ed0aab4eaa985a362`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10424553271` (`c9c7460178067d9eabb4cb944c4ec3378827ae93c9d23a76661726c1952d8e49`); Pages artifact `10424359343` (`5a20b80bcf345df9644945a1f5c0a5b389549169402680ccfa42b250cf29800f`); deployment succeeded.
+- Feedback Inbox: **5 total / 0 unresolved**; checkpoint `main` → `ecd7e58c32a3145e8354f7397b70fc14d1feaf64` at `2026-09-16 00:39:27.036715+00`.
+
+## Prior certified gameplay/source — Run #181 — Yuki Threadroom viewport/fallback hotfix
 
 - Upload wrapper `703516842c2e09a07ab298e60ec4dadce80490a4`; expanded certified source `fd304ae097dbb5fccab52085fd32ab838b011887`; Actions Run ID `35035042349`; job `104602148567`. Net diff from Run #180 `3d33429bed185c9c382a21f9926fda362fba79b9` is exactly **3 intended files**.
 - Full-screen Threadroom now portals to `document.body`, so ordinary app chrome cannot cover the special surface. Higher-priority global overlays retain their own layering authority.
@@ -58,7 +69,7 @@ Candidate save schema: none
 - Production build **215 modules**. Lazy character-art pack ~**971.11/69.18 gzip kB**; People ~**50.76/15.18**; main ~**1,358.35/379.57**; CSS ~**87.92/16.19**. Existing >700 kB warning remains nonblocking.
 - Certified source SHA `c91e04d2fa246a4af4421ea48fe32b7fea543c5d48160a8afa4fc0d7e78f6fe2`; dependency SHA `d5a1c173c3bffb7ae194d1c7b0beaa07ebbdf086ee7a35d718cacde7ead62fa6`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10418778648` (`d3179b417effdcf6d57f13651b94fd4445d40d2c749ad86d17e18a2e9e49c0e9`); Pages artifact `10419241565` (`e1d8ece084efb23bd17f8bdf3935c4e3da2d2ed864bd9758126ad086c1198a3b`); deployment succeeded.
 - The transient post-Run-#178 Supabase outage later recovered; current durable feedback checkpoint is Run #181.
-- Richer general aging/presentation remains the next planned Character Visual slice.
+- Run #183 certifies the richer general aging/presentation slice; the next visual slice is selected after player review/feedback.
 
 ## Prior certified gameplay/source — Run #176 — Family resemblance + visual inheritance
 

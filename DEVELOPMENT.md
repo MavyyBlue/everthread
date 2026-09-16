@@ -3,8 +3,8 @@
 Last updated: 2026-09-15
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #181 / `fd304ae097dbb5fccab52085fd32ab838b011887`
-Certified gameplay baseline: Run #181 / `fd304ae097dbb5fccab52085fd32ab838b011887`
+Newest certified expanded gameplay/source: Run #183 / `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`
+Certified gameplay baseline: Run #183 / `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`
 
 ## Product direction
 
@@ -26,7 +26,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified post-closeout hotfix — Run #181 — Yuki Threadroom viewport/fallback
+## Newest certified Character Visual slice — Run #183 — richer aging/presentation
+
+Run #183 makes the existing modular portrait identity visibly age without creating a second aging authority or mutating saved appearance.
+
+- Expanded certified source: `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`, schema **17**. Upload wrapper `8988105410ed6af26e5ddc505cbf5b571db6f511`; Actions Run ID `35040783887`; job `104619936027`. Base synchronized source was Run #182 `948b7f3bda7fcbe7d801ec1994b36a50ac7b447c`; net diff is exactly **4 intended source/test files**.
+- `CharacterVisualSystem.characterAgePresentation` is a pure projection over stable `CharacterVisualIdentity` + authoritative person age. It normalizes invalid ages read-only, consumes no gameplay RNG, allocates no runtime IDs, and never rewrites the underlying portrait identity.
+- Natural hair palettes gain deterministic person-specific graying onset in the 48–64 range, then silver → white progression. Already silver/white and stylized/dyed palettes remain authored. Mature/elder stages add the existing aging-detail assets, while youth projection suppresses adult work clothing and age-inappropriate facial hair.
+- `CharacterPortrait` now uses age-aware palette tokens as well as age-aware layers. `PlayerProfileSystem` passes real age into the same appearance-description projection so text and rendered portrait stay consistent.
+- Character Visual regression is **76/76**; Player Profile **63/63**; People **57/57**; Family Visual **27/27**; Dynasty **66/66**; Long-Life **105/105**; Yuki art **19/19**; canonical preflight **4/4 Green**. GitHub's single-command wall completes successfully even though the local container ceiling also timed out on unchanged Run #182.
+- Production: **218 modules**; Player Profile ~**10.20/2.95 kB gzip**, People ~**58.81/17.86**, character-art pack ~**971.11/69.18**, main ~**1,360.67/380.18**.
+- Certified source SHA `dd824f03b0ad2095a6f254f7afba2d63fb094237b1324cfd214bd0fde86d498d`; dependency SHA `fdd414a7d14e6fcba1d0d667bc840208faa7df9de0771c6ed0aab4eaa985a362`; certified artifact `10424553271`; Pages artifact `10424359343`; deployment succeeded.
+- Feedback: **5 total / 0 unresolved**. Review checkpoint `main` advanced to Run #183 source at `2026-09-16 00:39:27.036715+00`, reviewed count **5**.
+- Next Character Visual slice is intentionally **not precommitted** here. Player review/feedback may choose the next general visual improvement; future authored Yuki age-stage PNG families can plug into the existing stage contract without changing this age authority.
+
+## Prior certified post-closeout hotfix — Run #181 — Yuki Threadroom viewport/fallback
 
 Run #181 closes the player-facing cutoff found after Run #180 without changing simulation/save authorities.
 
@@ -57,7 +71,7 @@ Run #178 gives the Sandbox secret-origin Yuki one authored visual identity and o
 - Production build: **215 modules**; People lazy surface ~**50.76/15.18 kB gzip**; lazy character-art pack ~**971.11/69.18**; main ~**1,358.35/379.57**; CSS ~**87.92/16.19**. Existing large-chunk warning remains nonblocking.
 - Certified source SHA `c91e04d2fa246a4af4421ea48fe32b7fea543c5d48160a8afa4fc0d7e78f6fe2`; dependency SHA `d5a1c173c3bffb7ae194d1c7b0beaa07ebbdf086ee7a35d718cacde7ead62fa6`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10418778648`; Pages artifact `10419241565`; deployment succeeded.
 - The earlier Run #178 Supabase outage later recovered. Run #181 now holds the current verified Feedback Inbox checkpoint at **5 total / 0 unresolved**.
-- Next planned Character Visual work remains richer general aging/presentation behavior over the same stable identities after this documentation synchronization. Additional bespoke Yuki age-stage art can plug into the existing Threadroom visual-stage contract when authored; it is not a blocker. No Phase 11 label is implied.
+- Run #183 now certifies richer general aging/presentation over these same stable identities. Additional bespoke Yuki age-stage art can plug into the existing Threadroom visual-stage contract when authored; it is not a blocker. No Phase 11 label is implied.
 
 ## Prior certified Character Visual slice — Run #176 — Family resemblance + visual inheritance
 
