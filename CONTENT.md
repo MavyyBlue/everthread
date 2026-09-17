@@ -1,3 +1,11 @@
+## Crossroads scheduled-date navigation closeout — Run #210
+
+Run #210 adds **no authored gameplay/content definitions** and no new location art. It changes date navigation/presentation only: accepted invitations continue to use the existing `relationship.romance.pendingDate` truth, while scene companion/date routing is declared on the existing Location Scene action definitions and consumed generically by compatible locations. Certified content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components**, **7 dedicated location scenes / 22 semantic groups / 44 scene action bindings / 14 selected Astra runtime assets**, and save schema **17** unchanged. Newest certified gameplay source is Run #210 / `3a7e79010d55af3e6c75540f1e1ac1468bc7aaf5`; QA-4 from Run #201 remains unchanged.
+
+## Crossroads Mall dedicated location scene — Run #209
+
+Run #209 expands the dedicated scene rollout to **7 location-scene surfaces / 22 semantic object groups / 44 scene action bindings / 14 selected Astra presentation assets** by adding Crossroads Mall. Its eight bindings reuse the established Crossroads personal-item catalogue, personal inventory ownership, collectible purchase/asset authority, Shared Experience plans, Romantic Date plans, and action economy. It adds **no new Town Place, institution service, personal-item definition, collectible definition, relationship/date state, event, career, education, inventory authority, or preference definition**. Collectible browsing remains RNG-neutral and the existing purchase command retains the authoritative market/authenticity roll. Certified gameplay/content totals therefore remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged. Run #210 subsequently certifies the generalized scheduled-date navigation used by Crossroads and all current/future declared date-capable scenes.
+
 ## Threadwell Residential District dedicated location scene — Run #207
 
 Mavyy's post-certification Android acceptance of Threadwell changes no executable content totals beyond the already certified Run #207 scene slice.

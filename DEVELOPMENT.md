@@ -3,8 +3,8 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #207 / `90e16923efa896da52750e7241b5387ca02da1ad`
-Certified gameplay baseline: Run #207 / `90e16923efa896da52750e7241b5387ca02da1ad`
+Newest certified expanded source: Run #210 / `3a7e79010d55af3e6c75540f1e1ac1468bc7aaf5`
+Certified gameplay baseline: Run #210 / `3a7e79010d55af3e6c75540f1e1ac1468bc7aaf5`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -26,6 +26,27 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
+
+## Newest certified gameplay hotfix — Run #210 — scheduled-date location navigation
+
+Run #210 closes the Crossroads player-facing date-navigation seam without adding a second dating system or durable state.
+
+- Expanded source `3a7e79010d55af3e6c75540f1e1ac1468bc7aaf5` from wrapper `4803063f5c5dbc1ee5b0d52af8fd947b0657ec9e`; Actions Run `35265443401`, job `105351341114`. Persistent diff from Run #209 `487ea66dd589bf7d35efce29ab8ebba8a5313b44` is exactly **6 intended source/test files**; the importer reports 7 changed paths only because it removes transient `everthread-source.zip`.
+- NPC profiles now schedule/accept a date through the existing relationship invitation owner and preserve the existing `relationship.romance.pendingDate` truth. Destination execution has moved out of the profile and into compatible dedicated location scenes. Rejection, cancellation, date history/momentum, action limits, RNG, and save ownership remain established behavior.
+- Companion/date plans are now declarative metadata on `LOCATION_SCENE_ACTIONS`. `LocationScene` and `LocationSceneSystem` consume this generically, so Weaver Park, Threadwell Residential District, Crossroads Mall, and future properly declared date scenes all use the same accepted-plan bridge. No scheduler, calendar, date ledger, migration, or new save field was introduced. Save schema remains **17**.
+- Location Scene regression expanded **82 → 88** and passed **88/88** in CI. Dating Momentum remains **61/61**, Shared Experience **53/53**, Shared Lives closeout **41/41**, AI Interaction **82/82**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #210 preflight passed **6/6 in 37,749 ms**: Engine TS **3,075 ms**, Test TS **4,510 ms**, App TS **7,405 ms**, Node/Vite TS **793 ms**, regression stage **18,031 ms**, production build **3,924 ms**. The wall itself passed **5/5 in 17,913 ms** and production transformed **228 modules**. Certified artifact `10516895640`; Pages artifact `10516386442`; deployment Green.
+- Direct Android/player acceptance passed after Run #210; Mavyy reported the scheduled-date flow works on-device. Crossroads Location #7 is therefore closed. After the mandatory documentation-only synchronization certifies, select exactly one remaining Astra-backed Location #8 only after a fresh authority/source/test audit.
+
+## Certified location-scene slice — Run #209 — Crossroads Mall
+
+Run #209 adds the seventh dedicated illustrated location while preserving established personal-inventory, collectible, shared-experience, romantic-date, action-economy, save, and QA authorities.
+
+- Expanded source `487ea66dd589bf7d35efce29ab8ebba8a5313b44` from wrapper `d2736dd98b5741c1a51cb410fc83de32b66d6e93`; Actions Run `35260873402`, job `105335962298`. Persistent diff from synchronized Run #208 `e3f7f081e0ef5ddc864cc559deddc1c72a5a26d4` is exactly **10 intended files**.
+- Crossroads uses three semantic groups—Shopping counter, Gift boutique, Mall concourse—and eight bindings: personal-item shopping, collectibles, gifts, owned mall purchases, browsing together, games, movies, and Mall date. Scene totals become **7 / 22 / 44 / 14** (scenes / groups / bindings / selected Astra runtime assets).
+- Personal-item purchases remain `PersonalInventorySystem` truth; collectibles remain `PropertySystem` assets; shared outings/date results remain established Shared Experience / Romantic Date behavior. The legacy Assets UI and Crossroads share the same collectible availability owner. Browsing collectibles consumes no gameplay RNG; the actual purchase command alone rolls market/authenticity/condition/value.
+- Location Scene regression expanded **70 → 82** and passed **82/82** in CI. Canonical Run #209 preflight passed **6/6 in 49,066 ms** and production transformed **228 modules**. Certified artifact `10514552885`; Pages artifact `10514503137`; deployment Green.
+- Initial Android review praised the scene presentation but exposed the accepted-date navigation seam. Run #210 fixes that seam generically; Run #210 plus subsequent device acceptance is the final Crossroads closeout state.
 
 ## Newest certified location-scene slice — Run #207 — Threadwell Residential District
 
@@ -72,7 +93,7 @@ QA-4 closes the temporary QA-optimization program with measured process isolatio
 - Complete regression wall **5/5 Green in 20,544 ms**; canonical regression stage **20,668 ms**. Adjacent Run #200 wall was **35,727 ms**, so this certified sample is **~42.5% lower** while retaining exact coverage.
 - Canonical preflight passed **6/6 in 42,372 ms**: Engine TS **3,505 ms** → Test TS **5,547 ms** → App TS **7,675 ms** → Node/Vite TS **850 ms** → regression wall **20,668 ms** → production build **4,014 ms**. Adjacent Run #200 preflight was **60,351 ms**; this sample is **~29.8% lower**.
 - Production remains **224 modules**. Certification: source SHA `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependencies `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10501795811`; Pages artifact `10501840639`; deployment Green.
-- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Run #207 preserves this infrastructure unchanged and certifies Threadwell Residential District as Location #6; direct device acceptance has passed. Documentation synchronization is the only gate before selecting exactly one Location #7.
+- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Runs #209–#210 preserve this infrastructure unchanged, certify Crossroads Mall as Location #7, generalize accepted-date navigation across declared date-capable scenes, and pass direct Android acceptance. Documentation synchronization is the only gate before selecting exactly one Location #8.
 
 ## Prior certified QA infrastructure — Run #199 — QA-3 regression registry/timing
 

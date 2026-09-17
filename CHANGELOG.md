@@ -1,3 +1,36 @@
+## Scheduled-date location navigation + Crossroads device closeout — CI Green Run #210 — 2026-09-17
+
+### Added / changed
+
+- Mavyy completed direct Android/player acceptance of the generalized scheduled-date flow on certified Run #210 and reported that it works on-device. This closes the Crossroads Location #7 player-facing gate after the Run #209 scene certification and the date-navigation seam found during initial device review.
+- NPC profiles now **Schedule a Date** through the existing relationship invitation owner rather than completing a date destination inside the profile. Acceptance still uses the established probabilistic/eligibility path and persists only the existing `relationship.romance.pendingDate` truth; rejection behavior, cancellation, date history, momentum, and save ownership remain unchanged.
+- Accepted date plans are now consumed at compatible dedicated locations. Weaver Park, Threadwell Residential District, and Crossroads Mall all project the same pending date through their existing Romantic Date plans. Completing the date at one location consumes the one authoritative pending plan everywhere.
+- Scene companion/date routing is now declarative on `LOCATION_SCENE_ACTIONS`: each companion action may carry its existing place/activity plan, while `LocationScene` and `LocationSceneSystem` consume that metadata generically. Future date-capable scenes inherit the same flow by declaring a valid Romantic Date place/activity mapping rather than adding another hardcoded companion registry. No scheduler, calendar, romance ledger, save field, migration, or second invitation system was added.
+
+### Certification
+
+- GitHub Actions Run #210 (`35265443401`, job `105351341114`) certified expanded source `3a7e79010d55af3e6c75540f1e1ac1468bc7aaf5` from upload wrapper `4803063f5c5dbc1ee5b0d52af8fd947b0657ec9e`. Persistent hotfix diff from Run #209 `487ea66dd589bf7d35efce29ab8ebba8a5313b44` is exactly **6 intended source/test files**; workflow import reports 7 changed paths only because it also removes transient `everthread-source.zip`.
+- Location Scene regression expanded **82 → 88** and passed **88/88**. Connected certified coverage includes Dating Momentum **61/61**, Shared Experience **53/53**, Shared Lives closeout **41/41**, and AI Interaction **82/82**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 37,749 ms**: Engine TS **3,075 ms**, Test TS **4,510 ms**, App TS **7,405 ms**, Node/Vite TS **793 ms**, complete regression stage **18,031 ms** (wall **5/5 in 17,913 ms**), production build **3,924 ms**. Production transformed **228 modules**.
+- Certified source SHA-256 `0559b935bcefb072737084603f2bba27f1d1c4b1f9642525e5ec1c6c683a823f`; dependency SHA-256 `8616774696662095fcb59536665c2095edfe5c1253eda023899cd21d59904e4f`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10516895640` (`becc86c5b19a883b0ff32d7dc4ff64fa79c42bfc097c65997a838beb5a048738`); Pages artifact `10516386442` (`af471a12334e710971e5094afcdd04ded8497dc334fb4834241e54aac71d32d2`); Pages deployment Green.
+- Scene/content totals remain **7 scenes / 22 semantic groups / 44 scene action bindings / 14 selected Astra runtime assets** and save schema remains **17**. After the mandatory documentation-only synchronization certifies, select exactly one remaining Astra-backed **Location #8** after a fresh repository owner/source/test audit.
+
+## Crossroads Mall dedicated location scene — CI Green Run #209 — 2026-09-17
+
+### Added / changed
+
+- Added **Crossroads Mall** as the seventh dedicated location scene using Astra-derived `crossroads-mall.png` and `shopping-display.png`. Three semantic groups—Shopping counter, Gift boutique, and Mall concourse—expose eight focused bindings: Clothing & personal items, Collectibles, Browse gifts, Your mall purchases, Browse together, Play games together, Catch a movie, and Mall date.
+- Crossroads is a presentation/routing adapter over established owners. Personal items remain `PersonalInventorySystem` truth; collectibles remain `PropertySystem` assets; shared outings remain Shared Experience; dates remain Romantic Date. Collectible availability was centralized behind the existing property owner and reused by legacy Assets UI and Crossroads rather than copied into the scene.
+- Collectible browsing is RNG-neutral: the Mall shows the existing base estimate only. Authoritative market price, authenticity, condition, and value are rolled only inside the existing purchase command when the player actually chooses Find. No shadow shop inventory, mall economy, collectible ledger, or second relationship/date authority was introduced.
+
+### Certification
+
+- GitHub Actions Run #209 (`35260873402`, job `105335962298`) certified expanded source `487ea66dd589bf7d35efce29ab8ebba8a5313b44` from upload wrapper `d2736dd98b5741c1a51cb410fc83de32b66d6e93`. Persistent gameplay diff from synchronized Run #208 `e3f7f081e0ef5ddc864cc559deddc1c72a5a26d4` is exactly **10 intended files**; workflow import reports 11 changed paths only because it also removes transient `everthread-source.zip`.
+- Location Scene regression expanded **70 → 82** and passed **82/82**. QA-4 remained exact at `core=81+1/82 specialized=76+1/77 overlap=0`; save schema stayed **17**.
+- Canonical preflight passed **6/6 in 49,066 ms**: Engine TS **4,140 ms**, Test TS **6,190 ms**, App TS **9,547 ms**, Node/Vite TS **985 ms**, complete regression wall **23,587 ms**, production build **4,565 ms**. Production transformed **228 modules**.
+- Certified source SHA-256 `2a8b4d72934ffb7b6a383144e997c123afa5447d845bce08ddf3490938cb849c`; dependency SHA-256 `f91df36b7e85c78cec55af8aae4b7a1a5d7ecc658e14b9c5c22be579514cf68a`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10514552885` (`349a0dc668a742d91312fa5fcf2a0b198e51e2e5b721b4c647d993840ec7c333`); Pages artifact `10514503137` (`37bde4746b3a10dfc606abeb4c7f397987a44026bdc31a5015c226782e2ba180`); Pages deployment Green.
+- Run #209 established scene totals of **7 scenes / 22 semantic groups / 44 scene action bindings / 14 selected Astra runtime assets**. Initial Android review found one navigation seam: Mall Date could only be made eligible by accepting a date from the NPC profile, while the profile also offered to complete the destination itself. Run #210 resolves that seam generically and is the player-accepted closeout baseline.
+
 ## Threadwell Residential District device acceptance + Run #207 closeout — 2026-09-17
 
 ### Added / changed
