@@ -39,11 +39,15 @@ export function locationSceneMotorsCatalogue(financingOnly=false){
 
 export function locationSceneHomeCatalogue(){return propertyDefinitions;}
 export function locationSceneResidenceProjection(state:GameState){return playerResidenceProjection(state);}
+export function locationScenePersonalCatalogue(placeId:string){return personalInventoryCatalogForPlace(placeId);}
+export function locationSceneOwnedPersonalItems(state:GameState,placeId:string){return personalInventoryOwnedFromPlace(state,placeId);}
 export function locationSceneMallPersonalCatalogue(giftsOnly=false){
-  const items=personalInventoryCatalogForPlace('crossroads-mall');
+  const items=locationScenePersonalCatalogue('crossroads-mall');
   return giftsOnly?items.filter(item=>item.category==='gift'):items.filter(item=>item.category!=='gift');
 }
-export function locationSceneMallOwnedPersonalItems(state:GameState){return personalInventoryOwnedFromPlace(state,'crossroads-mall');}
+export function locationSceneMallOwnedPersonalItems(state:GameState){return locationSceneOwnedPersonalItems(state,'crossroads-mall');}
+export function locationSceneDinerPersonalCatalogue(){return locationScenePersonalCatalogue('nightjar-diner');}
+export function locationSceneDinerOwnedPersonalItems(state:GameState){return locationSceneOwnedPersonalItems(state,'nightjar-diner');}
 export function locationSceneMallCollectibleCatalogue(){return collectibleDefinitions;}
 
 export function locationSceneCompanionPlan(actionId:LocationSceneActionId){return LOCATION_SCENE_ACTIONS[actionId]?.companionPlan;}

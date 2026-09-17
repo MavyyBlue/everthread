@@ -2,13 +2,14 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperti
 import { BottomSheet } from './BottomSheet';
 import { EverthreadIcon } from './EverthreadIcon';
 import { formatMoney } from '../core/format';
-import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneMallActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
+import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneDinerActionId, type LocationSceneMallActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
 import { gameEngine } from '../stores/gameStore';
 import { BankLocationPanel } from './BankLocationPanel';
 import { MotorsLocationPanel } from './MotorsLocationPanel';
 import { RealtyLocationPanel } from './RealtyLocationPanel';
 import { ResidentialLocationPanel } from './ResidentialLocationPanel';
 import { MallLocationPanel } from './MallLocationPanel';
+import { DinerLocationPanel } from './DinerLocationPanel';
 import {
   coverLocationScene,
   locationSceneActionAvailability,
@@ -35,13 +36,15 @@ type DetailState=
   |{kind:'motors';actionId:LocationSceneMotorsActionId}
   |{kind:'realty';actionId:LocationSceneRealtyActionId}
   |{kind:'residential';actionId:LocationSceneResidentialActionId|'homes.residence'}
-  |{kind:'mall';actionId:LocationSceneMallActionId};
+  |{kind:'mall';actionId:LocationSceneMallActionId}
+  |{kind:'diner';actionId:LocationSceneDinerActionId};
 
 function unavailableResult(reason:string):EngineResult{return{success:false,messages:[{text:reason}]};}
 function actionIcon(actionId:LocationSceneActionId){
   if(actionId.startsWith('bank.'))return'bank' as const;
   if(actionId.startsWith('motors.')||actionId==='license.driving')return'car' as const;
   if(actionId.startsWith('homes.'))return'key' as const;
+  if(actionId==='shop.diner')return'diner' as const;
   if(actionId.startsWith('shop.'))return'mall' as const;
   if(actionId.startsWith('home.')||actionId.startsWith('shared.home')||actionId==='date.home')return'home' as const;
   if(actionId.startsWith('music.'))return'music' as const;
@@ -55,9 +58,10 @@ function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='hearthline-realty')return'key' as const;
   if(placeId==='threadwell-residential')return'home' as const;
   if(placeId==='crossroads-mall')return'mall' as const;
+  if(placeId==='nightjar-diner')return'diner' as const;
   return'music' as const;
 }
-function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:'music' as const;}
+function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:'music' as const;}
 function InteractHandIcon({size=24}:{size?:number}){
   return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.5 16V9.5a2 2 0 0 1 4 0V15m0-4.5V7.5a2 2 0 0 1 4 0V15m0-4V9a2 2 0 0 1 4 0v7m0-3.5v-1a2 2 0 0 1 4 0V20c0 5.5-3.7 9-9.2 9h-1.1c-4.2 0-7.1-2-9-5l-3-4.7a2.1 2.1 0 0 1 3.1-2.8l3.2 2.4V16Z"/></svg>;
 }
@@ -181,6 +185,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
     if(actionId.startsWith('motors.')||actionId==='license.driving'){setDetail({kind:'motors',actionId:actionId as LocationSceneMotorsActionId});return;}
     if(placeId==='threadwell-residential'&&(actionId==='homes.residence'||actionId==='home.neighbors'||actionId==='home.visits'||actionId==='shared.home.hangout'||actionId==='shared.home.cook'||actionId==='shared.home.sleepover')){setDetail({kind:'residential',actionId:actionId as LocationSceneResidentialActionId|'homes.residence'});return;}
     if(actionId.startsWith('homes.')){setDetail({kind:'realty',actionId:actionId as LocationSceneRealtyActionId});return;}
+    if(actionId==='shop.diner'){setDetail({kind:'diner',actionId});return;}
     if(actionId.startsWith('shop.')){setDetail({kind:'mall',actionId:actionId as LocationSceneMallActionId});return;}
     if(action.risk==='confirm'&&(actionId==='music.leave'||actionId==='music.retire')){setDetail({kind:'confirm',actionId});return;}
     executeDirect(actionId);
@@ -204,7 +209,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   };
 
   const prop=locationScenePropRect(scene.propAlphaBounds,stage,scene.propPlacement.width,scene.propPlacement.maxHeight,scene.propPlacement.baseline);
-  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
+  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
 
   return <section ref={sceneRef} className="location-scene" aria-label={scene.label}>
     <header className="location-scene__header" aria-hidden={Boolean(selectedGroupId)}>
@@ -295,6 +300,12 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
         <p className="eyebrow">Crossroads Mall</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
         <MallLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
         <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to Crossroads</button>
+      </div>}
+
+      {detail?.kind==='diner'&&<div className="location-scene__focused location-scene__diner-focused">
+        <p className="eyebrow">Nightjar Diner</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
+        <DinerLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
+        <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to Nightjar</button>
       </div>}
 
       {detail?.kind==='partnership'&&music&&<div className="location-scene__focused">

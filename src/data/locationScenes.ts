@@ -1,15 +1,17 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
 export type LocationSceneRealtyActionId='homes.catalog'|'homes.owned'|'homes.mortgage'|'homes.residence';
 export type LocationSceneResidentialActionId='home.neighbors'|'home.visits'|'shared.home.hangout'|'shared.home.cook'|'shared.home.sleepover';
 export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts'|'shop.inventory';
+export type LocationSceneDinerActionId='shop.diner';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'
   |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
   |'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'
-  |LocationSceneResidentialActionId|LocationSceneMallActionId
+  |'shared.diner.meal'|'date.diner'
+  |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
@@ -75,6 +77,9 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'shared.mall.games':{id:'shared.mall.games',label:'Play games together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'crossroads-mall',activityId:'mall_games'}},
   'shared.mall.movie':{id:'shared.mall.movie',label:'Catch a movie',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'crossroads-mall',activityId:'movie_outing'}},
   'date.mall':{id:'date.mall',label:'Mall date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'crossroads-mall',activityId:'mall_browse'}},
+  'shared.diner.meal':{id:'shared.diner.meal',label:'Share a meal',description:'Choose someone to share a booth and a meal with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'nightjar-diner',activityId:'diner_meal'}},
+  'date.diner':{id:'date.diner',label:'Diner date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'nightjar-diner',activityId:'diner_meal'}},
+  'shop.diner':{id:'shop.diner',label:'Counter goods',description:'Browse the real personal items already sold at Nightjar Diner and see what you have bought here.',kind:'panel',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -147,6 +152,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'display',label:'Shopping counter',description:'Personal items & collectibles',actionIds:['shop.style','shop.collection'],order:1,hitRect:[.26462,.58,.47076,.32]},
       {id:'gifts',label:'Gift boutique',description:'Something thoughtful',actionIds:['shop.gifts','shop.inventory'],order:2,hitRect:[.03,.335,.28,.19]},
       {id:'leisure',label:'Mall concourse',description:'Time together',actionIds:['shared.mall.browse','shared.mall.games','shared.mall.movie','date.mall'],order:3,hitRect:[.45,.30,.20,.18]},
+    ],
+  },
+  {
+    id:'nightjar-diner',label:'Nightjar Diner',tagline:'Your usual corner, a new conversation.',
+    background:'./location-scenes/backgrounds/nightjar-diner.png',propFile:'./location-scenes/props/diner-table.png',canvas:[1024,1536],
+    propAlphaBounds:[0,0,1240,1254],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'table',label:'Your table',description:'A little time together',actionIds:['shared.diner.meal','date.diner'],order:1,hitRect:[.26268,.58,.47464,.32]},
+      {id:'counter',label:'Diner counter',description:'Nightjar goods & keepsakes',actionIds:['shop.diner'],order:2,hitRect:[.02,.295,.28,.19]},
+      {id:'booth',label:'Window booth',description:'A shared meal',actionIds:['shared.diner.meal'],order:3,hitRect:[.65,.335,.28,.19]},
     ],
   },
 ] as const;
