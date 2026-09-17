@@ -12,7 +12,7 @@ import type { GameState } from '../types/game';
 
 export interface LocationSceneAvailability{available:boolean;reason?:string}
 export interface LocationSceneCompanionOption{npcId:string;name:string;detail:string}
-export interface ContainedScene{left:number;top:number;width:number;height:number}
+export interface LocationSceneStage{left:number;top:number;width:number;height:number}
 
 export type LocationSceneBackStep='detail'|'group'|'map';
 export type LocationSceneLabelAlignment='start'|'center'|'end';
@@ -33,13 +33,14 @@ const wellnessActionMap:Partial<Record<LocationSceneActionId,keyof typeof WELLNE
 function musicTrack(state:GameState){return state.specialCareers.music??{};}
 function numberValue(value:unknown,fallback=0){return typeof value==='number'&&Number.isFinite(value)?value:fallback;}
 
-export function containedLocationScene(width:number,height:number):ContainedScene{
-  const scale=Math.max(0,Math.min(width/1024,height/1536));
+export function coverLocationScene(width:number,height:number):LocationSceneStage{
+  const safeWidth=Math.max(1,width),safeHeight=Math.max(1,height);
+  const scale=Math.max(safeWidth/1024,safeHeight/1536);
   const sceneWidth=1024*scale,sceneHeight=1536*scale;
-  return{left:(width-sceneWidth)/2,top:(height-sceneHeight)/2,width:sceneWidth,height:sceneHeight};
+  return{left:(safeWidth-sceneWidth)/2,top:(safeHeight-sceneHeight)/2,width:sceneWidth,height:sceneHeight};
 }
 
-export function placeLocationSceneRect(rect:LocationSceneRect,stage:ContainedScene,minSize=48){
+export function placeLocationSceneRect(rect:LocationSceneRect,stage:LocationSceneStage,minSize=48){
   const rawWidth=rect[2]*stage.width,rawHeight=rect[3]*stage.height;
   const width=Math.max(minSize,rawWidth),height=Math.max(minSize,rawHeight);
   return{
@@ -49,7 +50,7 @@ export function placeLocationSceneRect(rect:LocationSceneRect,stage:ContainedSce
   };
 }
 
-export function locationScenePropRect(bounds:LocationSceneRect,stage:ContainedScene,width=.62,maxHeight=.32,baseline=.90){
+export function locationScenePropRect(bounds:LocationSceneRect,stage:LocationSceneStage,width=.62,maxHeight=.32,baseline=.90){
   let normalizedWidth=width;
   let normalizedHeight=normalizedWidth*bounds[3]/bounds[2]/1.5;
   if(normalizedHeight>maxHeight){normalizedHeight=maxHeight;normalizedWidth=normalizedHeight*1.5*bounds[2]/bounds[3];}

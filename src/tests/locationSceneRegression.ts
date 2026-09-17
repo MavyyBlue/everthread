@@ -3,7 +3,7 @@ import { LOCATION_SCENE_ACTIONS, LOCATION_SCENE_V1_ENABLED, LOCATION_SCENES, loc
 import { createNewGame } from '../systems/CharacterSystem';
 import { performWellnessActivity } from '../systems/HealthSystem';
 import {
-  containedLocationScene,
+  coverLocationScene,
   locationSceneActionAvailability,
   locationSceneBackStep,
   locationSceneLabelAlignment,
@@ -33,13 +33,13 @@ export function runLocationSceneRegression(){
   verify(locationSceneDefinition('weaver-park')!.groups.flatMap(group=>group.actionIds).join('|')==='shared.park.walk|shared.park.play|date.park|wellness.walk|wellness.run|wellness.meditate','07 Weaver Park must expose only its focused social/date/wellness actions');
   verify(locationSceneDefinition('threadtone-music-studio')!.groups.flatMap(group=>group.actionIds).join('|')==='music.leave|music.retire|music.practice|music.tour|music.song|music.album|music.catalog|music.partnership','08 Threadtone must expose its focused career/release/catalog actions without mounting the generic Career surface');
   verify(LOCATION_SCENES.every(scene=>scene.groups.every(group=>group.actionIds.every(actionId=>Boolean(LOCATION_SCENE_ACTIONS[actionId])))),'09 every scene action must resolve through the literal first-slice allowlist');
-  verify(LOCATION_SCENES.every(scene=>scene.groups.every(group=>group.hitRect.every(value=>value>=0&&value<=1)&&group.hitRect[0]+group.hitRect[2]<=1&&group.hitRect[1]+group.hitRect[3]<=1)),'10 semantic hotspot geometry must remain normalized to the contained art rectangle');
+  verify(LOCATION_SCENES.every(scene=>scene.groups.every(group=>group.hitRect.every(value=>value>=0&&value<=1)&&group.hitRect[0]+group.hitRect[2]<=1&&group.hitRect[1]+group.hitRect[3]<=1)),'10 semantic hotspot geometry must remain normalized to the authored art rectangle');
 
-  const portrait=containedLocationScene(390,560);
-  verify(Math.abs(portrait.width/portrait.height-2/3)<.000001&&portrait.width<=390&&portrait.height<=560,'11 contained scene geometry must preserve the art aspect ratio without cover-cropping on a 390px phone');
-  const narrow=containedLocationScene(320,430);verify(narrow.left>=0&&narrow.top>=0&&narrow.width<=320&&narrow.height<=430,'12 contained scene geometry must stay inside a narrow/short viewport');
+  const portrait=coverLocationScene(390,710);
+  verify(Math.abs(portrait.width/portrait.height-2/3)<.000001&&portrait.left<=0&&portrait.top<=0&&portrait.left+portrait.width>=390&&portrait.top+portrait.height>=710,'11 immersive scene geometry must cover the full portrait viewport without distorting the authored aspect ratio');
+  const narrow=coverLocationScene(320,430);verify(narrow.left<=0&&narrow.top<=0&&narrow.left+narrow.width>=320&&narrow.top+narrow.height>=430,'12 cover geometry must eliminate letterbox gaps on a narrow/short viewport');
   const parkTrail=placeLocationSceneRect(locationSceneDefinition('weaver-park')!.groups[1]!.hitRect,portrait);
-  verify(parkTrail.width>=48&&parkTrail.height>=48,'13 hotspot placement must retain a minimum 48px touch target even when scene art is contained');
+  verify(parkTrail.width>=48&&parkTrail.height>=48,'13 hotspot placement must retain a minimum 48px touch target under immersive scene fitting');
   const deskProp=locationScenePropRect(locationSceneDefinition('threadtone-music-studio')!.propAlphaBounds,portrait,.62,.32,.90);
   verify(deskProp.left>=portrait.left&&deskProp.top>=portrait.top&&deskProp.left+deskProp.width<=portrait.left+portrait.width+1&&deskProp.top+deskProp.height<=portrait.top+portrait.height+1,'14 transparent prop placement must stay inside the authored scene bounds');
 
@@ -81,6 +81,11 @@ export function runLocationSceneRegression(){
   const park=locationSceneDefinition('weaver-park')!,studio=locationSceneDefinition('threadtone-music-studio')!;
   verify(locationSceneLabelAlignment(park.groups.find(group=>group.id==='trails')!.hitRect)==='start'&&locationSceneLabelAlignment(park.groups.find(group=>group.id==='pavilion')!.hitRect)==='end','33 edge hotspots must anchor their readable labels inward instead of clipping against the scene edge');
   verify(locationSceneLabelAlignment(studio.groups.find(group=>group.id==='records')!.hitRect)==='center','34 centered/small hotspots must keep an independent readable label width instead of shrinking the label to the raw hit rectangle');
+  for(const [width,height] of [[360,666],[390,710],[412,781],[430,798]] as const){
+    const stage=coverLocationScene(width,height);
+    verify(LOCATION_SCENES.every(scene=>scene.groups.every(group=>{const rect=placeLocationSceneRect(group.hitRect,stage);const centerX=rect.left+rect.width/2,centerY=rect.top+rect.height/2;return centerX>=0&&centerX<=width&&centerY>=0&&centerY<=height;})),`35 portrait ${width}x${height} must keep every first-slice hotspot center visible under immersive cover fitting`);
+  }
+  verify(coverLocationScene(844,390).width>=844&&coverLocationScene(844,390).height>=390,'39 short-landscape art must still fill the entire location surface even when some artwork is necessarily cropped');
 
   return checks;
 }

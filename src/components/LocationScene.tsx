@@ -5,7 +5,7 @@ import { formatMoney } from '../core/format';
 import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
 import { gameEngine } from '../stores/gameStore';
 import {
-  containedLocationScene,
+  coverLocationScene,
   locationSceneActionAvailability,
   locationSceneBackStep,
   locationSceneLabelAlignment,
@@ -14,7 +14,7 @@ import {
   locationSceneMusicProjection,
   locationScenePropRect,
   placeLocationSceneRect,
-  type ContainedScene,
+  type LocationSceneStage,
 } from '../systems/LocationSceneSystem';
 import type { EngineResult, GameState } from '../types/game';
 import './LocationScene.css';
@@ -35,6 +35,9 @@ function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='weaver-park')return groupId==='bench'?'people' as const:'leaf' as const;
   return'music' as const;
 }
+function InteractHandIcon({size=24}:{size?:number}){
+  return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.5 16V9.5a2 2 0 0 1 4 0V15m0-4.5V7.5a2 2 0 0 1 4 0V15m0-4V9a2 2 0 0 1 4 0v7m0-3.5v-1a2 2 0 0 1 4 0V20c0 5.5-3.7 9-9.2 9h-1.1c-4.2 0-7.1-2-9-5l-3-4.7a2.1 2.1 0 0 1 3.1-2.8l3.2 2.4V16Z"/></svg>;
+}
 
 export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;placeId:LocationScenePlaceId;onClose:()=>void;onResult:(result:EngineResult)=>void}){
   const scene=locationSceneDefinition(placeId)!;
@@ -45,9 +48,10 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   const selectedGroupIdRef=useRef<string|undefined>(undefined);
   const detailRef=useRef<DetailState|undefined>(undefined);
   onCloseRef.current=onClose;
-  const[stage,setStage]=useState<ContainedScene>(()=>containedLocationScene(390,560));
+  const[stage,setStage]=useState<LocationSceneStage>(()=>coverLocationScene(390,710));
   const[selectedGroupId,setSelectedGroupId]=useState<string>();
   const[detail,setDetail]=useState<DetailState>();
+  const[trayCollapsed,setTrayCollapsed]=useState(false);
   selectedGroupIdRef.current=selectedGroupId;
   detailRef.current=detail;
   const[artLoaded,setArtLoaded]=useState(false);
@@ -58,7 +62,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
 
   useLayoutEffect(()=>{
     const element=viewportRef.current;if(!element)return;
-    const read=()=>{const rect=element.getBoundingClientRect();setStage(containedLocationScene(Math.max(1,rect.width),Math.max(1,rect.height)));};
+    const read=()=>{const rect=element.getBoundingClientRect();setStage(coverLocationScene(Math.max(1,rect.width),Math.max(1,rect.height)));};
     read();const observer=new ResizeObserver(read);observer.observe(element);return()=>observer.disconnect();
   },[]);
 
@@ -188,12 +192,15 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       {!artFailed&&<svg className="location-scene__prop" style={{left:prop.left,top:prop.top,width:prop.width,height:prop.height} as CSSProperties} viewBox={`${scene.propAlphaBounds[0]} ${scene.propAlphaBounds[1]} ${scene.propAlphaBounds[2]} ${scene.propAlphaBounds[3]}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <image href={scene.propFile} x="0" y="0" width="1254" height="1254"/>
       </svg>}
-      {groups.map((group,index)=>{const rect=placeLocationSceneRect(group.hitRect,stage),alignment=locationSceneLabelAlignment(group.hitRect);return <button key={group.id} className="location-scene__object" style={{left:rect.left,top:rect.top,width:rect.width,height:rect.height}} onClick={event=>openGroup(group,event)} aria-haspopup="dialog" aria-label={`${group.label}: ${group.description}`}>
-        <span className={`location-scene__object-label location-scene__object-label--${alignment}`}><b>{index+1}</b><span><strong>{group.label}</strong><small>{group.description}</small></span><EverthreadIcon name={groupIcon(placeId,group.id)} size={16}/></span>
+      {groups.map(group=>{const rect=placeLocationSceneRect(group.hitRect,stage),alignment=locationSceneLabelAlignment(group.hitRect);return <button key={group.id} className="location-scene__object" style={{left:rect.left,top:rect.top,width:rect.width,height:rect.height}} onClick={event=>openGroup(group,event)} aria-haspopup="dialog" aria-label={`${group.label}: ${group.description}`}>
+        <span className={`location-scene__object-label location-scene__object-label--${alignment}`}><b><InteractHandIcon size={20}/></b><span><strong>{group.label}</strong><small>{group.description}</small></span><EverthreadIcon name={groupIcon(placeId,group.id)} size={16}/></span>
       </button>;})}
     </div>
 
-    <footer className="location-scene__footer" aria-hidden={Boolean(selectedGroupId)}>
+    <button className={`location-scene__tray-toggle ${trayCollapsed?'is-collapsed':''}`} onClick={()=>setTrayCollapsed(value=>!value)} aria-expanded={!trayCollapsed} aria-controls="location-scene-utility-tray" aria-label={trayCollapsed?'Show location controls':'Hide location controls'} hidden={Boolean(selectedGroupId)}>
+      <EverthreadIcon name="chevron" size={18}/>
+    </button>
+    <footer id="location-scene-utility-tray" className="location-scene__footer" hidden={Boolean(selectedGroupId)||trayCollapsed}>
       <button onClick={openAllActions} aria-haspopup="dialog"><EverthreadIcon name="plus" size={19}/><span><strong>Things to do</strong><small>{groups.length} spots · {groups.reduce((sum,group)=>sum+group.actionIds.length,0)} actions</small></span></button>
       <button onClick={requestClose}><EverthreadIcon name="map" size={19}/><span><strong>Map</strong><small>Return to Everthread</small></span></button>
     </footer>
