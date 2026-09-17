@@ -13,9 +13,9 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified repository/QA source is **Run #199 / `7c8d0f2fc9da1a4461877caf1ae9a2b4b1660c28`**, while newest gameplay source remains **Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`**, save schema **17**. Runs #194/#196/#197/#199 change QA/build/test orchestration only; Run #192 remains the Central Everthread Bank dedicated-location gameplay slice. Neither reopens Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** remain certified/closed; no Phase 11 label is active.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified repository/QA source is **Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`**, while newest gameplay source remains **Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`**, save schema **17**. Runs #194/#196/#197/#199/#201 change QA/build/test orchestration only; Run #192 remains the Central Everthread Bank dedicated-location gameplay slice. Neither reopens Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** remain certified/closed; no Phase 11 label is active.
 
-The latest live review sweep remains the post-Run-#192 check on 2026-09-17: **5 total / 0 unresolved** reports and no receipt newer than `2026-09-15 06:47:52.761298+00`. QA-1/QA-2/QA-3 change no player behavior, so this documentation sync preserves rather than fabricates a newer feedback review checkpoint. The stored `main` review-state checkpoint points to Run #192 source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed-report count **5**.
+The latest live review sweep remains the post-Run-#192 check on 2026-09-17: **5 total / 0 unresolved** reports and no receipt newer than `2026-09-15 06:47:52.761298+00`. QA-1/QA-2/QA-3/QA-4 change no player behavior, so this documentation sync preserves rather than fabricates a newer feedback review checkpoint. The stored `main` review-state checkpoint points to Run #192 source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed-report count **5**.
 
 Central Feedback Inbox infrastructure:
 

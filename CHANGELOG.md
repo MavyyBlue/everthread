@@ -1,3 +1,22 @@
+## QA-4 process-isolated regression lanes — CI Green Run #201 — 2026-09-17
+
+### Added / changed
+
+- Canonical `npm test` now runs the measured regression wall through at most **two isolated Node processes**: a standard lane and a heavy lane. The heavy lane contains only the existing 25-life multi-life integration smoke plus Integrated Long-Life; all other core cases and specialized suites remain in the standard lane in their established relative order.
+- Added exact shard-coverage verification. The parent wall refuses Green unless core-case indexes and specialized-suite IDs are disjoint across lanes and their union exactly matches the complete expected registry. Missing, duplicated, or misrouted coverage is therefore a hard failure rather than a silent speedup.
+- Added a one-worker process-isolated fallback for debugging. Browser/global fixtures and mutable module state stay process-local; no concurrent worker shares a `GameState` or test VM.
+- QA-4 changes only QA/test orchestration (`package.json`, `scripts/run-regression-wall.mjs`, `src/tests/regressionMetadata.ts`, `src/tests/regressionRegistry.ts`, `src/tests/regressionSuite.ts`, `src/tests/runRegression.ts`). The 25-life smoke body, its 25 lives / `regression-sim` seed prefix / max-age 125 parameters, Integrated Long-Life body, simulation harness, gameplay, saves, content, assets, and package lock remain unchanged. Newest gameplay implementation remains Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`.
+
+### Certification
+
+- GitHub Actions Run #201 (`35231430935`, job `105236231925`) certified expanded QA-4 source `1a252744d9659328d7f66a2169271b70d9c0018a` from upload wrapper `61ae2ca182ed4f174697aab94030c4489f7a8008`. Net persistent diff from synchronized Run #200 `16bb69f34c7e4c0a99c65a60e61e5965d868a734` is exactly **6 QA/test-infrastructure files**; the importer also removes transient `everthread-source.zip`.
+- Canonical preflight passed **6/6 in 42,372 ms**: Engine TypeScript **3,505 ms**, Test TypeScript **5,547 ms**, App TypeScript **7,675 ms**, Node/Vite Config TypeScript **850 ms**, complete regression wall **20,668 ms**, production build **4,014 ms**. Production remains **224 modules** and Vite itself built in about **3.65 s**.
+- The two-worker registered wall passed with exact coverage handshake `core=81+1/82 specialized=76+1/77 overlap=0`. Standard lane: core cases 1–81 all Green, 76 specialized suites Green, **14,461 ms** process time. Heavy lane: core case 82 Green in **15,401 ms**, Integrated Long-Life **105/105** Green in **3,034 ms**, **19,788 ms** process time.
+- The complete five-stage regression wall reports **5/5 Green in 20,544 ms**: registered regressions **19,791 ms**, New Life layout **33 ms**, activity minigames **185 ms**, feedback reporting **255 ms**, central-inbox feedback **278 ms**.
+- Against adjacent certified Run #200, the wall changed **35,727 → 20,544 ms** (**15,183 ms / ~42.5% lower**) and the canonical regression stage changed **35,874 → 20,668 ms** (**~42.4% lower**). Full canonical preflight changed **60,351 → 42,372 ms** (**17,979 ms / ~29.8% lower**). These are adjacent CI samples, not a claim that every runner will reproduce the exact percentage.
+- Run #201 certified source SHA-256 `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependency SHA-256 `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10501795811` (`24467447db18afa6e47477c355d3469ab876aae4be91a61117aa555951f9457a`); Pages artifact `10501840639` (`47142a09e8518e7cc2089fa501b36e08686be3a19433b787fbf00497b736bc48`); Pages deployment reported success.
+- **QA infrastructure optimization stops here.** QA-1 through QA-4 are certified. No QA-5 is planned without new measured evidence. After the mandatory QA-4 documentation sync certifies, return to the existing player-facing gate: direct review of Central Everthread Bank before any fourth location scene.
+
 ## QA-3 regression registry + timing visibility — CI Green Run #199 — 2026-09-17
 
 ### Added / changed
@@ -15,7 +34,7 @@
 - Registered regressions report **78/78 suites passed in 34,411 ms** (1 core + 77 specialized). The largest registered costs after the core suite were Integrated Long-Life **3,577 ms**, Dynasty Transition **1,238 ms**, Collision-Aware Naming **817 ms**, Estate Administration **511 ms**, and NPC Asset Ownership **496 ms**.
 - The complete five-stage regression wall reports **5/5 Green in 36,518 ms**: registered regressions **35,650 ms**, New Life layout **39 ms**, activity minigames **221 ms**, feedback reporting **292 ms**, central-inbox feedback **316 ms**. This is evidence for QA-4 boundary selection, not a claim that every suite should be parallelized.
 - Run #199 certified source SHA-256 `26602cf008d3fb963f372ab99e56101e359bffcf8103873c59e2532b6f8994da`; dependency SHA-256 `00bd3ea3ae32434f354ed9eb38f2ddda9fb9e52ed50e8e6332eef1bed881885c`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10499028734` (`9ccbd7826336df1b6cf8200f4fc5068fe3b24d0b1ef24e6d2d542e05f199610f`); Pages artifact `10499608076` (`9b2e0223ffb776d10c7bc91e89ad02ef6d0c37c51cf050dbfca339cbe0d2d4b0`); deployment reported success.
-- **Next infrastructure gate: QA-4 measured process isolation/sharding.** Start with at most two independent processes and target the demonstrated heavy work first; preserve every assertion, seed, life count, age cap, serial semantics within each shard, and aggregate all failures before considering the optimization complete.
+- **Historical next gate was QA-4**, now certified/closed in Run #201 with exact full-coverage partition verification. QA infrastructure optimization stops there unless new measured evidence justifies reopening it.
 
 ## QA-2 TypeScript graph + redundant build-compiler cleanup — CI Green Runs #196–#197 — 2026-09-17
 

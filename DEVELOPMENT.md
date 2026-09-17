@@ -3,9 +3,9 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #199 / `7c8d0f2fc9da1a4461877caf1ae9a2b4b1660c28`
+Newest certified expanded source: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 Certified gameplay baseline: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
-Certified QA infrastructure baseline: Run #199 / `7c8d0f2fc9da1a4461877caf1ae9a2b4b1660c28`
+Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
 
@@ -27,7 +27,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified QA infrastructure — Run #199 — QA-3 regression registry/timing
+## Newest certified QA infrastructure — Run #201 — QA-4 process isolation/sharding
+
+QA-4 closes the temporary QA-optimization program with measured process isolation rather than broader test rewriting. Canonical `npm test` uses at most two separate Node workers: a standard lane and a heavy lane. Exact coverage-partition checks prevent missing, duplicated, or overlapping cases/suites from certifying. A one-worker process-isolated fallback remains available for debugging.
+
+- Upload wrapper `61ae2ca182ed4f174697aab94030c4489f7a8008`; expanded certified source `1a252744d9659328d7f66a2169271b70d9c0018a`; Actions Run `35231430935`, job `105236231925`. Persistent diff from synchronized Run #200 `16bb69f34c7e4c0a99c65a60e61e5965d868a734` is exactly **6 QA/test-infrastructure files**.
+- Coverage handshake certified `core=81+1/82 specialized=76+1/77 overlap=0`. The heavy lane contains only core case 82 (the unchanged 25-life smoke) and Integrated Long-Life; all other core cases/specialized suites stay in the standard lane. No life count, seed, age cap, assertion, simulation harness, save gate, or gameplay owner changed.
+- Standard lane process time **14,461 ms**; heavy lane **19,788 ms**. Heavy core case 82 remained Green at **15,401 ms** and Integrated Long-Life remained **105/105** at **3,034 ms**.
+- Complete regression wall **5/5 Green in 20,544 ms**; canonical regression stage **20,668 ms**. Adjacent Run #200 wall was **35,727 ms**, so this certified sample is **~42.5% lower** while retaining exact coverage.
+- Canonical preflight passed **6/6 in 42,372 ms**: Engine TS **3,505 ms** → Test TS **5,547 ms** → App TS **7,675 ms** → Node/Vite TS **850 ms** → regression wall **20,668 ms** → production build **4,014 ms**. Adjacent Run #200 preflight was **60,351 ms**; this sample is **~29.8% lower**.
+- Production remains **224 modules**. Certification: source SHA `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependencies `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10501795811`; Pages artifact `10501840639`; deployment Green.
+- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** After this mandatory documentation sync certifies, resume the existing player-facing location-scene gate: direct Central Everthread Bank review before any fourth location.
+
+## Prior certified QA infrastructure — Run #199 — QA-3 regression registry/timing
 
 QA-3 turns the previously opaque serial regression wall into measured evidence without changing gameplay or test intent. Test bodies/assertions and specialized-suite order remain preserved; no simulation count, save/migration gate, determinism check, or coverage requirement was removed.
 
@@ -37,7 +49,7 @@ QA-3 turns the previously opaque serial regression wall into measured evidence w
 - Canonical preflight passed **6/6 in 62,594 ms**: Engine TS **4,133 ms** → Test TS **6,565 ms** → App TS **9,306 ms** → Node/Vite TS **1,015 ms** → regression wall **36,672 ms** → production build **4,699 ms**. Production remains **224 modules**.
 - Top-level wall timings: registered regressions **35,650 ms**, New Life layout **39 ms**, activity minigames **221 ms**, feedback reporting **292 ms**, central-inbox feedback **316 ms**.
 - Certification: source SHA `26602cf008d3fb963f372ab99e56101e359bffcf8103873c59e2532b6f8994da`; dependencies `00bd3ea3ae32434f354ed9eb38f2ddda9fb9e52ed50e8e6332eef1bed881885c`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10499028734`; Pages artifact `10499608076`; deployment Green.
-- **Next infrastructure gate: QA-4 measured process isolation/sharding.** Begin with at most two independent processes and isolate the demonstrated heavy work first. Do not reduce 25-life smoke parameters or Integrated Long-Life coverage, and do not share mutable `GameState`/browser globals across concurrent workers.
+- **Historical next gate was QA-4**, now certified in Run #201. Its two-process isolation preserves the 25-life smoke and Integrated Long-Life coverage; QA infrastructure optimization is now closed unless new measured evidence justifies reopening it.
 
 ## Prior certified QA infrastructure — Runs #196–#197 — QA-2 TypeScript graph/build cleanup
 
