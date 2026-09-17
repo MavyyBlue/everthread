@@ -1,6 +1,6 @@
 import { actionGateStatus } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneRect } from '../data/locationScenes';
-import { propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
+import { collectibleDefinitions, propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { MUSIC_RELEASE_MIN_AGE } from './SpecialCareerSystem';
 import { WELLNESS_MIN_AGES } from './HealthSystem';
 import { specialCareerStartGate } from './CommitmentSystem';
@@ -10,6 +10,7 @@ import { musicCatalog, musicPartnershipOffer } from './MusicCareerCycleSystem';
 import { romanticDatePlanFor } from './RomanticDateSystem';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
 import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from './ResidentialLifeSystem';
+import { personalInventoryCatalogForPlace, personalInventoryOwnedFromPlace } from './PersonalInventorySystem';
 import type { GameState } from '../types/game';
 
 export interface LocationSceneAvailability{available:boolean;reason?:string}
@@ -38,12 +39,22 @@ export function locationSceneMotorsCatalogue(financingOnly=false){
 
 export function locationSceneHomeCatalogue(){return propertyDefinitions;}
 export function locationSceneResidenceProjection(state:GameState){return playerResidenceProjection(state);}
+export function locationSceneMallPersonalCatalogue(giftsOnly=false){
+  const items=personalInventoryCatalogForPlace('crossroads-mall');
+  return giftsOnly?items.filter(item=>item.category==='gift'):items.filter(item=>item.category!=='gift');
+}
+export function locationSceneMallOwnedPersonalItems(state:GameState){return personalInventoryOwnedFromPlace(state,'crossroads-mall');}
+export function locationSceneMallCollectibleCatalogue(){return collectibleDefinitions;}
 
 const companionPlans:Partial<Record<LocationSceneActionId,LocationSceneCompanionPlan>>={
   'shared.park.walk':{kind:'shared',placeId:'weaver-park',activityId:'park_walk'},
   'shared.park.play':{kind:'shared',placeId:'weaver-park',activityId:'park_play'},
   'date.park':{kind:'date',placeId:'weaver-park',activityId:'park_walk'},
   'date.home':{kind:'date',placeId:'threadwell-residential',activityId:'cook_together'},
+  'shared.mall.browse':{kind:'shared',placeId:'crossroads-mall',activityId:'mall_browse'},
+  'shared.mall.games':{kind:'shared',placeId:'crossroads-mall',activityId:'mall_games'},
+  'shared.mall.movie':{kind:'shared',placeId:'crossroads-mall',activityId:'movie_outing'},
+  'date.mall':{kind:'date',placeId:'crossroads-mall',activityId:'mall_browse'},
 };
 export function locationSceneCompanionPlan(actionId:LocationSceneActionId){return companionPlans[actionId];}
 
@@ -180,6 +191,7 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
   if(actionId.startsWith('bank.'))return{available:true};
   if(actionId==='motors.catalog'||actionId==='motors.owned'||actionId==='motors.finance')return{available:true};
   if(actionId.startsWith('homes.'))return{available:true};
+  if(actionId.startsWith('shop.'))return{available:true};
   if(actionId==='license.driving'){
     if(state.character.age<16)return{available:false,reason:'Driving licence tests unlock at age 16.'};
     if(state.travel.licenses.driving)return{available:false,reason:'You already hold a driving licence.'};

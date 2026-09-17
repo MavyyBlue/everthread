@@ -1,13 +1,15 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
 export type LocationSceneRealtyActionId='homes.catalog'|'homes.owned'|'homes.mortgage'|'homes.residence';
 export type LocationSceneResidentialActionId='home.neighbors'|'home.visits'|'shared.home.hangout'|'shared.home.cook'|'shared.home.sleepover';
+export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts'|'shop.inventory';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'
   |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
-  |LocationSceneResidentialActionId
+  |'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'
+  |LocationSceneResidentialActionId|LocationSceneMallActionId
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
@@ -64,6 +66,14 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'shared.home.cook':{id:'shared.home.cook',label:'Cook together',description:'Cook together through the existing residential-life plan system.',kind:'panel',risk:'normal'},
   'shared.home.sleepover':{id:'shared.home.sleepover',label:'Have a sleepover',description:'Choose an age-appropriate sleepover plan tied to a real available residence.',kind:'panel',risk:'normal'},
   'date.home':{id:'date.home',label:'Cook together date',description:'Choose an eligible person with an accepted home-date plan.',kind:'companion',risk:'normal'},
+  'shop.style':{id:'shop.style',label:'Clothing & personal items',description:'Browse Crossroads personal items through the existing inventory catalogue.',kind:'panel',risk:'normal'},
+  'shop.collection':{id:'shop.collection',label:'Collectibles',description:'Browse the existing collectible market without pre-rolling price or authenticity.',kind:'panel',risk:'normal'},
+  'shop.gifts':{id:'shop.gifts',label:'Browse gifts',description:'Shop gift-category items already sold at Crossroads Mall.',kind:'panel',risk:'normal'},
+  'shop.inventory':{id:'shop.inventory',label:'Your mall purchases',description:'Review personal items you actually acquired from Crossroads Mall.',kind:'panel',risk:'normal'},
+  'shared.mall.browse':{id:'shared.mall.browse',label:'Browse together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
+  'shared.mall.games':{id:'shared.mall.games',label:'Play games together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
+  'shared.mall.movie':{id:'shared.mall.movie',label:'Catch a movie',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
+  'date.mall':{id:'date.mall',label:'Mall date',description:'Choose an eligible person with an accepted mall-date plan.',kind:'companion',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -126,6 +136,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'board',label:'Neighborhood board',description:'Your home & connections',actionIds:['homes.residence','home.neighbors'],order:1,hitRect:[.26058,.58,.47885,.32]},
       {id:'porch',label:'Home entrance',description:'Household time',actionIds:['home.visits','shared.home.hangout','shared.home.cook','shared.home.sleepover'],order:2,hitRect:[.01,.355,.28,.19]},
       {id:'courtyard',label:'Courtyard',description:'Make time together',actionIds:['date.home'],order:3,hitRect:[.65,.385,.28,.19]},
+    ],
+  },
+  {
+    id:'crossroads-mall',label:'Crossroads Mall',tagline:'An afternoon with possibilities.',
+    background:'./location-scenes/backgrounds/crossroads-mall.png',propFile:'./location-scenes/props/shopping-display.png',canvas:[1024,1536],
+    propAlphaBounds:[0,7,1223,1247],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'display',label:'Shopping counter',description:'Personal items & collectibles',actionIds:['shop.style','shop.collection'],order:1,hitRect:[.26462,.58,.47076,.32]},
+      {id:'gifts',label:'Gift boutique',description:'Something thoughtful',actionIds:['shop.gifts','shop.inventory'],order:2,hitRect:[.03,.335,.28,.19]},
+      {id:'leisure',label:'Mall concourse',description:'Time together',actionIds:['shared.mall.browse','shared.mall.games','shared.mall.movie','date.mall'],order:3,hitRect:[.45,.30,.20,.18]},
     ],
   },
 ] as const;

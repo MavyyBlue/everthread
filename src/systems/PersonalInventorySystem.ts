@@ -69,3 +69,7 @@ export function discardPersonalItem(state:GameState,instanceId:string):EngineRes
 }
 
 export function personalInventoryCatalog(){return personalItemDefinitions;}
+export function personalInventoryCatalogForPlace(placeId:string){return personalItemDefinitions.filter(item=>item.vendorPlaceId===placeId);}
+export function personalInventoryOwnedFromPlace(state:GameState,placeId:string){
+  return (state.personalInventory?.items??[]).filter(item=>item.sourcePlaceId===placeId).map(item=>({item,definition:personalItemById[item.itemId]!})).filter(entry=>Boolean(entry.definition));
+}

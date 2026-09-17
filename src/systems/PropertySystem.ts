@@ -1,7 +1,7 @@
 import { propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions, collectibleDefinitions } from '../data/assets';
 import type { EngineResult, GameState } from '../types/game';
 import { makeStateId } from '../core/ids';
-import { consumeAction } from '../core/actionEconomy';
+import { actionGateStatus, consumeAction } from '../core/actionEconomy';
 import { createRng } from '../core/rng';
 import { clamp } from '../core/math';
 import { acceptAssetFinanceOffer, bestAssetFinanceOffer, getAssetFinanceOffers } from './AssetFinancingSystem';
@@ -127,7 +127,14 @@ export function repairVehicle(state:GameState,vehicleId:string):EngineResult {
   const v=state.assets.vehicles.find(v=>v.id===vehicleId);if(!v)return{success:false,messages:[{text:'Vehicle not found.'}]};const cost=Math.round((100-v.condition)*Math.max(80,v.value*.0015));if(cost<=0)return{success:false,messages:[{text:'This vehicle is already in excellent condition.'}]};if(state.finances.cash<cost)return{success:false,messages:[{text:`Repairs require ${cost.toLocaleString()}.`}]};state.finances.cash-=cost;v.condition=100;return{success:true,messages:[{text:`Repaired ${v.name} for ${cost.toLocaleString()}.`}]};
 }
 
+export function collectiblePurchaseAvailability(state:GameState,itemId:string):PropertyActionAvailability {
+  if(state.character.age<12)return{allowed:false,reason:'Collectible-market purchases become available at age 12.'};
+  if(!collectibleDefinitions.some(item=>item.id===itemId))return{allowed:false,reason:'Collectible not found.'};
+  const gate=actionGateStatus(state,[{policy:'collectible.purchase.total'},{policy:'collectible.purchase.item',target:itemId}]);
+  return gate.allowed?{allowed:true}:{allowed:false,reason:gate.message};
+}
+
 export function buyCollectible(state:GameState,itemId:string):EngineResult {
-  if(state.character.age<12)return{success:false,messages:[{text:'Collectible-market purchases become available at age 12.'}]};
-  const def=collectibleDefinitions.find(i=>i.id===itemId);if(!def)return{success:false,messages:[{text:'Collectible not found.'}]};const rng=createRng(state.seed,state.rngCounter);const price=Math.round(def.baseValue*rng.int(70,145)/100);if(state.finances.cash<price)return{success:false,messages:[{text:`You need ${price.toLocaleString()} cash.`}]};const gate=consumeAction(state,[{policy:'collectible.purchase.total'},{policy:'collectible.purchase.item',target:itemId}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=price;const authentic=!rng.chance(def.fakeChance);state.assets.collectibles.push({id:makeStateId(state,'collectible'),itemId:def.id,name:def.name,estimatedValue:authentic?Math.round(price*rng.int(90,160)/100):Math.round(price*.1),authenticity:authentic?rng.int(88,100):rng.int(5,35),condition:rng.int(55,98),rarity:def.rarity});state.rngCounter=rng.counter();return{success:true,messages:[{text:`Purchased ${def.name} for ${price.toLocaleString()}. Authenticity is not guaranteed until appraised.`}]};
+  const availability=collectiblePurchaseAvailability(state,itemId);if(!availability.allowed)return{success:false,messages:[{text:availability.reason!}]};
+  const def=collectibleDefinitions.find(i=>i.id===itemId)!;const rng=createRng(state.seed,state.rngCounter);const price=Math.round(def.baseValue*rng.int(70,145)/100);if(state.finances.cash<price)return{success:false,messages:[{text:`You need ${price.toLocaleString()} cash.`}]};const gate=consumeAction(state,[{policy:'collectible.purchase.total'},{policy:'collectible.purchase.item',target:itemId}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=price;const authentic=!rng.chance(def.fakeChance);state.assets.collectibles.push({id:makeStateId(state,'collectible'),itemId:def.id,name:def.name,estimatedValue:authentic?Math.round(price*rng.int(90,160)/100):Math.round(price*.1),authenticity:authentic?rng.int(88,100):rng.int(5,35),condition:rng.int(55,98),rarity:def.rarity});state.rngCounter=rng.counter();return{success:true,messages:[{text:`Purchased ${def.name} for ${price.toLocaleString()}. Authenticity is not guaranteed until appraised.`}]};
 }

@@ -1,6 +1,7 @@
 import { actionUsesThisAge } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, LOCATION_SCENE_V1_ENABLED, LOCATION_SCENES, locationSceneDefinition, locationSceneEnabled } from '../data/locationScenes';
-import { propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
+import { collectibleDefinitions, propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
+import { personalItemDefinitions } from '../data/personalItems';
 import { createNewGame } from '../systems/CharacterSystem';
 import { performWellnessActivity } from '../systems/HealthSystem';
 import {
@@ -12,6 +13,9 @@ import {
   locationSceneCompanions,
   locationSceneMusicPartnershipDecisionAvailability,
   locationSceneMusicProjection,
+  locationSceneMallCollectibleCatalogue,
+  locationSceneMallOwnedPersonalItems,
+  locationSceneMallPersonalCatalogue,
   locationSceneMotorsCatalogue,
   locationSceneHomeCatalogue,
   locationSceneResidenceProjection,
@@ -22,8 +26,9 @@ import {
   placeLocationSceneRect,
 } from '../systems/LocationSceneSystem';
 import { takeLicenseTest } from '../systems/TravelSystem';
-import { buyProperty, getPropertySaleQuote, rentOutProperty, sellProperty } from '../systems/PropertySystem';
-import { completeRomanticDate, shareResidentialExperienceWithNpc } from '../systems/RelationshipSystem';
+import { buyCollectible, buyProperty, collectiblePurchaseAvailability, getPropertySaleQuote, rentOutProperty, sellProperty } from '../systems/PropertySystem';
+import { completeRomanticDate, shareExperienceWithNpc, shareResidentialExperienceWithNpc } from '../systems/RelationshipSystem';
+import { purchasePersonalItem } from '../systems/PersonalInventorySystem';
 import type { GameState, Npc, Relationship } from '../types/game';
 
 function addFriend(state:GameState,id='location-scene-friend',age=30){
@@ -36,9 +41,9 @@ export function runLocationSceneRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Location scene regression failed: ${message}`);}
 
   verify(LOCATION_SCENE_V1_ENABLED,'01 first location-scene rollout must remain explicitly feature-gated');
-  verify(LOCATION_SCENES.length===6&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio|central-everthread-bank|loomline-motors|hearthline-realty|threadwell-residential','02 location rollout must preserve the five certified scenes and add only Threadwell Residential in this slice');
-  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&locationSceneEnabled('central-everthread-bank')&&locationSceneEnabled('loomline-motors')&&locationSceneEnabled('hearthline-realty')&&locationSceneEnabled('threadwell-residential'),'03 all six integrated scene-backed places must bypass legacy map routing without widening the allowlist elsewhere');
-  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png')&&locationSceneDefinition('central-everthread-bank')?.background.endsWith('/central-everthread-bank.png')&&locationSceneDefinition('loomline-motors')?.background.endsWith('/loomline-motors.png')&&locationSceneDefinition('hearthline-realty')?.background.endsWith('/hearthline-realty.png')&&locationSceneDefinition('threadwell-residential')?.background.endsWith('/threadwell-residential.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
+  verify(LOCATION_SCENES.length===7&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio|central-everthread-bank|loomline-motors|hearthline-realty|threadwell-residential|crossroads-mall','02 location rollout must preserve the six certified scenes and add only Crossroads Mall in this slice');
+  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&locationSceneEnabled('central-everthread-bank')&&locationSceneEnabled('loomline-motors')&&locationSceneEnabled('hearthline-realty')&&locationSceneEnabled('threadwell-residential')&&locationSceneEnabled('crossroads-mall'),'03 all seven integrated scene-backed places must bypass legacy map routing without widening the allowlist elsewhere');
+  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png')&&locationSceneDefinition('central-everthread-bank')?.background.endsWith('/central-everthread-bank.png')&&locationSceneDefinition('loomline-motors')?.background.endsWith('/loomline-motors.png')&&locationSceneDefinition('hearthline-realty')?.background.endsWith('/hearthline-realty.png')&&locationSceneDefinition('threadwell-residential')?.background.endsWith('/threadwell-residential.png')&&locationSceneDefinition('crossroads-mall')?.background.endsWith('/crossroads-mall.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
   verify(LOCATION_SCENES.every(scene=>scene.canvas[0]===1024&&scene.canvas[1]===1536),'05 scene geometry must preserve the authored 1024x1536 portrait canvas');
   verify(LOCATION_SCENES.every(scene=>new Set(scene.groups.map(group=>group.id)).size===scene.groups.length),'06 semantic object ids must be unique within each location');
   verify(locationSceneDefinition('weaver-park')!.groups.flatMap(group=>group.actionIds).join('|')==='shared.park.walk|shared.park.play|date.park|wellness.walk|wellness.run|wellness.meditate','07 Weaver Park must expose only its focused social/date/wellness actions');
@@ -57,8 +62,8 @@ export function runLocationSceneRegression(){
   const pure=createNewGame({seed:'location-scene-pure'});pure.character.age=30;addFriend(pure);pure.settings.autoSave=false;
   const pureBefore=JSON.stringify(pure),pureRng=pure.rngCounter,pureId=pure.idCounter,pureRevision=pure.actionLedger?.revision??0;
   for(const actionId of Object.keys(LOCATION_SCENE_ACTIONS) as Array<keyof typeof LOCATION_SCENE_ACTIONS>)locationSceneActionAvailability(pure,actionId);
-  locationSceneCompanions(pure,'shared.park.walk');locationSceneCompanions(pure,'date.home');locationSceneMusicProjection(pure);locationSceneMotorsCatalogue();locationSceneMotorsCatalogue(true);locationSceneHomeCatalogue();locationSceneResidenceProjection(pure);locationSceneResidentialConnections(pure);locationSceneResidentialPlans(pure);locationSceneResidentialPlans(pure,'shared.home.cook');
-  verify(JSON.stringify(pure)===pureBefore&&pure.rngCounter===pureRng&&pure.idCounter===pureId&&(pure.actionLedger?.revision??0)===pureRevision,'15 browsing scenes, availability, companions, music records, vehicle/home catalogues, residence/household projections, and residential plans must be save/RNG/runtime-id/action-ledger neutral');
+  locationSceneCompanions(pure,'shared.park.walk');locationSceneCompanions(pure,'date.home');locationSceneCompanions(pure,'shared.mall.games');locationSceneCompanions(pure,'date.mall');locationSceneMusicProjection(pure);locationSceneMotorsCatalogue();locationSceneMotorsCatalogue(true);locationSceneHomeCatalogue();locationSceneResidenceProjection(pure);locationSceneResidentialConnections(pure);locationSceneResidentialPlans(pure);locationSceneResidentialPlans(pure,'shared.home.cook');locationSceneMallPersonalCatalogue();locationSceneMallPersonalCatalogue(true);locationSceneMallOwnedPersonalItems(pure);locationSceneMallCollectibleCatalogue();
+  verify(JSON.stringify(pure)===pureBefore&&pure.rngCounter===pureRng&&pure.idCounter===pureId&&(pure.actionLedger?.revision??0)===pureRevision,'15 browsing scenes, availability, companions, music records, vehicle/home/mall catalogues, residence/household projections, and residential plans must be save/RNG/runtime-id/action-ledger neutral');
 
   const child=createNewGame({seed:'location-scene-child'});child.character.age=2;
   verify(!locationSceneActionAvailability(child,'wellness.walk').available&&!locationSceneActionAvailability(child,'wellness.run').available&&!locationSceneActionAvailability(child,'wellness.meditate').available,'16 Park wellness objects must preserve the existing age gates rather than invent location shortcuts');
@@ -159,6 +164,28 @@ export function runLocationSceneRegression(){
   verify(dateResult.success&&!dateFriend.rel.romance?.pendingDate&&dateState.timeline.at(-1)?.placeId==='threadwell-residential'&&dateFriend.rel.romance?.dateHistory?.at(-1)?.activityId==='cook_together','69 selecting a Threadwell date must commit through RomanticDateSystem and preserve its existing momentum/history authority');
   const boardProp=locationScenePropRect(threadwell.propAlphaBounds,portrait,threadwell.propPlacement.width,threadwell.propPlacement.maxHeight,threadwell.propPlacement.baseline);
   verify(boardProp.left>=portrait.left&&boardProp.top>=portrait.top&&boardProp.left+boardProp.width<=portrait.left+portrait.width+1&&boardProp.top+boardProp.height<=portrait.top+portrait.height+1,'70 Threadwell neighborhood-board prop must remain aligned inside the shared immersive scene stage');
+
+  const mall=locationSceneDefinition('crossroads-mall')!;
+  verify(mall.groups.flatMap(group=>group.actionIds).join('|')==='shop.style|shop.collection|shop.gifts|shop.inventory|shared.mall.browse|shared.mall.games|shared.mall.movie|date.mall','71 Crossroads Mall must expose only the authored personal-shopping, collectible, inventory, shared-leisure, and date surfaces');
+  verify(mall.groups.map(group=>group.id).join('|')==='display|gifts|leisure'&&mall.groups.slice(0,2).every(group=>group.actionIds.every(actionId=>LOCATION_SCENE_ACTIONS[actionId].kind==='panel'))&&mall.groups[2]!.actionIds.every(actionId=>LOCATION_SCENE_ACTIONS[actionId].kind==='companion'),'72 Crossroads grouping must preserve Astra shopping-counter/gift-boutique/concourse semantics without creating direct location-owned purchases');
+  const mallVendorItems=personalItemDefinitions.filter(item=>item.vendorPlaceId==='crossroads-mall');const mallStyle=locationSceneMallPersonalCatalogue(),mallGifts=locationSceneMallPersonalCatalogue(true);
+  verify(mallVendorItems.length===10&&[...mallStyle,...mallGifts].map(item=>item.id).sort().join('|')===mallVendorItems.map(item=>item.id).sort().join('|')&&mallGifts.every(item=>item.category==='gift')&&mallStyle.every(item=>item.category!=='gift'),'73 Crossroads personal-item shelves must be a lossless category split of the authoritative ten-item mall catalogue');
+  const mallBrowse=createNewGame({seed:'location-scene-mall-browse'});mallBrowse.character.age=30;mallBrowse.settings.autoSave=false;mallBrowse.finances.cash=1_000_000;const mallBrowseBefore=JSON.stringify(mallBrowse),mallBrowseRng=mallBrowse.rngCounter,mallBrowseId=mallBrowse.idCounter;locationSceneMallPersonalCatalogue();locationSceneMallPersonalCatalogue(true);locationSceneMallOwnedPersonalItems(mallBrowse);locationSceneMallCollectibleCatalogue();for(const item of collectibleDefinitions)collectiblePurchaseAvailability(mallBrowse,item.id);
+  verify(JSON.stringify(mallBrowse)===mallBrowseBefore&&mallBrowse.rngCounter===mallBrowseRng&&mallBrowse.idCounter===mallBrowseId,'74 Crossroads shopping/catalogue browsing and collectible eligibility projection must remain save/RNG/runtime-id neutral');
+  const giftDef=mallGifts[0]!;const giftCash=mallBrowse.finances.cash;const personalPurchase=purchasePersonalItem(mallBrowse,giftDef.id);const mallOwned=locationSceneMallOwnedPersonalItems(mallBrowse);
+  verify(personalPurchase.success&&mallBrowse.finances.cash===giftCash-giftDef.price&&mallOwned.some(entry=>entry.item.itemId===giftDef.id&&entry.item.sourcePlaceId==='crossroads-mall'),'75 a Crossroads personal-item purchase must commit exactly through PersonalInventorySystem and immediately appear in the read-only mall-purchase projection');
+  const collection=locationSceneMallCollectibleCatalogue();
+  verify(collection.map(item=>item.id).join('|')===collectibleDefinitions.map(item=>item.id).join('|'),'76 Crossroads collectible stalls must project the authoritative collectible catalogue rather than maintain mall-specific collectible definitions');
+  const collector=createNewGame({seed:'location-scene-mall-collector'});collector.character.age=11;collector.finances.cash=5_000_000;const collectible=collectibleDefinitions[0]!;verify(!collectiblePurchaseAvailability(collector,collectible.id).allowed,'77 Crossroads collectible purchase gating must preserve PropertySystem age-12 ownership');collector.character.age=12;const collectibleRng=collector.rngCounter;const collectiblePurchase=buyCollectible(collector,collectible.id);
+  verify(collectiblePurchase.success&&collector.assets.collectibles.some(item=>item.itemId===collectible.id)&&collector.rngCounter>collectibleRng&&!collectiblePurchaseAvailability(collector,collectible.id).allowed,'78 choosing Find must commit through PropertySystem, consume gameplay RNG only then, create the authoritative collectible asset, and close the existing same-item yearly gate');
+  const mallSocial=createNewGame({seed:'location-scene-mall-social'});mallSocial.character.age=30;const mallFriend=addFriend(mallSocial,'mall-friend',30);const browsePlan=locationSceneCompanionPlan('shared.mall.browse'),gamesPlan=locationSceneCompanionPlan('shared.mall.games'),moviePlan=locationSceneCompanionPlan('shared.mall.movie');
+  verify(browsePlan?.placeId==='crossroads-mall'&&browsePlan.activityId==='mall_browse'&&gamesPlan?.activityId==='mall_games'&&moviePlan?.activityId==='movie_outing'&&locationSceneCompanions(mallSocial,'shared.mall.games').some(option=>option.npcId===mallFriend.npc.id),'79 Crossroads shared leisure must reuse the generic companion bridge over the existing Shared Experience plans');
+  const mallSharedResult=shareExperienceWithNpc(mallSocial,mallFriend.npc.id,'crossroads-mall','mall_games');
+  verify(mallSharedResult.success&&mallSocial.timeline.at(-1)?.placeId==='crossroads-mall'&&actionUsesThisAge(mallSocial,'social.npc.action',`${mallFriend.npc.id}:shared:mall_games`)===1,'80 a Crossroads shared-leisure choice must commit through Shared Experience ownership and its existing action ledger');
+  const mallDate=createNewGame({seed:'location-scene-mall-date',orientation:'pansexual'});mallDate.character.age=30;const mallDateFriend=addFriend(mallDate,'mall-date-friend',30);mallDateFriend.npc.sexuality='pansexual';mallDateFriend.rel.romance={pendingDate:{acceptedYear:mallDate.currentYear,acceptedAge:mallDate.character.age}};const mallDatePlan=locationSceneCompanionPlan('date.mall');
+  verify(mallDatePlan?.kind==='date'&&mallDatePlan.placeId==='crossroads-mall'&&mallDatePlan.activityId==='mall_browse'&&locationSceneCompanions(mallDate,'date.mall').some(option=>option.npcId===mallDateFriend.npc.id)&&completeRomanticDate(mallDate,mallDateFriend.npc.id,'crossroads-mall','mall_browse').success,'81 Crossroads mall dates must project and commit through the existing Romantic Date owner without auto-accepting or inventing date state');
+  const shoppingProp=locationScenePropRect(mall.propAlphaBounds,portrait,mall.propPlacement.width,mall.propPlacement.maxHeight,mall.propPlacement.baseline);
+  verify(shoppingProp.left>=portrait.left&&shoppingProp.top>=portrait.top&&shoppingProp.left+shoppingProp.width<=portrait.left+portrait.width+1&&shoppingProp.top+shoppingProp.height<=portrait.top+portrait.height+1,'82 Crossroads shopping-display prop must remain aligned inside the shared immersive scene stage');
 
   return checks;
 }
