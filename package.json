@@ -20,7 +20,13 @@
     "sim:neutral": "tsx src/tests/runSimulation.ts 1000 bulk neutral",
     "sim:policies": "tsx src/tests/runSimulation.ts 1000 bulk mixed",
     "preflight": "node scripts/everthread-preflight.mjs",
-    "preflight:deep": "node scripts/everthread-preflight.mjs --deep"
+    "preflight:deep": "node scripts/everthread-preflight.mjs --deep",
+    "preflight:engine": "node scripts/everthread-preflight.mjs --stage typecheck-engine",
+    "preflight:tests-ts": "node scripts/everthread-preflight.mjs --stage typecheck-tests",
+    "preflight:regressions": "node scripts/everthread-preflight.mjs --stage regressions",
+    "preflight:build": "node scripts/everthread-preflight.mjs --stage production-build",
+    "preflight:content": "node scripts/everthread-preflight.mjs --stage content-audit",
+    "preflight:sim": "node scripts/everthread-preflight.mjs --stage simulation-1k"
   },
   "dependencies": {
     "react": "^19.1.1",
