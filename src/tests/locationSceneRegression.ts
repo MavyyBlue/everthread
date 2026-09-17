@@ -11,6 +11,7 @@ import {
   locationSceneMusicPartnershipDecisionAvailability,
   locationSceneMusicProjection,
   locationScenePropRect,
+  locationSceneUtilityTrayState,
   placeLocationSceneRect,
 } from '../systems/LocationSceneSystem';
 import type { GameState, Npc, Relationship } from '../types/game';
@@ -86,6 +87,7 @@ export function runLocationSceneRegression(){
     verify(LOCATION_SCENES.every(scene=>scene.groups.every(group=>{const rect=placeLocationSceneRect(group.hitRect,stage);const centerX=rect.left+rect.width/2,centerY=rect.top+rect.height/2;return centerX>=0&&centerX<=width&&centerY>=0&&centerY<=height;})),`35 portrait ${width}x${height} must keep every first-slice hotspot center visible under immersive cover fitting`);
   }
   verify(coverLocationScene(844,390).width>=844&&coverLocationScene(844,390).height>=390,'39 short-landscape art must still fill the entire location surface even when some artwork is necessarily cropped');
+  verify(locationSceneUtilityTrayState(false,false)==='expanded'&&locationSceneUtilityTrayState(true,false)==='collapsed'&&locationSceneUtilityTrayState(false,true)==='hidden'&&locationSceneUtilityTrayState(true,true)==='hidden','40 utility tray presentation must collapse Things to do + Map as one drawer and hide the whole drawer while an object panel is open');
 
   return checks;
 }

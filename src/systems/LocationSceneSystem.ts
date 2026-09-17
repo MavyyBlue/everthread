@@ -16,6 +16,11 @@ export interface LocationSceneStage{left:number;top:number;width:number;height:n
 
 export type LocationSceneBackStep='detail'|'group'|'map';
 export type LocationSceneLabelAlignment='start'|'center'|'end';
+export type LocationSceneUtilityTrayState='expanded'|'collapsed'|'hidden';
+
+export function locationSceneUtilityTrayState(collapsed:boolean,panelOpen:boolean):LocationSceneUtilityTrayState{
+  return panelOpen?'hidden':collapsed?'collapsed':'expanded';
+}
 
 export function locationSceneBackStep(detailOpen:boolean,groupOpen:boolean):LocationSceneBackStep{
   return detailOpen?'detail':groupOpen?'group':'map';

@@ -13,6 +13,7 @@ import {
   locationSceneMusicPartnershipDecisionAvailability,
   locationSceneMusicProjection,
   locationScenePropRect,
+  locationSceneUtilityTrayState,
   placeLocationSceneRect,
   type LocationSceneStage,
 } from '../systems/LocationSceneSystem';
@@ -59,6 +60,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   const groups=useMemo(()=>[...scene.groups].sort((a,b)=>a.order-b.order),[scene.groups]);
   const selectedGroup=groups.find(group=>group.id===selectedGroupId);
   const music=placeId==='threadtone-music-studio'?locationSceneMusicProjection(state):undefined;
+  const utilityTrayState=locationSceneUtilityTrayState(trayCollapsed,Boolean(selectedGroupId));
 
   useLayoutEffect(()=>{
     const element=viewportRef.current;if(!element)return;
@@ -197,13 +199,15 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       </button>;})}
     </div>
 
-    <button className={`location-scene__tray-toggle ${trayCollapsed?'is-collapsed':''}`} onClick={()=>setTrayCollapsed(value=>!value)} aria-expanded={!trayCollapsed} aria-controls="location-scene-utility-tray" aria-label={trayCollapsed?'Show location controls':'Hide location controls'} hidden={Boolean(selectedGroupId)}>
-      <EverthreadIcon name="chevron" size={18}/>
-    </button>
-    <footer id="location-scene-utility-tray" className="location-scene__footer" hidden={Boolean(selectedGroupId)||trayCollapsed}>
-      <button onClick={openAllActions} aria-haspopup="dialog"><EverthreadIcon name="plus" size={19}/><span><strong>Things to do</strong><small>{groups.length} spots · {groups.reduce((sum,group)=>sum+group.actionIds.length,0)} actions</small></span></button>
-      <button onClick={requestClose}><EverthreadIcon name="map" size={19}/><span><strong>Map</strong><small>Return to Everthread</small></span></button>
-    </footer>
+    <div className={`location-scene__utility-tray is-${utilityTrayState}`} hidden={utilityTrayState==='hidden'} data-state={utilityTrayState}>
+      <button className="location-scene__tray-toggle" onClick={()=>setTrayCollapsed(value=>!value)} aria-expanded={utilityTrayState==='expanded'} aria-controls="location-scene-utility-tray" aria-label={utilityTrayState==='collapsed'?'Show location controls':'Hide location controls'}>
+        <EverthreadIcon name="chevron" size={18}/>
+      </button>
+      <footer id="location-scene-utility-tray" className="location-scene__footer" hidden={utilityTrayState!=='expanded'}>
+        <button onClick={openAllActions} aria-haspopup="dialog"><EverthreadIcon name="plus" size={19}/><span><strong>Things to do</strong><small>{groups.length} spots · {groups.reduce((sum,group)=>sum+group.actionIds.length,0)} actions</small></span></button>
+        <button onClick={requestClose}><EverthreadIcon name="map" size={19}/><span><strong>Map</strong><small>Return to Everthread</small></span></button>
+      </footer>
+    </div>
 
     <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet}>
       {selectedGroupId&&!detail&&<div className="location-scene__sheet">
