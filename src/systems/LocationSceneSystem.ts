@@ -123,6 +123,7 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     const gate=specialCareerRetirementGate(state,'music');return gate.allowed?{available:true}:{available:false,reason:gate.message};
   }
   if(actionId==='music.catalog'||actionId==='music.partnership')return{available:true};
+  if(actionId.startsWith('bank.'))return{available:true};
   return{available:false,reason:'This location action is not connected.'};
 }
 

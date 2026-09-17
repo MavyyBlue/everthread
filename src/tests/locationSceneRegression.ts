@@ -26,9 +26,9 @@ export function runLocationSceneRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Location scene regression failed: ${message}`);}
 
   verify(LOCATION_SCENE_V1_ENABLED,'01 first location-scene rollout must remain explicitly feature-gated');
-  verify(LOCATION_SCENES.length===2&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio','02 first rollout must contain only Weaver Park and Threadtone Music Studio');
-  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&!locationSceneEnabled('central-everthread-bank'),'03 unsupported places must retain their existing map routing until their own scene slice is integrated');
-  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
+  verify(LOCATION_SCENES.length===3&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio|central-everthread-bank','02 certified scene set must preserve Weaver Park + Threadtone and add only Central Everthread Bank in this migration slice');
+  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&locationSceneEnabled('central-everthread-bank')&&!locationSceneEnabled('loomline-motors'),'03 only integrated scene-backed places may bypass legacy map routing');
+  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png')&&locationSceneDefinition('central-everthread-bank')?.background.endsWith('/central-everthread-bank.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
   verify(LOCATION_SCENES.every(scene=>scene.canvas[0]===1024&&scene.canvas[1]===1536),'05 scene geometry must preserve the authored 1024x1536 portrait canvas');
   verify(LOCATION_SCENES.every(scene=>new Set(scene.groups.map(group=>group.id)).size===scene.groups.length),'06 semantic object ids must be unique within each location');
   verify(locationSceneDefinition('weaver-park')!.groups.flatMap(group=>group.actionIds).join('|')==='shared.park.walk|shared.park.play|date.park|wellness.walk|wellness.run|wellness.meditate','07 Weaver Park must expose only its focused social/date/wellness actions');
@@ -88,6 +88,14 @@ export function runLocationSceneRegression(){
   }
   verify(coverLocationScene(844,390).width>=844&&coverLocationScene(844,390).height>=390,'39 short-landscape art must still fill the entire location surface even when some artwork is necessarily cropped');
   verify(locationSceneUtilityTrayState(false,false)==='expanded'&&locationSceneUtilityTrayState(true,false)==='collapsed'&&locationSceneUtilityTrayState(false,true)==='hidden'&&locationSceneUtilityTrayState(true,true)==='hidden','40 utility tray presentation must collapse Things to do + Map as one drawer and hide the whole drawer while an object panel is open');
+
+  const bank=locationSceneDefinition('central-everthread-bank')!;
+  verify(bank.groups.flatMap(group=>group.actionIds).join('|')==='bank.summary|bank.payments|bank.accounts|bank.offers|bank.borrowing|bank.invest|bank.history','41 Central Bank must expose only the seven authored focused finance surfaces');
+  verify(bank.groups.map(group=>group.id).join('|')==='kiosk|teller|advisor'&&bank.groups.every(group=>group.actionIds.every(actionId=>LOCATION_SCENE_ACTIONS[actionId].kind==='panel')),'42 Central Bank object grouping must preserve Astra kiosk/teller/advisor semantics without inventing direct money mutations');
+  const bankChild=createNewGame({seed:'location-scene-bank-child'});bankChild.character.age=10;const bankBefore=JSON.stringify(bankChild);
+  verify(bank.groups.flatMap(group=>group.actionIds).every(actionId=>locationSceneActionAvailability(bankChild,actionId).available)&&JSON.stringify(bankChild)===bankBefore,'43 Bank browsing, including the locked investment view, must remain inspectable and state-neutral before action-specific owner gates apply');
+  const kioskProp=locationScenePropRect(bank.propAlphaBounds,portrait,bank.propPlacement.width,bank.propPlacement.maxHeight,bank.propPlacement.baseline);
+  verify(kioskProp.left>=portrait.left&&kioskProp.top>=portrait.top&&kioskProp.left+kioskProp.width<=portrait.left+portrait.width+1&&kioskProp.top+kioskProp.height<=portrait.top+portrait.height+1,'44 Central Bank service-kiosk prop must remain aligned inside the shared immersive scene stage');
 
   return checks;
 }

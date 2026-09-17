@@ -5,8 +5,8 @@ import { EstatePlanningPanel } from '../components/EstatePlanningPanel';
 import { AssetPurchaseSheet, type AssetPurchaseTarget } from '../components/AssetPurchaseSheet';
 import { AssetSaleSheet, type AssetSaleTarget } from '../components/AssetSaleSheet';
 import { gameEngine } from '../stores/gameStore';
-import { assetValue, getSecuredLoanStatus, liabilityValue, netWorth } from '../systems/FinanceSystem';
-import { propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions, securities, businessIndustries, petVariants, collectibleDefinitions } from '../data/assets';
+import { getSecuredLoanStatus, netWorth } from '../systems/FinanceSystem';
+import { propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions, businessIndustries, petVariants, collectibleDefinitions } from '../data/assets';
 import { exactMoney, formatMoney } from '../core/format';
 import { actionAllowed } from '../core/actionEconomy';
 import { InstitutionRouteBanner } from '../components/InstitutionRouteBanner';
@@ -14,6 +14,7 @@ import type { InstitutionRouteRequest } from '../core/institutionRouting';
 import { ASSET_SECTION_NAVIGATION, type AssetSectionTab } from '../core/navigation';
 import { playerResidenceProjection } from '../systems/ResidentialLifeSystem';
 import { businessWorkLocation } from '../systems/WorkingEverthreadSystem';
+import { InvestmentMarketView, MoneySummaryView } from '../components/FinanceFocusedViews';
 
 export function AssetsScreen({state,onResult,routeRequest,onReturnToMap}:{state:GameState;onResult:(r:EngineResult)=>void;routeRequest?:InstitutionRouteRequest;onReturnToMap?:()=>void}){
   const routed=routeRequest?.resolved.tab==='assets'?routeRequest:undefined;
@@ -21,12 +22,10 @@ export function AssetsScreen({state,onResult,routeRequest,onReturnToMap}:{state:
   const[tab,setTab]=useState<AssetSectionTab>(routeView?.assetsTab??'money');
   const[propertyView,setPropertyView]=useState<'browse'|'owned'>(routeView?.propertyView??'browse');
   const[q,setQ]=useState('');
-  const[amount,setAmount]=useState(1000);
   const[bizIndustry,setBizIndustry]=useState('software');
   const[bizName,setBizName]=useState('');
   const[purchaseTarget,setPurchaseTarget]=useState<AssetPurchaseTarget>();
   const[saleTarget,setSaleTarget]=useState<AssetSaleTarget>();
-  const portfolio=state.investments.positions.reduce((s,p)=>s+p.units*(state.investments.prices[p.securityId]??0),0);
   const search=q.trim().toLowerCase();
   const props=useMemo(()=>propertyDefinitions.filter(p=>!search||p.name.toLowerCase().includes(search)).slice(0,45),[search]);
   const vehicles=useMemo(()=>[...vehicleDefinitions,...luxuryVehicleDefinitions].filter(v=>!search||v.name.toLowerCase().includes(search)),[search]);
@@ -38,20 +37,15 @@ export function AssetsScreen({state,onResult,routeRequest,onReturnToMap}:{state:
     <InstitutionRouteBanner request={routed} onBackToMap={onReturnToMap}/>
     <div className="segmented segmented--scroll">{ASSET_SECTION_NAVIGATION.map(section=><button key={section.id} className={tab===section.id?'active':''} onClick={()=>setTab(section.id)}>{section.label}</button>)}</div>
 
-    {tab==='money'&&<MoneyView state={state} portfolio={portfolio}/>}
+    {tab==='money'&&<MoneySummaryView state={state}/>}
     {tab==='property'&&<PropertyView state={state} view={propertyView} setView={setPropertyView} q={q} setQ={setQ} props={props} vehicles={vehicles} onResult={onResult} onPurchase={setPurchaseTarget} onSell={setSaleTarget}/>}
-    {tab==='invest'&&(state.character.age<18?<section className="hero-card"><p className="eyebrow">Locked</p><h2>Investing unlocks at 18</h2><p>Your childhood finances are managed as dependent finances. Market trading becomes available when you reach adulthood.</p></section>:<><section className="hero-card"><p className="eyebrow">Market regime</p><h2>{state.investments.marketRegime}</h2><p>All securities are fictional. Prices are generated from your save seed and evolve only inside the game.</p></section><label className="form-field"><span>Trade amount</span><input type="number" min="10" step="100" value={amount} onChange={e=>setAmount(Number(e.target.value)||0)}/></label><div className="stack">{securities.map(s=>{const price=state.investments.prices[s.id]??s.basePrice;const pos=state.investments.positions.find(p=>p.securityId===s.id);return <div className="market-card" key={s.id}><div><strong>{s.ticker} · {s.name}</strong><small>{s.type} · {price.toFixed(2)}{pos?` · you own ${formatMoney(pos.units*price)}`:''}</small></div><div className="button-row"><button onClick={()=>onResult(gameEngine.invest(s.id,amount))}>Buy</button>{pos&&<button onClick={()=>onResult(gameEngine.sellInvestment(s.id))}>Sell all</button>}</div></div>})}</div></>)}
+    {tab==='invest'&&<InvestmentMarketView state={state} onResult={onResult}/>}
     {tab==='business'&&<><section className="action-card"><h2>Start company</h2><label className="form-field"><span>Name</span><input value={bizName} onChange={e=>setBizName(e.target.value)} placeholder="Company name"/></label><label className="form-field"><span>Industry</span><select value={bizIndustry} onChange={e=>setBizIndustry(e.target.value)}>{businessIndustries.map(i=><option key={i.id} value={i.id}>{i.name} · {i.startupCapital.toLocaleString()}</option>)}</select></label><button className="full-button" disabled={state.character.age<18||!actionAllowed(state,{policy:'business.start'})} onClick={()=>onResult(gameEngine.startBusiness(bizIndustry,bizName))}>Found company</button></section>{state.businesses.map(b=><section className="business-card" key={b.id}><div className="section-heading"><div><p className="eyebrow">{b.bankrupt?'Closed':'Operating'}</p><h2>{b.name}</h2></div><strong title={exactMoney(b.valuation)}>{formatMoney(b.valuation)}</strong></div><p className="muted">{b.origin==='inherited'?'Inherited family company · ':'Based in '}{businessWorkLocation(state,b).locationLabel}.</p><div className="finance-grid"><div title={exactMoney(b.revenue)}><small>Revenue</small><strong>{formatMoney(b.revenue)}</strong></div><div title={exactMoney(b.profit)}><small>Profit</small><strong>{formatMoney(b.profit)}</strong></div><div><small>Employees</small><strong>{b.employees}</strong></div><div><small>Reputation</small><strong>{Math.round(b.reputation)}</strong></div></div>{!b.bankrupt&&<div className="action-grid"><button disabled={!actionAllowed(state,{policy:'business.product',target:b.id})} onClick={()=>onResult(gameEngine.addBusinessProduct(b.id))}>Launch product</button><button onClick={()=>onResult(gameEngine.tuneBusiness(b.id,'marketingBudget',Math.max(1000,b.marketingBudget*1.25)))}>Raise marketing</button><button onClick={()=>onResult(gameEngine.tuneBusiness(b.id,'compensationIndex',Math.min(1.8,b.compensationIndex+.1)))}>Raise pay</button></div>}</section>)}</>}
     {tab==='estate'&&<EstatePlanningPanel state={state} onResult={onResult}/>}
     {tab==='more'&&<MoreAssets state={state} onResult={onResult}/>}
     {purchaseTarget&&<AssetPurchaseSheet state={state} target={purchaseTarget} onResult={onResult} onClose={()=>setPurchaseTarget(undefined)}/>}
     {saleTarget&&<AssetSaleSheet state={state} target={saleTarget} onResult={onResult} onClose={()=>setSaleTarget(undefined)}/>}
   </main>;
-}
-
-function MoneyView({state,portfolio}:{state:GameState;portfolio:number}){
-  const creditDebt=state.finances.credit.accounts.filter(account=>account.status==='open'&&account.balance>0);
-  return <><div className="finance-grid"><div title={exactMoney(state.finances.cash)}><small>Cash</small><strong>{formatMoney(state.finances.cash)}</strong></div><div title={exactMoney(assetValue(state))}><small>Assets</small><strong>{formatMoney(assetValue(state))}</strong></div><div title={exactMoney(liabilityValue(state))}><small>Debt</small><strong>{formatMoney(liabilityValue(state))}</strong></div><div title={exactMoney(portfolio)}><small>Portfolio</small><strong>{formatMoney(portfolio)}</strong></div></div>{state.finances.lastYearSummary&&<section className="action-card"><p className="eyebrow">Last year</p><h2>Financial summary</h2>{Object.entries(state.finances.lastYearSummary).map(([k,v])=><p className="history-line" key={k}><span>{k.replace(/([A-Z])/g,' $1')}</span><strong title={exactMoney(v)}>{formatMoney(v)}</strong></p>)}</section>}<section className="action-card"><h2>Liabilities</h2>{state.finances.liabilities.length||creditDebt.length?<>{state.finances.liabilities.map(l=>{const secured=getSecuredLoanStatus(state,l);return <div className={`liability-card${secured?.status==='delinquent'?' liability-card--danger':''}`} key={l.id}><div className="liability-card__main"><span>{l.kind} · {Math.round(l.annualRate*1000)/10}%<small>{formatMoney(l.annualPayment)}/yr · {l.remainingYears} yr remaining{secured?` · ${secured.collateralName}`:''}</small>{secured?.status==='delinquent'&&<em>{formatMoney(secured.arrears)} past due · {secured.consequence} risk</em>}</span><strong title={exactMoney(l.balance)}>{formatMoney(l.balance)}</strong></div></div>})}{creditDebt.map(account=><p className="history-line" key={account.id}><span>credit card · {Math.round(account.annualRate*1000)/10}%<small>{account.productName}{(account.pastDueAmount??0)>0?` · ${formatMoney(account.pastDueAmount??0)} past due`:''}</small></span><strong title={exactMoney(account.balance)}>{formatMoney(account.balance)}</strong></p>)}<p className="muted asset-payment-note">Required payments and auto-pay preferences are managed from Credit & Banking → Bills & Payments.</p></>:<p className="muted">No debt.</p>}</section></>;
 }
 
 function PropertyView({state,view,setView,q,setQ,props,vehicles,onResult,onPurchase,onSell}:{state:GameState;view:'browse'|'owned';setView:(view:'browse'|'owned')=>void;q:string;setQ:(value:string)=>void;props:typeof propertyDefinitions;vehicles:Array<(typeof vehicleDefinitions)[number]|(typeof luxuryVehicleDefinitions)[number]>;onResult:(r:EngineResult)=>void;onPurchase:(target:AssetPurchaseTarget)=>void;onSell:(target:AssetSaleTarget)=>void}){

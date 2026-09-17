@@ -11,6 +11,8 @@ import { personalLoanProductById } from '../data/personalLoans';
 import { exactMoney, formatMoney } from '../core/format';
 import type { InstitutionBankingView } from '../core/institutionRouting';
 
+export type CreditBankingFocusedSection='payments'|'accounts'|'offers'|'borrowing'|'history';
+
 const money=(value:number)=>formatMoney(Math.max(0,value));
 const pct=(value:number)=>`${(value*100).toFixed(value*100%1?1:0)}%`;
 
@@ -54,6 +56,28 @@ export function CreditBankingPanel({state,onResult,onClose,initialView}:{state:G
   </div>;
 }
 
+
+export function CreditBankingFocusedView({state,onResult,section}:{state:GameState;onResult:(result:EngineResult)=>void;section:CreditBankingFocusedSection}){
+  const[selectedProductId,setSelectedProductId]=useState<string>();
+  const[selectedAccountId,setSelectedAccountId]=useState<string>();
+  const[amount,setAmount]=useState(50);
+  const offers=getCreditOffers(state);
+  const selectedOffer=selectedProductId?offers.find(offer=>offer.product.id===selectedProductId):undefined;
+  const openAccounts=state.finances.credit.accounts.filter(account=>account.status==='open');
+  const selectedAccount=selectedAccountId?openAccounts.find(account=>account.id===selectedAccountId):undefined;
+  const history=getCreditTransactionHistory(state);
+  const apply=()=>{if(!selectedOffer)return;const result=gameEngine.applyForCreditCard(selectedOffer.product.id);onResult(result);if(result.success)setSelectedProductId(undefined);};
+  const doPayment=()=>{if(!selectedAccount)return;onResult(gameEngine.payCreditCard(selectedAccount.id,amount));};
+  const doPurchase=()=>{if(!selectedAccount)return;onResult(gameEngine.chargeCreditCard(selectedAccount.id,amount));};
+  const doClose=()=>{if(!selectedAccount)return;const result=gameEngine.closeCreditCard(selectedAccount.id);onResult(result);if(result.success)setSelectedAccountId(undefined);};
+
+  if(section==='payments')return <PaymentsView state={state} onResult={onResult}/>;
+  if(section==='accounts')return selectedAccount?<AccountView state={state} account={selectedAccount} amount={amount} setAmount={setAmount} onBack={()=>setSelectedAccountId(undefined)} onPayment={doPayment} onPurchase={doPurchase} onCloseAccount={doClose}/>:<Accounts state={state} onOpen={setSelectedAccountId}/>;
+  if(section==='offers')return selectedOffer?<ContractView state={state} offer={selectedOffer} onBack={()=>setSelectedProductId(undefined)} onApply={apply}/>:<Offers offers={offers} onOpen={setSelectedProductId}/>;
+  if(section==='borrowing')return <Borrowing state={state} onResult={onResult}/>;
+  return <History state={state} current={history.current} older={history.older}/>;
+}
+
 function Overview({state,profile,onOpenPayments}:{state:GameState;profile:ReturnType<typeof getCreditProfile>;onOpenPayments:()=>void}){
   const payments=paymentSummary(state);const activeBills=payments.obligations.length;
   return <>
@@ -67,12 +91,12 @@ function Overview({state,profile,onOpenPayments}:{state:GameState;profile:Return
   </>;
 }
 
-function PaymentsView({state,onResult,onBack}:{state:GameState;onResult:(result:EngineResult)=>void;onBack:()=>void}){
+function PaymentsView({state,onResult,onBack}:{state:GameState;onResult:(result:EngineResult)=>void;onBack?:()=>void}){
   const summary=paymentSummary(state);
   const pay=(id:string)=>onResult(gameEngine.payPaymentObligation(id));
   const toggle=(id:string,value:boolean)=>onResult(gameEngine.setPaymentAutoPay(id,value));
   return <>
-    <button className="banking-back-button" onClick={onBack}>← Back to overview</button>
+    {onBack&&<button className="banking-back-button" onClick={onBack}>← Back to overview</button>}
     <section className="hero-card banking-payments-hero"><p className="eyebrow">Bills & Payments</p><h2>{summary.pastDue>0?`${money(summary.pastDue)} past due`:`${money(summary.dueNow)} due`}</h2><p>Manage annual minimum card payments, personal loans, and financed home or vehicle bills here. Auto-pay uses available cash when you Age Up.</p></section>
     <div className="finance-grid banking-payment-metrics"><div><small>Cash available</small><strong title={exactMoney(state.finances.cash)}>{money(state.finances.cash)}</strong></div><div><small>Total due</small><strong>{money(summary.dueNow)}</strong></div><div><small>Past due</small><strong>{money(summary.pastDue)}</strong></div><div><small>Auto-pay on</small><strong>{summary.autoPayCount}/{summary.obligations.length}</strong></div></div>
     {summary.obligations.length?<div className="banking-obligation-list">{summary.obligations.map(item=><section className={`banking-obligation-card${item.status==='past_due'?' banking-obligation-card--danger':''}`} key={item.id}>

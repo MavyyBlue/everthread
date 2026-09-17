@@ -1,8 +1,11 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank';
+export type LocationSceneBankActionId=
+  |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'
   |'shared.park.walk'|'shared.park.play'|'date.park'
-  |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership';
+  |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
+  |LocationSceneBankActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
 export type LocationSceneRisk='normal'|'confirm';
 export type LocationSceneRect=readonly[number,number,number,number];
@@ -36,6 +39,13 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'music.album':{id:'music.album',label:'Release Album',description:'Bring a collection of songs together.',kind:'action',risk:'normal'},
   'music.catalog':{id:'music.catalog',label:'Your music',description:'Releases, streams, and career history.',kind:'panel',risk:'normal'},
   'music.partnership':{id:'music.partnership',label:'Distribution offers',description:'Review your current music partnership offer.',kind:'panel',risk:'normal'},
+  'bank.summary':{id:'bank.summary',label:'Money summary',description:'Cash, assets, liabilities, and net worth.',kind:'panel',risk:'normal'},
+  'bank.payments':{id:'bank.payments',label:'Bills & Payments',description:'Required payments, arrears, and auto-pay.',kind:'panel',risk:'normal'},
+  'bank.accounts':{id:'bank.accounts',label:'Your accounts',description:'Balances, credit limits, and account controls.',kind:'panel',risk:'normal'},
+  'bank.offers':{id:'bank.offers',label:'Credit offers',description:'Review terms before applying.',kind:'panel',risk:'normal'},
+  'bank.borrowing':{id:'bank.borrowing',label:'Borrowing',description:'Personal loans and debt options.',kind:'panel',risk:'normal'},
+  'bank.invest':{id:'bank.invest',label:'Investments',description:'Browse your fictional in-game market.',kind:'panel',risk:'normal'},
+  'bank.history':{id:'bank.history',label:'Credit history',description:'Review your recorded credit history.',kind:'panel',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -58,6 +68,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'rehearsal',label:'Rehearsal nook',description:'Practice & touring',actionIds:['music.practice','music.tour'],order:2,hitRect:[.07,.335,.28,.19]},
       {id:'booth',label:'Recording booth',description:'Your next release',actionIds:['music.song','music.album'],order:3,hitRect:[.60,.305,.28,.19]},
       {id:'records',label:'Record shelf',description:'Your work & partnerships',actionIds:['music.catalog','music.partnership'],order:4,hitRect:[.41,.25,.14,.12]},
+    ],
+  },
+  {
+    id:'central-everthread-bank',label:'Central Everthread Bank',tagline:'A clearer view of your finances.',
+    background:'./location-scenes/backgrounds/central-everthread-bank.png',propFile:'./location-scenes/props/service-kiosk.png',canvas:[1024,1536],
+    propAlphaBounds:[97,32,1101,1199],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'kiosk',label:'Banking kiosk',description:'Your money at a glance',actionIds:['bank.summary','bank.payments'],order:1,hitRect:[.27962,.58,.44077,.32]},
+      {id:'teller',label:'Teller counter',description:'Accounts & borrowing',actionIds:['bank.accounts','bank.offers','bank.borrowing'],order:2,hitRect:[.10,.375,.28,.19]},
+      {id:'advisor',label:'Advisor office',description:'Investing & credit history',actionIds:['bank.invest','bank.history'],order:3,hitRect:[.68,.375,.28,.19]},
     ],
   },
 ] as const;

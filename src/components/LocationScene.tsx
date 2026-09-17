@@ -2,8 +2,9 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperti
 import { BottomSheet } from './BottomSheet';
 import { EverthreadIcon } from './EverthreadIcon';
 import { formatMoney } from '../core/format';
-import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
+import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
 import { gameEngine } from '../stores/gameStore';
+import { BankLocationPanel } from './BankLocationPanel';
 import {
   coverLocationScene,
   locationSceneActionAvailability,
@@ -24,18 +25,22 @@ type DetailState=
   |{kind:'confirm';actionId:'music.leave'|'music.retire'}
   |{kind:'companion';actionId:'shared.park.walk'|'shared.park.play'|'date.park'}
   |{kind:'catalog';actionId:'music.catalog'}
-  |{kind:'partnership';actionId:'music.partnership'};
+  |{kind:'partnership';actionId:'music.partnership'}
+  |{kind:'bank';actionId:LocationSceneBankActionId};
 
 function unavailableResult(reason:string):EngineResult{return{success:false,messages:[{text:reason}]};}
 function actionIcon(actionId:LocationSceneActionId){
+  if(actionId.startsWith('bank.'))return'bank' as const;
   if(actionId.startsWith('music.'))return'music' as const;
   if(actionId.startsWith('shared.')||actionId.startsWith('date.'))return'people' as const;
   return'leaf' as const;
 }
 function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='weaver-park')return groupId==='bench'?'people' as const:'leaf' as const;
+  if(placeId==='central-everthread-bank')return'bank' as const;
   return'music' as const;
 }
+function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:'music' as const;}
 function InteractHandIcon({size=24}:{size?:number}){
   return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.5 16V9.5a2 2 0 0 1 4 0V15m0-4.5V7.5a2 2 0 0 1 4 0V15m0-4V9a2 2 0 0 1 4 0v7m0-3.5v-1a2 2 0 0 1 4 0V20c0 5.5-3.7 9-9.2 9h-1.1c-4.2 0-7.1-2-9-5l-3-4.7a2.1 2.1 0 0 1 3.1-2.8l3.2 2.4V16Z"/></svg>;
 }
@@ -155,6 +160,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
     if(actionId==='shared.park.walk'||actionId==='shared.park.play'||actionId==='date.park'){setDetail({kind:'companion',actionId});return;}
     if(actionId==='music.catalog'){setDetail({kind:'catalog',actionId});return;}
     if(actionId==='music.partnership'){setDetail({kind:'partnership',actionId});return;}
+    if(actionId.startsWith('bank.')){setDetail({kind:'bank',actionId:actionId as LocationSceneBankActionId});return;}
     if(action.risk==='confirm'&&(actionId==='music.leave'||actionId==='music.retire')){setDetail({kind:'confirm',actionId});return;}
     executeDirect(actionId);
   };
@@ -176,18 +182,18 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   };
 
   const prop=locationScenePropRect(scene.propAlphaBounds,stage,scene.propPlacement.width,scene.propPlacement.maxHeight,scene.propPlacement.baseline);
-  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
+  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
 
   return <section ref={sceneRef} className="location-scene" aria-label={scene.label}>
     <header className="location-scene__header" aria-hidden={Boolean(selectedGroupId)}>
       <button className="location-scene__back" onClick={requestClose} aria-label={`Back to map from ${scene.label}`}><EverthreadIcon name="back" size={20}/></button>
       <div><p className="eyebrow">Everthread · location</p><h1>{scene.label}</h1><small>{scene.tagline}</small></div>
-      <span className="location-scene__place-icon" aria-hidden="true"><EverthreadIcon name={placeId==='weaver-park'?'park':'music'} size={25}/></span>
+      <span className="location-scene__place-icon" aria-hidden="true"><EverthreadIcon name={placeIcon(placeId)} size={25}/></span>
     </header>
 
     <div className="location-scene__viewport" aria-hidden={Boolean(selectedGroupId)} ref={viewportRef} data-art-state={artFailed?'failed':artLoaded?'ready':'loading'}>
       {!artLoaded&&!artFailed&&<div className="location-scene__loading" aria-live="polite"><span/><small>Opening {scene.label}…</small></div>}
-      {artFailed&&<div className="location-scene__art-fallback"><EverthreadIcon name={placeId==='weaver-park'?'park':'music'} size={42}/><strong>{scene.label}</strong><small>The artwork could not load. Every location action is still available below.</small></div>}
+      {artFailed&&<div className="location-scene__art-fallback"><EverthreadIcon name={placeIcon(placeId)} size={42}/><strong>{scene.label}</strong><small>The artwork could not load. Every location action is still available below.</small></div>}
       <div className="location-scene__art" style={{left:stage.left,top:stage.top,width:stage.width,height:stage.height}} aria-hidden="true">
         <img src={scene.background} alt="" draggable={false} onLoad={()=>setArtLoaded(true)} onError={()=>setArtFailed(true)}/>
       </div>
@@ -209,7 +215,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       </footer>
     </div>
 
-    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet}>
+    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet} wide={detail?.kind==='bank'}>
       {selectedGroupId&&!detail&&<div className="location-scene__sheet">
         {selectedGroupId!=='__all'&&selectedGroup&&<><p className="eyebrow">{scene.label}</p><h3>{selectedGroup.description}</h3></>}
         <div className="location-scene__action-list">{visibleActions.map(({group,actionId})=>{const action=LOCATION_SCENE_ACTIONS[actionId],availability=locationSceneActionAvailability(state,actionId);return <button key={`${group.id}:${actionId}`} disabled={!availability.available} onClick={()=>chooseAction(actionId)}>
@@ -237,6 +243,12 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
         <div className="location-scene__status-card"><small>{music.lifecycle.label}</small><strong>{music.lifecycle.status}</strong><span>Skill {Math.round(music.skill)} · fans {Math.round(music.fanbase).toLocaleString()}{music.distributionPartner?` · ${music.distributionPartner}`:''}</span></div>
         {music.catalog.length?<div className="location-scene__catalog">{music.catalog.map(entry=><article key={entry.slot}><div><strong>{entry.title}</strong><small>{entry.kind} · age {entry.launchAge}</small></div><p>{entry.reception}</p><span>{entry.lifetimeStreams.toLocaleString()} lifetime streams · quality {Math.round(entry.quality)}</span></article>)}</div>:<div className="empty-card">No releases are in your current catalog yet. Practice and release actions stay at their own studio objects.</div>}
         <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back</button>
+      </div>}
+
+      {detail?.kind==='bank'&&<div className="location-scene__focused location-scene__bank-focused">
+        <p className="eyebrow">Central Everthread Bank</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
+        <BankLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
+        <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to bank</button>
       </div>}
 
       {detail?.kind==='partnership'&&music&&<div className="location-scene__focused">
