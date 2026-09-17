@@ -1,3 +1,9 @@
+## Hearthline Realty & Leasing dedicated location scene — Run #205
+
+Mavyy's post-certification Android acceptance of Hearthline changes no executable content totals beyond the already certified Run #205 scene slice.
+
+Run #205 expands the dedicated scene rollout to **5 location-scene surfaces / 16 semantic object groups / 29 scene action bindings / 10 selected Astra presentation assets** by adding Hearthline Realty & Leasing. Its four bindings reuse the established property catalogue, housing index, mortgage/asset-financing, current-residence projection, landlord rent-out, renovation, primary-residence, sale/payoff, and Bank payment owners; they add **no new Town Place, institution service, property definition, mortgage/debt type, lease system, event, career, education, inventory, or preference definition**. Certified gameplay/content totals therefore remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged. Newest certified repository/gameplay source is Run #205 / `5ea3d448a90c8b82044d33b5f4e31ef99e5b80e9`; QA-4 from Run #201 remains unchanged.
+
 ## Loomline Motors dedicated location scene — Run #203
 
 Mavyy's post-certification Android acceptance of Loomline changes no executable content totals. Location #5 Hearthline Realty & Leasing remains an approved next integration target only; its Astra assets/design are not runtime content until separately implemented and certified.

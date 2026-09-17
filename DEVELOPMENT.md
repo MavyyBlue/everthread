@@ -3,8 +3,8 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #203 / `bde2f4a7498c2b677f27f8c805372ceb9019ef95`
-Certified gameplay baseline: Run #203 / `bde2f4a7498c2b677f27f8c805372ceb9019ef95`
+Newest certified expanded source: Run #205 / `5ea3d448a90c8b82044d33b5f4e31ef99e5b80e9`
+Certified gameplay baseline: Run #205 / `5ea3d448a90c8b82044d33b5f4e31ef99e5b80e9`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,6 +27,18 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
+## Newest certified location-scene slice — Run #205 — Hearthline Realty & Leasing
+
+Run #205 adds the fifth dedicated illustrated location while preserving established property, mortgage, residence, rental, renovation, sale/payoff, payment, save, and QA authorities.
+
+- Expanded source `5ea3d448a90c8b82044d33b5f4e31ef99e5b80e9` from wrapper `75af208552577ee3e66149e2685f98b334ec56c0`; Actions Run `35244915393`, job `105282529337`. Persistent diff from synchronized Run #204 `42bdf7501a67def2103c66cccbb204b71e82b724` is exactly **9 intended files**.
+- Hearthline uses three semantic groups—Home display, Property wall, Property office—and four focused bindings: Browse homes, Mortgage options, Current residence, and Your homes & rentals. Scene totals become **5 / 16 / 29 / 10** (scenes / groups / bindings / selected Astra runtime assets).
+- `RealtyLocationPanel` is presentation/adaptation only. Purchases and mortgages use the existing property + asset-financing path; current residence remains a read-only `ResidentialLifeSystem` projection; owned-property actions continue through `PropertySystem`; mortgage context uses the existing secured-loan owner; Bank retains payment/autopay authority. No tenant-side lease-signing or lease-selection mechanic was added.
+- Existing property purchase and Make Home eligibility were centralized behind read-only `PropertySystem` availability helpers and consumed by both legacy Assets UI and Hearthline, avoiding a second UI ruleset. Save schema remains **17**.
+- Location Scene regression expanded **52 → 60** and passed **60/60** in CI. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`; the regression registry/runner remain unchanged.
+- Canonical Run #205 preflight passed **6/6 in 32,517 ms**: Engine TS **2,635 ms**, Test TS **4,124 ms**, App TS **6,611 ms**, Node/Vite TS **698 ms**, complete wall **15,093 ms**, production build **3,346 ms**. Production transformed **226 modules**. Certified artifact `10507520649`; Pages artifact `10507450705`; deployment Green.
+- Direct Android/player acceptance passed after Run #205; Mavyy reported the location functions very well. After the documentation-only synchronization certifies, select exactly one remaining Astra-backed Location #6 only after a fresh authority/source/test audit.
+
 ## Newest certified location-scene slice — Run #203 — Loomline Motors
 
 Run #203 adds the fourth dedicated illustrated location while preserving all established vehicle, financing, licence, payment, save, and QA authorities.
@@ -48,7 +60,7 @@ QA-4 closes the temporary QA-optimization program with measured process isolatio
 - Complete regression wall **5/5 Green in 20,544 ms**; canonical regression stage **20,668 ms**. Adjacent Run #200 wall was **35,727 ms**, so this certified sample is **~42.5% lower** while retaining exact coverage.
 - Canonical preflight passed **6/6 in 42,372 ms**: Engine TS **3,505 ms** → Test TS **5,547 ms** → App TS **7,675 ms** → Node/Vite TS **850 ms** → regression wall **20,668 ms** → production build **4,014 ms**. Adjacent Run #200 preflight was **60,351 ms**; this sample is **~29.8% lower**.
 - Production remains **224 modules**. Certification: source SHA `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependencies `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10501795811`; Pages artifact `10501840639`; deployment Green.
-- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Run #203 preserves this infrastructure unchanged and certifies Loomline Motors as Location #4; direct device acceptance has now passed, and Hearthline Realty & Leasing is the next bounded location after documentation synchronization.
+- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Run #205 preserves this infrastructure unchanged and certifies Hearthline Realty & Leasing as Location #5; direct device acceptance has passed. Documentation synchronization is the only gate before selecting exactly one Location #6.
 
 ## Prior certified QA infrastructure — Run #199 — QA-3 regression registry/timing
 
@@ -97,7 +109,7 @@ Run #192 adds the third dedicated illustrated location without creating a second
 - Production **224 modules**; Town Map JS ~**35.48/10.70 gzip kB**, CSS ~**24.42/4.66**; People ~**58.82/17.86**; character-art pack ~**971.11/69.18**; main ~**1,361.81/380.49**.
 - Certification hashes/artifacts: source `c857954cf15ed3a761daa9d6d2985d2b793cc9ceb1d6593ea7d04bef23e10731`; dependencies `b39ae97fe6ae6ca22ad0b0a777549a134c94e683507c1f917ee6a8b5d8911dac`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10479623295`; Pages artifact `10479573465`; deployment succeeded.
 - Feedback sweep is **5 total / 0 unresolved** and checkpointed against Run #192 at `2026-09-17 03:49:20.500943+00`.
-- Historical next step was player-facing Bank review. That gate was completed before Run #203; current next step is Loomline Android/player acceptance before any fifth location.
+- Historical Bank review and Loomline acceptance are complete. Run #205 certifies Hearthline as Location #5 and its Android acceptance has passed; current next step is documentation synchronization before any sixth location.
 
 ## Prior certified presentation/navigation polish — Runs #189–#190 — immersive scenes + unified utility drawer
 

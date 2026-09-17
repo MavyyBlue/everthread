@@ -1,3 +1,20 @@
+## Hearthline Realty & Leasing device acceptance + Run #205 closeout — 2026-09-17
+
+### Added / changed
+
+- Mavyy completed direct Android/player acceptance of certified **Hearthline Realty & Leasing** after Run #205 and reported that the location functions very well. The device-facing gate is therefore closed.
+- Run #205 adds Hearthline as the fifth dedicated scene using Astra-derived `hearthline-realty.png` and `home-model.png`, with Home display, Property wall, and Property office groups exposing Browse homes, Mortgage options, Current residence, and Your homes & rentals.
+- Hearthline remains a focused adapter over authoritative `PropertySystem`, `AssetFinancingSystem`, `ResidentialLifeSystem`, secured-loan/payoff, and Bank payment behavior. Existing purchase / Make Home eligibility is projected from `PropertySystem` for both legacy Assets UI and Hearthline. No tenant lease-signing / lease-selection system was added.
+
+### Certification
+
+- GitHub Actions Run #205 (`35244915393`, job `105282529337`) certified expanded source `5ea3d448a90c8b82044d33b5f4e31ef99e5b80e9` from upload wrapper `75af208552577ee3e66149e2685f98b334ec56c0`. Persistent gameplay diff from synchronized Run #204 `42bdf7501a67def2103c66cccbb204b71e82b724` is exactly **9 intended files**; workflow import also removes transient `everthread-source.zip`.
+- Location Scene regression is **60/60**. QA-4 remains `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 32,517 ms**: Engine TS **2,635 ms**, Test TS **4,124 ms**, App TS **6,611 ms**, Node/Vite TS **698 ms**, regressions **15,093 ms**, production build **3,346 ms**. Production transformed **226 modules**.
+- Certified source SHA-256 `ca5e6a8c89e778d01337f9460cd6a3014a898ff1a2235e67c713d8d5404a6f3e`; dependency SHA-256 `05a99dfd7074a8972e109b6b824b81bb431ad211b22e734a2c903ae5be862f73`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10507520649`; Pages artifact `10507450705`; Pages deployment Green.
+- Certified location-scene totals are now **5 scenes / 16 semantic groups / 29 scene action bindings / 10 selected Astra runtime assets**. Save schema remains **17**.
+- After this documentation-only synchronization certifies, select exactly one remaining Astra-backed Location #6 after a fresh repository owner/source/test audit.
+
 ## Post-Run #203 Loomline device acceptance + Location #5 gate — 2026-09-17
 
 ### Player acceptance / sequencing
