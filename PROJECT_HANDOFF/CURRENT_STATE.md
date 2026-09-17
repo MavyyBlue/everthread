@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **repository/source** is **GitHub Actions Run #194** (`35181808022`) on expanded source **`fb9cc4fb7c271cb2b37188a11f75663535371767`**, save schema **17**. Run #194 is **QA infrastructure only**: it adds bounded/stage-selectable preflight commands plus stronger source/timing/input evidence and changes no gameplay, UI, saves, content, tests, or assets. The newest certified **gameplay implementation remains Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`**, which adds Central Everthread Bank as the third dedicated location scene. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; QA-1 and the location-scene rollout are post-closeout work, not Phase 11.**
+The newest certified expanded **repository/source** is **GitHub Actions Run #197** (`35186102059`) on expanded source **`3b3b9e9d13cf882dcd20874573db895a322434c9`**, save schema **17**. Runs #196–#197 complete **QA-2 TypeScript graph/build cleanup**: production App typechecking no longer roots `src/tests`, Engine/Test/App/Node TypeScript are explicit mandatory gates, and the production bundle no longer repeats `tsc -b`. These are QA/build-infrastructure changes only; no gameplay, UI, saves, content, regression bodies, or assets changed. The newest certified **gameplay implementation remains Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`**, which adds Central Everthread Bank as the third dedicated location scene. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; QA infrastructure work and the location-scene rollout are post-closeout work, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,9 +16,9 @@ The newest certified expanded **repository/source** is **GitHub Actions Run #194
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Feedback Inbox last verified **5 total / 0 unresolved by triage**; durable review-state still points to gameplay source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**. QA-1 changes no player behavior, and this doc sync does not invent a newer feedback checkpoint.
+- Feedback Inbox last verified **5 total / 0 unresolved by triage**; durable review-state still points to gameplay source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**. QA-1/QA-2 change no player behavior, and this doc sync does not invent a newer feedback checkpoint.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Current immediate engineering direction is the **QA infrastructure optimization sequence**. QA-1 is certified; QA-2 is next and will clean the production TypeScript graph while preserving Engine/Test/App type safety. The approved player-facing location-scene direction remains intact underneath: Run #192 certifies Central Everthread Bank as location #3, and the next player-facing gate remains direct Bank review before any location #4. No Phase 11 label is implied.
+- Current immediate engineering direction is the **QA infrastructure optimization sequence**. QA-1 and QA-2 are certified; after this documentation sync, **QA-3 regression registry/timing** is next, followed only if justified by measurements by QA-4 proven-isolated process sharding. The approved player-facing location-scene direction remains intact underneath: Run #192 certifies Central Everthread Bank as location #3, and the next player-facing gate remains direct Bank review before any location #4. No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -29,14 +29,24 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified repository/QA source — Run #194 — QA-1 bounded preflight
+## Newest certified repository/QA source — Runs #196–#197 — QA-2 TypeScript graph/build cleanup
+
+- QA-2A Run #196: wrapper `56ed892730a0caea7228bef8624afdc076a5ade1`; expanded source `4cb845c97dca8c7e4537337ed7f456fa1aa7de19`; Actions Run `35183198144`, job `105079606201`. Exactly four persistent infrastructure/config files changed. Production App TypeScript excludes `src/tests`; the Test project still roots tests; explicit App and Node/Vite typecheck/preflight stages were added. The legacy `tsc -b` production build remained for equivalence proof. Canonical preflight **6/6 Green in 52,247 ms**.
+- QA-2B Run #197: wrapper `3bf94f80badabf5b2644b75b3708dc75a696abf5`; expanded certified source `3b3b9e9d13cf882dcd20874573db895a322434c9`; Actions Run `35186102059`, job `105088391776`. Persistent diff from QA-2A is exactly one `package.json` build-script line: `npm run build` now performs Vite bundling + build-info only.
+- Canonical Run #197 preflight is **6/6 Green in 53,857 ms**: Engine TS **3,790 ms**, Test TS **5,593 ms**, App TS **7,930 ms**, Node/Vite TS **908 ms**, regressions **31,295 ms**, production build **4,233 ms**. TypeScript safety therefore remains mandatory and explicit before the bundle.
+- Run #197 production build remains **224 modules** and is **4,233 ms**, down from **10,342 ms** in QA-2A with the redundant compiler backstop: **6,109 ms / ~59% less build-stage time**. Do not claim a total-wall speedup from these two individual runs because regression/typecheck stages varied independently.
+- Full regression coverage remains Green, including base **82/82**, Integrated Long-Life **105/105**, Location Scene **44/44**, Map **46/46**, Routing **42/42**, finance/debt, estates/generations, Yuki, Character Visuals, minigames, feedback, migrations, deterministic IDs/RNG, and the rest of the established wall.
+- Certification: source SHA `28cae67c9e1bf010400f0e1fd1bae594919ee98384cb82cca4678acf5cebc107`; dependencies `f0e5908669978df5eacafffa5d437e229ce08c57b32fd163f228f7ea9779e8d8`; lock SHA unchanged; certified artifact `10482745723`; Pages artifact `10482835166`; deployment succeeded.
+- **Next gate after this doc sync: QA-3 regression registry/timing.** Preserve test bodies and current serial semantics first. Measure per-suite cost before introducing any QA-4 process-level concurrency.
+
+## Prior certified repository/QA source — Run #194 — QA-1 bounded preflight
 
 - Upload wrapper `c0bb0c55080028e6354ae41a52e00c2626365b8e`; expanded certified source `fb9cc4fb7c271cb2b37188a11f75663535371767`; Actions Run ID `35181808022`; job `105075377955`. Net persistent diff from synchronized Run #193 `226c6390be08a40bde0de6964152f2c8d4cdc61f` is exactly **2 infrastructure files**: `package.json` and `scripts/everthread-preflight.mjs`.
-- Canonical `npm run preflight` remains unchanged in authority and still requires **4/4** standard gates. New bounded commands let development run one gate at a time; stage-only Green explicitly does **not** certify a candidate.
+- At Run #194, canonical `npm run preflight` retained authority and required **4/4** standard gates. New bounded commands let development run one gate at a time; stage-only Green explicitly does **not** certify a candidate. QA-2 later expanded the current canonical wall to six explicit gates.
 - Evidence now records exact commit, working-tree dirty/clean state + fingerprint, cache-reusability flag, selected-stage identity, per-stage timestamps/durations/exit codes, and SHA-256 fingerprints for relevant package/lock/config inputs. Run #194 certified from a clean tree. Resume/caching is not implemented yet.
 - Canonical Run #194 preflight: **40,472 ms** total — Engine TypeScript **2,615 ms**, Test TypeScript **3,978 ms**, complete regression wall **23,274 ms**, production build **10,597 ms**. All established regression coverage remains present; Vite itself reports ~**3.02 s** inside the build stage.
 - Production remains **224 modules**. Certified source SHA `63b21ff3eb361944f0b9da92a2b0ce34818535f00a8b959191835861170f9f18`; dependency SHA `d17c900765a62d000df1307fffb9173f130472f474af16b92693ec814c54857c`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10480573406` (`86ba8c0a400f3eb00747ce0582847d7dcf9d49b93d35b99e0f335a0cf8a241cd`); Pages artifact `10479909888` (`87cebd9b071db6cc7e1fcd557d4ed4a32070299bccecf3641c075b48dd1ebaca`); deployment succeeded.
-- **Next gate: QA-2 production TypeScript graph cleanup.** Preserve engine isolation and dedicated test checking, add/confirm explicit app checking, stop app compilation from redundantly rooting tests, prove diagnostic/CI equivalence, then remove only compiler work proven redundant.
+- QA-2 subsequently completed that compiler-graph/build cleanup in Runs #196–#197; this QA-1 section remains the historical bounded-preflight foundation.
 
 ## Newest certified gameplay/source — Run #192 — Central Everthread Bank dedicated scene
 

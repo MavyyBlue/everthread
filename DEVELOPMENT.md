@@ -3,9 +3,9 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #194 / `fb9cc4fb7c271cb2b37188a11f75663535371767`
+Newest certified expanded source: Run #197 / `3b3b9e9d13cf882dcd20874573db895a322434c9`
 Certified gameplay baseline: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
-Certified QA infrastructure baseline: Run #194 / `fb9cc4fb7c271cb2b37188a11f75663535371767`
+Certified QA infrastructure baseline: Run #197 / `3b3b9e9d13cf882dcd20874573db895a322434c9`
 
 ## Product direction
 
@@ -27,17 +27,28 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified QA infrastructure — Run #194 — QA-1 bounded preflight
+## Newest certified QA infrastructure — Runs #196–#197 — QA-2 TypeScript graph/build cleanup
 
-Run #194 changes QA orchestration only and becomes the newest certified repository baseline while leaving Run #192 as the newest gameplay implementation.
+QA-2 is certified in two preservation-first checkpoints. QA-2A proved the new compiler responsibility split while retaining the old build compiler as a backstop; QA-2B removed only the now-proven redundant build-time compiler pass. Gameplay, UI, saves, content, regression bodies, assets, workflow YAML, dependencies, and save schema remain unchanged. Run #192 remains the newest gameplay implementation.
+
+- **QA-2A / Run #196:** upload wrapper `56ed892730a0caea7228bef8624afdc076a5ade1`; expanded source `4cb845c97dca8c7e4537337ed7f456fa1aa7de19`; Actions Run `35183198144`, job `105079606201`. The persistent diff from synchronized Run #195 is exactly `package.json`, `scripts/everthread-preflight.mjs`, `tsconfig.app.json`, and `tsconfig.tests.json`. `tsconfig.app.json` stops rooting `src/tests`; the Test project still roots the test tree. Explicit App and Node/Vite-config TypeScript gates were added while the legacy `tsc -b` production build remained as the equivalence backstop. Canonical preflight passed **6/6** in **52,247 ms**.
+- **QA-2B / Run #197:** upload wrapper `3bf94f80badabf5b2644b75b3708dc75a696abf5`; expanded certified source `3b3b9e9d13cf882dcd20874573db895a322434c9`; Actions Run `35186102059`, job `105088391776`. The persistent diff from QA-2A is exactly **one `package.json` line**: production `build` is now `vite build && node scripts/write-build-info.mjs dist/build-info.json`. No TypeScript gate was removed.
+- Canonical Run #197 preflight remains fail-fast and now requires **6/6** standard stages: Engine TypeScript **3,790 ms** → Test TypeScript **5,593 ms** → App TypeScript **7,930 ms** → Node/Vite Config TypeScript **908 ms** → complete regression wall **31,295 ms** → production build **4,233 ms**; total **53,857 ms**. The full established regression wall remains Green, including base **82/82**, Integrated Long-Life **105/105**, Location Scene **44/44**, finance/debt, generations/estates, Threadspace, Character Visual, Yuki Threadroom, minigames, feedback, saves/migrations, and determinism.
+- The production-build stage fell from **10,342 ms in Run #196 to 4,233 ms in Run #197**: **6,109 ms / ~59% less build-stage time**. Overall preflight wall time is not claimed to have improved in that particular sample because regression/typecheck stages varied upward between runners. Vite produced the same **224 modules** and wrote build info for the exact expanded commit.
+- Run #197 certification: source SHA `28cae67c9e1bf010400f0e1fd1bae594919ee98384cb82cca4678acf5cebc107`; dependencies `f0e5908669978df5eacafffa5d437e229ce08c57b32fd163f228f7ea9779e8d8`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10482745723` (`dafa90e6eb98cf154d85aa9298a5aa593f87bae73a5ef1e9da7c8c4d448da511`); Pages artifact `10482835166` (`94f98fad7b77b485223ace64b8cded7686036a2d30cfd5aa18c08428104aad3e`); deployment Green.
+- **Next infrastructure gate: QA-3 regression registry/timing.** Preserve every test body and serial behavior first; add canonical suite metadata/timing so slow/failing areas are visible before any QA-4 process sharding.
+
+## Prior certified QA infrastructure — Run #194 — QA-1 bounded preflight
+
+Run #194 changed QA orchestration only and became the certified repository baseline at that checkpoint while leaving Run #192 as the newest gameplay implementation.
 
 - Upload wrapper `c0bb0c55080028e6354ae41a52e00c2626365b8e`; expanded certified source `fb9cc4fb7c271cb2b37188a11f75663535371767`; Actions Run `35181808022`, job `105075377955`. Persistent diff from synchronized Run #193 `226c6390be08a40bde0de6964152f2c8d4cdc61f` is exactly `package.json` + `scripts/everthread-preflight.mjs`.
-- Standard canonical certification is still `npm run preflight`: Engine TypeScript → Test TypeScript → complete regression wall → production build. No required gate, assertion, simulation parameter, save check, or TypeScript strictness rule was removed.
+- At Run #194, standard canonical certification was `npm run preflight`: Engine TypeScript → Test TypeScript → complete regression wall → production build. No required gate, assertion, simulation parameter, save check, or TypeScript strictness rule was removed; QA-2 later expanded the current standard wall to six explicit stages.
 - Bounded development commands are now available: `preflight:engine`, `preflight:tests-ts`, `preflight:regressions`, `preflight:build`, `preflight:content`, and `preflight:sim`. Stage-only Green is explicitly non-certifying; GitHub Actions remains final authority.
 - Preflight reports now bind evidence to exact commit/working-tree state and record selected stage, timestamps, duration, exit status, and relevant package/lock/config SHA-256 inputs. Clean Run #194 evidence reports `cacheReusable: true`; dirty-tree stage evidence is diagnostic only.
 - Run #194 canonical preflight: **4/4 Green in 40,472 ms** — Engine TS **2,615 ms**, Test TS **3,978 ms**, regressions **23,274 ms**, production build **10,597 ms**. Vite itself reports about **3.02 s**, confirming the next optimization target is repeated TypeScript/build graph work rather than Vite.
 - Certification: source SHA `63b21ff3eb361944f0b9da92a2b0ce34818535f00a8b959191835861170f9f18`; dependencies `d17c900765a62d000df1307fffb9173f130472f474af16b92693ec814c54857c`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10480573406`; Pages artifact `10479909888`; deployment Green.
-- **Next infrastructure gate: QA-2.** Add an explicit production-app TypeScript responsibility, stop the production app project from redundantly rooting `src/tests`, prove old/new compiler coverage equivalence under the certified wall, and only then consider separating bundle-only Vite work from redundant TypeScript build work.
+- QA-2 subsequently completed this compiler-graph/build separation in Runs #196–#197; this QA-1 section remains historical evidence for the bounded preflight foundation.
 
 ## Newest certified location-scene slice — Run #192 — Central Everthread Bank
 

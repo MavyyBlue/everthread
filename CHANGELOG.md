@@ -1,3 +1,21 @@
+## QA-2 TypeScript graph + redundant build-compiler cleanup — CI Green Runs #196–#197 — 2026-09-17
+
+### Added / changed
+
+- **QA-2A / Run #196** isolates production App TypeScript roots from `src/tests` and adds explicit App plus Node/Vite-config typecheck stages. The Test project continues to root all test files, Engine TypeScript remains a distinct gate, and the legacy `tsc -b` production build was intentionally retained for this checkpoint as an equivalence backstop.
+- QA-2A adds bounded `preflight:app` and `preflight:node` commands. Standard canonical certification becomes Engine TS → Test TS → App TS → Node/Vite Config TS → complete regression wall → production build. No test body, assertion, simulation parameter, save/migration check, strictness rule, or gameplay owner changed.
+- **QA-2B / Run #197** removes only the redundant `tsc -b` invocation from `npm run build` after Run #196 proved all four explicit compiler gates Green under the complete existing wall. Production `build` is now bundle + build-info only; TypeScript correctness remains mandatory earlier in canonical preflight.
+- QA-2 changes no gameplay, UI, content catalogs, durable state, save schema, assets, workflow YAML, dependencies, or regression bodies. Newest gameplay implementation remains Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`.
+
+### Certification
+
+- Run #196 (`35183198144`, job `105079606201`) certified expanded QA-2A source `4cb845c97dca8c7e4537337ed7f456fa1aa7de19` from upload wrapper `56ed892730a0caea7228bef8624afdc076a5ade1`. Net persistent diff from synchronized Run #195 is exactly **4 infrastructure/config files**: `package.json`, `scripts/everthread-preflight.mjs`, `tsconfig.app.json`, and `tsconfig.tests.json`. Canonical preflight passed **6/6** in **52,247 ms**; production build stage **10,342 ms** with the legacy compiler backstop still present.
+- Run #197 (`35186102059`, job `105088391776`) certified expanded QA-2B source `3b3b9e9d13cf882dcd20874573db895a322434c9` from upload wrapper `3bf94f80badabf5b2644b75b3708dc75a696abf5`. Net persistent diff from Run #196 is exactly **one modified file / one build-script line** in `package.json`.
+- Run #197 canonical preflight passed **6/6** in **53,857 ms**: Engine TypeScript **3,790 ms**, Test TypeScript **5,593 ms**, App TypeScript **7,930 ms**, Node/Vite Config TypeScript **908 ms**, complete regression wall **31,295 ms**, production build **4,233 ms**. Base regression remains **82/82**, Integrated Long-Life **105/105**, Location Scene **44/44**, and the complete established wall remains Green.
+- QA-2B reduces the production-build stage from **10,342 → 4,233 ms**, a **6,109 ms / ~59%** reduction in that stage. The total wall is not presented as a direct speedup because independent regression/typecheck timing varied between runners. Production remains **224 modules** and build info records the exact expanded source.
+- Run #197 certified source SHA-256 `28cae67c9e1bf010400f0e1fd1bae594919ee98384cb82cca4678acf5cebc107`; dependency SHA-256 `f0e5908669978df5eacafffa5d437e229ce08c57b32fd163f228f7ea9779e8d8`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10482745723` (`dafa90e6eb98cf154d85aa9298a5aa593f87bae73a5ef1e9da7c8c4d448da511`); Pages artifact `10482835166` (`94f98fad7b77b485223ace64b8cded7686036a2d30cfd5aa18c08428104aad3e`); deployment reported success.
+- Next infrastructure slice is **QA-3 regression registry/timing**. Preserve test bodies and serial semantics first; use measured evidence before deciding QA-4 shard boundaries.
+
 ## QA-1 bounded preflight + evidence hardening — CI Green Run #194 — 2026-09-17
 
 ### Added / changed
