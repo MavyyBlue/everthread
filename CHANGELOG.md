@@ -1,3 +1,22 @@
+## Nightjar Diner device acceptance + Astra location-source handoff — CI Green Run #212 — 2026-09-17
+
+### Added / changed
+
+- Added **Nightjar Diner** as the eighth dedicated illustrated location using Astra-derived `nightjar-diner.png` and `diner-table.png`. Three semantic groups—Your table, Diner counter, and Window booth—expose four scene bindings: Share a meal, Diner date, Counter goods, and the second booth entry to the same shared-meal owner.
+- Nightjar is a presentation/routing adapter over existing systems. Shared meals remain Shared Experience truth; dates remain Romantic Date truth and reuse the Run #210 accepted `relationship.romance.pendingDate` bridge; counter purchases remain `PersonalInventorySystem` truth through `gameEngine.purchasePersonalItem`.
+- Astra's broad counter concept was intentionally narrowed to the **six real Nightjar-specific personal items already authored in Everthread**. No hunger/nourishment model, priced meal ledger, grocery economy, diner inventory authority, second relationship/date state, or scene-local cash balance was invented. Browsing is read-only and RNG-neutral.
+- Mavyy completed direct Android/player acceptance after Run #212 and reported Nightjar works on-device. The Location #8 tactile/player-facing gate is closed.
+- Added a durable `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` continuation folder. It records the certified scene ledger, remaining-source inventory, preservation-first implementation playbook, and exact lightweight references from Astra Yuki's original v1 handoff. The exact original 89,718,869-byte source ZIP is staged for lossless preservation as four browser-safe byte parts because GitHub browser/mobile uploads cap one file at 25 MiB. These archive/reference files are non-runtime provenance only.
+
+### Certification
+
+- GitHub Actions Run #212 (`35275536409`, job `105385139759`) certified expanded source `7dde94325f56a2f44172b5de65709700b5ad73ea` from upload wrapper `d47c70fe75b23fe4585543ddb029f8b8f5818c38`. Persistent gameplay diff from synchronized Run #211 `3f869498c7245c741e255023015ae77ffdd97e0c` is exactly **7 intended project files**; workflow import reports 8 changed paths only because it removes transient `everthread-source.zip`.
+- Location Scene regression expanded **88 → 99** and passed **99/99**. Connected certified coverage includes Shared Experience **53/53**, Dating Momentum **61/61**, Player Profile/Inventory **63/63**, Youth Social **40/40**, Cross-World Chemistry **43/43**, Shared Lives closeout **41/41**, Town Map **46/46**, and institution routing **42/42**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 27,450 ms**: Engine TS **2,266 ms**, Test TS **3,314 ms**, App TS **4,994 ms**, Node/Vite TS **566 ms**, complete regression wall **13,182 ms** (wall **5/5 in 13,089 ms**), production build **3,037 ms**. Production transformed **229 modules**.
+- Certified source SHA-256 `a4590a473e8d9a0d2b5fbf27a7984e3ac4dc630199aaaaa5ace28222c7ac7e56`; dependency SHA-256 `843e6871a19ef8a299745b910df885172a0d5724786764b285e23b3f8c7bf48b`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10520691404` (`1e229d6547706ea87b3d41233da1581dcbf8f5bc7580085ddcd01263c37c3799`); Pages artifact `10520731398` (`c5abc53dc50ca753be9bf59b38b88a50ecd3a3aa07605e426d8fc691e3f7276e`); Pages deployment Green.
+- Certified scene totals are now **8 scenes / 25 semantic groups / 48 scene action bindings / 16 selected Astra runtime assets**. Save schema remains **17**.
+- The next gameplay gate is **Location #9**, but it remains deliberately unchosen until this handoff/archive synchronization is certified and a fresh repository owner/source/test audit is performed. The raw Astra source archive never overrides current repository authority.
+
 ## Scheduled-date location navigation + Crossroads device closeout — CI Green Run #210 — 2026-09-17
 
 ### Added / changed

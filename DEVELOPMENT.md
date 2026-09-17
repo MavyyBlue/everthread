@@ -3,8 +3,8 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #210 / `3a7e79010d55af3e6c75540f1e1ac1468bc7aaf5`
-Certified gameplay baseline: Run #210 / `3a7e79010d55af3e6c75540f1e1ac1468bc7aaf5`
+Newest certified expanded source: Run #212 / `7dde94325f56a2f44172b5de65709700b5ad73ea`
+Certified gameplay baseline: Run #212 / `7dde94325f56a2f44172b5de65709700b5ad73ea`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -26,6 +26,26 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
+
+## Newest certified location-scene slice — Run #212 — Nightjar Diner
+
+Run #212 adds the eighth dedicated illustrated location while preserving personal-inventory, shared-experience, romantic-date, action-economy, save, RNG, and QA authorities.
+
+- Expanded source `7dde94325f56a2f44172b5de65709700b5ad73ea` from wrapper `d47c70fe75b23fe4585543ddb029f8b8f5818c38`; Actions Run `35275536409`, job `105385139759`. Persistent diff from synchronized Run #211 `3f869498c7245c741e255023015ae77ffdd97e0c` is exactly **7 intended files**.
+- Nightjar uses three semantic groups—Your table, Diner counter, Window booth—and four scene bindings: shared diner meal, scheduled Diner date, Nightjar counter goods, and a second booth affordance into the same shared-meal plan. Scene totals become **8 / 25 / 48 / 16** (scenes / groups / bindings / selected Astra runtime assets).
+- `DinerLocationPanel` is presentation/adaptation only. It reads the existing place-filtered personal catalogue, purchase availability, and owned personal inventory; purchase mutation remains `gameEngine.purchasePersonalItem`. Shared meals/date outcomes remain Shared Experience / Romantic Date behavior. The source design's broad counter idea was narrowed to six real Nightjar items instead of inventing hunger, meal inventory, or a diner economy.
+- Run #210's declarative `companionPlan` contract is reused unchanged. An accepted scheduled NPC therefore appears at Nightjar through the existing `date.diner` Romantic Date plan, and completing it consumes the one authoritative pending date.
+- Location Scene regression expanded **88 → 99** and passed **99/99** in CI. Shared Experience remains **53/53**, Dating Momentum **61/61**, Player Profile/Inventory **63/63**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #212 preflight passed **6/6 in 27,450 ms**: Engine TS **2,266 ms**, Test TS **3,314 ms**, App TS **4,994 ms**, Node/Vite TS **566 ms**, regression wall **13,182 ms**, production build **3,037 ms**. Production transformed **229 modules**. Certified artifact `10520691404`; Pages artifact `10520731398`; deployment Green.
+- Direct Android/player acceptance passed after Run #212. Mavyy reported Nightjar works. Location #8's device gate is closed.
+
+## Astra location source continuation handoff
+
+`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#8, and lightweight exact references from Astra Yuki's original v1 source package.
+
+The original 89,718,869-byte `everthread-location-scenes-v1.zip` is preserved losslessly as four browser-safe byte parts because browser/mobile GitHub uploads cap each file at 25 MiB. The archive and mirrored source references are non-runtime design provenance: they add no gameplay/content authority and must never be copied wholesale into `public/`.
+
+After this handoff/archive synchronization certifies, select exactly one **Location #9** only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
 
 ## Newest certified gameplay hotfix — Run #210 — scheduled-date location navigation
 
@@ -93,7 +113,7 @@ QA-4 closes the temporary QA-optimization program with measured process isolatio
 - Complete regression wall **5/5 Green in 20,544 ms**; canonical regression stage **20,668 ms**. Adjacent Run #200 wall was **35,727 ms**, so this certified sample is **~42.5% lower** while retaining exact coverage.
 - Canonical preflight passed **6/6 in 42,372 ms**: Engine TS **3,505 ms** → Test TS **5,547 ms** → App TS **7,675 ms** → Node/Vite TS **850 ms** → regression wall **20,668 ms** → production build **4,014 ms**. Adjacent Run #200 preflight was **60,351 ms**; this sample is **~29.8% lower**.
 - Production remains **224 modules**. Certification: source SHA `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependencies `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10501795811`; Pages artifact `10501840639`; deployment Green.
-- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Runs #209–#210 preserve this infrastructure unchanged, certify Crossroads Mall as Location #7, generalize accepted-date navigation across declared date-capable scenes, and pass direct Android acceptance. Documentation synchronization is the only gate before selecting exactly one Location #8.
+- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Runs #209–#212 preserve this infrastructure unchanged, certify Crossroads Mall as Location #7, generalize accepted-date navigation, certify Nightjar Diner as Location #8, and pass direct Android acceptance. The Nightjar handoff/archive synchronization is the only gate before selecting exactly one Location #9.
 
 ## Prior certified QA infrastructure — Run #199 — QA-3 regression registry/timing
 

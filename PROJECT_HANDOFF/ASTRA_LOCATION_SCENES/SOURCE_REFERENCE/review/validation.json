@@ -1,0 +1,16 @@
+{
+  "locations": 25,
+  "backgrounds": 25,
+  "transparentProps": 19,
+  "objectGroups": 76,
+  "actionDefinitions": 142,
+  "assetHashes": "pass",
+  "references": "pass",
+  "normalizedRectangles": "pass",
+  "musicMenus": "pass",
+  "browserWalkthrough": "pending: session policy blocked local preview",
+  "liveIntegration": "not applied",
+  "javascriptSyntax": "pass: scene.js and four inline scripts",
+  "staticHtmlReferences": "pass",
+  "staticVisualReview": "pass: overview, location board, prop board, corrected foregrounds"
+}

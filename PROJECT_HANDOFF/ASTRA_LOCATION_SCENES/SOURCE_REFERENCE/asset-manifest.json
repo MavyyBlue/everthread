@@ -1,0 +1,1549 @@
+{
+  "kitId": "everthread-location-scenes",
+  "version": "1.0.0",
+  "sourceCommit": "e1787ac018d47b580dd49ac9854c087fc07ec729",
+  "assets": [
+    {
+      "id": "background.blackline-freight-yard",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/blackline-freight-yard.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2460145,
+      "sha256": "7acef8fbcb6e5f18e9a4afdab15fba5e0e130f6b27723a29dc4918ac1f47c4c9",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.central-everthread-bank",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/central-everthread-bank.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2737845,
+      "sha256": "3a0ce1037162463d38edc8f9ada0e120e9f451011c7fbf7ec9da0116d6d40a56",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.crossroads-mall",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/crossroads-mall.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2723738,
+      "sha256": "a5bbcf760b9ee64d54732ef3336011540a398a54353a4ef16fb3cb14a9aac2b6",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-air-terminal",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-air-terminal.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2409753,
+      "sha256": "a5463977ec28d4c6e429c630c1873b0a68b5ba55b6b847767f95fdb411d96c02",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-city-hall",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-city-hall.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2723830,
+      "sha256": "ca1cb5e57fec0e43bba6d6393a0f4fe2a7f4d5a2bcf2d1bc1e9f9922bdba017a",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-college",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-college.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2633364,
+      "sha256": "343f7132849a95be34edf9d0efd7aa4827f105ccc346ab6bef3d5a247754bd66",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-correctional",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-correctional.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2223388,
+      "sha256": "bef4b6b1ef71e22af8fe3054dc50d975e5f078cc74319c4dcd0621eb6cb4d42f",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-courthouse",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-courthouse.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2331825,
+      "sha256": "a39e8ea803217bb862746db4664268341223bcef079c111baf474b846c9ab062",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-defense-garrison",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-defense-garrison.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2342415,
+      "sha256": "0cf8df5bf47a837d4e5a20ca71289a5f07c2b2f3bf852055d16f7deb8c88cdf9",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-general-hospital",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-general-hospital.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2601495,
+      "sha256": "437cafaafe71eeb72c13921ebd7a6cf4ca4534b771ad04f5697854a8b78b4c1f",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-market",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-market.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2433643,
+      "sha256": "813943fc560b878b0c7b71080d9e2c463072b6943419aec2c8ba0022e30900ae",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-school",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-school.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2684486,
+      "sha256": "7d4d8765ead34b39216757fbadad81ff0312adb8dd3926eb033ca3d8d35acdac",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-speedway",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-speedway.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2616162,
+      "sha256": "7ac115a770bb6b1e0ee1e2fbfbb85f0ba20f4c8280b1bf970283438b57fc179c",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.everthread-stadium",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/everthread-stadium.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2563710,
+      "sha256": "977f26e325fca994982b4710bc3280c100e3f3a4fad18294808c8128eec49352",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.facet-modeling-agency",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/facet-modeling-agency.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2506871,
+      "sha256": "1bfd323daa53f755e2f9d43911235a5f2c173ad23f7dc5d738eae9bf54b653d5",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.hearthline-realty",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/hearthline-realty.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2542081,
+      "sha256": "864246397fa48d9e261184037a47f5f4149a3f9748b9b7c0c5f7ff2d070cdb00",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.loomline-motors",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/loomline-motors.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2262071,
+      "sha256": "6ee2b67b5ce2117943b4c93363a8e10f1e06f26baf291dce9c6f5afa9345aa02",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.loomworks-business-district",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/loomworks-business-district.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2549086,
+      "sha256": "cccebd85f2b7c7b31461bae919e06a7f68b144bb1f10405202747d93ba30197b",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.nightjar-diner",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/nightjar-diner.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2250334,
+      "sha256": "75b96fd0517b2e7de9049dcf8274fb90430d8f3fcb1e80fce8cd9f8413820486",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.public-safety-center",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/public-safety-center.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2302040,
+      "sha256": "f7f59256ba78a2d6a5afe1d1cdad5263990922c169d4f433c1555de9b2443c16",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.pulseworks-gym",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/pulseworks-gym.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2337082,
+      "sha256": "37e765635d6122db4fb6c5a176d08509af15f47b6a9070317d46768bee050174",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.silverframe-studios",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/silverframe-studios.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2476013,
+      "sha256": "df580f1ddaff672121234b03fcc60c6f8df253ea89814895d2946ff460696116",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.threadtone-music-studio",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/threadtone-music-studio.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2227378,
+      "sha256": "f0856578d2d11509dfb7cd30c03a5b017134901b3342b58a168ce78e8bd636b0",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.threadwell-residential",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/threadwell-residential.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 2728244,
+      "sha256": "36fff3545a828e55c259fd31d894bf686af2cbc371d8fabb2ffdcb67adfb4955",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "background.weaver-park",
+      "category": "backgrounds",
+      "layer": 0,
+      "file": "assets/backgrounds/weaver-park.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "bytes": 3369105,
+      "sha256": "bd4596b29beed3c509ac2fbd657a14f8cbcf443813f9cc2f3ab3f23ce9d78bbd",
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.diner-table",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/diner-table.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1104001,
+      "sha256": "82b42285b9f5dcdf038d3085a90cbf93552883202d4208950d4846d11dc0029f",
+      "alphaBounds": [
+        0,
+        0,
+        1240,
+        1254
+      ],
+      "transparentPixelFraction": 0.6218,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.fashion-mirror",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/fashion-mirror.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 579189,
+      "sha256": "98228c0d5c84d8df1029ad9a9ed619445a0071abb48f61618161e9cbc38cae48",
+      "alphaBounds": [
+        65,
+        14,
+        1145,
+        1224
+      ],
+      "transparentPixelFraction": 0.782,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.film-camera",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/film-camera.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 945069,
+      "sha256": "be9e6e49dd01b159a26a919ac51ad2c45c32a13c2461a2d20f290492aacc90eb",
+      "alphaBounds": [
+        19,
+        19,
+        1211,
+        1203
+      ],
+      "transparentPixelFraction": 0.7053,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.fitness-bench",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/fitness-bench.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 999554,
+      "sha256": "84533c2f1bb82e18f4a88afbc6bb1461c2b1b2afde018badd5c4eca496f68728",
+      "alphaBounds": [
+        24,
+        40,
+        1203,
+        1214
+      ],
+      "transparentPixelFraction": 0.6606,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.grocery-cart",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/grocery-cart.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1698514,
+      "sha256": "2b3842409d9128e4b20c3b598e1d8156f799c9364729fcdad5d7ed80cccd7da3",
+      "alphaBounds": [
+        0,
+        17,
+        1222,
+        1237
+      ],
+      "transparentPixelFraction": 0.5611,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.home-model",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/home-model.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1443084,
+      "sha256": "033b7f1b227acadb55ba724062b1ad9f29524eeaf72870cfbd43bf5249e45b30",
+      "alphaBounds": [
+        95,
+        31,
+        1139,
+        1187
+      ],
+      "transparentPixelFraction": 0.4951,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.ledger-table",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/ledger-table.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 908102,
+      "sha256": "412afa35a94988f98165aca93fb611b3de586415c85c838155af63fe6bf7f7ac",
+      "alphaBounds": [
+        0,
+        12,
+        1224,
+        1202
+      ],
+      "transparentPixelFraction": 0.6626,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.medical-trolley",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/medical-trolley.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1469787,
+      "sha256": "33c5702dd5fc09fb41d15b9e776ab5d69d886f12a3f98b3dad73f8de2b0eb53c",
+      "alphaBounds": [
+        73,
+        21,
+        1149,
+        1203
+      ],
+      "transparentPixelFraction": 0.5137,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.neighborhood-board",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/neighborhood-board.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1406834,
+      "sha256": "99e9b64315a7ae93a5228cec4941c60c52a926e88a2dbde41a28dda3277d3c64",
+      "alphaBounds": [
+        0,
+        7,
+        1244,
+        1247
+      ],
+      "transparentPixelFraction": 0.541,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.park-bench",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/park-bench.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1136289,
+      "sha256": "dc5f6997b4e7eb53a34010fa2f02f03fba06a1c7e931298cb1ca257af163f08e",
+      "alphaBounds": [
+        0,
+        21,
+        1222,
+        1233
+      ],
+      "transparentPixelFraction": 0.6525,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.pit-console",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/pit-console.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1069811,
+      "sha256": "c0f6f73b8433c7503448f496230a068508d13603723de85ac940cdacde7c85c1",
+      "alphaBounds": [
+        97,
+        34,
+        1067,
+        1186
+      ],
+      "transparentPixelFraction": 0.5971,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.producer-desk",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/producer-desk.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1196233,
+      "sha256": "595a4f095768ad4c835642c0aa469528ca827f210354d078587272d1933f67e9",
+      "alphaBounds": [
+        11,
+        45,
+        1235,
+        1167
+      ],
+      "transparentPixelFraction": 0.5738,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.records-desk",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/records-desk.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1045872,
+      "sha256": "28451aee2ec0fa21482dc95473f37d20b4ab89fc66c60945dbe98dba7b466154",
+      "alphaBounds": [
+        38,
+        31,
+        1184,
+        1223
+      ],
+      "transparentPixelFraction": 0.6307,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.service-kiosk",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/service-kiosk.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 732470,
+      "sha256": "f2c1753dab0ed6d96c47e85087eef62c4bbcffde22c8625b275fb5296c13bf3e",
+      "alphaBounds": [
+        97,
+        32,
+        1101,
+        1199
+      ],
+      "transparentPixelFraction": 0.6891,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.shopping-display",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/shopping-display.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1596332,
+      "sha256": "8ecac9fa34b7a3da1a6b625bb5e74d6683af9729c6bd4aa44a82bed8bc04d948",
+      "alphaBounds": [
+        0,
+        7,
+        1223,
+        1247
+      ],
+      "transparentPixelFraction": 0.4029,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.showroom-car",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/showroom-car.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1290076,
+      "sha256": "c42a557d32f511c262884e07d501a55a1c16876bb881d09beb8d51b89e395e0f",
+      "alphaBounds": [
+        0,
+        53,
+        1240,
+        1161
+      ],
+      "transparentPixelFraction": 0.5758,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.student-desk",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/student-desk.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1048090,
+      "sha256": "55c28824a9e48a89bce7589121f411be9bb015f158688b81a8e55d645fc66773",
+      "alphaBounds": [
+        0,
+        2,
+        1184,
+        1218
+      ],
+      "transparentPixelFraction": 0.6377,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.trophy-display",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/trophy-display.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1358115,
+      "sha256": "c101f1950aecd1bd252ee1dc699d09539a30166b59557750080801ff821bbc66",
+      "alphaBounds": [
+        0,
+        5,
+        1236,
+        1249
+      ],
+      "transparentPixelFraction": 0.5132,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "prop.work-desk",
+      "category": "props",
+      "layer": 20,
+      "file": "assets/props/work-desk.png",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "bytes": 1003871,
+      "sha256": "1bc8355394e82eebd980ca7194ff1a74c6eae213b449a60aba53b920f4300b9a",
+      "alphaBounds": [
+        9,
+        0,
+        1217,
+        1222
+      ],
+      "transparentPixelFraction": 0.6696,
+      "usage": "decorative art; semantic buttons and text remain in HTML",
+      "colorRegions": []
+    },
+    {
+      "id": "ui.back",
+      "file": "assets/ui/back.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 198,
+      "sha256": "379b50da5556b5690ddf1c5c8c627a59e51d0cac9c0b964b11fc453843871a09",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.check",
+      "file": "assets/ui/check.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 192,
+      "sha256": "794f4f370a6308ff5f2e2d4c3f68eac5e099ff24c72a65abe3607cfef3e53088",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.chevron",
+      "file": "assets/ui/chevron.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 191,
+      "sha256": "cd7aa695dac7fce4ebcb4c3630296812bcd7c4b7225df6e1b52985695c49c8c6",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.clock",
+      "file": "assets/ui/clock.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 221,
+      "sha256": "16f4b9070cf45128509b971a8b1817c5fd53b49b693119f000b1d7f32f02ba9c",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.close",
+      "file": "assets/ui/close.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 198,
+      "sha256": "fd1b90257fc1f358c1757a2bd414d59c5cd0f2d08449c7d40a778c0934763ccd",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.eye",
+      "file": "assets/ui/eye.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 253,
+      "sha256": "dc069710218e44bb12ae66b0aa4e903d3adb67699762abc6ba1653b5db9c1139",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.hotspot-marker",
+      "file": "assets/ui/hotspot-marker.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 253,
+      "sha256": "05186a5c20634a7cb764881bf400b4c9a526f16521132253d16bbe69a13e4848",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.info",
+      "file": "assets/ui/info.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 225,
+      "sha256": "67b9f5f78aba496c73ef130a31746762fbfd4d3ff9f6f81b50201eb17d34789b",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.leaf",
+      "file": "assets/ui/leaf.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 227,
+      "sha256": "ca9459d0d009c205166b598fa2d01fd1ed2e721b89cb9ffd8fa0f9c314c152ec",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.list",
+      "file": "assets/ui/list.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 293,
+      "sha256": "f4336dc1e72dd2aa27973fd71286e0241da0a2715a2fbd399416c8e84ca12c91",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.lock",
+      "file": "assets/ui/lock.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 260,
+      "sha256": "cd97184779221f5e46b68d3593a84e401e7cff587cba7f3141cda96047d00afd",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.map",
+      "file": "assets/ui/map.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 228,
+      "sha256": "9c805de6faab0a942e9e6e75f696410e34a98b338c8b1c4fd5ee5261f43cbdba",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.music",
+      "file": "assets/ui/music.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 284,
+      "sha256": "09b72803ff0372132a5045ba9f4c293c5909d15cdc920c30bf0dd1bf98e5159a",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.people",
+      "file": "assets/ui/people.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 270,
+      "sha256": "03a6f21117b606b04f27b486360786a96cc93e3bb17f69d551fc3becaaf7d710",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.popup-frame",
+      "file": "assets/ui/popup-frame.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 241,
+      "sha256": "c34f1548c564027cd864b20f730cc5699e54117aff9d5aaa4d7ecb414260e55a",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.retry",
+      "file": "assets/ui/retry.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 208,
+      "sha256": "3118717be0f086d23cceb13b47e169a3b752f848a4b6415eb2cf86acfd2c17c8",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "ui.spark",
+      "file": "assets/ui/spark.svg",
+      "category": "ui",
+      "layer": 40,
+      "bytes": 219,
+      "sha256": "db5af7575e05ddcd7319d3568e8a0458bace5953440ea1b2c52a804960e65867",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.blackline-freight-yard.ledger",
+      "file": "assets/hotspots/blackline-freight-yard.ledger.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "40ebf0bd10eeb00b5152fe7c02ba7353e38fe37b30de6f9009ad8a85602ca3bc",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.blackline-freight-yard.office",
+      "file": "assets/hotspots/blackline-freight-yard.office.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "3b57fa6573ca0404fcbbdfc4decc8b716c1c4c4b30ece4f4953c51beb6e4728e",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.blackline-freight-yard.warehouse",
+      "file": "assets/hotspots/blackline-freight-yard.warehouse.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "8834431c4984a1384b3e787c4f79b769cd50a717dfbae48a104e75571976b070",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.central-everthread-bank.advisor",
+      "file": "assets/hotspots/central-everthread-bank.advisor.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "0eb00f1c9ce0209f7a9c0f672cee8e9f44a9459f4eb965aed7a3df26c87bc566",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.central-everthread-bank.kiosk",
+      "file": "assets/hotspots/central-everthread-bank.kiosk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "031833f2639bc5d389cd5d8bf040213945a2530363d1399320d7c149edd97df7",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.central-everthread-bank.teller",
+      "file": "assets/hotspots/central-everthread-bank.teller.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "7648a2d287e7538a28bcb73426a494277ee8c8dc2aba105b069c76fb6b469fe4",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.crossroads-mall.display",
+      "file": "assets/hotspots/crossroads-mall.display.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "fcda6027bd2bafe96d21dbcb1db0253daea79fead2c5f1b88fdbcb92d02d91dc",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.crossroads-mall.gifts",
+      "file": "assets/hotspots/crossroads-mall.gifts.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "2f4a4231fc64edffefafd4267566de6da3c5be9d94b1df014bc0ee7130e67c5d",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.crossroads-mall.leisure",
+      "file": "assets/hotspots/crossroads-mall.leisure.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "0d8369e54996fba040ab96565203bea84f197be044f46f4078779e6931ba9f32",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-air-terminal.checkin",
+      "file": "assets/hotspots/everthread-air-terminal.checkin.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "ecdff985d6fe6ca96c10af4a2c08c30ca4d61fa41ae706422b385080c78188a6",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-air-terminal.gate",
+      "file": "assets/hotspots/everthread-air-terminal.gate.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "d4eb8ec86b52355a51d0e51bb062e5b342a2ecda41daa4a1f09b58f7ef48e208",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-air-terminal.kiosk",
+      "file": "assets/hotspots/everthread-air-terminal.kiosk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "031833f2639bc5d389cd5d8bf040213945a2530363d1399320d7c149edd97df7",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-city-hall.companies",
+      "file": "assets/hotspots/everthread-city-hall.companies.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "0eb00f1c9ce0209f7a9c0f672cee8e9f44a9459f4eb965aed7a3df26c87bc566",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-city-hall.council",
+      "file": "assets/hotspots/everthread-city-hall.council.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "d52909a1a05e478ad617592e0a0ea21e48f2a30ab3e4fb122db0917b443e703b",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-city-hall.desk",
+      "file": "assets/hotspots/everthread-city-hall.desk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "29b9b41655a88ad51bc3dd61557dfaa814836132ed8523a777f12e08d98e68b9",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-college.admissions",
+      "file": "assets/hotspots/everthread-college.admissions.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "748eea6cde05982f3dcba80098daaa354f0167d098d3d2bd8ed91aa37762e964",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-college.kiosk",
+      "file": "assets/hotspots/everthread-college.kiosk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "031833f2639bc5d389cd5d8bf040213945a2530363d1399320d7c149edd97df7",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-college.library",
+      "file": "assets/hotspots/everthread-college.library.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "d3cbd41be3f6b09163b452b61b7476404955e14d4cab834ed963ef9f6ddc3c57",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-correctional.case",
+      "file": "assets/hotspots/everthread-correctional.case.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "698f3863cc68ced246895d5842845efc752dc828fdf91d1ccc3763a0132a6890",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-correctional.table",
+      "file": "assets/hotspots/everthread-correctional.table.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "40ebf0bd10eeb00b5152fe7c02ba7353e38fe37b30de6f9009ad8a85602ca3bc",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-correctional.yard",
+      "file": "assets/hotspots/everthread-correctional.yard.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "75f72f7f64304e1fe230d665a71326be2846a45e6f3d473776d2a88d77c69d5d",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-courthouse.consult",
+      "file": "assets/hotspots/everthread-courthouse.consult.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "0614f923a50359b5daa8a33fe1aefbe626c4f1443bb23b312ec0f17d9cf0668c",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-courthouse.courtroom",
+      "file": "assets/hotspots/everthread-courthouse.courtroom.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "77618e5de6a6abf23d92d921fc76266ec47e6817231d07e767dbc4516ceb82b1",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-courthouse.desk",
+      "file": "assets/hotspots/everthread-courthouse.desk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "29b9b41655a88ad51bc3dd61557dfaa814836132ed8523a777f12e08d98e68b9",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-defense-garrison.desk",
+      "file": "assets/hotspots/everthread-defense-garrison.desk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "29b9b41655a88ad51bc3dd61557dfaa814836132ed8523a777f12e08d98e68b9",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-defense-garrison.personnel",
+      "file": "assets/hotspots/everthread-defense-garrison.personnel.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "e2e279bc6ac124b82c9d466ebd1239ae3b0a45d25d1d9fa626779f961b353182",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-defense-garrison.training",
+      "file": "assets/hotspots/everthread-defense-garrison.training.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "653d5f8e02bcec67674c3fb02c25f0d330bc6a8e2f39c669b5c0970f4d9bd2b7",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-general-hospital.consultation",
+      "file": "assets/hotspots/everthread-general-hospital.consultation.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "319cd297e141e657a0a9bfbd8667621caa84fc19faf5f4f7a586a812507671d4",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-general-hospital.support",
+      "file": "assets/hotspots/everthread-general-hospital.support.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "439286612393cdd5992c8253c4403e894858e06d0251cfa319d372d914379979",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-general-hospital.trolley",
+      "file": "assets/hotspots/everthread-general-hospital.trolley.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "5f0fbef93e7c4e8daf5dab78814db43e8b8f96a7815cbed9a83a09b2094e8dcd",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-market.cart",
+      "file": "assets/hotspots/everthread-market.cart.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "12e4498c35f6b7bfa8c400cd4e31abae768e31d235d9c645db40bccce418fce7",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-market.pantry",
+      "file": "assets/hotspots/everthread-market.pantry.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "c35ccb7f0161695818bece3cd388b35220ce7e7e52b5b53444e9f570c0f416f3",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-market.produce",
+      "file": "assets/hotspots/everthread-market.produce.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "690ac675a7364e5effe8389eeb38908679dae1a056c673d47c7fded913f8f156",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-school.classroom",
+      "file": "assets/hotspots/everthread-school.classroom.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "9f93416a0f9693cff23a1a74a1ee9b58e89da24b734b773ad705095e377f3db2",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-school.clubs",
+      "file": "assets/hotspots/everthread-school.clubs.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "fc230e329d096f664636d43adc59fecfc3f3d4ed6ba089bf5d7618cbdfce9428",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-school.desk",
+      "file": "assets/hotspots/everthread-school.desk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "06e6155287e400d518d199b69a148dfd0cc1ff8e1180f46111f33825420966c2",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-speedway.console",
+      "file": "assets/hotspots/everthread-speedway.console.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "30396d4e90ce2b4ce5fb7285be57923dcd4033941730030e04087a1ba498a036",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-speedway.track",
+      "file": "assets/hotspots/everthread-speedway.track.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "e0175da11d5d92d1135fe87e721d66cc5bd13b35a94a0d8005d5edaeed8f6edf",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-speedway.training",
+      "file": "assets/hotspots/everthread-speedway.training.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "a0b8ce3e4c28f5c5c8422721e01dd7d8b5e9f412abc4588f1d8eada3500017f5",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-stadium.cabinet",
+      "file": "assets/hotspots/everthread-stadium.cabinet.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "65f911a4e167b0000597482d14951dc107559dc004a69241f552941c64e5cd02",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-stadium.team",
+      "file": "assets/hotspots/everthread-stadium.team.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "26ce7fbfcbd1d7c4d3326975ddbf77a3d834ed636264eb464c7d0649b42e63ce",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.everthread-stadium.training",
+      "file": "assets/hotspots/everthread-stadium.training.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 204,
+      "sha256": "abdb171be20fd33af7014d695fc338d3289646e5e050b6a2326f16d92b52cf1b",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.facet-modeling-agency.mirror",
+      "file": "assets/hotspots/facet-modeling-agency.mirror.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "e8c6a6c013233c4d8e9e2b0cbe80730efa1f682949ab5fc2f35e02a52a8c3b71",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.facet-modeling-agency.runway",
+      "file": "assets/hotspots/facet-modeling-agency.runway.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "4bbfdffc57f7f30d40edd65b134f6ba7bd7161c3de805a5709b4b545f7fbee00",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.facet-modeling-agency.studio",
+      "file": "assets/hotspots/facet-modeling-agency.studio.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "06f98a8e4f79843b39ad8e7e866bc151b23e3fa6f15626e588b1858b05c90717",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.hearthline-realty.agent",
+      "file": "assets/hotspots/hearthline-realty.agent.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "0eb00f1c9ce0209f7a9c0f672cee8e9f44a9459f4eb965aed7a3df26c87bc566",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.hearthline-realty.listings",
+      "file": "assets/hotspots/hearthline-realty.listings.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "ab8a534d3d012633e81188b30196e122534c131384cae6ab22f66fcba6ae873a",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.hearthline-realty.model",
+      "file": "assets/hotspots/hearthline-realty.model.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "605ca687c9e6a933eb7307ae3e09ae5804d5ac3b1317dfc7f80ebcf0e7ed64cc",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.loomline-motors.finance",
+      "file": "assets/hotspots/loomline-motors.finance.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "20ed53c7929b1f7923c6d6fd90c22eb3aef52bd290527db58f797440e87fff3b",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.loomline-motors.service",
+      "file": "assets/hotspots/loomline-motors.service.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "da1a607b99bd6a7f0d4e505360d6511abd8dc977ae85bb0f6d632bc88ef27dd1",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.loomline-motors.showroom",
+      "file": "assets/hotspots/loomline-motors.showroom.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "b0319c6c1f703a1a8782367b16e457e6241debb1e8f20db199f0abcfac3c100f",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.loomworks-business-district.companies",
+      "file": "assets/hotspots/loomworks-business-district.companies.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "a46ea5efd6c9ba42130f1784a7efebf91f81d854cde49f69f328cf8b77206d9d",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.loomworks-business-district.desk",
+      "file": "assets/hotspots/loomworks-business-district.desk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "2a07a52eeed8bbb8edf084d5e0ef201aa1ed91d45ca095aa691858a2684da42f",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.loomworks-business-district.jobs",
+      "file": "assets/hotspots/loomworks-business-district.jobs.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "9f93416a0f9693cff23a1a74a1ee9b58e89da24b734b773ad705095e377f3db2",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.nightjar-diner.booth",
+      "file": "assets/hotspots/nightjar-diner.booth.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "5730326bbcb3c44660ccb6ead3a1e8ddedf41b0fa973c46dd7345c49377eeb1d",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.nightjar-diner.counter",
+      "file": "assets/hotspots/nightjar-diner.counter.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "34116a213b046020ff4cb3e3703069a4a5ae666702656a2092e413b844c8518f",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.nightjar-diner.table",
+      "file": "assets/hotspots/nightjar-diner.table.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "5d1d146bcaff87739d563048650274854c138d9fbb99dd82ca5a3b439be04ee5",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.public-safety-center.counter",
+      "file": "assets/hotspots/public-safety-center.counter.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "68f076eeebc8105687f233d06d46cb836045dc0eef7e9fd418e51be6aefbf5e3",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.public-safety-center.kiosk",
+      "file": "assets/hotspots/public-safety-center.kiosk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "031833f2639bc5d389cd5d8bf040213945a2530363d1399320d7c149edd97df7",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.public-safety-center.records",
+      "file": "assets/hotspots/public-safety-center.records.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "76862fbaf300777495a657a813fec3e776db8f525a80886b7f56eb7550f32a81",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.pulseworks-gym.bench",
+      "file": "assets/hotspots/pulseworks-gym.bench.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "eb55164f7734d09d04f66704a4bbce0041e92d3296bf033197c7c5b74d17ed2a",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.pulseworks-gym.dojo",
+      "file": "assets/hotspots/pulseworks-gym.dojo.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "b8a539118c15e4c7112a7468816c11a326f4f6ec5b50f2d8a58bf947463797c8",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.pulseworks-gym.fitness",
+      "file": "assets/hotspots/pulseworks-gym.fitness.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "c0981dc32d88f13716f4a47cab6dd2670f2bec911558f85dbb150387a8505492",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.silverframe-studios.camera",
+      "file": "assets/hotspots/silverframe-studios.camera.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "d622aad8d603daf171d2e933223aeea7c9a7c70de49a51a48a4a526455b74bde",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.silverframe-studios.casting",
+      "file": "assets/hotspots/silverframe-studios.casting.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "960f43e4c4fbfd2bf987c762579b948a3f6dbb7d161adb0365522a6c85d9c202",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.silverframe-studios.production",
+      "file": "assets/hotspots/silverframe-studios.production.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "14af4cdb3bb088a0685067565c59516ebab049e58d1800c2b17b409f3bd93782",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.threadtone-music-studio.booth",
+      "file": "assets/hotspots/threadtone-music-studio.booth.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "540f5502b308202589c663ff304f3b525dc483c2ee858db37885dba6f4294f6d",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.threadtone-music-studio.desk",
+      "file": "assets/hotspots/threadtone-music-studio.desk.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "92aea0a7ff4923d15c697b7ce2aa3014c5a5f5b4499a7eca2146713b20590aa6",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.threadtone-music-studio.records",
+      "file": "assets/hotspots/threadtone-music-studio.records.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "5ef89dc3e13ccb9286be4ba5ed3d0a88620a2a1deebdbf04ce574b2d23e9ce60",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.threadtone-music-studio.rehearsal",
+      "file": "assets/hotspots/threadtone-music-studio.rehearsal.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "19bde7d8a913b9cc892a05c95b572cb3ba318e5277de080548057e663b780587",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.threadwell-residential.board",
+      "file": "assets/hotspots/threadwell-residential.board.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "ebac9563d4b2725e529ff3e537041b90be9d768fb5b60e4649ac48753b7ff223",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.threadwell-residential.courtyard",
+      "file": "assets/hotspots/threadwell-residential.courtyard.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "c7f5b603b936cc1910e5697654d86c9ecbc0878189ce5be1d99778ff67716ff0",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.threadwell-residential.porch",
+      "file": "assets/hotspots/threadwell-residential.porch.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "7f1f10ea7cb58e634a42941bf2f1bbe569eb8c70b77be6539ea46f2139709218",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.weaver-park.bench",
+      "file": "assets/hotspots/weaver-park.bench.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "e542584af15d91c8004d1327cfc0da4ea8576946bf7f432b8ff4d6c7ff1f8be9",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.weaver-park.pavilion",
+      "file": "assets/hotspots/weaver-park.pavilion.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 206,
+      "sha256": "9fde9c6ba61feaa52d02e67020a6ae9e6f7404d0b7cc7b8a9e42eb782b7050c0",
+      "usage": "UI-only SVG; not a simulated location object"
+    },
+    {
+      "id": "hotspots.weaver-park.trails",
+      "file": "assets/hotspots/weaver-park.trails.svg",
+      "category": "hotspots",
+      "layer": 30,
+      "bytes": 205,
+      "sha256": "dabe07454c6e20ab4d4d5aa6f70160cd5ed0fece0172fd969a955c9f889067ff",
+      "usage": "UI-only SVG; not a simulated location object"
+    }
+  ]
+}
