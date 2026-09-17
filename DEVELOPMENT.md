@@ -3,8 +3,8 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
-Certified gameplay baseline: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
+Newest certified expanded source: Run #203 / `bde2f4a7498c2b677f27f8c805372ceb9019ef95`
+Certified gameplay baseline: Run #203 / `bde2f4a7498c2b677f27f8c805372ceb9019ef95`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,6 +27,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
+## Newest certified location-scene slice — Run #203 — Loomline Motors
+
+Run #203 adds the fourth dedicated illustrated location while preserving all established vehicle, financing, licence, payment, save, and QA authorities.
+
+- Expanded source `bde2f4a7498c2b677f27f8c805372ceb9019ef95` from wrapper `7079979d79b16b37a64e50b70f93270dbc3cb292`; Actions Run `35239439932`, job `105263759985`. Persistent diff from synchronized Run #202 `d12e04e4e10689e2bba21427fc6cb066e9d570dd` is exactly **8 intended files**.
+- Loomline uses three semantic groups—Showroom car, Service bay, Finance office—and four focused bindings: browse vehicles, owned vehicles/service, vehicle financing, and driving licence. Scene totals become **4 / 13 / 25 / 8** (scenes / groups / bindings / selected Astra runtime assets).
+- `MotorsLocationPanel` is presentation/adaptation only. Purchases/financing continue through established asset systems, garage truth remains `state.assets.vehicles`, secured-loan status/payoff remains authoritative, repairs/sales use existing engine actions, and the driving licence uses the existing Travel owner. No parallel vehicle/debt/licence state and no save migration were added. Save schema stays **17**.
+- Connected Location Scene coverage is **52/52**. The QA-4 wall remains exactly **82 core / 77 specialized / zero overlap** with handshake `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #203 preflight passed **6/6 in 46,762 ms**: Engine TS **3,814 ms**, Test TS **5,813 ms**, App TS **9,148 ms**, Node/Vite TS **960 ms**, complete wall **22,511 ms**, production build **4,502 ms**. Certified artifact `10503894830`; Pages artifact `10505105082`; deployment Green.
+- Direct Android/player acceptance of Loomline passed after Run #203. After this documentation-only synchronization certifies, the next bounded scene is **Location #5 — Hearthline Realty & Leasing**, using the existing property/residential/financing owners and explicitly not inventing tenant lease-signing controls.
+
 ## Newest certified QA infrastructure — Run #201 — QA-4 process isolation/sharding
 
 QA-4 closes the temporary QA-optimization program with measured process isolation rather than broader test rewriting. Canonical `npm test` uses at most two separate Node workers: a standard lane and a heavy lane. Exact coverage-partition checks prevent missing, duplicated, or overlapping cases/suites from certifying. A one-worker process-isolated fallback remains available for debugging.
@@ -37,7 +48,7 @@ QA-4 closes the temporary QA-optimization program with measured process isolatio
 - Complete regression wall **5/5 Green in 20,544 ms**; canonical regression stage **20,668 ms**. Adjacent Run #200 wall was **35,727 ms**, so this certified sample is **~42.5% lower** while retaining exact coverage.
 - Canonical preflight passed **6/6 in 42,372 ms**: Engine TS **3,505 ms** → Test TS **5,547 ms** → App TS **7,675 ms** → Node/Vite TS **850 ms** → regression wall **20,668 ms** → production build **4,014 ms**. Adjacent Run #200 preflight was **60,351 ms**; this sample is **~29.8% lower**.
 - Production remains **224 modules**. Certification: source SHA `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependencies `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10501795811`; Pages artifact `10501840639`; deployment Green.
-- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** After this mandatory documentation sync certifies, resume the existing player-facing location-scene gate: direct Central Everthread Bank review before any fourth location.
+- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Run #203 preserves this infrastructure unchanged and certifies Loomline Motors as Location #4; direct device acceptance has now passed, and Hearthline Realty & Leasing is the next bounded location after documentation synchronization.
 
 ## Prior certified QA infrastructure — Run #199 — QA-3 regression registry/timing
 
@@ -86,7 +97,7 @@ Run #192 adds the third dedicated illustrated location without creating a second
 - Production **224 modules**; Town Map JS ~**35.48/10.70 gzip kB**, CSS ~**24.42/4.66**; People ~**58.82/17.86**; character-art pack ~**971.11/69.18**; main ~**1,361.81/380.49**.
 - Certification hashes/artifacts: source `c857954cf15ed3a761daa9d6d2985d2b793cc9ceb1d6593ea7d04bef23e10731`; dependencies `b39ae97fe6ae6ca22ad0b0a777549a134c94e683507c1f917ee6a8b5d8911dac`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10479623295`; Pages artifact `10479573465`; deployment succeeded.
 - Feedback sweep is **5 total / 0 unresolved** and checkpointed against Run #192 at `2026-09-17 03:49:20.500943+00`.
-- Next step is player-facing Bank review. Do not begin a fourth location until that pass is accepted.
+- Historical next step was player-facing Bank review. That gate was completed before Run #203; current next step is Loomline Android/player acceptance before any fifth location.
 
 ## Prior certified presentation/navigation polish — Runs #189–#190 — immersive scenes + unified utility drawer
 

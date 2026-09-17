@@ -1,8 +1,6 @@
 # Everthread — Current State
 
-## READ THIS FIRST IN A NEW CHAT
-
-The newest certified expanded **repository/source** is **GitHub Actions Run #201** (`35231430935`) on expanded source **`1a252744d9659328d7f66a2169271b70d9c0018a`**, save schema **17**. Run #201 certifies **QA-4 process-isolated regression lanes**: all 82 core cases and 77 specialized suites remain mandatory, with exact partition handshake `core=81+1/82 specialized=76+1/77 overlap=0`, while the measured heavy work runs beside the standard lane in a second isolated Node process. This is QA infrastructure only; no gameplay, UI, saves, content, heavy-test body, simulation parameters, or assets changed. The newest certified **gameplay implementation remains Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`**, which adds Central Everthread Bank as the third dedicated location scene. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; QA infrastructure work and the location-scene rollout are post-closeout work, not Phase 11.**
+The newest certified expanded **repository/source and gameplay implementation** is **GitHub Actions Run #203** (`35239439932`) on expanded source **`bde2f4a7498c2b677f27f8c805372ceb9019ef95`**, save schema **17**. Run #203 certifies **Loomline Motors as dedicated Location #4** while preserving the certified QA-4 two-process regression wall: all 82 core cases and 77 specialized suites remain mandatory with exact partition handshake `core=81+1/82 specialized=76+1/77 overlap=0`. Mavyy subsequently completed direct Android/player acceptance of Loomline, including system Back, safe-area/touch fit, rapid panel navigation, financing-browse neutrality, cold-load presentation, and overall tactile/visual acceptance. The temporary QA optimization program remains closed at QA-4; no QA-5 exists without new measured evidence. **After this documentation-only synchronization certifies, the next bounded location slice is Location #5: Hearthline Realty & Leasing, reusing established property/residential/financing owners.** Phase 10 and the Living World Program remain closed/certified; this rollout is not Phase 11.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -17,8 +15,8 @@ The newest certified expanded **repository/source** is **GitHub Actions Run #201
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
 - Feedback Inbox last verified **5 total / 0 unresolved by triage**; durable review-state still points to gameplay source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**. QA-1/QA-2/QA-3/QA-4 change no player behavior, and this doc sync does not invent a newer feedback checkpoint.
-- Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- The temporary **QA infrastructure optimization sequence is complete**: QA-1 through QA-4 are certified, and no QA-5 is planned without new measured evidence. After this documentation sync certifies, return to the approved player-facing location-scene direction: Run #192 certifies Central Everthread Bank as location #3, and the next gate is direct Bank review before any location #4. No Phase 11 label is implied.
+- Direct Android/player-side QA has confirmed the Map sheet/navigation/Music Studio corrections, Everthread-only Airport travel rule, and the complete Loomline Motors Location #4 acceptance pass.
+- The temporary **QA infrastructure optimization sequence remains complete**: QA-1 through QA-4 are certified, with no QA-5 planned without new measured evidence. Central Bank review and Loomline Android/player acceptance are complete. **After this documentation-only sync certifies, proceed with Hearthline Realty & Leasing as Location #5.** No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -29,7 +27,18 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified repository/QA source — Run #201 — QA-4 process isolation/sharding
+## Newest certified repository/gameplay source — Run #203 — Loomline Motors dedicated scene
+
+- Upload wrapper `7079979d79b16b37a64e50b70f93270dbc3cb292`; expanded certified source `bde2f4a7498c2b677f27f8c805372ceb9019ef95`; Actions Run `35239439932`, job `105263759985`. Net persistent diff from synchronized Run #202 `d12e04e4e10689e2bba21427fc6cb066e9d570dd` is exactly **8 intended files**: Loomline background + showroom-car assets, `MotorsLocationPanel`, shared scene presentation/data/system wiring, and the existing Location Scene regression. The workflow importer also removes the transient `everthread-source.zip`.
+- **Loomline Motors is the fourth dedicated location scene.** Its three semantic groups are **Showroom car**, **Service bay**, and **Finance office**, exposing four focused bindings: browse vehicles, your vehicles/service, vehicle financing, and driving licence. Certified scene totals are now **4 scenes / 13 semantic groups / 25 scene action bindings / 8 selected Astra runtime assets**. Town places remain **25** and routed institution services remain **29**.
+- Loomline adds no duplicate vehicle inventory, debt ledger, licence state, or action economy. The focused panel reuses the established vehicle catalogue, `PropertySystem`/`AssetFinancingSystem` purchase path, `state.assets.vehicles`, secured-loan payoff/status, `repairVehicle`, sale flow, and `TravelSystem.takeLicenseTest`. Financing remains limited by the established asset-financing owner; Bank remains payment/account authority.
+- Save schema remains **17**. Bank, Weaver Park, and Threadtone Music Studio were reviewed before Location #4 and remain intact; Bank browsing stays mutation/RNG/runtime-ID neutral.
+- Location Scene regression is **52/52**. QA-4 topology is preserved exactly: **82 core cases / 77 specialized suites / zero overlap**, with handshake `core=81+1/82 specialized=76+1/77 overlap=0`. No QA-5 work was introduced.
+- Canonical CI preflight passed **6/6 in 46,762 ms**: Engine TypeScript **3,814 ms**, Test TypeScript **5,813 ms**, App TypeScript **9,148 ms**, Node/Vite Config TypeScript **960 ms**, complete regression wall **22,511 ms**, production build **4,502 ms**.
+- Certification source SHA `699fb39bfe275ffae31ff5b8db8267da57fdef6093c86cb52fcadb66ee9f21ce`; dependencies `08f34f2c107032a23439691e72d4c766d2bbdb8852d10f6d39b4c82c8409489b`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10503894830` (`05588aa54ba35016307b598087871415c5aade41c5cdef528ac8f31678a44db9`); Pages artifact `10505105082` (`1e29d8f2e54bdfcfd23da72e88b791d563c5cd0f65eb80a7f36c2743ef23e478`); Pages deployment Green.
+- **Player acceptance:** Mavyy completed the direct Android pass successfully after Run #203, including system Back, safe-area/touch behavior, rapid panel use, financing-browse neutrality, cold-load behavior, and tactile/visual fit. **Next gate after this documentation-only sync certifies: Location #5 — Hearthline Realty & Leasing.** Preserve existing property, mortgage, residential, rental, renovation, sale, payment, and save authorities; do not invent tenant lease-signing controls absent from the certified source.
+
+## Certified QA infrastructure baseline — Run #201 — QA-4 process isolation/sharding
 
 - Wrapper `61ae2ca182ed4f174697aab94030c4489f7a8008`; expanded certified source `1a252744d9659328d7f66a2169271b70d9c0018a`; Actions Run `35231430935`, job `105236231925`. Persistent diff from synchronized Run #200 `16bb69f34c7e4c0a99c65a60e61e5965d868a734` is exactly **6 QA/test-infrastructure files** and no gameplay/source-content files.
 - Canonical `npm test` uses at most two isolated Node processes. Standard lane runs core cases 1–81 plus 76 standard specialized suites; heavy lane runs unchanged core case 82 (25-life integration smoke) plus unchanged Integrated Long-Life. Exact coverage handshake certified `core=81+1/82 specialized=76+1/77 overlap=0`.
@@ -37,7 +46,7 @@ Candidate save schema: none
 - Full regression wall **5/5 Green in 20,544 ms**: registered regressions **19,791 ms**, New Life layout **33 ms**, activity minigames **185 ms**, feedback reporting **255 ms**, central-inbox feedback **278 ms**. Run #201 is **~42.5% lower** than the adjacent Run #200 wall of **35,727 ms**.
 - Canonical preflight **6/6 Green in 42,372 ms**: Engine TS **3,505 ms**, Test TS **5,547 ms**, App TS **7,675 ms**, Node/Vite TS **850 ms**, regressions **20,668 ms**, production build **4,014 ms**. Production remains **224 modules**.
 - Certification source SHA `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependencies `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; lock unchanged; certified artifact `10501795811`; Pages artifact `10501840639`; deployment Green.
-- **QA optimization stops here.** After this documentation sync certifies, return to direct player review of Central Everthread Bank before any fourth dedicated location.
+- **QA optimization stops here.** Run #203 preserves QA-4 unchanged while certifying Loomline Motors; no QA-5 is planned without new measured evidence.
 
 ## Prior certified repository/QA source — Run #199 — QA-3 regression registry/timing
 
@@ -78,7 +87,7 @@ Candidate save schema: none
 - Production build **224 modules**. Town Map lazy JS ~**35.48/10.70 gzip kB** and CSS ~**24.42/4.66**; People ~**58.82/17.86**; Player Profile ~**10.20/2.94**; character-art pack ~**971.11/69.18**; main ~**1,361.81/380.49**. Existing >700 kB warning remains nonblocking.
 - Certified source SHA `c857954cf15ed3a761daa9d6d2985d2b793cc9ceb1d6593ea7d04bef23e10731`; dependency SHA `b39ae97fe6ae6ca22ad0b0a777549a134c94e683507c1f917ee6a8b5d8911dac`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10479623295` (`bc100c21ee49fc0a35c74425cbf4c675be72e4b490ca85a99bf8fd27a34026ae`); Pages artifact `10479573465` (`243767c5c4037cfda59418761c6c0d9bfda5f3ba5a98bd403ca08e2ef8b24ae4`); deployment succeeded.
 - Live Feedback Inbox sweep after certification: **5 total / 0 unresolved by triage**, no report newer than `2026-09-15 06:47:52.761298+00`; checkpoint `main` → `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**.
-- Next gate: Mavyy player-facing review of Central Everthread Bank. Do not widen to location #4 until that interaction pass is accepted; then select exactly one next Astra location and repeat owner mapping → regression → full CI certification.
+- Historical next gate was Mavyy player-facing review of Central Everthread Bank. That review was completed before Run #203, which certifies Loomline Motors as Location #4; the current next gate is direct Loomline device acceptance before any Location #5.
 
 ## Prior certified gameplay/source — Runs #189–#190 — immersive scene polish + utility-drawer repair
 

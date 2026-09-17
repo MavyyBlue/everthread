@@ -1,3 +1,27 @@
+## Post-Run #203 Loomline device acceptance + Location #5 gate — 2026-09-17
+
+### Player acceptance / sequencing
+
+- Mavyy completed direct Android/player acceptance of the certified Loomline Motors scene after Run #203. System Back, safe-area/touch fit, rapid panel navigation, financing-browse neutrality, cold-load presentation, and overall tactile/visual behavior were accepted on-device.
+- This documentation-only synchronization records that acceptance; it adds no gameplay, UI, assets, test-body, QA topology, save, or schema changes. QA-4 remains closed with the exact `core=81+1/82 specialized=76+1/77 overlap=0` handshake.
+- After this documentation synchronization certifies, the next bounded rollout target is **Location #5 — Hearthline Realty & Leasing**. Reuse the existing property market, mortgage/asset-financing, current-residence projection, landlord/rental, renovation, sale/payoff, payment, and save authorities. Do not invent tenant lease-signing or lease-selection behavior that the certified source does not own.
+
+## Loomline Motors dedicated location scene — CI Green Run #203 — 2026-09-17
+
+### Added / changed
+
+- Added **Loomline Motors** as the fourth dedicated location scene using Astra-derived `loomline-motors.png` and `showroom-car.png` presentation assets. Three semantic object groups—Showroom car, Service bay, and Finance office—expose four focused bindings: Browse vehicles, Your vehicles, Vehicle financing, and Driving licence.
+- Added `MotorsLocationPanel` as a focused presentation adapter only. Vehicle catalogue/purchase/financing, garage truth, secured-loan context/payoff, repair/sale actions, and driving-licence mutation remain owned by the existing systems and `GameEngine`; no second vehicle inventory, finance ledger, licence state, or save authority was introduced.
+- Preserved Weaver Park, Threadtone Music Studio, and Central Everthread Bank intact. The required direct Bank review was completed before widening to Location #4. Save schema remains **17**.
+- Expanded the existing Location Scene regression to **52/52** rather than adding another registry suite. QA-4 remains unchanged at **82 core cases / 77 specialized suites / zero overlap** with exact handshake `core=81+1/82 specialized=76+1/77 overlap=0`.
+
+### Certification
+
+- GitHub Actions Run #203 (`35239439932`, job `105263759985`) certified expanded source `bde2f4a7498c2b677f27f8c805372ceb9019ef95` from upload wrapper `7079979d79b16b37a64e50b70f93270dbc3cb292`. Net persistent diff from synchronized Run #202 `d12e04e4e10689e2bba21427fc6cb066e9d570dd` is exactly **8 intended files**; the importer also removes transient `everthread-source.zip`.
+- Canonical preflight passed **6/6 in 46,762 ms**: Engine TypeScript **3,814 ms**, Test TypeScript **5,813 ms**, App TypeScript **9,148 ms**, Node/Vite Config TypeScript **960 ms**, complete regression wall **22,511 ms**, production build **4,502 ms**.
+- Certified source SHA-256 `699fb39bfe275ffae31ff5b8db8267da57fdef6093c86cb52fcadb66ee9f21ce`; dependency SHA-256 `08f34f2c107032a23439691e72d4c766d2bbdb8852d10f6d39b4c82c8409489b`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10503894830` (`05588aa54ba35016307b598087871415c5aade41c5cdef528ac8f31678a44db9`); Pages artifact `10505105082` (`1e29d8f2e54bdfcfd23da72e88b791d563c5cd0f65eb80a7f36c2743ef23e478`); Pages deployment reported success.
+- Certified location-scene totals are now **4 scenes / 13 semantic groups / 25 scene action bindings / 8 selected Astra runtime assets**. Direct Android/player acceptance subsequently passed; after the documentation synchronization certifies, the next bounded target is **Hearthline Realty & Leasing as Location #5**.
+
 ## QA-4 process-isolated regression lanes — CI Green Run #201 — 2026-09-17
 
 ### Added / changed
