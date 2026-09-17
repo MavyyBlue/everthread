@@ -1,6 +1,6 @@
 import { actionGateStatus } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneRect } from '../data/locationScenes';
-import { vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
+import { propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { MUSIC_RELEASE_MIN_AGE } from './SpecialCareerSystem';
 import { WELLNESS_MIN_AGES } from './HealthSystem';
 import { specialCareerStartGate } from './CommitmentSystem';
@@ -9,6 +9,7 @@ import { specialCareerLifecycleView, specialCareerRetirementGate } from './Speci
 import { musicCatalog, musicPartnershipOffer } from './MusicCareerCycleSystem';
 import { romanticDatePlanFor } from './RomanticDateSystem';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
+import { playerResidenceProjection } from './ResidentialLifeSystem';
 import type { GameState } from '../types/game';
 
 export interface LocationSceneAvailability{available:boolean;reason?:string}
@@ -31,6 +32,9 @@ export function locationSceneMotorsCatalogue(financingOnly=false){
   const catalogue=[...vehicleDefinitions,...luxuryVehicleDefinitions];
   return financingOnly?catalogue.filter(vehicle=>vehicle.category==='car'||vehicle.category==='motorcycle'):catalogue;
 }
+
+export function locationSceneHomeCatalogue(){return propertyDefinitions;}
+export function locationSceneResidenceProjection(state:GameState){return playerResidenceProjection(state);}
 
 export function locationSceneLabelAlignment(rect:LocationSceneRect):LocationSceneLabelAlignment{
   const center=rect[0]+rect[2]/2;
@@ -131,6 +135,7 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
   if(actionId==='music.catalog'||actionId==='music.partnership')return{available:true};
   if(actionId.startsWith('bank.'))return{available:true};
   if(actionId==='motors.catalog'||actionId==='motors.owned'||actionId==='motors.finance')return{available:true};
+  if(actionId.startsWith('homes.'))return{available:true};
   if(actionId==='license.driving'){
     if(state.character.age<16)return{available:false,reason:'Driving licence tests unlock at age 16.'};
     if(state.travel.licenses.driving)return{available:false,reason:'You already hold a driving licence.'};

@@ -21,8 +21,22 @@ export interface AssetSaleQuote {
   deficiency:number;
 }
 
+export interface PropertyActionAvailability {allowed:boolean;reason?:string}
+
+export function propertyPurchaseAvailability(state:GameState):PropertyActionAvailability{
+  return state.character.age<18?{allowed:false,reason:'You must be an adult to purchase property.'}:{allowed:true};
+}
+
+export function primaryResidenceAvailability(state:GameState,propertyId:string):PropertyActionAvailability{
+  const property=state.assets.properties.find(item=>item.id===propertyId);if(!property)return{allowed:false,reason:'Property not found.'};
+  if(state.character.age<18)return{allowed:false,reason:'A guardian household remains responsible for your residence until adulthood.'};
+  if(property.location!==state.character.city)return{allowed:false,reason:`You currently live in ${state.character.city}. Move there before making ${property.name} your home.`};
+  if(property.rental?.occupied)return{allowed:false,reason:`${property.name} is occupied by a tenant. You cannot move in while the tenancy is active.`};
+  return{allowed:true};
+}
+
 export function buyProperty(state:GameState,typeId:string,useMortgage=true,offerId?:string,downPaymentRate=.2):EngineResult {
-  if(state.character.age<18)return{success:false,messages:[{text:'You must be an adult to purchase property.'}]};
+  const purchaseGate=propertyPurchaseAvailability(state);if(!purchaseGate.allowed)return{success:false,messages:[{text:purchaseGate.reason!}]};
   const def=propertyDefinitions.find(p=>p.id===typeId);if(!def)return{success:false,messages:[{text:'Unknown property type.'}]};
   const price=Math.round(def.basePrice*state.economy.housingIndex);
   let amountDue=price;let mortgageId:string|undefined;let financeMessage:string|undefined;let financeDetail:string|undefined;
@@ -60,10 +74,8 @@ export function renovateProperty(state:GameState,propertyId:string):EngineResult
 }
 
 export function setPrimaryResidence(state:GameState,propertyId:string):EngineResult {
-  const p=state.assets.properties.find(item=>item.id===propertyId);if(!p)return{success:false,messages:[{text:'Property not found.'}]};
-  if(state.character.age<18)return{success:false,messages:[{text:'A guardian household remains responsible for your residence until adulthood.'}]};
-  if(p.location!==state.character.city)return{success:false,messages:[{text:`You currently live in ${state.character.city}. Move there before making ${p.name} your home.`}]};
-  if(p.rental?.occupied)return{success:false,messages:[{text:`${p.name} is occupied by a tenant. You cannot move in while the tenancy is active.`}]};
+  const gate=primaryResidenceAvailability(state,propertyId);if(!gate.allowed)return{success:false,messages:[{text:gate.reason!}]};
+  const p=state.assets.properties.find(item=>item.id===propertyId)!;
   const removedListing=Boolean(p.rental);if(removedListing)delete p.rental;
   for(const property of state.assets.properties)property.primaryResidence=property.id===p.id||undefined;
   state.flags.financiallyIndependent=true;state.flags.financialSupportChoiceMade=true;

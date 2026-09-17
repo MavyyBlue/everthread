@@ -1,12 +1,13 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
+export type LocationSceneRealtyActionId='homes.catalog'|'homes.owned'|'homes.mortgage'|'homes.residence';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'
   |'shared.park.walk'|'shared.park.play'|'date.park'
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
-  |LocationSceneBankActionId|LocationSceneMotorsActionId;
+  |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
 export type LocationSceneRisk='normal'|'confirm';
 export type LocationSceneRect=readonly[number,number,number,number];
@@ -51,6 +52,10 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'motors.owned':{id:'motors.owned',label:'Your vehicles',description:'Review your garage, repairs, financing context, and sales.',kind:'panel',risk:'normal'},
   'motors.finance':{id:'motors.finance',label:'Vehicle financing',description:'Compare current terms on finance-eligible vehicles.',kind:'panel',risk:'normal'},
   'license.driving':{id:'license.driving',label:'Driving licence',description:'Take the existing driving licence skill check.',kind:'panel',risk:'normal'},
+  'homes.catalog':{id:'homes.catalog',label:'Browse homes',description:'Explore the established home catalogue and purchase options.',kind:'panel',risk:'normal'},
+  'homes.owned':{id:'homes.owned',label:'Your homes & rentals',description:'Manage your owned homes, rentals, renovations, financing context, and sales.',kind:'panel',risk:'normal'},
+  'homes.mortgage':{id:'homes.mortgage',label:'Mortgage options',description:'Select a home to compare the existing mortgage offers at purchase.',kind:'panel',risk:'normal'},
+  'homes.residence':{id:'homes.residence',label:'Current residence',description:'Review the residence projected from your current save.',kind:'panel',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -93,6 +98,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'showroom',label:'Showroom car',description:'Browse the vehicle market',actionIds:['motors.catalog'],order:1,hitRect:[.24367,.58,.51266,.32]},
       {id:'service',label:'Service bay',description:'Your garage',actionIds:['motors.owned'],order:2,hitRect:[.05,.33,.36,.23]},
       {id:'finance',label:'Finance office',description:'Purchase planning',actionIds:['motors.finance','license.driving'],order:3,hitRect:[.60,.29,.36,.29]},
+    ],
+  },
+  {
+    id:'hearthline-realty',label:'Hearthline Realty & Leasing',tagline:'Somewhere to call home.',
+    background:'./location-scenes/backgrounds/hearthline-realty.png',propFile:'./location-scenes/props/home-model.png',canvas:[1024,1536],
+    propAlphaBounds:[95,31,1139,1187],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'model',label:'Home display',description:'Find your next home',actionIds:['homes.catalog'],order:1,hitRect:[.26971,.58,.46059,.32]},
+      {id:'listings',label:'Property wall',description:'Financing & current residence',actionIds:['homes.mortgage','homes.residence'],order:2,hitRect:[.04,.245,.28,.19]},
+      {id:'agent',label:'Property office',description:'The homes you own',actionIds:['homes.owned'],order:3,hitRect:[.68,.375,.28,.19]},
     ],
   },
 ] as const;

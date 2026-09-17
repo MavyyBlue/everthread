@@ -1,6 +1,6 @@
 import { actionUsesThisAge } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, LOCATION_SCENE_V1_ENABLED, LOCATION_SCENES, locationSceneDefinition, locationSceneEnabled } from '../data/locationScenes';
-import { vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
+import { propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { createNewGame } from '../systems/CharacterSystem';
 import { performWellnessActivity } from '../systems/HealthSystem';
 import {
@@ -12,11 +12,14 @@ import {
   locationSceneMusicPartnershipDecisionAvailability,
   locationSceneMusicProjection,
   locationSceneMotorsCatalogue,
+  locationSceneHomeCatalogue,
+  locationSceneResidenceProjection,
   locationScenePropRect,
   locationSceneUtilityTrayState,
   placeLocationSceneRect,
 } from '../systems/LocationSceneSystem';
 import { takeLicenseTest } from '../systems/TravelSystem';
+import { buyProperty, getPropertySaleQuote, rentOutProperty, sellProperty } from '../systems/PropertySystem';
 import type { GameState, Npc, Relationship } from '../types/game';
 
 function addFriend(state:GameState,id='location-scene-friend',age=30){
@@ -29,9 +32,9 @@ export function runLocationSceneRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Location scene regression failed: ${message}`);}
 
   verify(LOCATION_SCENE_V1_ENABLED,'01 first location-scene rollout must remain explicitly feature-gated');
-  verify(LOCATION_SCENES.length===4&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio|central-everthread-bank|loomline-motors','02 location rollout must preserve Weaver Park + Threadtone + Central Bank and add only Loomline Motors in this slice');
-  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&locationSceneEnabled('central-everthread-bank')&&locationSceneEnabled('loomline-motors')&&!locationSceneEnabled('hearthline-realty'),'03 only integrated scene-backed places may bypass legacy map routing');
-  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png')&&locationSceneDefinition('central-everthread-bank')?.background.endsWith('/central-everthread-bank.png')&&locationSceneDefinition('loomline-motors')?.background.endsWith('/loomline-motors.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
+  verify(LOCATION_SCENES.length===5&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio|central-everthread-bank|loomline-motors|hearthline-realty','02 location rollout must preserve the four certified scenes and add only Hearthline Realty in this slice');
+  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&locationSceneEnabled('central-everthread-bank')&&locationSceneEnabled('loomline-motors')&&locationSceneEnabled('hearthline-realty'),'03 all five integrated scene-backed places must bypass legacy map routing without widening the allowlist elsewhere');
+  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png')&&locationSceneDefinition('central-everthread-bank')?.background.endsWith('/central-everthread-bank.png')&&locationSceneDefinition('loomline-motors')?.background.endsWith('/loomline-motors.png')&&locationSceneDefinition('hearthline-realty')?.background.endsWith('/hearthline-realty.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
   verify(LOCATION_SCENES.every(scene=>scene.canvas[0]===1024&&scene.canvas[1]===1536),'05 scene geometry must preserve the authored 1024x1536 portrait canvas');
   verify(LOCATION_SCENES.every(scene=>new Set(scene.groups.map(group=>group.id)).size===scene.groups.length),'06 semantic object ids must be unique within each location');
   verify(locationSceneDefinition('weaver-park')!.groups.flatMap(group=>group.actionIds).join('|')==='shared.park.walk|shared.park.play|date.park|wellness.walk|wellness.run|wellness.meditate','07 Weaver Park must expose only its focused social/date/wellness actions');
@@ -50,8 +53,8 @@ export function runLocationSceneRegression(){
   const pure=createNewGame({seed:'location-scene-pure'});pure.character.age=30;addFriend(pure);pure.settings.autoSave=false;
   const pureBefore=JSON.stringify(pure),pureRng=pure.rngCounter,pureId=pure.idCounter,pureRevision=pure.actionLedger?.revision??0;
   for(const actionId of Object.keys(LOCATION_SCENE_ACTIONS) as Array<keyof typeof LOCATION_SCENE_ACTIONS>)locationSceneActionAvailability(pure,actionId);
-  locationSceneCompanions(pure,'shared.park.walk');locationSceneMusicProjection(pure);locationSceneMotorsCatalogue();locationSceneMotorsCatalogue(true);
-  verify(JSON.stringify(pure)===pureBefore&&pure.rngCounter===pureRng&&pure.idCounter===pureId&&(pure.actionLedger?.revision??0)===pureRevision,'15 browsing scenes, availability, companions, music records, and Loomline catalogue projections must be save/RNG/runtime-id/action-ledger neutral');
+  locationSceneCompanions(pure,'shared.park.walk');locationSceneMusicProjection(pure);locationSceneMotorsCatalogue();locationSceneMotorsCatalogue(true);locationSceneHomeCatalogue();locationSceneResidenceProjection(pure);
+  verify(JSON.stringify(pure)===pureBefore&&pure.rngCounter===pureRng&&pure.idCounter===pureId&&(pure.actionLedger?.revision??0)===pureRevision,'15 browsing scenes, availability, companions, music records, vehicle/home catalogues, and residence projections must be save/RNG/runtime-id/action-ledger neutral');
 
   const child=createNewGame({seed:'location-scene-child'});child.character.age=2;
   verify(!locationSceneActionAvailability(child,'wellness.walk').available&&!locationSceneActionAvailability(child,'wellness.run').available&&!locationSceneActionAvailability(child,'wellness.meditate').available,'16 Park wellness objects must preserve the existing age gates rather than invent location shortcuts');
@@ -114,6 +117,21 @@ export function runLocationSceneRegression(){
   verify(licenseResult.success&&driver.travel.licenses.driving&&!locationSceneActionAvailability(driver,'license.driving').available&&actionUsesThisAge(driver,'license.test','driving')===1,'51 a submitted Loomline driving test must commit exactly through TravelSystem and immediately close the location gate');
   const showroomProp=locationScenePropRect(motors.propAlphaBounds,portrait,motors.propPlacement.width,motors.propPlacement.maxHeight,motors.propPlacement.baseline);
   verify(showroomProp.left>=portrait.left&&showroomProp.top>=portrait.top&&showroomProp.left+showroomProp.width<=portrait.left+portrait.width+1&&showroomProp.top+showroomProp.height<=portrait.top+portrait.height+1,'52 Loomline showroom-car prop must remain aligned inside the shared immersive scene stage');
+
+  const realty=locationSceneDefinition('hearthline-realty')!;
+  verify(realty.groups.flatMap(group=>group.actionIds).join('|')==='homes.catalog|homes.mortgage|homes.residence|homes.owned','53 Hearthline must expose only the authored catalogue, mortgage, residence, and owned-home surfaces');
+  verify(realty.groups.map(group=>group.id).join('|')==='model|listings|agent'&&realty.groups.every(group=>group.actionIds.every(actionId=>LOCATION_SCENE_ACTIONS[actionId].kind==='panel')),'54 Hearthline object grouping must preserve Astra home-display/property-wall/property-office semantics without inventing direct property mutations');
+  verify(locationSceneHomeCatalogue().map(home=>home.id).join('|')===propertyDefinitions.map(home=>home.id).join('|'),'55 Hearthline home display must project the authoritative property catalogue instead of maintaining a parallel market');
+  const realtyChild=createNewGame({seed:'location-scene-realty-child'});realtyChild.character.age=10;const realtyChildBefore=JSON.stringify(realtyChild);const childResidence=locationSceneResidenceProjection(realtyChild);
+  verify(['homes.catalog','homes.mortgage','homes.residence','homes.owned'].every(actionId=>locationSceneActionAvailability(realtyChild,actionId as keyof typeof LOCATION_SCENE_ACTIONS).available)&&childResidence.kind==='family'&&JSON.stringify(realtyChild)===realtyChildBefore,'56 Hearthline browsing and residence projection must remain inspectable and neutral before transaction-specific adulthood and finance gates apply');
+  const owner=createNewGame({seed:'location-scene-realty-owner'});owner.character.age=30;owner.finances.cash=2_000_000;const homeDefinition=propertyDefinitions[0]!;const purchase=buyProperty(owner,homeDefinition.id,false);const ownedHome=owner.assets.properties[0]!;
+  verify(purchase.success&&ownedHome.typeId===homeDefinition.id&&locationSceneResidenceProjection(owner).propertyId===ownedHome.id,'57 a Hearthline purchase must commit through PropertySystem and immediately become visible through the existing residence projection');
+  const rent=rentOutProperty(owner,ownedHome.id);
+  verify(rent.success&&Boolean(ownedHome.rental)&&!ownedHome.primaryResidence&&locationSceneResidenceProjection(owner).kind==='rented','58 Hearthline Rent out must remain landlord functionality owned by PropertySystem and must remove the property from current-residence truth');
+  const saleQuote=getPropertySaleQuote(owner,ownedHome.id)!;const cashBeforeSale=owner.finances.cash;const sale=sellProperty(owner,ownedHome.id);
+  verify(sale.success&&owner.assets.properties.length===0&&owner.finances.cash===cashBeforeSale+saleQuote.cashProceeds,'59 Hearthline sales must reconcile through the existing property sale quote/payoff authority rather than a location-specific balance path');
+  const homeModelProp=locationScenePropRect(realty.propAlphaBounds,portrait,realty.propPlacement.width,realty.propPlacement.maxHeight,realty.propPlacement.baseline);
+  verify(homeModelProp.left>=portrait.left&&homeModelProp.top>=portrait.top&&homeModelProp.left+homeModelProp.width<=portrait.left+portrait.width+1&&homeModelProp.top+homeModelProp.height<=portrait.top+portrait.height+1,'60 Hearthline home-model prop must remain aligned inside the shared immersive scene stage');
 
   return checks;
 }
