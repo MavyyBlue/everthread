@@ -36,8 +36,8 @@ import { attendSchoolGroup, cheatAtSchool, currentSchoolWorld, joinSchoolGroup, 
 import { schoolProfileFor } from '../data/schools';
 import { ensureNpcLife, processNpcLives, relocateNpcHousehold } from '../systems/NpcLifeSystem';
 
-export interface RegressionResult {name:string;passed:boolean;error?:string;}
-export interface RegressionReport {passed:number;failed:number;results:RegressionResult[];}
+export interface RegressionResult {name:string;passed:boolean;durationMs:number;error?:string;}
+export interface RegressionReport {passed:number;failed:number;durationMs:number;results:RegressionResult[];}
 export interface RegressionCase {name:string;run:()=>void;}
 
 function fail(message:string):never{throw new Error(message);}
@@ -770,13 +770,28 @@ export const regressionCases:RegressionCase[]=[
 ];
 
 export function runRegressionSuite(cases=regressionCases):RegressionReport{
+  const startedAt=Date.now();
   const results:RegressionResult[]=[];
-  for(const test of cases){try{test.run();results.push({name:test.name,passed:true});}catch(error){results.push({name:test.name,passed:false,error:error instanceof Error?error.message:String(error)});}}
-  return {passed:results.filter(r=>r.passed).length,failed:results.filter(r=>!r.passed).length,results};
+  for(const test of cases){
+    const caseStartedAt=Date.now();
+    try{test.run();results.push({name:test.name,passed:true,durationMs:Date.now()-caseStartedAt});}
+    catch(error){results.push({name:test.name,passed:false,durationMs:Date.now()-caseStartedAt,error:error instanceof Error?error.message:String(error)});}
+  }
+  return {passed:results.filter(r=>r.passed).length,failed:results.filter(r=>!r.passed).length,durationMs:Date.now()-startedAt,results};
 }
 
 export function formatRegressionReport(report:RegressionReport){
   const lines=[`Everthread regression suite — ${report.passed} passed, ${report.failed} failed`];
   for(const result of report.results)lines.push(`${result.passed?'PASS':'FAIL'}  ${result.name}${result.error?` — ${result.error}`:''}`);
+  return lines.join('\n');
+}
+
+export function formatRegressionTimingReport(report:RegressionReport){
+  const indexed=report.results.map((result,index)=>({result,index:index+1}));
+  indexed.sort((a,b)=>b.result.durationMs-a.result.durationMs||a.index-b.index);
+  const lines=[`Everthread base-case timing — ${report.results.length} cases in ${report.durationMs} ms`];
+  for(const {result,index} of indexed){
+    lines.push(`CASE_TIMING ${String(index).padStart(3,'0')} ${result.durationMs}ms ${result.passed?'PASS':'FAIL'} — ${result.name}`);
+  }
   return lines.join('\n');
 }

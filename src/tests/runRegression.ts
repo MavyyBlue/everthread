@@ -1,160 +1,49 @@
-import { formatRegressionReport, runRegressionSuite } from './regressionSuite';
-import { runSpecialCareerWorldRegression } from './specialCareerWorldRegression';
-import { runMusicCareerRegression } from './musicCareerRegression';
-import { runSocialAffiliationRegression } from './socialAffiliationRegression';
-import { runModelingCareerRegression } from './modelingCareerRegression';
-import { runRacingCareerRegression } from './racingCareerRegression';
-import { runCoherenceRegression } from './coherenceRegression';
-import { runStressCareerRegression } from './stressCareerRegression';
-import { runEventTargetRegression } from './eventTargetRegression';
-import { runCommitmentExclusivityRegression } from './commitmentExclusivityRegression';
-import { runCareerRelationshipCoherenceRegression } from './careerRelationshipCoherenceRegression';
-import { runSpecialCareerInfluenceRegression } from './specialCareerInfluenceRegression';
-import { runContextualInfoRegression } from './contextualInfoRegression';
-import { runSpecialCareerLifecycleRegression } from './specialCareerLifecycleRegression';
-import { runSpecialCareerStoryRegression } from './specialCareerStoryRegression';
-import { runSpecialCareerPathStoryRegression } from './specialCareerPathStoryRegression';
-import { runCombatCareerWorldRegression } from './combatCareerWorldRegression';
-import { runMilitaryCareerWorldRegression } from './militaryCareerWorldRegression';
-import { runPoliticsCareerWorldRegression } from './politicsCareerWorldRegression';
-import { runPhase4CloseoutRegression } from './phase4CloseoutRegression';
-import { runEventCoherenceRegression } from './eventCoherenceRegression';
-import { runPeopleWorkspaceRegression } from './peopleWorkspaceRegression';
-import { runAiInteractionRegression } from './aiInteractionRegression';
-import { runEstatePlanningRegression } from './estatePlanningRegression';
-import { runEstateAdministrationRegression } from './estateAdministrationRegression';
-import { runFamilyContinuityRegression } from './familyContinuityRegression';
-import { runVisualIdentityRegression } from './visualIdentityRegression';
-import { runFamilyReproductionRegression } from './familyReproductionRegression';
-import { runSecretCodeRegression } from './secretCodeRegression';
-import { runRewindScalingRegression } from './rewindScalingRegression';
-import { runNpcHouseholdCoherenceRegression } from './npcHouseholdCoherenceRegression';
-import { runNpcHealthMortalityRegression } from './npcHealthMortalityRegression';
-import { runAgeAwareReproductionRegression } from './ageAwareReproductionRegression';
-import { runNpcOrientationCoherenceRegression } from './npcOrientationCoherenceRegression';
-import { runCollisionAwareNamingRegression } from './collisionAwareNamingRegression';
-import { runRelationshipMicrocopyRegression } from './relationshipMicrocopyRegression';
-import { runIntegratedLongLifeRegression } from './integratedLongLifeRegression';
-import { runActionVfxRegression } from './actionVfxRegression';
-import { runNpcAssetOwnershipRegression } from './npcAssetOwnershipRegression';
-import { runTimelineScalingRegression } from './timelineScalingRegression';
-import { runFamilyTopologyRegression } from './familyTopologyRegression';
-import { runDynastyTransitionRegression } from './dynastyTransitionRegression';
-import { runCreditBankingRegression } from './creditBankingRegression';
-import { runAssetFinancingRegression } from './assetFinancingRegression';
-import { runAssetDelinquencyRegression } from './assetDelinquencyRegression';
-import { runPaymentAssetManagementRegression } from './paymentAssetManagementRegression';
-import { runPersonalBorrowingRegression } from './personalBorrowingRegression';
-import { runHouseholdFinanceRegression } from './householdFinanceRegression';
-import { runPersistentConsequenceRegression } from './persistentConsequenceRegression';
-import { runPhase7BSystemicStoryRegression } from './phase7BSystemicStoryRegression';
-import { runPhase7B2OwnershipWorkRegression } from './phase7B2OwnershipWorkRegression';
-import { runPhase7B3SpecialCareerEchoRegression } from './phase7B3SpecialCareerEchoRegression';
-import { runPhase7CWorldConditionRegression } from './phase7CWorldConditionRegression';
-import { runProgressiveDisclosureRegression } from './progressiveDisclosureRegression';
-import { runPhase8ASettingFoundationRegression } from './phase8ASettingFoundationRegression';
-import { runPhase8BTownMapRegression } from './phase8BTownMapRegression';
-import { runPhase8CInstitutionRoutingRegression } from './phase8CInstitutionRoutingRegression';
-import { runPhase8DPlayerProfileInventoryRegression } from './phase8DPlayerProfileInventoryRegression';
-import { runThreadspaceLoadRecoveryRegression } from './threadspaceLoadRecoveryRegression';
-import { runPhase8ECloseoutRegression } from './phase8ECloseoutRegression';
-import { runPhase9ANpcPreferencesRegression } from './phase9ANpcPreferencesRegression';
-import { runPhase9BSharedExperienceRegression } from './phase9BSharedExperienceRegression';
-import { runPhase9CYouthSocialRegression } from './phase9CYouthSocialRegression';
-import { runPhase9DDatingMomentumRegression } from './phase9DDatingMomentumRegression';
-import { runPhase9ERealGiftsRegression } from './phase9ERealGiftsRegression';
-import { runPhase9FCrossWorldChemistryRegression } from './phase9FCrossWorldChemistryRegression';
-import { runPhase9GSharedLivesCloseoutRegression } from './phase9GSharedLivesCloseoutRegression';
-import { runPhase10AResidentialLifeRegression } from './phase10AResidentialLifeRegression';
-import { runPhase10BWorkingEverthreadRegression } from './phase10BWorkingEverthreadRegression';
-import { runPhase10CGenerationalPlaceMemoryRegression } from './phase10CGenerationalPlaceMemoryRegression';
-import { runPhase10DLivingMapProjectionRegression } from './phase10DLivingMapProjectionRegression';
-import { runPrePhase10EPlayerUxRegression } from './prePhase10EPlayerUxRegression';
-import { runPhase10EProgramCloseoutRegression } from './phase10EProgramCloseoutRegression';
-import { runUiIconographyRegression } from './uiIconographyRegression';
-import { runCharacterVisualRegression } from './characterVisualRegression';
-import { runFamilyVisualInheritanceRegression } from './familyVisualInheritanceRegression';
-import { runYukiThreadroomArtRegression } from './yukiThreadroomArtRegression';
-import { runLocationSceneRegression } from './locationSceneRegression';
+import { formatRegressionReport, formatRegressionTimingReport, runRegressionSuite } from './regressionSuite';
+import { regressionRegistry } from './regressionRegistry';
 
 declare const process:{exitCode?:number};
-const report=runRegressionSuite();
-console.log(formatRegressionReport(report));
-try{const checks=runSpecialCareerWorldRegression();console.log(`Special-career world regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runMusicCareerRegression();console.log(`Music career regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runSocialAffiliationRegression();console.log(`Social-affiliation regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runModelingCareerRegression();console.log(`Modeling career regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runRacingCareerRegression();console.log(`Racing career regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runCoherenceRegression();console.log(`Coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runStressCareerRegression();console.log(`Stress / career-freedom regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runEventTargetRegression();console.log(`Event-target role regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runCommitmentExclusivityRegression();console.log(`Commitment exclusivity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runCareerRelationshipCoherenceRegression();console.log(`Career / relationship coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runSpecialCareerInfluenceRegression();console.log(`Special-career influence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runContextualInfoRegression();console.log(`Contextual info regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runSpecialCareerLifecycleRegression();console.log(`Special-career lifecycle regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runSpecialCareerStoryRegression();console.log(`Special-career story regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runSpecialCareerPathStoryRegression();console.log(`Special-career path-story regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runCombatCareerWorldRegression();console.log(`Combat-career world regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runMilitaryCareerWorldRegression();console.log(`Military-career world regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runPoliticsCareerWorldRegression();console.log(`Politics-career world regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runPhase4CloseoutRegression();console.log(`Phase 4 closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runEventCoherenceRegression();console.log(`Random-event coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runPeopleWorkspaceRegression();console.log(`People Threadspace regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runAiInteractionRegression();console.log(`AI interaction testbench regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runEstatePlanningRegression();console.log(`Phase 5 estate-planning regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runEstateAdministrationRegression();console.log(`Phase 5 estate-administration regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runFamilyContinuityRegression();console.log(`Family continuity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runVisualIdentityRegression();console.log(`Visual identity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runFamilyReproductionRegression();console.log(`Family reproduction regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runSecretCodeRegression();console.log(`Secret-code regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runRewindScalingRegression();console.log(`Rewind scaling regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runNpcHouseholdCoherenceRegression();console.log(`NPC household coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runNpcHealthMortalityRegression();console.log(`NPC health / mortality regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runAgeAwareReproductionRegression();console.log(`Age-aware reproduction regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runNpcOrientationCoherenceRegression();console.log(`NPC orientation coherence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runCollisionAwareNamingRegression();console.log(`Collision-aware naming regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runRelationshipMicrocopyRegression();console.log(`Relationship microcopy regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runActionVfxRegression();console.log(`Action VFX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runNpcAssetOwnershipRegression();console.log(`NPC asset ownership regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runTimelineScalingRegression();console.log(`Timeline scaling regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runFamilyTopologyRegression();console.log(`Family topology regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runDynastyTransitionRegression();console.log(`Dynasty transition regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runCreditBankingRegression();console.log(`Credit & banking regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runAssetFinancingRegression();console.log(`Asset financing regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runAssetDelinquencyRegression();console.log(`Asset delinquency regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPaymentAssetManagementRegression();console.log(`Payment & asset management regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPersonalBorrowingRegression();console.log(`Personal borrowing & recovery regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runHouseholdFinanceRegression();console.log(`Household finance & crisis regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runIntegratedLongLifeRegression();console.log(`Integrated long-life regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPersistentConsequenceRegression();console.log(`Phase 7A persistent consequence regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase7BSystemicStoryRegression();console.log(`Phase 7B1 systemic story regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase7B2OwnershipWorkRegression();console.log(`Phase 7B2 ownership/work regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase7B3SpecialCareerEchoRegression();console.log(`Phase 7B3 special-career echo regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase7CWorldConditionRegression();console.log(`Phase 7C world-condition regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase8ASettingFoundationRegression();console.log(`Phase 8A setting-foundation regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase8BTownMapRegression();console.log(`Phase 8B town-map regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase8CInstitutionRoutingRegression();console.log(`Phase 8C institution-routing regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase8DPlayerProfileInventoryRegression();console.log(`Phase 8D player-profile/inventory regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runThreadspaceLoadRecoveryRegression();console.log(`Threadspace load recovery regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runPhase8ECloseoutRegression();console.log(`Phase 8E closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase9ANpcPreferencesRegression();console.log(`Phase 9A NPC-preference regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase9BSharedExperienceRegression();console.log(`Phase 9B shared-experience regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase9CYouthSocialRegression();console.log(`Phase 9C youth-social regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase9DDatingMomentumRegression();console.log(`Phase 9D dating/momentum regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase9ERealGiftsRegression();console.log(`Phase 9E real-gifts regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase9FCrossWorldChemistryRegression();console.log(`Phase 9F cross-world chemistry regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase9GSharedLivesCloseoutRegression();console.log(`Phase 9G Shared Lives closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase10AResidentialLifeRegression();console.log(`Phase 10A Residential Life regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase10BWorkingEverthreadRegression();console.log(`Phase 10B Working Everthread regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase10CGenerationalPlaceMemoryRegression();console.log(`Phase 10C Generational Place Memory regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPhase10DLivingMapProjectionRegression();console.log(`Phase 10D Living Map Projection regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runPrePhase10EPlayerUxRegression();console.log(`Pre-Phase 10E player-UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=await runPhase10EProgramCloseoutRegression();console.log(`Phase 10E Program Closeout regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runUiIconographyRegression();console.log(`UI iconography & theme reactivity regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runCharacterVisualRegression();console.log(`Character Visual regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runFamilyVisualInheritanceRegression();console.log(`Family Visual Inheritance regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runYukiThreadroomArtRegression();console.log(`Yuki Threadroom art regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-try{const checks=runLocationSceneRegression();console.log(`Location scene first-slice regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
-if(report.failed)process.exitCode=1;
+
+interface SuiteTiming {
+  id:string;
+  label:string;
+  executionClass:'standard'|'heavy';
+  status:'passed'|'failed';
+  checks:number|null;
+  durationMs:number;
+}
+
+const wallStartedAt=Date.now();
+const baseReport=runRegressionSuite();
+console.log(formatRegressionReport(baseReport));
+console.log(formatRegressionTimingReport(baseReport));
+
+const timings:SuiteTiming[]=[{
+  id:'core-regression-suite',
+  label:'Everthread regression suite',
+  executionClass:'heavy',
+  status:baseReport.failed?'failed':'passed',
+  checks:baseReport.passed+baseReport.failed,
+  durationMs:baseReport.durationMs,
+}];
+
+for(const suite of regressionRegistry){
+  const startedAt=Date.now();
+  try{
+    const checks=await suite.run();
+    timings.push({id:suite.id,label:suite.label,executionClass:suite.executionClass,status:'passed',checks,durationMs:Date.now()-startedAt});
+    console.log(`${suite.label}: ${checks}/${checks} checks passed.`);
+  }catch(error){
+    timings.push({id:suite.id,label:suite.label,executionClass:suite.executionClass,status:'failed',checks:null,durationMs:Date.now()-startedAt});
+    console.error(error instanceof Error?error.message:String(error));
+    process.exitCode=1;
+  }
+}
+
+const wallDurationMs=Date.now()-wallStartedAt;
+console.log(`Everthread registered regression timing — ${timings.length} suites in ${wallDurationMs} ms`);
+for(const timing of [...timings].sort((a,b)=>b.durationMs-a.durationMs||a.id.localeCompare(b.id))){
+  const checks=timing.checks===null?'n/a':String(timing.checks);
+  console.log(`SUITE_TIMING ${timing.id} ${timing.durationMs}ms ${timing.status.toUpperCase()} checks=${checks} class=${timing.executionClass} — ${timing.label}`);
+}
+
+if(baseReport.failed)process.exitCode=1;
