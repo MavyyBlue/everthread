@@ -1,5 +1,6 @@
 import { actionUsesThisAge } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, LOCATION_SCENE_V1_ENABLED, LOCATION_SCENES, locationSceneDefinition, locationSceneEnabled } from '../data/locationScenes';
+import { vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { createNewGame } from '../systems/CharacterSystem';
 import { performWellnessActivity } from '../systems/HealthSystem';
 import {
@@ -10,10 +11,12 @@ import {
   locationSceneCompanions,
   locationSceneMusicPartnershipDecisionAvailability,
   locationSceneMusicProjection,
+  locationSceneMotorsCatalogue,
   locationScenePropRect,
   locationSceneUtilityTrayState,
   placeLocationSceneRect,
 } from '../systems/LocationSceneSystem';
+import { takeLicenseTest } from '../systems/TravelSystem';
 import type { GameState, Npc, Relationship } from '../types/game';
 
 function addFriend(state:GameState,id='location-scene-friend',age=30){
@@ -26,9 +29,9 @@ export function runLocationSceneRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Location scene regression failed: ${message}`);}
 
   verify(LOCATION_SCENE_V1_ENABLED,'01 first location-scene rollout must remain explicitly feature-gated');
-  verify(LOCATION_SCENES.length===3&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio|central-everthread-bank','02 certified scene set must preserve Weaver Park + Threadtone and add only Central Everthread Bank in this migration slice');
-  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&locationSceneEnabled('central-everthread-bank')&&!locationSceneEnabled('loomline-motors'),'03 only integrated scene-backed places may bypass legacy map routing');
-  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png')&&locationSceneDefinition('central-everthread-bank')?.background.endsWith('/central-everthread-bank.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
+  verify(LOCATION_SCENES.length===4&&LOCATION_SCENES.map(scene=>scene.id).join('|')==='weaver-park|threadtone-music-studio|central-everthread-bank|loomline-motors','02 location rollout must preserve Weaver Park + Threadtone + Central Bank and add only Loomline Motors in this slice');
+  verify(locationSceneEnabled('weaver-park')&&locationSceneEnabled('threadtone-music-studio')&&locationSceneEnabled('central-everthread-bank')&&locationSceneEnabled('loomline-motors')&&!locationSceneEnabled('hearthline-realty'),'03 only integrated scene-backed places may bypass legacy map routing');
+  verify(locationSceneDefinition('weaver-park')?.background.endsWith('/weaver-park.png')&&locationSceneDefinition('threadtone-music-studio')?.background.endsWith('/threadtone-music-studio.png')&&locationSceneDefinition('central-everthread-bank')?.background.endsWith('/central-everthread-bank.png')&&locationSceneDefinition('loomline-motors')?.background.endsWith('/loomline-motors.png'),'04 each rollout scene must resolve its authored Astra environment rather than a generic backdrop');
   verify(LOCATION_SCENES.every(scene=>scene.canvas[0]===1024&&scene.canvas[1]===1536),'05 scene geometry must preserve the authored 1024x1536 portrait canvas');
   verify(LOCATION_SCENES.every(scene=>new Set(scene.groups.map(group=>group.id)).size===scene.groups.length),'06 semantic object ids must be unique within each location');
   verify(locationSceneDefinition('weaver-park')!.groups.flatMap(group=>group.actionIds).join('|')==='shared.park.walk|shared.park.play|date.park|wellness.walk|wellness.run|wellness.meditate','07 Weaver Park must expose only its focused social/date/wellness actions');
@@ -47,8 +50,8 @@ export function runLocationSceneRegression(){
   const pure=createNewGame({seed:'location-scene-pure'});pure.character.age=30;addFriend(pure);pure.settings.autoSave=false;
   const pureBefore=JSON.stringify(pure),pureRng=pure.rngCounter,pureId=pure.idCounter,pureRevision=pure.actionLedger?.revision??0;
   for(const actionId of Object.keys(LOCATION_SCENE_ACTIONS) as Array<keyof typeof LOCATION_SCENE_ACTIONS>)locationSceneActionAvailability(pure,actionId);
-  locationSceneCompanions(pure,'shared.park.walk');locationSceneMusicProjection(pure);
-  verify(JSON.stringify(pure)===pureBefore&&pure.rngCounter===pureRng&&pure.idCounter===pureId&&(pure.actionLedger?.revision??0)===pureRevision,'15 browsing scenes, availability, companions, and music records must be save/RNG/runtime-id/action-ledger neutral');
+  locationSceneCompanions(pure,'shared.park.walk');locationSceneMusicProjection(pure);locationSceneMotorsCatalogue();locationSceneMotorsCatalogue(true);
+  verify(JSON.stringify(pure)===pureBefore&&pure.rngCounter===pureRng&&pure.idCounter===pureId&&(pure.actionLedger?.revision??0)===pureRevision,'15 browsing scenes, availability, companions, music records, and Loomline catalogue projections must be save/RNG/runtime-id/action-ledger neutral');
 
   const child=createNewGame({seed:'location-scene-child'});child.character.age=2;
   verify(!locationSceneActionAvailability(child,'wellness.walk').available&&!locationSceneActionAvailability(child,'wellness.run').available&&!locationSceneActionAvailability(child,'wellness.meditate').available,'16 Park wellness objects must preserve the existing age gates rather than invent location shortcuts');
@@ -96,6 +99,21 @@ export function runLocationSceneRegression(){
   verify(bank.groups.flatMap(group=>group.actionIds).every(actionId=>locationSceneActionAvailability(bankChild,actionId).available)&&JSON.stringify(bankChild)===bankBefore,'43 Bank browsing, including the locked investment view, must remain inspectable and state-neutral before action-specific owner gates apply');
   const kioskProp=locationScenePropRect(bank.propAlphaBounds,portrait,bank.propPlacement.width,bank.propPlacement.maxHeight,bank.propPlacement.baseline);
   verify(kioskProp.left>=portrait.left&&kioskProp.top>=portrait.top&&kioskProp.left+kioskProp.width<=portrait.left+portrait.width+1&&kioskProp.top+kioskProp.height<=portrait.top+portrait.height+1,'44 Central Bank service-kiosk prop must remain aligned inside the shared immersive scene stage');
+
+  const motors=locationSceneDefinition('loomline-motors')!;
+  verify(motors.groups.flatMap(group=>group.actionIds).join('|')==='motors.catalog|motors.owned|motors.finance|license.driving','45 Loomline must expose only the authored vehicle-market, garage, finance, and driving-licence surfaces');
+  verify(motors.groups.map(group=>group.id).join('|')==='showroom|service|finance'&&motors.groups.every(group=>group.actionIds.every(actionId=>LOCATION_SCENE_ACTIONS[actionId].kind==='panel')),'46 Loomline object grouping must preserve Astra showroom/service/finance semantics without inventing direct asset mutations');
+  const fullCatalogue=locationSceneMotorsCatalogue(),financeCatalogue=locationSceneMotorsCatalogue(true),expectedCatalogue=[...vehicleDefinitions,...luxuryVehicleDefinitions];
+  verify(fullCatalogue.map(vehicle=>vehicle.id).join('|')===expectedCatalogue.map(vehicle=>vehicle.id).join('|'),'47 Loomline showroom must retain every authoritative vehicle type instead of maintaining a parallel catalogue');
+  verify(financeCatalogue.length===vehicleDefinitions.length&&financeCatalogue.every(vehicle=>vehicle.category==='car'||vehicle.category==='motorcycle'),'48 Loomline finance office must project only the vehicle categories already supported by existing secured financing');
+  const motorsChild=createNewGame({seed:'location-scene-motors-child'});motorsChild.character.age=15;const motorsBefore=JSON.stringify(motorsChild);
+  verify(locationSceneActionAvailability(motorsChild,'motors.catalog').available&&locationSceneActionAvailability(motorsChild,'motors.owned').available&&locationSceneActionAvailability(motorsChild,'motors.finance').available&&!locationSceneActionAvailability(motorsChild,'license.driving').available&&JSON.stringify(motorsChild)===motorsBefore,'49 Loomline browsing must remain inspectable and neutral before age-specific owner gates, while the driving test keeps its existing age-16 boundary');
+  const driver=createNewGame({seed:'location-scene-driver'});driver.character.age=16;
+  verify(locationSceneActionAvailability(driver,'license.driving').available,'50 Loomline driving licence must unlock through the existing licence action gate at age 16');
+  const licenseResult=takeLicenseTest(driver,'driving',100);
+  verify(licenseResult.success&&driver.travel.licenses.driving&&!locationSceneActionAvailability(driver,'license.driving').available&&actionUsesThisAge(driver,'license.test','driving')===1,'51 a submitted Loomline driving test must commit exactly through TravelSystem and immediately close the location gate');
+  const showroomProp=locationScenePropRect(motors.propAlphaBounds,portrait,motors.propPlacement.width,motors.propPlacement.maxHeight,motors.propPlacement.baseline);
+  verify(showroomProp.left>=portrait.left&&showroomProp.top>=portrait.top&&showroomProp.left+showroomProp.width<=portrait.left+portrait.width+1&&showroomProp.top+showroomProp.height<=portrait.top+portrait.height+1,'52 Loomline showroom-car prop must remain aligned inside the shared immersive scene stage');
 
   return checks;
 }

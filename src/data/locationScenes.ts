@@ -1,11 +1,12 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
+export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'
   |'shared.park.walk'|'shared.park.play'|'date.park'
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
-  |LocationSceneBankActionId;
+  |LocationSceneBankActionId|LocationSceneMotorsActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
 export type LocationSceneRisk='normal'|'confirm';
 export type LocationSceneRect=readonly[number,number,number,number];
@@ -46,6 +47,10 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'bank.borrowing':{id:'bank.borrowing',label:'Borrowing',description:'Personal loans and debt options.',kind:'panel',risk:'normal'},
   'bank.invest':{id:'bank.invest',label:'Investments',description:'Browse your fictional in-game market.',kind:'panel',risk:'normal'},
   'bank.history':{id:'bank.history',label:'Credit history',description:'Review your recorded credit history.',kind:'panel',risk:'normal'},
+  'motors.catalog':{id:'motors.catalog',label:'Browse vehicles',description:'Shop the established vehicle catalogue.',kind:'panel',risk:'normal'},
+  'motors.owned':{id:'motors.owned',label:'Your vehicles',description:'Review your garage, repairs, financing context, and sales.',kind:'panel',risk:'normal'},
+  'motors.finance':{id:'motors.finance',label:'Vehicle financing',description:'Compare current terms on finance-eligible vehicles.',kind:'panel',risk:'normal'},
+  'license.driving':{id:'license.driving',label:'Driving licence',description:'Take the existing driving licence skill check.',kind:'panel',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -78,6 +83,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'kiosk',label:'Banking kiosk',description:'Your money at a glance',actionIds:['bank.summary','bank.payments'],order:1,hitRect:[.27962,.58,.44077,.32]},
       {id:'teller',label:'Teller counter',description:'Accounts & borrowing',actionIds:['bank.accounts','bank.offers','bank.borrowing'],order:2,hitRect:[.10,.375,.28,.19]},
       {id:'advisor',label:'Advisor office',description:'Investing & credit history',actionIds:['bank.invest','bank.history'],order:3,hitRect:[.68,.375,.28,.19]},
+    ],
+  },
+  {
+    id:'loomline-motors',label:'Loomline Motors',tagline:'Your next set of keys.',
+    background:'./location-scenes/backgrounds/loomline-motors.png',propFile:'./location-scenes/props/showroom-car.png',canvas:[1024,1536],
+    propAlphaBounds:[0,53,1240,1161],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'showroom',label:'Showroom car',description:'Browse the vehicle market',actionIds:['motors.catalog'],order:1,hitRect:[.24367,.58,.51266,.32]},
+      {id:'service',label:'Service bay',description:'Your garage',actionIds:['motors.owned'],order:2,hitRect:[.05,.33,.36,.23]},
+      {id:'finance',label:'Finance office',description:'Purchase planning',actionIds:['motors.finance','license.driving'],order:3,hitRect:[.60,.29,.36,.29]},
     ],
   },
 ] as const;

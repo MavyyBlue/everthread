@@ -18,3 +18,4 @@
 @media(max-height:480px) and (orientation:landscape){.location-scene__object-label{display:none}.location-scene__header{height:58px}.location-scene__utility-tray{--location-scene-tray-footer-height:64px}.location-scene__footer small{display:none}}
 @media(prefers-reduced-motion:reduce){.location-scene__loading span{animation:none}.location-scene__object::after,.location-scene__utility-tray,.location-scene__tray-toggle,.location-scene__tray-toggle svg{transition:none}}
 @keyframes location-scene-shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.location-scene__motors-list{margin-top:10px}.location-scene__motors-focused .action-card{margin-top:10px}.location-scene__motors-focused .owned-card{margin-top:8px}

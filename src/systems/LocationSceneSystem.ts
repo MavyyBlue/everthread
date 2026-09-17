@@ -1,5 +1,6 @@
 import { actionGateStatus } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneRect } from '../data/locationScenes';
+import { vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { MUSIC_RELEASE_MIN_AGE } from './SpecialCareerSystem';
 import { WELLNESS_MIN_AGES } from './HealthSystem';
 import { specialCareerStartGate } from './CommitmentSystem';
@@ -24,6 +25,11 @@ export function locationSceneUtilityTrayState(collapsed:boolean,panelOpen:boolea
 
 export function locationSceneBackStep(detailOpen:boolean,groupOpen:boolean):LocationSceneBackStep{
   return detailOpen?'detail':groupOpen?'group':'map';
+}
+
+export function locationSceneMotorsCatalogue(financingOnly=false){
+  const catalogue=[...vehicleDefinitions,...luxuryVehicleDefinitions];
+  return financingOnly?catalogue.filter(vehicle=>vehicle.category==='car'||vehicle.category==='motorcycle'):catalogue;
 }
 
 export function locationSceneLabelAlignment(rect:LocationSceneRect):LocationSceneLabelAlignment{
@@ -124,6 +130,13 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
   }
   if(actionId==='music.catalog'||actionId==='music.partnership')return{available:true};
   if(actionId.startsWith('bank.'))return{available:true};
+  if(actionId==='motors.catalog'||actionId==='motors.owned'||actionId==='motors.finance')return{available:true};
+  if(actionId==='license.driving'){
+    if(state.character.age<16)return{available:false,reason:'Driving licence tests unlock at age 16.'};
+    if(state.travel.licenses.driving)return{available:false,reason:'You already hold a driving licence.'};
+    const gate=actionGateStatus(state,{policy:'license.test',target:'driving'});
+    return gate.allowed?{available:true}:{available:false,reason:gate.message};
+  }
   return{available:false,reason:'This location action is not connected.'};
 }
 
