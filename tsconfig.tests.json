@@ -11,5 +11,6 @@
     "src/data/**/*.ts",
     "src/systems/**/*.ts",
     "src/tests/**/*.ts"
-  ]
+  ],
+  "exclude": []
 }

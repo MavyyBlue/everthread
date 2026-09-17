@@ -39,6 +39,20 @@ const stageDefinitions = [
     deepOnly: false,
   },
   {
+    id: 'typecheck-app',
+    label: 'App TypeScript',
+    npmArgs: ['run', 'typecheck:app'],
+    inputs: ['package.json', 'package-lock.json', 'tsconfig.app.json'],
+    deepOnly: false,
+  },
+  {
+    id: 'typecheck-node',
+    label: 'Node / Vite Config TypeScript',
+    npmArgs: ['run', 'typecheck:node'],
+    inputs: ['package.json', 'package-lock.json', 'tsconfig.node.json', 'vite.config.ts'],
+    deepOnly: false,
+  },
+  {
     id: 'regressions',
     label: 'Complete Regression Wall',
     npmArgs: ['test'],
