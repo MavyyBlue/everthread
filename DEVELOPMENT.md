@@ -3,9 +3,9 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #197 / `3b3b9e9d13cf882dcd20874573db895a322434c9`
+Newest certified expanded source: Run #199 / `7c8d0f2fc9da1a4461877caf1ae9a2b4b1660c28`
 Certified gameplay baseline: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
-Certified QA infrastructure baseline: Run #197 / `3b3b9e9d13cf882dcd20874573db895a322434c9`
+Certified QA infrastructure baseline: Run #199 / `7c8d0f2fc9da1a4461877caf1ae9a2b4b1660c28`
 
 ## Product direction
 
@@ -27,7 +27,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified QA infrastructure — Runs #196–#197 — QA-2 TypeScript graph/build cleanup
+## Newest certified QA infrastructure — Run #199 — QA-3 regression registry/timing
+
+QA-3 turns the previously opaque serial regression wall into measured evidence without changing gameplay or test intent. Test bodies/assertions and specialized-suite order remain preserved; no simulation count, save/migration gate, determinism check, or coverage requirement was removed.
+
+- Upload wrapper `5bcd688058dbe13fbd405d95b4e942e29da59178`; expanded certified source `7c8d0f2fc9da1a4461877caf1ae9a2b4b1660c28`; Actions Run `35227365026`, job `105222262261`. Persistent diff from synchronized Run #198 `4232ef0e382f4f05bbd5e8a025aff9489dbe1e9c` is exactly **5 QA-harness files**: `package.json`, `scripts/run-regression-wall.mjs`, `src/tests/regressionRegistry.ts`, `src/tests/regressionSuite.ts`, and `src/tests/runRegression.ts`.
+- The registry reports **78 registered suites = the existing core suite + 77 specialized suites**. All 78 passed under the historical serial order. The top-level wall remains five serial stages and passed **5/5**.
+- Certified CI timing: core **82/82 in 19,832 ms**; existing 25-life multi-life smoke **16,264 ms**; registered regressions **34,411 ms**; Integrated Long-Life **3,577 ms**; complete regression wall **36,518 ms**.
+- Canonical preflight passed **6/6 in 62,594 ms**: Engine TS **4,133 ms** → Test TS **6,565 ms** → App TS **9,306 ms** → Node/Vite TS **1,015 ms** → regression wall **36,672 ms** → production build **4,699 ms**. Production remains **224 modules**.
+- Top-level wall timings: registered regressions **35,650 ms**, New Life layout **39 ms**, activity minigames **221 ms**, feedback reporting **292 ms**, central-inbox feedback **316 ms**.
+- Certification: source SHA `26602cf008d3fb963f372ab99e56101e359bffcf8103873c59e2532b6f8994da`; dependencies `00bd3ea3ae32434f354ed9eb38f2ddda9fb9e52ed50e8e6332eef1bed881885c`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10499028734`; Pages artifact `10499608076`; deployment Green.
+- **Next infrastructure gate: QA-4 measured process isolation/sharding.** Begin with at most two independent processes and isolate the demonstrated heavy work first. Do not reduce 25-life smoke parameters or Integrated Long-Life coverage, and do not share mutable `GameState`/browser globals across concurrent workers.
+
+## Prior certified QA infrastructure — Runs #196–#197 — QA-2 TypeScript graph/build cleanup
 
 QA-2 is certified in two preservation-first checkpoints. QA-2A proved the new compiler responsibility split while retaining the old build compiler as a backstop; QA-2B removed only the now-proven redundant build-time compiler pass. Gameplay, UI, saves, content, regression bodies, assets, workflow YAML, dependencies, and save schema remain unchanged. Run #192 remains the newest gameplay implementation.
 
@@ -36,7 +48,7 @@ QA-2 is certified in two preservation-first checkpoints. QA-2A proved the new co
 - Canonical Run #197 preflight remains fail-fast and now requires **6/6** standard stages: Engine TypeScript **3,790 ms** → Test TypeScript **5,593 ms** → App TypeScript **7,930 ms** → Node/Vite Config TypeScript **908 ms** → complete regression wall **31,295 ms** → production build **4,233 ms**; total **53,857 ms**. The full established regression wall remains Green, including base **82/82**, Integrated Long-Life **105/105**, Location Scene **44/44**, finance/debt, generations/estates, Threadspace, Character Visual, Yuki Threadroom, minigames, feedback, saves/migrations, and determinism.
 - The production-build stage fell from **10,342 ms in Run #196 to 4,233 ms in Run #197**: **6,109 ms / ~59% less build-stage time**. Overall preflight wall time is not claimed to have improved in that particular sample because regression/typecheck stages varied upward between runners. Vite produced the same **224 modules** and wrote build info for the exact expanded commit.
 - Run #197 certification: source SHA `28cae67c9e1bf010400f0e1fd1bae594919ee98384cb82cca4678acf5cebc107`; dependencies `f0e5908669978df5eacafffa5d437e229ce08c57b32fd163f228f7ea9779e8d8`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10482745723` (`dafa90e6eb98cf154d85aa9298a5aa593f87bae73a5ef1e9da7c8c4d448da511`); Pages artifact `10482835166` (`94f98fad7b77b485223ace64b8cded7686036a2d30cfd5aa18c08428104aad3e`); deployment Green.
-- **Next infrastructure gate: QA-3 regression registry/timing.** Preserve every test body and serial behavior first; add canonical suite metadata/timing so slow/failing areas are visible before any QA-4 process sharding.
+- QA-3 subsequently certified the registry/timing layer in Run #199; QA-2 remains the compiler-graph/build foundation beneath it.
 
 ## Prior certified QA infrastructure — Run #194 — QA-1 bounded preflight
 
