@@ -9,11 +9,14 @@ import { specialCareerLifecycleView, specialCareerRetirementGate } from './Speci
 import { musicCatalog, musicPartnershipOffer } from './MusicCareerCycleSystem';
 import { romanticDatePlanFor } from './RomanticDateSystem';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
-import { playerResidenceProjection } from './ResidentialLifeSystem';
+import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from './ResidentialLifeSystem';
 import type { GameState } from '../types/game';
 
 export interface LocationSceneAvailability{available:boolean;reason?:string}
 export interface LocationSceneCompanionOption{npcId:string;name:string;detail:string}
+export interface LocationSceneResidentialConnection{npcId:string;name:string;relationship:string;residenceLabel:string;detail:string;householdSize:number}
+export interface LocationSceneResidentialPlanOption{npcId:string;name:string;planId:string;label:string;description:string;residenceLabel:string;activityId:string;allowed:boolean;reason?:string}
+export interface LocationSceneCompanionPlan{kind:'shared'|'date';placeId:string;activityId:string}
 export interface LocationSceneStage{left:number;top:number;width:number;height:number}
 
 export type LocationSceneBackStep='detail'|'group'|'map';
@@ -35,6 +38,43 @@ export function locationSceneMotorsCatalogue(financingOnly=false){
 
 export function locationSceneHomeCatalogue(){return propertyDefinitions;}
 export function locationSceneResidenceProjection(state:GameState){return playerResidenceProjection(state);}
+
+const companionPlans:Partial<Record<LocationSceneActionId,LocationSceneCompanionPlan>>={
+  'shared.park.walk':{kind:'shared',placeId:'weaver-park',activityId:'park_walk'},
+  'shared.park.play':{kind:'shared',placeId:'weaver-park',activityId:'park_play'},
+  'date.park':{kind:'date',placeId:'weaver-park',activityId:'park_walk'},
+  'date.home':{kind:'date',placeId:'threadwell-residential',activityId:'cook_together'},
+};
+export function locationSceneCompanionPlan(actionId:LocationSceneActionId){return companionPlans[actionId];}
+
+export function locationSceneResidentialConnections(state:GameState):LocationSceneResidentialConnection[]{
+  const connections:LocationSceneResidentialConnection[]=[];
+  for(const relationship of state.relationships){
+    const npc=state.npcs[relationship.npcId];if(!npc?.alive||relationship.estranged)continue;
+    const household=npcHouseholdResidenceProjection(state,npc.id);if(household?.residence.placeId!=='threadwell-residential'||!household.residence.visitable)continue;
+    connections.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,relationship:relationship.type.replaceAll('_',' '),residenceLabel:household.residence.label,detail:household.residence.detail,householdSize:household.memberIds.length});
+  }
+  return connections.sort((a,b)=>a.name.localeCompare(b.name)||a.npcId.localeCompare(b.npcId));
+}
+
+function residentialActivityForAction(actionId:LocationSceneActionId){
+  if(actionId==='shared.home.hangout')return'home_hangout';
+  if(actionId==='shared.home.cook')return'cook_together';
+  if(actionId==='shared.home.sleepover')return'sleepover';
+  return undefined;
+}
+
+export function locationSceneResidentialPlans(state:GameState,actionId:LocationSceneActionId='home.visits'):LocationSceneResidentialPlanOption[]{
+  const activityId=residentialActivityForAction(actionId);const options:LocationSceneResidentialPlanOption[]=[];
+  for(const relationship of state.relationships){
+    const npc=state.npcs[relationship.npcId];if(!npc?.alive||relationship.estranged)continue;
+    for(const plan of projectResidentialPlans(state,npc.id)){
+      if(activityId&&plan.activityId!==activityId)continue;
+      options.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,planId:plan.id,label:plan.label,description:plan.description,residenceLabel:plan.residenceLabel,activityId:plan.activityId,allowed:plan.allowed,...(!plan.allowed&&plan.reason?{reason:plan.reason}:{})});
+    }
+  }
+  return options.sort((a,b)=>a.name.localeCompare(b.name)||a.label.localeCompare(b.label)||a.planId.localeCompare(b.planId));
+}
 
 export function locationSceneLabelAlignment(rect:LocationSceneRect):LocationSceneLabelAlignment{
   const center=rect[0]+rect[2]/2;
@@ -78,16 +118,16 @@ export function locationScenePropRect(bounds:LocationSceneRect,stage:LocationSce
 }
 
 export function locationSceneCompanions(state:GameState,actionId:LocationSceneActionId):LocationSceneCompanionOption[]{
+  const plan=locationSceneCompanionPlan(actionId);if(!plan)return[];
   const candidates:LocationSceneCompanionOption[]=[];
   for(const relationship of state.relationships){
     const npc=state.npcs[relationship.npcId];if(!npc?.alive)continue;
-    if(actionId==='shared.park.walk'||actionId==='shared.park.play'){
-      const activityId=actionId==='shared.park.walk'?'park_walk':'park_play';
-      const availability=sharedExperienceAvailability(state,npc.id,'weaver-park',activityId);
+    if(plan.kind==='shared'){
+      const availability=sharedExperienceAvailability(state,npc.id,plan.placeId,plan.activityId);
       if(availability.allowed)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:`${relationship.type.replaceAll('_',' ')} · relationship ${Math.round(relationship.score)}`});
-    }else if(actionId==='date.park'){
-      const plan=romanticDatePlanFor(state,npc.id,'weaver-park','park_walk');
-      if(plan?.allowed)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:'Accepted date plan · Weaver Park'});
+    }else{
+      const date=romanticDatePlanFor(state,npc.id,plan.placeId,plan.activityId);
+      if(date?.allowed)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:`Accepted date plan · ${date.placeLabel}`});
     }
   }
   return candidates.sort((a,b)=>a.name.localeCompare(b.name)||a.npcId.localeCompare(b.npcId));
@@ -102,9 +142,13 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     const gate=actionGateStatus(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:wellness}]);
     return gate.allowed?{available:true}:{available:false,reason:gate.message};
   }
-  if(actionId==='shared.park.walk'||actionId==='shared.park.play'||actionId==='date.park'){
+  if(locationSceneCompanionPlan(actionId)){
     const companions=locationSceneCompanions(state,actionId);
-    return companions.length?{available:true}:{available:false,reason:actionId==='date.park'?'No accepted eligible park date is waiting right now.':'No eligible person is currently available for that plan.'};
+    return companions.length?{available:true}:{available:false,reason:actionId.startsWith('date.')?'No accepted eligible date is waiting for this location right now.':'No eligible person is currently available for that plan.'};
+  }
+  if(actionId==='home.neighbors')return{available:true};
+  if(actionId==='home.visits'||actionId==='shared.home.hangout'||actionId==='shared.home.cook'||actionId==='shared.home.sleepover'){
+    const plans=locationSceneResidentialPlans(state,actionId);return plans.some(plan=>plan.allowed)?{available:true}:{available:false,reason:'No eligible residential plan is available for that activity right now.'};
   }
   if(actionId==='music.practice'){
     if(state.character.age<5)return{available:false,reason:'Music practice becomes available in childhood.'};

@@ -1,11 +1,13 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
 export type LocationSceneRealtyActionId='homes.catalog'|'homes.owned'|'homes.mortgage'|'homes.residence';
+export type LocationSceneResidentialActionId='home.neighbors'|'home.visits'|'shared.home.hangout'|'shared.home.cook'|'shared.home.sleepover';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'
-  |'shared.park.walk'|'shared.park.play'|'date.park'
+  |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
+  |LocationSceneResidentialActionId
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
@@ -56,6 +58,12 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'homes.owned':{id:'homes.owned',label:'Your homes & rentals',description:'Manage your owned homes, rentals, renovations, financing context, and sales.',kind:'panel',risk:'normal'},
   'homes.mortgage':{id:'homes.mortgage',label:'Mortgage options',description:'Select a home to compare the existing mortgage offers at purchase.',kind:'panel',risk:'normal'},
   'homes.residence':{id:'homes.residence',label:'Current residence',description:'Review the residence projected from your current save.',kind:'panel',risk:'normal'},
+  'home.neighbors':{id:'home.neighbors',label:'People connected here',description:'See people you already know whose current household projects into Threadwell.',kind:'panel',risk:'normal'},
+  'home.visits':{id:'home.visits',label:'Home visits',description:'Choose an existing relationship and a residential plan supported by the real household state.',kind:'panel',risk:'normal'},
+  'shared.home.hangout':{id:'shared.home.hangout',label:'Hang out at home',description:'Spend ordinary time together at one of your actual available homes.',kind:'panel',risk:'normal'},
+  'shared.home.cook':{id:'shared.home.cook',label:'Cook together',description:'Cook together through the existing residential-life plan system.',kind:'panel',risk:'normal'},
+  'shared.home.sleepover':{id:'shared.home.sleepover',label:'Have a sleepover',description:'Choose an age-appropriate sleepover plan tied to a real available residence.',kind:'panel',risk:'normal'},
+  'date.home':{id:'date.home',label:'Cook together date',description:'Choose an eligible person with an accepted home-date plan.',kind:'companion',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -108,6 +116,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'model',label:'Home display',description:'Find your next home',actionIds:['homes.catalog'],order:1,hitRect:[.26971,.58,.46059,.32]},
       {id:'listings',label:'Property wall',description:'Financing & current residence',actionIds:['homes.mortgage','homes.residence'],order:2,hitRect:[.04,.245,.28,.19]},
       {id:'agent',label:'Property office',description:'The homes you own',actionIds:['homes.owned'],order:3,hitRect:[.68,.375,.28,.19]},
+    ],
+  },
+  {
+    id:'threadwell-residential',label:'Threadwell Residential District',tagline:'The familiar part of town.',
+    background:'./location-scenes/backgrounds/threadwell-residential.png',propFile:'./location-scenes/props/neighborhood-board.png',canvas:[1024,1536],
+    propAlphaBounds:[0,7,1244,1247],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'board',label:'Neighborhood board',description:'Your home & connections',actionIds:['homes.residence','home.neighbors'],order:1,hitRect:[.26058,.58,.47885,.32]},
+      {id:'porch',label:'Home entrance',description:'Household time',actionIds:['home.visits','shared.home.hangout','shared.home.cook','shared.home.sleepover'],order:2,hitRect:[.01,.355,.28,.19]},
+      {id:'courtyard',label:'Courtyard',description:'Make time together',actionIds:['date.home'],order:3,hitRect:[.65,.385,.28,.19]},
     ],
   },
 ] as const;

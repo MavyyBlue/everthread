@@ -38,7 +38,7 @@ function HomeCatalogue({state,mortgageFirst,onResult}:{state:GameState;mortgageF
   </>;
 }
 
-function CurrentResidence({state}:{state:GameState}){
+export function ResidenceProjectionCard({state,contextLabel}:{state:GameState;contextLabel:string}){
   const residence=locationSceneResidenceProjection(state);
   const property=residence.propertyId?state.assets.properties.find(item=>item.id===residence.propertyId):undefined;
   return <section className="action-card">
@@ -51,7 +51,7 @@ function CurrentResidence({state}:{state:GameState}){
     </div>
     {residence.familyLandmark&&<p className="muted">This residence is preserved as an inherited family landmark by the existing residential-life system.</p>}
     {!residence.visitable&&residence.reason&&<p className="warning-card">{residence.reason}</p>}
-    <p className="muted">Hearthline only reads this projection. It does not create a second residence or lease record.</p>
+    <p className="muted">{contextLabel} only reads this projection. It does not create a second residence or lease record.</p>
   </section>;
 }
 
@@ -81,7 +81,7 @@ function OwnedHomes({state,onResult}:{state:GameState;onResult:(result:EngineRes
 export function RealtyLocationPanel({state,actionId,onResult}:{state:GameState;actionId:LocationSceneRealtyActionId;onResult:(result:EngineResult)=>void}){
   if(actionId==='homes.catalog')return <HomeCatalogue state={state} mortgageFirst={false} onResult={onResult}/>;
   if(actionId==='homes.mortgage')return <HomeCatalogue state={state} mortgageFirst onResult={onResult}/>;
-  if(actionId==='homes.residence')return <CurrentResidence state={state}/>;
+  if(actionId==='homes.residence')return <ResidenceProjectionCard state={state} contextLabel="Hearthline"/>;
   if(actionId==='homes.owned')return <OwnedHomes state={state} onResult={onResult}/>;
   return <p className="empty-card"><EverthreadIcon name="key" size={18}/> This Hearthline service is unavailable.</p>;
 }
