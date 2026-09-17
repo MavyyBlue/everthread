@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build && node scripts/write-build-info.mjs dist/build-info.json",
     "preview": "vite preview",
-    "test": "node scripts/run-regression-wall.mjs",
+    "test": "node scripts/run-regression-wall.mjs --workers=2",
     "test:watch": "vitest",
     "sim": "tsx src/tests/runSimulation.ts 1000 bulk",
     "typecheck": "tsc --noEmit",
@@ -30,7 +30,8 @@
     "preflight:regressions": "node scripts/everthread-preflight.mjs --stage regressions",
     "preflight:build": "node scripts/everthread-preflight.mjs --stage production-build",
     "preflight:content": "node scripts/everthread-preflight.mjs --stage content-audit",
-    "preflight:sim": "node scripts/everthread-preflight.mjs --stage simulation-1k"
+    "preflight:sim": "node scripts/everthread-preflight.mjs --stage simulation-1k",
+    "test:serial": "node scripts/run-regression-wall.mjs --workers=1"
   },
   "dependencies": {
     "react": "^19.1.1",

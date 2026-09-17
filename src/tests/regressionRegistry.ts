@@ -76,7 +76,8 @@ import { runProgressiveDisclosureRegression } from './progressiveDisclosureRegre
 import { runYukiThreadroomArtRegression } from './yukiThreadroomArtRegression';
 import { runLocationSceneRegression } from './locationSceneRegression';
 
-export type RegressionExecutionClass = 'standard' | 'heavy';
+import type { RegressionExecutionClass } from './regressionMetadata';
+
 export interface RegressionSuiteDefinition {
   id:string;
   label:string;

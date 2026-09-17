@@ -35,10 +35,11 @@ import { featuredLife } from '../systems/LifeSaveSystem';
 import { attendSchoolGroup, cheatAtSchool, currentSchoolWorld, joinSchoolGroup, migrateLegacySchoolWorlds, schoolAdmissionsFactors } from '../systems/SchoolWorldSystem';
 import { schoolProfileFor } from '../data/schools';
 import { ensureNpcLife, processNpcLives, relocateNpcHousehold } from '../systems/NpcLifeSystem';
+import type { RegressionExecutionClass } from './regressionMetadata';
 
-export interface RegressionResult {name:string;passed:boolean;durationMs:number;error?:string;}
+export interface RegressionResult {index:number;name:string;executionClass:RegressionExecutionClass;passed:boolean;durationMs:number;error?:string;}
 export interface RegressionReport {passed:number;failed:number;durationMs:number;results:RegressionResult[];}
-export interface RegressionCase {name:string;run:()=>void;}
+export interface RegressionCase {name:string;executionClass?:RegressionExecutionClass;run:()=>void;}
 
 function fail(message:string):never{throw new Error(message);}
 function assert(condition:unknown,message:string):asserts condition{if(!condition)fail(message);}
@@ -763,6 +764,7 @@ export const regressionCases:RegressionCase[]=[
   },
   {
     name:'multi-life integration smoke run completes without state anomalies',
+    executionClass:'heavy',
     run:()=>{
       const report=runSimulation({lives:25,seedPrefix:'regression-sim',maxAge:125});equal(report.completedLives,25,'simulation did not complete requested lives');equal(report.anomalyCount,0,`simulation found ${report.anomalyCount} anomalies`);assert(report.averageLifespan>55&&report.averageLifespan<105,`implausible smoke-run lifespan ${report.averageLifespan}`);assert(report.forcedTerminalDeaths<=1,'too many lives hit terminal age cap');
     }
@@ -772,10 +774,13 @@ export const regressionCases:RegressionCase[]=[
 export function runRegressionSuite(cases=regressionCases):RegressionReport{
   const startedAt=Date.now();
   const results:RegressionResult[]=[];
+  const originalIndexes=new Map(regressionCases.map((test,index)=>[test,index+1]));
   for(const test of cases){
     const caseStartedAt=Date.now();
-    try{test.run();results.push({name:test.name,passed:true,durationMs:Date.now()-caseStartedAt});}
-    catch(error){results.push({name:test.name,passed:false,durationMs:Date.now()-caseStartedAt,error:error instanceof Error?error.message:String(error)});}
+    const index=originalIndexes.get(test)??0;
+    const executionClass=test.executionClass??'standard';
+    try{test.run();results.push({index,name:test.name,executionClass,passed:true,durationMs:Date.now()-caseStartedAt});}
+    catch(error){results.push({index,name:test.name,executionClass,passed:false,durationMs:Date.now()-caseStartedAt,error:error instanceof Error?error.message:String(error)});}
   }
   return {passed:results.filter(r=>r.passed).length,failed:results.filter(r=>!r.passed).length,durationMs:Date.now()-startedAt,results};
 }
@@ -787,11 +792,10 @@ export function formatRegressionReport(report:RegressionReport){
 }
 
 export function formatRegressionTimingReport(report:RegressionReport){
-  const indexed=report.results.map((result,index)=>({result,index:index+1}));
-  indexed.sort((a,b)=>b.result.durationMs-a.result.durationMs||a.index-b.index);
+  const ordered=[...report.results].sort((a,b)=>b.durationMs-a.durationMs||a.index-b.index);
   const lines=[`Everthread base-case timing — ${report.results.length} cases in ${report.durationMs} ms`];
-  for(const {result,index} of indexed){
-    lines.push(`CASE_TIMING ${String(index).padStart(3,'0')} ${result.durationMs}ms ${result.passed?'PASS':'FAIL'} — ${result.name}`);
+  for(const result of ordered){
+    lines.push(`CASE_TIMING ${String(result.index).padStart(3,'0')} ${result.durationMs}ms ${result.passed?'PASS':'FAIL'} class=${result.executionClass} — ${result.name}`);
   }
   return lines.join('\n');
 }
