@@ -1,3 +1,20 @@
+## QA-1 bounded preflight + evidence hardening — CI Green Run #194 — 2026-09-17
+
+### Added / changed
+
+- Added **stage-selectable canonical preflight execution** without changing the mandatory standard certification wall. `scripts/everthread-preflight.mjs` can now run bounded development stages for Engine TypeScript, Test TypeScript, the complete regression wall, production build, content audit, and the 1,000-life simulation; `npm run preflight` remains the aggregate standard certification command and `preflight:deep` remains the aggregate deep command.
+- Added package scripts `preflight:engine`, `preflight:tests-ts`, `preflight:regressions`, `preflight:build`, `preflight:content`, and `preflight:sim`. A stage-only Green is explicitly labeled **development evidence, not canonical certification**. No regression, assertion, simulation count, save gate, TypeScript strictness rule, or production-build requirement was removed.
+- Expanded `.everthread/preflight-report.json` evidence with exact source commit, clean/dirty working-tree state, a status fingerprint, cache-reusability flag, selected-stage identity, per-stage start/finish timestamps, duration/exit status, and SHA-256 fingerprints for the package/lock/config inputs relevant to each stage. Dirty-tree stage evidence is marked diagnostic/non-reusable rather than silently treated as certified proof.
+- This slice changes only QA orchestration (`package.json` + `scripts/everthread-preflight.mjs`). Gameplay, UI, saves, content, test bodies, workflow YAML, assets, and save schema remain unchanged. Newest gameplay implementation remains Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`; Run #194 becomes the newest certified repository/QA baseline.
+
+### Certification
+
+- GitHub Actions Run #194 (`35181808022`, job `105075377955`) certified expanded source `fb9cc4fb7c271cb2b37188a11f75663535371767` from upload wrapper `c0bb0c55080028e6354ae41a52e00c2626365b8e`. Net persistent diff from synchronized Run #193 `226c6390be08a40bde0de6964152f2c8d4cdc61f` is exactly **2 intended infrastructure files**: `package.json` and `scripts/everthread-preflight.mjs`; the workflow import also removes the transient `everthread-source.zip`.
+- Canonical preflight passed **4/4** on a clean working tree in **40,472 ms**: Engine TypeScript **2,615 ms**, Test TypeScript **3,978 ms**, complete regression wall **23,274 ms**, production build **10,597 ms**. The regression wall retains base **82/82**, Integrated Long-Life **105/105**, Location Scene **44/44**, Map **46/46**, institution routing **42/42**, Credit & Banking **75/75**, Payment & Asset Management **81/81**, Music **76/76**, Secret Yuki **36/36**, Character Visual **76/76**, New Life **8/8**, minigames **19/19**, feedback **20/20 + 23/23**, and the rest of the established wall.
+- Production remains **224 modules**; Vite itself built in about **3.02 s** inside the **10.597 s** production-build stage. Existing >700 kB chunk warnings remain nonblocking and unchanged in meaning.
+- Certified source SHA-256 `63b21ff3eb361944f0b9da92a2b0ce34818535f00a8b959191835861170f9f18`; dependency SHA-256 `d17c900765a62d000df1307fffb9173f130472f474af16b92693ec814c54857c`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10480573406` (`86ba8c0a400f3eb00747ce0582847d7dcf9d49b93d35b99e0f335a0cf8a241cd`); Pages artifact `10479909888` (`87cebd9b071db6cc7e1fcd557d4ed4a32070299bccecf3641c075b48dd1ebaca`); deployment reported success.
+- Next QA-infrastructure slice is **QA-2: production TypeScript graph cleanup**. It must preserve Engine/Test/App type safety while proving that tests are not redundantly rooted by the production app graph; do not remove the existing compiler/build path until equivalence is demonstrated under the current certified wall.
+
 ## Central Everthread Bank dedicated location scene — CI Green Run #192 — 2026-09-17
 
 ### Added / changed

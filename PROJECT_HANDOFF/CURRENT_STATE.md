@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #192** (`35178859400`) on expanded source **`1f5c8d598b6f277f26ffda5d7683d7474141200e`**, save schema **17**. Run #192 widens the certified dedicated location-scene rollout from Weaver Park + Threadtone Music Studio to **Central Everthread Bank** while preserving the existing Town Map, finance/credit/investment owners, action economy, and all save/simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this location-scene rollout is post-closeout presentation/navigation work, not Phase 11.**
+The newest certified expanded **repository/source** is **GitHub Actions Run #194** (`35181808022`) on expanded source **`fb9cc4fb7c271cb2b37188a11f75663535371767`**, save schema **17**. Run #194 is **QA infrastructure only**: it adds bounded/stage-selectable preflight commands plus stronger source/timing/input evidence and changes no gameplay, UI, saves, content, tests, or assets. The newest certified **gameplay implementation remains Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`**, which adds Central Everthread Bank as the third dedicated location scene. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; QA-1 and the location-scene rollout are post-closeout work, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,9 +16,9 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #192**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**.
+- Feedback Inbox last verified **5 total / 0 unresolved by triage**; durable review-state still points to gameplay source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**. QA-1 changes no player behavior, and this doc sync does not invent a newer feedback checkpoint.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Current active player-facing direction is the dedicated **location-scene rollout**. Run #192 certifies **Central Everthread Bank** as the third scene-backed map place on top of the Run #187/#189/#190 Weaver Park + Threadtone foundation. The next gate is direct player-facing review of the Bank scene and focused finance surfaces; only after that approval should one additional Astra location be selected and integrated. The remaining Astra assets are design input, not shipped/certified content. Character Visual remains a separate approved direction with Runs #170–#185 preserved, and additional Yuki age-stage art can still plug into that existing contract later. No Phase 11 label is implied.
+- Current immediate engineering direction is the **QA infrastructure optimization sequence**. QA-1 is certified; QA-2 is next and will clean the production TypeScript graph while preserving Engine/Test/App type safety. The approved player-facing location-scene direction remains intact underneath: Run #192 certifies Central Everthread Bank as location #3, and the next player-facing gate remains direct Bank review before any location #4. No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -28,6 +28,15 @@ Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
+
+## Newest certified repository/QA source — Run #194 — QA-1 bounded preflight
+
+- Upload wrapper `c0bb0c55080028e6354ae41a52e00c2626365b8e`; expanded certified source `fb9cc4fb7c271cb2b37188a11f75663535371767`; Actions Run ID `35181808022`; job `105075377955`. Net persistent diff from synchronized Run #193 `226c6390be08a40bde0de6964152f2c8d4cdc61f` is exactly **2 infrastructure files**: `package.json` and `scripts/everthread-preflight.mjs`.
+- Canonical `npm run preflight` remains unchanged in authority and still requires **4/4** standard gates. New bounded commands let development run one gate at a time; stage-only Green explicitly does **not** certify a candidate.
+- Evidence now records exact commit, working-tree dirty/clean state + fingerprint, cache-reusability flag, selected-stage identity, per-stage timestamps/durations/exit codes, and SHA-256 fingerprints for relevant package/lock/config inputs. Run #194 certified from a clean tree. Resume/caching is not implemented yet.
+- Canonical Run #194 preflight: **40,472 ms** total — Engine TypeScript **2,615 ms**, Test TypeScript **3,978 ms**, complete regression wall **23,274 ms**, production build **10,597 ms**. All established regression coverage remains present; Vite itself reports ~**3.02 s** inside the build stage.
+- Production remains **224 modules**. Certified source SHA `63b21ff3eb361944f0b9da92a2b0ce34818535f00a8b959191835861170f9f18`; dependency SHA `d17c900765a62d000df1307fffb9173f130472f474af16b92693ec814c54857c`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10480573406` (`86ba8c0a400f3eb00747ce0582847d7dcf9d49b93d35b99e0f335a0cf8a241cd`); Pages artifact `10479909888` (`87cebd9b071db6cc7e1fcd557d4ed4a32070299bccecf3641c075b48dd1ebaca`); deployment succeeded.
+- **Next gate: QA-2 production TypeScript graph cleanup.** Preserve engine isolation and dedicated test checking, add/confirm explicit app checking, stop app compilation from redundantly rooting tests, prove diagnostic/CI equivalence, then remove only compiler work proven redundant.
 
 ## Newest certified gameplay/source — Run #192 — Central Everthread Bank dedicated scene
 

@@ -3,8 +3,9 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
+Newest certified expanded source: Run #194 / `fb9cc4fb7c271cb2b37188a11f75663535371767`
 Certified gameplay baseline: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
+Certified QA infrastructure baseline: Run #194 / `fb9cc4fb7c271cb2b37188a11f75663535371767`
 
 ## Product direction
 
@@ -25,6 +26,18 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
+
+## Newest certified QA infrastructure — Run #194 — QA-1 bounded preflight
+
+Run #194 changes QA orchestration only and becomes the newest certified repository baseline while leaving Run #192 as the newest gameplay implementation.
+
+- Upload wrapper `c0bb0c55080028e6354ae41a52e00c2626365b8e`; expanded certified source `fb9cc4fb7c271cb2b37188a11f75663535371767`; Actions Run `35181808022`, job `105075377955`. Persistent diff from synchronized Run #193 `226c6390be08a40bde0de6964152f2c8d4cdc61f` is exactly `package.json` + `scripts/everthread-preflight.mjs`.
+- Standard canonical certification is still `npm run preflight`: Engine TypeScript → Test TypeScript → complete regression wall → production build. No required gate, assertion, simulation parameter, save check, or TypeScript strictness rule was removed.
+- Bounded development commands are now available: `preflight:engine`, `preflight:tests-ts`, `preflight:regressions`, `preflight:build`, `preflight:content`, and `preflight:sim`. Stage-only Green is explicitly non-certifying; GitHub Actions remains final authority.
+- Preflight reports now bind evidence to exact commit/working-tree state and record selected stage, timestamps, duration, exit status, and relevant package/lock/config SHA-256 inputs. Clean Run #194 evidence reports `cacheReusable: true`; dirty-tree stage evidence is diagnostic only.
+- Run #194 canonical preflight: **4/4 Green in 40,472 ms** — Engine TS **2,615 ms**, Test TS **3,978 ms**, regressions **23,274 ms**, production build **10,597 ms**. Vite itself reports about **3.02 s**, confirming the next optimization target is repeated TypeScript/build graph work rather than Vite.
+- Certification: source SHA `63b21ff3eb361944f0b9da92a2b0ce34818535f00a8b959191835861170f9f18`; dependencies `d17c900765a62d000df1307fffb9173f130472f474af16b92693ec814c54857c`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10480573406`; Pages artifact `10479909888`; deployment Green.
+- **Next infrastructure gate: QA-2.** Add an explicit production-app TypeScript responsibility, stop the production app project from redundantly rooting `src/tests`, prove old/new compiler coverage equivalence under the certified wall, and only then consider separating bundle-only Vite work from redundant TypeScript build work.
 
 ## Newest certified location-scene slice — Run #192 — Central Everthread Bank
 
