@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from 'react';
 import { BottomSheet } from '../components/BottomSheet';
 import { TOWN_DISTRICTS, TOWN_MAP_HEIGHT, TOWN_MAP_WIDTH, TOWN_PLACE_CATEGORIES, TOWN_PLACES, type TownPlaceCategory } from '../data/townPlaces';
 import {
@@ -14,14 +14,16 @@ import {
   townMapWorldBounds,
   type TownMapCamera,
 } from '../systems/TownMapSystem';
-import type { GameState } from '../types/game';
+import type { EngineResult, GameState } from '../types/game';
 import townMapArtwork from '../assets/everthread-town-map.png';
 import { EverthreadIcon } from '../components/EverthreadIcon';
+import { LocationScene } from '../components/LocationScene';
+import { locationSceneEnabled, type LocationScenePlaceId } from '../data/locationScenes';
 import { townPlaceIconName } from '../core/everthreadIcons';
 import './TownMapScreen.css';
 
 type PointerPoint={x:number;y:number};
-export default function TownMapScreen({state,onNavigate,initialSelectedId}:{state:GameState;onNavigate:(placeId:string,serviceId:string)=>void;initialSelectedId?:string}){
+export default function TownMapScreen({state,onNavigate,onResult,initialSelectedId}:{state:GameState;onNavigate:(placeId:string,serviceId:string)=>void;onResult:(result:EngineResult)=>void;initialSelectedId?:string}){
   const viewportRef=useRef<HTMLDivElement|null>(null);
   const pointersRef=useRef(new Map<number,PointerPoint>());
   const gestureRef=useRef<{lastSingle?:PointerPoint;distance?:number;midpoint?:PointerPoint}>({});
@@ -33,6 +35,9 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
   const[query,setQuery]=useState('');
   const[categories,setCategories]=useState<TownPlaceCategory[]>(TOWN_PLACE_CATEGORIES.map(item=>item.id));
   const[selectedId,setSelectedId]=useState<string|undefined>(initialSelectedId);
+  const[activeSceneId,setActiveSceneId]=useState<LocationScenePlaceId>();
+  const[sceneSelectedId,setSceneSelectedId]=useState<LocationScenePlaceId>();
+  const sceneInvokerRef=useRef<HTMLButtonElement|null>(null);
 
   const projection=useMemo(()=>buildTownMapProjection(state,{query,categories}),[state,query,categories]);
   const livingByPlace=useMemo(()=>new Map(projection.living.places.map(item=>[item.placeId,item] as const)),[projection.living.places]);
@@ -54,8 +59,8 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
   const renderedPlaces=useMemo(()=>{
     const inBounds=townMapPlacesInBounds(projection.places,worldBounds);
     if(query.trim())return inBounds;
-    return inBounds.filter(place=>place.id===selectedId||townMapMarkerVisible(place,camera.scale));
-  },[projection.places,worldBounds,query,selectedId,camera.scale]);
+    return inBounds.filter(place=>place.id===selectedId||place.id===sceneSelectedId||townMapMarkerVisible(place,camera.scale));
+  },[projection.places,worldBounds,query,selectedId,sceneSelectedId,camera.scale]);
 
   const applyCamera=(next:TownMapCamera)=>setCamera(constrainTownMapCamera(next,viewport));
   const fitMap=()=>applyCamera(fitTownMapCamera(viewport));
@@ -87,6 +92,11 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
     }
   };
   const endPointer=(event:ReactPointerEvent<HTMLDivElement>)=>{pointersRef.current.delete(event.pointerId);const values=[...pointersRef.current.values()];gestureRef.current=values.length===1?{lastSingle:values[0]}:values.length>=2?{distance:distance(values[0]!,values[1]!),midpoint:midpoint(values[0]!,values[1]!)}:{};};
+  const openPlace=(placeId:string,event:ReactMouseEvent<HTMLButtonElement>)=>{
+    if(locationSceneEnabled(placeId)){sceneInvokerRef.current=event.currentTarget;setSelectedId(undefined);setSceneSelectedId(placeId as LocationScenePlaceId);setActiveSceneId(placeId as LocationScenePlaceId);return;}
+    setSceneSelectedId(undefined);setSelectedId(placeId);
+  };
+  const closeLocationScene=()=>{setActiveSceneId(undefined);window.setTimeout(()=>sceneInvokerRef.current?.focus(),0);};
   const toggleCategory=(category:TownPlaceCategory)=>setCategories(current=>current.includes(category)?current.filter(item=>item!==category):[...current,category]);
   const resetFilters=()=>{setQuery('');setCategories(TOWN_PLACE_CATEGORIES.map(item=>item.id));};
   const placeScale=1/camera.scale;
@@ -107,7 +117,7 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
     <div className="town-map-viewport" ref={viewportRef} onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endPointer} onPointerCancel={endPointer}>
       <div className="town-map-world" style={{width:TOWN_MAP_WIDTH,height:TOWN_MAP_HEIGHT,transform:`translate(${camera.x}px,${camera.y}px) scale(${camera.scale})`}}>
         <img className="town-map-artwork" src={townMapArtwork} width={TOWN_MAP_WIDTH} height={TOWN_MAP_HEIGHT} draggable={false} alt="" aria-hidden="true"/>
-        {renderedPlaces.map(place=>{const living=showLiving?livingByPlace.get(place.id):undefined;return <button key={place.id} className={`town-map-place town-map-place--${place.category} ${selectedId===place.id?'selected':''} ${living?'has-living-context':''}`} style={{left:place.map.x,top:place.map.y,transform:`translate(-50%,-50%) scale(${placeScale})`}} onClick={()=>setSelectedId(place.id)} aria-label={`Open ${place.label}${living?` · ${living.contexts.map(item=>item.label).join(', ')}`:''}`}>
+        {renderedPlaces.map(place=>{const living=showLiving?livingByPlace.get(place.id):undefined;return <button key={place.id} className={`town-map-place town-map-place--${place.category} ${selectedId===place.id||sceneSelectedId===place.id?'selected':''} ${living?'has-living-context':''}`} style={{left:place.map.x,top:place.map.y,transform:`translate(-50%,-50%) scale(${placeScale})`}} onClick={event=>openPlace(place.id,event)} aria-label={`${locationSceneEnabled(place.id)?'Enter':'Open'} ${place.label}${living?` · ${living.contexts.map(item=>item.label).join(', ')}`:''}`}>
           <span className="town-map-place-glyph" aria-hidden="true">{townPlaceIconName(place.id)?<EverthreadIcon name={townPlaceIconName(place.id)!} size={27}/>:<span>{place.map.glyph}</span>}{living&&<b className="town-map-context-count">{living.contexts.length}</b>}</span>
           {townMapLabelVisible(place,camera.scale)&&<span className="town-map-place-label">{place.shortLabel}{living&&<small>{living.contexts[0]?.label}</small>}</span>}
         </button>})}
@@ -118,6 +128,7 @@ export default function TownMapScreen({state,onNavigate,initialSelectedId}:{stat
       {!projection.places.length&&<div className="town-map-empty">No places match these filters.</div>}
       <div className="town-map-gesture-hint">Drag to move · pinch to zoom · tap a place</div>
     </div>
+    {activeSceneId&&<LocationScene state={state} placeId={activeSceneId} onClose={closeLocationScene} onResult={onResult}/>}
     <BottomSheet open={Boolean(selected)} title={selected?.label??'Place'} onClose={()=>setSelectedId(undefined)}>
       {selected&&<div className="town-place-sheet">
         <p className="eyebrow">{TOWN_PLACE_CATEGORIES.find(item=>item.id===selected.category)?.label} · {TOWN_DISTRICTS.find(item=>item.id===selected.districtId)?.label}</p>

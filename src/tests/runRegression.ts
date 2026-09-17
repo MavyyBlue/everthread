@@ -75,6 +75,7 @@ import { runUiIconographyRegression } from './uiIconographyRegression';
 import { runCharacterVisualRegression } from './characterVisualRegression';
 import { runFamilyVisualInheritanceRegression } from './familyVisualInheritanceRegression';
 import { runYukiThreadroomArtRegression } from './yukiThreadroomArtRegression';
+import { runLocationSceneRegression } from './locationSceneRegression';
 
 declare const process:{exitCode?:number};
 const report=runRegressionSuite();
@@ -155,4 +156,5 @@ try{const checks=runCharacterVisualRegression();console.log(`Character Visual re
 try{const checks=runFamilyVisualInheritanceRegression();console.log(`Family Visual Inheritance regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runProgressiveDisclosureRegression();console.log(`Progressive-disclosure UX regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 try{const checks=runYukiThreadroomArtRegression();console.log(`Yuki Threadroom art regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
+try{const checks=runLocationSceneRegression();console.log(`Location scene first-slice regression: ${checks}/${checks} checks passed.`);}catch(error){console.error(error instanceof Error?error.message:String(error));process.exitCode=1;}
 if(report.failed)process.exitCode=1;
