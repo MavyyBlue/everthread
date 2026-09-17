@@ -3,8 +3,8 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #205 / `5ea3d448a90c8b82044d33b5f4e31ef99e5b80e9`
-Certified gameplay baseline: Run #205 / `5ea3d448a90c8b82044d33b5f4e31ef99e5b80e9`
+Newest certified expanded source: Run #207 / `90e16923efa896da52750e7241b5387ca02da1ad`
+Certified gameplay baseline: Run #207 / `90e16923efa896da52750e7241b5387ca02da1ad`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -26,6 +26,18 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/minigames/` — reusable minigame definitions plus activity-specific and generic challenge components with character-skill accessibility resolution.
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
+
+## Newest certified location-scene slice — Run #207 — Threadwell Residential District
+
+Run #207 adds the sixth dedicated illustrated location while preserving established residential, household, relationship, shared-experience, romantic-date, action-economy, save, and QA authorities.
+
+- Expanded source `90e16923efa896da52750e7241b5387ca02da1ad` from wrapper `6506073b6d5d83bb1d5cd989043baf439f8ba199`; Actions Run `35253421670`, job `105311055912`. Persistent diff from synchronized Run #206 `c5cd9c87417b53494f47095c278666b5a1487951` is exactly **8 intended files**.
+- Threadwell uses three semantic groups—Neighborhood board, Home entrance, Courtyard—and seven focused bindings: Current residence, Known households, Visits, Home hangout, Cook together, Sleepover, and At-home date. Scene totals become **6 / 19 / 36 / 12** (scenes / groups / bindings / selected Astra runtime assets).
+- `ResidentialLocationPanel` is presentation/adaptation only. Current residence remains a read-only `ResidentialLifeSystem` projection; known households derive from real NPC/relationship/household truth; visits/cooking/sleepovers use existing residential actions; home hangouts and at-home dates terminate in the established Shared Experience / Romantic Date owners. Scene artwork never implies home ownership. No neighborhood ledger, second household registry, second residence field, or new save authority was introduced.
+- The companion-plan helper now generalizes the existing scene companion bridge so Weaver Park and Threadwell share one projection-to-owner commit path rather than parallel date UI logic. Save schema remains **17**.
+- Location Scene regression expanded **60 → 70** and passed **70/70** in CI. Connected CI remains Green: Residential Life **69/69**, Shared Experience **53/53**, Dating Momentum **61/61**, Shared Lives closeout **41/41**, Town Map **46/46**, and institution routing **42/42**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`; registry/runner/package orchestration remain unchanged.
+- Canonical Run #207 preflight passed **6/6 in 27,925 ms**: Engine TS **2,471 ms**, Test TS **3,417 ms**, App TS **5,324 ms**, Node/Vite TS **604 ms**, complete wall **12,957 ms**, production build **3,073 ms**. Production transformed **227 modules**. Certified artifact `10511147329`; Pages artifact `10511062309`; deployment Green.
+- Direct Android/player acceptance passed after Run #207; Mavyy reported Threadwell works well. After this documentation-only synchronization certifies, select exactly one remaining Astra-backed Location #7 only after a fresh authority/source/test audit.
 
 ## Newest certified location-scene slice — Run #205 — Hearthline Realty & Leasing
 
@@ -60,7 +72,7 @@ QA-4 closes the temporary QA-optimization program with measured process isolatio
 - Complete regression wall **5/5 Green in 20,544 ms**; canonical regression stage **20,668 ms**. Adjacent Run #200 wall was **35,727 ms**, so this certified sample is **~42.5% lower** while retaining exact coverage.
 - Canonical preflight passed **6/6 in 42,372 ms**: Engine TS **3,505 ms** → Test TS **5,547 ms** → App TS **7,675 ms** → Node/Vite TS **850 ms** → regression wall **20,668 ms** → production build **4,014 ms**. Adjacent Run #200 preflight was **60,351 ms**; this sample is **~29.8% lower**.
 - Production remains **224 modules**. Certification: source SHA `9cb33dbc955df0ed018811959de5928f861d1628ee5dd9d278be655b815e0318`; dependencies `100cbff80852cb5cd3faf9c996e0c5cb21a60599995c0e84a25aae4f07b73116`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10501795811`; Pages artifact `10501840639`; deployment Green.
-- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Run #205 preserves this infrastructure unchanged and certifies Hearthline Realty & Leasing as Location #5; direct device acceptance has passed. Documentation synchronization is the only gate before selecting exactly one Location #6.
+- **QA-1 through QA-4 are complete. No QA-5 is planned without new measured evidence.** Run #207 preserves this infrastructure unchanged and certifies Threadwell Residential District as Location #6; direct device acceptance has passed. Documentation synchronization is the only gate before selecting exactly one Location #7.
 
 ## Prior certified QA infrastructure — Run #199 — QA-3 regression registry/timing
 
@@ -109,7 +121,7 @@ Run #192 adds the third dedicated illustrated location without creating a second
 - Production **224 modules**; Town Map JS ~**35.48/10.70 gzip kB**, CSS ~**24.42/4.66**; People ~**58.82/17.86**; character-art pack ~**971.11/69.18**; main ~**1,361.81/380.49**.
 - Certification hashes/artifacts: source `c857954cf15ed3a761daa9d6d2985d2b793cc9ceb1d6593ea7d04bef23e10731`; dependencies `b39ae97fe6ae6ca22ad0b0a777549a134c94e683507c1f917ee6a8b5d8911dac`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10479623295`; Pages artifact `10479573465`; deployment succeeded.
 - Feedback sweep is **5 total / 0 unresolved** and checkpointed against Run #192 at `2026-09-17 03:49:20.500943+00`.
-- Historical Bank review and Loomline acceptance are complete. Run #205 certifies Hearthline as Location #5 and its Android acceptance has passed; current next step is documentation synchronization before any sixth location.
+- Historical Bank review plus Loomline and Hearthline acceptance are complete. Run #207 certifies Threadwell as Location #6 and its Android acceptance has passed; current next step is documentation synchronization before any seventh location.
 
 ## Prior certified presentation/navigation polish — Runs #189–#190 — immersive scenes + unified utility drawer
 

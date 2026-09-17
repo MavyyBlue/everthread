@@ -1,3 +1,20 @@
+## Threadwell Residential District device acceptance + Run #207 closeout — 2026-09-17
+
+### Added / changed
+
+- Mavyy completed direct Android/player acceptance of certified **Threadwell Residential District** after Run #207 and reported that the location works well on-device. The Location #6 player-facing gate is therefore closed.
+- Run #207 adds Threadwell as the sixth dedicated scene using Astra-derived `threadwell-residential.png` and `neighborhood-board.png`, with Neighborhood board, Home entrance, and Courtyard groups exposing Current residence, Known households, Visits, Home hangout, Cook together, Sleepover, and At-home date.
+- Threadwell remains a focused neighborhood projection over authoritative `ResidentialLifeSystem`, Shared Experience, Romantic Date, relationship/NPC household, action-economy, and existing `GameEngine` actions. It adds no neighborhood ledger, duplicate household state, second residence authority, or fabricated home ownership. The companion-plan bridge was generalized so existing Park companion actions and Threadwell's at-home date share one projection-to-owner commit path.
+
+### Certification
+
+- GitHub Actions Run #207 (`35253421670`, job `105311055912`) certified expanded source `90e16923efa896da52750e7241b5387ca02da1ad` from upload wrapper `6506073b6d5d83bb1d5cd989043baf439f8ba199`. Persistent gameplay diff from synchronized Run #206 `c5cd9c87417b53494f47095c278666b5a1487951` is exactly **8 intended files**; workflow import reports 9 changed paths only because it also removes transient `everthread-source.zip`.
+- Location Scene regression expanded **60 → 70** and passed **70/70**. Connected certified coverage remains Residential Life **69/69**, Shared Experience **53/53**, Dating Momentum **61/61**, Shared Lives closeout **41/41**, Town Map **46/46**, and institution routing **42/42**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 27,925 ms**: Engine TS **2,471 ms**, Test TS **3,417 ms**, App TS **5,324 ms**, Node/Vite TS **604 ms**, complete regression wall **12,957 ms**, production build **3,073 ms**. Production transformed **227 modules**.
+- Certified source SHA-256 `d04640b3f62e2bb9e675afd31717c6c6718341640205c704e5b0147773a1f4e6`; dependency SHA-256 `2da3e914d915ba5f62ba8ad09d3d5a29df6bf3b659a381227215f411db661294`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10511147329` (`ea83f0542584f4e9fe922227c1dc0be78b79c5db30322a17adb680e710da62e3`); Pages artifact `10511062309` (`0aec413a0849bd100a24b6e77705c08453d89f5cbb548caa368edb8ce77f84ec`); Pages deployment Green.
+- Certified location-scene totals are now **6 scenes / 19 semantic groups / 36 scene action bindings / 12 selected Astra runtime assets**. Save schema remains **17**.
+- After this documentation-only synchronization certifies, select exactly one remaining Astra-backed **Location #7** after a fresh repository owner/source/test audit. Do not preselect it from historical design notes.
+
 ## Hearthline Realty & Leasing device acceptance + Run #205 closeout — 2026-09-17
 
 ### Added / changed

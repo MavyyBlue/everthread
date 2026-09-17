@@ -1,3 +1,9 @@
+## Threadwell Residential District dedicated location scene — Run #207
+
+Mavyy's post-certification Android acceptance of Threadwell changes no executable content totals beyond the already certified Run #207 scene slice.
+
+Run #207 expands the dedicated scene rollout to **6 location-scene surfaces / 19 semantic object groups / 36 scene action bindings / 12 selected Astra presentation assets** by adding Threadwell Residential District. Its seven bindings reuse the established current-residence projection, real NPC household/relationship context, residential visit/home-plan actions, Shared Experience evaluation/commit paths, Romantic Date owner, action economy, and existing save truth. It adds **no new Town Place, institution service, residence field, neighborhood ledger, household authority, event, career, education, inventory, or preference definition** and fabricates no home ownership from scene artwork. Certified gameplay/content totals therefore remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged. Newest certified gameplay source is Run #207 / `90e16923efa896da52750e7241b5387ca02da1ad`; QA-4 from Run #201 remains unchanged.
+
 ## Hearthline Realty & Leasing dedicated location scene — Run #205
 
 Mavyy's post-certification Android acceptance of Hearthline changes no executable content totals beyond the already certified Run #205 scene slice.
