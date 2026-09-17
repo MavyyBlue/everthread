@@ -28,7 +28,7 @@ import './LocationScene.css';
 
 type DetailState=
   |{kind:'confirm';actionId:'music.leave'|'music.retire'}
-  |{kind:'companion';actionId:'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'|'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'}
+  |{kind:'companion';actionId:LocationSceneActionId}
   |{kind:'catalog';actionId:'music.catalog'}
   |{kind:'partnership';actionId:'music.partnership'}
   |{kind:'bank';actionId:LocationSceneBankActionId}
@@ -174,7 +174,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
 
   const chooseAction=(actionId:LocationSceneActionId)=>{
     const action=LOCATION_SCENE_ACTIONS[actionId];
-    if(locationSceneCompanionPlan(actionId)){setDetail({kind:'companion',actionId:actionId as 'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'|'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'});return;}
+    if(locationSceneCompanionPlan(actionId)){setDetail({kind:'companion',actionId});return;}
     if(actionId==='music.catalog'){setDetail({kind:'catalog',actionId});return;}
     if(actionId==='music.partnership'){setDetail({kind:'partnership',actionId});return;}
     if(actionId.startsWith('bank.')){setDetail({kind:'bank',actionId:actionId as LocationSceneBankActionId});return;}

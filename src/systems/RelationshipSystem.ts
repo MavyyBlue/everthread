@@ -322,12 +322,12 @@ export function askNpcOnDate(state:GameState,npcId:string):DateInvitationResult 
   const availability=romanticDateTargetAvailability(state,npcId);
   if(!availability.allowed)return{success:false,messages:[{text:availability.reason??'That date invitation is not available.'}]};
   const npc=availability.npc!,rel=availability.relationship!;
-  if(rel.romance?.pendingDate)return{success:false,messages:[{text:`${npc.firstName} already agreed to a date. Choose where to go first.`}],accepted:true,pendingDate:true};
+  if(rel.romance?.pendingDate)return{success:false,messages:[{text:`${npc.firstName} already agreed to a date. Visit a Date option on the Map or cancel the plan first.`}],accepted:true,pendingDate:true};
   const gate=consumeAction(state,{policy:'relationship.date.invite',target:npcId});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const chance=clamp(rel.score*.34+rel.compatibility*.24+rel.attraction*.32+npc.hiddenOpinion*.10,8,92)/100;
   const accepted=rng.chance(chance);
-  const text=accepted?`${npc.firstName} says yes to a date. Choose somewhere to go together.`:`${npc.firstName} is not ready to go on a date with you right now.`;
+  const text=accepted?`${npc.firstName} says yes to a date. Visit a Date option on the Map when you are ready to go together.`:`${npc.firstName} is not ready to go on a date with you right now.`;
   if(accepted){rel.romance??={};rel.romance.pendingDate={acceptedYear:state.currentYear,acceptedAge:state.character.age};}
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'relationship',importance:1,text,npcIds:[npcId]});
   state.rngCounter=rng.counter();

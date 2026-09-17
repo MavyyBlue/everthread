@@ -16,8 +16,9 @@ export type LocationSceneActionKind='action'|'companion'|'panel';
 export type LocationSceneRisk='normal'|'confirm';
 export type LocationSceneRect=readonly[number,number,number,number];
 
+export interface LocationSceneCompanionPlanDefinition{kind:'shared'|'date';placeId:LocationScenePlaceId;activityId:string}
 export interface LocationSceneActionDefinition{
-  id:LocationSceneActionId;label:string;description:string;kind:LocationSceneActionKind;risk:LocationSceneRisk;
+  id:LocationSceneActionId;label:string;description:string;kind:LocationSceneActionKind;risk:LocationSceneRisk;companionPlan?:LocationSceneCompanionPlanDefinition;
 }
 export interface LocationSceneGroupDefinition{
   id:string;label:string;description:string;actionIds:readonly LocationSceneActionId[];order:number;hitRect:LocationSceneRect;
@@ -34,9 +35,9 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'wellness.walk':{id:'wellness.walk',label:'Walk',description:'Take an easy walk through the park.',kind:'action',risk:'normal'},
   'wellness.run':{id:'wellness.run',label:'Run',description:'Follow the running trail at your own pace.',kind:'action',risk:'normal'},
   'wellness.meditate':{id:'wellness.meditate',label:'Meditate',description:'Settle into a quiet moment.',kind:'action',risk:'normal'},
-  'shared.park.walk':{id:'shared.park.walk',label:'Walk together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
-  'shared.park.play':{id:'shared.park.play',label:'Play outside',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
-  'date.park':{id:'date.park',label:'Park date',description:'Choose an eligible person with an accepted date plan.',kind:'companion',risk:'normal'},
+  'shared.park.walk':{id:'shared.park.walk',label:'Walk together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'weaver-park',activityId:'park_walk'}},
+  'shared.park.play':{id:'shared.park.play',label:'Play outside',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'weaver-park',activityId:'park_play'}},
+  'date.park':{id:'date.park',label:'Park date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'weaver-park',activityId:'park_walk'}},
   'music.leave':{id:'music.leave',label:'Leave Music Path',description:'Step away from music while keeping your completed history.',kind:'action',risk:'confirm'},
   'music.retire':{id:'music.retire',label:'Retire',description:'Review retirement from your music career.',kind:'action',risk:'confirm'},
   'music.practice':{id:'music.practice',label:'Practice vocals',description:'Spend time developing your voice.',kind:'action',risk:'normal'},
@@ -65,15 +66,15 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'shared.home.hangout':{id:'shared.home.hangout',label:'Hang out at home',description:'Spend ordinary time together at one of your actual available homes.',kind:'panel',risk:'normal'},
   'shared.home.cook':{id:'shared.home.cook',label:'Cook together',description:'Cook together through the existing residential-life plan system.',kind:'panel',risk:'normal'},
   'shared.home.sleepover':{id:'shared.home.sleepover',label:'Have a sleepover',description:'Choose an age-appropriate sleepover plan tied to a real available residence.',kind:'panel',risk:'normal'},
-  'date.home':{id:'date.home',label:'Cook together date',description:'Choose an eligible person with an accepted home-date plan.',kind:'companion',risk:'normal'},
+  'date.home':{id:'date.home',label:'Cook together date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'threadwell-residential',activityId:'cook_together'}},
   'shop.style':{id:'shop.style',label:'Clothing & personal items',description:'Browse Crossroads personal items through the existing inventory catalogue.',kind:'panel',risk:'normal'},
   'shop.collection':{id:'shop.collection',label:'Collectibles',description:'Browse the existing collectible market without pre-rolling price or authenticity.',kind:'panel',risk:'normal'},
   'shop.gifts':{id:'shop.gifts',label:'Browse gifts',description:'Shop gift-category items already sold at Crossroads Mall.',kind:'panel',risk:'normal'},
   'shop.inventory':{id:'shop.inventory',label:'Your mall purchases',description:'Review personal items you actually acquired from Crossroads Mall.',kind:'panel',risk:'normal'},
-  'shared.mall.browse':{id:'shared.mall.browse',label:'Browse together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
-  'shared.mall.games':{id:'shared.mall.games',label:'Play games together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
-  'shared.mall.movie':{id:'shared.mall.movie',label:'Catch a movie',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal'},
-  'date.mall':{id:'date.mall',label:'Mall date',description:'Choose an eligible person with an accepted mall-date plan.',kind:'companion',risk:'normal'},
+  'shared.mall.browse':{id:'shared.mall.browse',label:'Browse together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'crossroads-mall',activityId:'mall_browse'}},
+  'shared.mall.games':{id:'shared.mall.games',label:'Play games together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'crossroads-mall',activityId:'mall_games'}},
+  'shared.mall.movie':{id:'shared.mall.movie',label:'Catch a movie',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'crossroads-mall',activityId:'movie_outing'}},
+  'date.mall':{id:'date.mall',label:'Mall date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'crossroads-mall',activityId:'mall_browse'}},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[

@@ -1,5 +1,5 @@
 import { actionGateStatus } from '../core/actionEconomy';
-import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneRect } from '../data/locationScenes';
+import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneCompanionPlanDefinition, type LocationSceneRect } from '../data/locationScenes';
 import { collectibleDefinitions, propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { MUSIC_RELEASE_MIN_AGE } from './SpecialCareerSystem';
 import { WELLNESS_MIN_AGES } from './HealthSystem';
@@ -17,7 +17,7 @@ export interface LocationSceneAvailability{available:boolean;reason?:string}
 export interface LocationSceneCompanionOption{npcId:string;name:string;detail:string}
 export interface LocationSceneResidentialConnection{npcId:string;name:string;relationship:string;residenceLabel:string;detail:string;householdSize:number}
 export interface LocationSceneResidentialPlanOption{npcId:string;name:string;planId:string;label:string;description:string;residenceLabel:string;activityId:string;allowed:boolean;reason?:string}
-export interface LocationSceneCompanionPlan{kind:'shared'|'date';placeId:string;activityId:string}
+export type LocationSceneCompanionPlan=LocationSceneCompanionPlanDefinition;
 export interface LocationSceneStage{left:number;top:number;width:number;height:number}
 
 export type LocationSceneBackStep='detail'|'group'|'map';
@@ -46,17 +46,7 @@ export function locationSceneMallPersonalCatalogue(giftsOnly=false){
 export function locationSceneMallOwnedPersonalItems(state:GameState){return personalInventoryOwnedFromPlace(state,'crossroads-mall');}
 export function locationSceneMallCollectibleCatalogue(){return collectibleDefinitions;}
 
-const companionPlans:Partial<Record<LocationSceneActionId,LocationSceneCompanionPlan>>={
-  'shared.park.walk':{kind:'shared',placeId:'weaver-park',activityId:'park_walk'},
-  'shared.park.play':{kind:'shared',placeId:'weaver-park',activityId:'park_play'},
-  'date.park':{kind:'date',placeId:'weaver-park',activityId:'park_walk'},
-  'date.home':{kind:'date',placeId:'threadwell-residential',activityId:'cook_together'},
-  'shared.mall.browse':{kind:'shared',placeId:'crossroads-mall',activityId:'mall_browse'},
-  'shared.mall.games':{kind:'shared',placeId:'crossroads-mall',activityId:'mall_games'},
-  'shared.mall.movie':{kind:'shared',placeId:'crossroads-mall',activityId:'movie_outing'},
-  'date.mall':{kind:'date',placeId:'crossroads-mall',activityId:'mall_browse'},
-};
-export function locationSceneCompanionPlan(actionId:LocationSceneActionId){return companionPlans[actionId];}
+export function locationSceneCompanionPlan(actionId:LocationSceneActionId){return LOCATION_SCENE_ACTIONS[actionId]?.companionPlan;}
 
 export function locationSceneResidentialConnections(state:GameState):LocationSceneResidentialConnection[]{
   const connections:LocationSceneResidentialConnection[]=[];
@@ -153,9 +143,10 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     const gate=actionGateStatus(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:wellness}]);
     return gate.allowed?{available:true}:{available:false,reason:gate.message};
   }
-  if(locationSceneCompanionPlan(actionId)){
+  const companionPlan=locationSceneCompanionPlan(actionId);
+  if(companionPlan){
     const companions=locationSceneCompanions(state,actionId);
-    return companions.length?{available:true}:{available:false,reason:actionId.startsWith('date.')?'No accepted eligible date is waiting for this location right now.':'No eligible person is currently available for that plan.'};
+    return companions.length?{available:true}:{available:false,reason:companionPlan.kind==='date'?'No scheduled eligible date is waiting here. Schedule a date from an NPC profile first.':'No eligible person is currently available for that plan.'};
   }
   if(actionId==='home.neighbors')return{available:true};
   if(actionId==='home.visits'||actionId==='shared.home.hangout'||actionId==='shared.home.cook'||actionId==='shared.home.sleepover'){
