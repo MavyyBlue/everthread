@@ -14,7 +14,7 @@ Phase 7B1 follows that boundary with a stateless `SystemicStorySystem` request b
 
 ## Determinism, saves, and yearly processors
 
-Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current **certified** save schema is **17** on gameplay/source Run #183 / expanded source `ecd7e58c32a3145e8354f7397b70fc14d1feaf64`. Historical schema-14 Phase 7C owns bounded durable world-condition lifecycle state; Phase 7 remains closed. Phase 7A introduced durable consequence-scheduler cooldown/history authority through shared `CURRENT_SAVE_VERSION` and is certified/deployed. Phase 6A advanced to schema 11 for durable revolving-credit account/history authority; Phase 6B3 advanced to schema 12 for durable auto-pay, card past-due, and secured paid-ahead payment state. Schema increments are justified by new durable authority, not by presentation-only projections or bounded primitive flags.
+Core simulation uses seeded RNG, state-scoped `makeStateId`, and no `Math.random()` for simulation state. Yearly processors that can award money, advance contracts, resolve projects/seasons, or create incidents must be idempotent per age. Current **certified** save schema is **17** on gameplay/source Run #187 / expanded source `c68757f75f38f76fc616589450b1a39b41e1b6d0`. Historical schema-14 Phase 7C owns bounded durable world-condition lifecycle state; Phase 7 remains closed. Phase 7A introduced durable consequence-scheduler cooldown/history authority through shared `CURRENT_SAVE_VERSION` and is certified/deployed. Phase 6A advanced to schema 11 for durable revolving-credit account/history authority; Phase 6B3 advanced to schema 12 for durable auto-pay, card past-due, and secured paid-ahead payment state. Schema increments are justified by new durable authority, not by presentation-only projections or bounded primitive flags.
 
 Real player saves are diagnostic evidence only. Generalize the failure shape into fabricated deterministic regression fixtures; never ship a tester's seed, IDs, NPCs, or history.
 
@@ -50,6 +50,19 @@ A special presentation surface must never become a second simulation for the per
 - Run #181 portals the full-screen Threadroom root to `document.body` so it can escape Threadspace's stacking context. Full-screen special surfaces must not assume a child component's high `z-index` can outrank parent stacking contexts; ordinary app chrome stays below the room, while truly global critical overlays may remain above it.
 - Non-painted fallback portraits use their own compact square geometry rather than inheriting the seated-adult stage. Mobile layout must reserve dialogue/action-sheet clearance at 320/360/390/412/430px widths.
 - Future bespoke NPC surfaces should follow this same pattern only when explicitly justified: provenance-based routing, one underlying person, read-only presentation where possible, controlled engine actions for mutation, and dedicated regressions proving decoy/name collisions cannot trigger the special surface.
+
+## Dedicated location scenes and map-owned navigation
+
+Run #187 establishes the reusable dedicated-location presentation contract with Weaver Park and Threadtone Music Studio. This is a UI/navigation layer over existing town and gameplay authorities, not a second place/action simulation.
+
+- `TOWN_PLACES` / existing map place IDs remain the canonical place catalog. `locationScenes.ts` may attach a scene definition to an existing place ID, but must not create a parallel town-place ledger or silently invent new map locations.
+- `TownMapScreen` owns scene entry/return presentation and should keep the map mounted while a scene is open so camera, zoom, filters, search, and originating selection remain local UI state rather than save state. Scene-open state is presentation-only and must not enter `GameState`.
+- `LocationSceneSystem` is an adapter for availability/projection only. It must call established wellness, Shared Lives, dating, special-career, music, commitment, and action-economy owners rather than duplicating their rules. Any mutating action must recheck the authoritative gate immediately before execution. Browsing hotspots, catalogs, offers, and unavailable controls must be RNG-neutral and state-neutral.
+- Scene art is presentation, never collision/gameplay authority. Authored hotspot rectangles are normalized against the declared **1024×1536** canvas and rendered with `contain`, not `cover`, so artwork and semantic target geometry remain aligned across phones. Props may use recorded alpha bounds for composition without changing interaction semantics.
+- Each semantic target must remain thumb-safe (minimum 48px effective target), while visible labels may use independent readable widths/edge anchoring. Every hotspot action must also be reachable through the first-class **Things to do** fallback; accessibility/fallback paths must call the exact same action bindings.
+- Back navigation is local-stack aware: detail/picker/confirmation → object menu → scene → preserved map. Do not let Android/system Back bypass unresolved local UI or remount the map unnecessarily.
+- Roll out scenes incrementally. The existence of Astra art for additional locations is not certification. Import only runtime assets for the currently implemented slice, add exact owner/gate tests, pass the full regression wall/build, then certify before widening the rollout.
+- Run #187 ships only Weaver Park + Threadtone Music Studio and four runtime assets; save schema stays **17** and no scene-specific durable state is introduced.
 
 ## Social worlds and affiliation history
 

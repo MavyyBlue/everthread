@@ -3,8 +3,8 @@
 Last updated: 2026-09-16
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #185 / `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`
-Certified gameplay baseline: Run #185 / `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`
+Newest certified expanded gameplay/source: Run #187 / `c68757f75f38f76fc616589450b1a39b41e1b6d0`
+Certified gameplay baseline: Run #187 / `c68757f75f38f76fc616589450b1a39b41e1b6d0`
 
 ## Product direction
 
@@ -26,7 +26,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified post-closeout hotfix — Run #185 — Secret Yuki durable provenance routing
+## Newest certified presentation/navigation slice — Run #187 — dedicated location scenes foundation
+
+Run #187 certifies the first two dedicated illustrated place surfaces without changing simulation/save authority.
+
+- Expanded certified source: `c68757f75f38f76fc616589450b1a39b41e1b6d0`, schema **17**. Upload wrapper `f3898378133f48f7b60816f3cfb46596f554c781`; Actions Run ID `35170740515`; job `105041659840`. Base synchronized source was Run #186 `e1787ac018d47b580dd49ac9854c087fc07ec729`; net diff is exactly **12 intended source/test/asset files**.
+- Weaver Park and Threadtone Music Studio are the only enabled scene routes. The Town Map remains the navigation authority; opening a scene keeps the map mounted and local camera/filter/search state intact. Returning preserves the originating pin highlight rather than remounting or forwarding into a legacy mega-screen.
+- `LocationSceneSystem` is a gate/projection adapter over existing owners only. Wellness, Shared Lives, dating, music lifecycle/release/tour/partnership, career exit/retirement, and the central action economy remain authoritative. Scene browsing is read-only; mutations recheck the existing gate immediately before calling the owning action. No location balance, career shadow, duplicate relationship state, or scene save state exists.
+- Shared `LocationScene` presentation uses contained 1024×1536 geometry, ≥48px semantic targets, readable labels independent from raw hotspot size, first-class **Things to do** parity, focus containment, and local Back unwinding before returning to the preserved map. The first slice imports only four runtime Astra assets; the remaining source-drop scenes are not yet shipped.
+- Location Scene regression is **34/34**. Connected gates remain Map **46/46**, institution routing **42/42**, Shared Lives **53/53**, Dating **61/61**, Music **76/76**, lifecycle **48/48**, Secret Yuki **36/36**, Character Visual **76/76**, Dynasty **66/66**, Long-Life **105/105**, plus the complete established wall. Canonical preflight is **4/4 Green** in **61,250 ms**.
+- Production: **222 modules**; Town Map lazy JS ~**31.63/9.66 kB gzip**, Town Map CSS ~**22.96/4.38**, People ~**58.82/17.86**, character-art pack ~**971.11/69.18**, main ~**1,360.79/380.23**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `8225082ce4b5489ceb2efd59a7260afa5a0f3893555b97f38170ac1e1ae69cee`; dependency SHA `a0add8575bcb362a98de2379a894d215f3b1f1d4eb6cf0a0be5318668e2d86b2`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10477005329` (`88d522000bd1865d8deba4945e3e023ed10e64dbe08aabda8aa8e61251a48f01`); Pages artifact `10477005335` (`0cbd4c99776cbc127208060ecfd57937e1ea9a49877d7ccc7e32ecfdf40b6b5a`); deployment succeeded.
+- Feedback Inbox remains **5 total / 0 unresolved by triage**. Durable checkpoint `main` advanced to Run #187 source at `2026-09-17 01:34:16.880968+00`, reviewed count **5**.
+- Next step is player-facing review of these two certified rooms before widening the rollout to more Astra location scenes. Do not bulk-import or migrate the remaining places merely because assets exist.
+
+## Prior certified post-closeout hotfix — Run #185 — Secret Yuki durable provenance routing
 
 Run #185 fixes a player-reproduced Hidden Threadroom routing failure without changing saves, bounded-memory policy, or ordinary NPC simulation.
 

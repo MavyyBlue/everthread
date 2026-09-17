@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #185** (`35121435267`) on expanded source **`d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`**, save schema **17**. Run #185 is a narrow Secret Yuki provenance-routing hotfix over Run #183 richer aging/presentation: the durable secret-code flag now owns special identity routing, while bounded NPC narrative memory remains bounded and ordinary NPC/relationship/family authorities remain unchanged. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; Character Visual remains a separate approved direction, not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #187** (`35170740515`) on expanded source **`c68757f75f38f76fc616589450b1a39b41e1b6d0`**, save schema **17**. Run #187 establishes the first dedicated location-scene presentation/navigation slice for Weaver Park and Threadtone Music Studio while preserving the existing Town Map, gameplay action owners, action economy, and all save/simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this location-scene rollout is post-closeout presentation/navigation work, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,9 +16,9 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #185**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4` at `2026-09-16 16:25:10.400372+00`, reviewed count **5**.
+- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `c68757f75f38f76fc616589450b1a39b41e1b6d0` at `2026-09-17 01:34:16.880968+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Mavyy approved Character Visual development as the current feature direction. Run #170 certifies the player creator/renderer foundation, Run #172 its New Life responsive-width hotfix, Run #174 deterministic NPC identity/reveal plus descendant portrait continuity, Run #176 biological family resemblance/inheritance, Run #178 the secret-origin Yuki identity/Hidden Threadroom slice, Run #180 reactive Astra Threadroom presentation, Run #181 its viewport/fallback hotfix, Run #183 richer general aging/presentation, and Run #185 the durable Secret Yuki provenance-routing hotfix. The next visual slice is intentionally selected after player review/feedback; additional bespoke Yuki age-stage art may extend the existing visual-stage contract later without blocking the roadmap. No Phase 11 label is implied.
+- Current active player-facing direction is the dedicated **location-scene rollout**. Run #187 certifies Weaver Park + Threadtone Music Studio as the first two scene-backed map places over existing simulation owners. Expand further only after player review confirms this interaction model; the remaining Astra location assets are not yet certified/shipped. Character Visual remains a separate approved direction with Runs #170–#185 preserved, and additional Yuki age-stage art can still plug into that existing contract later. No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -29,7 +29,20 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #185 — Secret Yuki durable provenance-routing hotfix
+## Newest certified gameplay/source — Run #187 — dedicated location scenes first slice
+
+- Upload wrapper `f3898378133f48f7b60816f3cfb46596f554c781`; expanded certified source `c68757f75f38f76fc616589450b1a39b41e1b6d0`; Actions Run ID `35170740515`; job `105041659840`. Net diff from synchronized Run #186 `e1787ac018d47b580dd49ac9854c087fc07ec729` is exactly **12 intended source/test/asset files**.
+- Only Weaver Park and Threadtone Music Studio are scene-enabled. The map stays mounted underneath; returning preserves local map camera/filter/search state and keeps the originating pin selected. Other town places continue their existing behavior until separately migrated/certified.
+- Weaver Park routes park-bench social/date actions, trail wellness, and pavilion meditation through existing owners. Threadtone routes music exit/retirement, practice/tour, song/album release, catalog, and partnership-offer interactions through existing music/career/action-economy authorities. No duplicate action implementation or scene-owned simulation state is introduced.
+- Shared room geometry is data-driven and uses authored 1024×1536 `contain` layout, semantic hotspots, ≥48px targets, readable label anchoring, and a **Things to do** fallback with action parity. Android/system Back unwinds detail/picker → object menu → room → preserved map.
+- Four Astra runtime assets are shipped for the two certified scenes. The rest of the 25-location source drop remains unshipped design input. Save schema remains **17**.
+- Location Scene regression **34/34**; Map **46/46**; institution routing **42/42**; Shared Lives **53/53**; Dating **61/61**; Music **76/76**; lifecycle **48/48**; Secret Yuki **36/36**; Character Visual **76/76**; Yuki Art **19/19**; Dynasty **66/66**; Long-Life **105/105**; feedback **20/20 + 23/23**. Canonical preflight **4/4 Green**, **61,250 ms** total.
+- Production build **222 modules**. Town Map ~**31.63/9.66 gzip kB** JS and ~**22.96/4.38** CSS; People ~**58.82/17.86**; character-art pack ~**971.11/69.18**; main ~**1,360.79/380.23**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `8225082ce4b5489ceb2efd59a7260afa5a0f3893555b97f38170ac1e1ae69cee`; dependency SHA `a0add8575bcb362a98de2379a894d215f3b1f1d4eb6cf0a0be5318668e2d86b2`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10477005329` (`88d522000bd1865d8deba4945e3e023ed10e64dbe08aabda8aa8e61251a48f01`); Pages artifact `10477005335` (`0cbd4c99776cbc127208060ecfd57937e1ea9a49877d7ccc7e32ecfdf40b6b5a`); deployment succeeded.
+- Feedback Inbox: **5 total / 0 unresolved by triage**; checkpoint `main` → `c68757f75f38f76fc616589450b1a39b41e1b6d0` at `2026-09-17 01:34:16.880968+00`.
+- Player review of these two rooms is the gate before expanding scene migration to additional locations.
+
+## Prior certified gameplay/source — Run #185 — Secret Yuki durable provenance-routing hotfix
 
 - Upload wrapper `6bbd4a7aef2dc876748f056d2fcecdcb040ba0ce`; expanded certified source `d3760daa841f21e4a73bd4a22bbcd5f6560b08a4`; Actions Run ID `35121435267`; job `104879924533`. Net diff from synchronized Run #184 `f8842340b36dc69e10c5481449576927c9f7fab7` is exactly **5 intended source/test files**.
 - Player reproduction exposed an authority bug rather than save corruption: the exact secret Yuki NPC and `secretCode:yuki:9426` flag still existed, but the old `secret_yuki_9426` origin memory had been pruned after the NPC reached the intentional 36-entry relationship-memory ceiling. Because routing still inspected that bounded memory, Threadspace opened the ordinary profile.

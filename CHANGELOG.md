@@ -1,3 +1,22 @@
+## Dedicated location scenes first slice — CI Green Run #187 — 2026-09-16
+
+### Added / changed
+
+- Added the first certified dedicated location-scene rollout for **Weaver Park** and **Threadtone Music Studio**. Selecting either enabled place from the existing Everthread map now opens an illustrated, object-driven place surface instead of forwarding into the broad legacy Activities/Career pages. The underlying map remains mounted so camera/search/filter state survives the visit and the originating pin remains highlighted on return.
+- Added reusable `LocationScene` / `LocationSceneSystem` / data contracts without creating a second simulation authority. Scene actions consume existing wellness, Shared Lives, dating, action-economy, music lifecycle/release/tour/partnership, exit, and retirement owners; availability is projected from those systems and rechecked before mutation. Browsing a room, object menu, catalog, or unavailable action does not consume gameplay RNG or silently mutate `GameState`.
+- Weaver Park exposes a park bench (Walk together / Play outside / accepted Park date), walking trail (Walk / Run), and quiet pavilion (Meditate). Threadtone exposes the producer desk (Leave Music Path / Retire with confirmation), rehearsal nook (Practice vocals / Tour), recording booth (Release Song / Album), and record shelf (existing catalog and distribution-offer projections).
+- Added data-driven 1024×1536 contained scene geometry, semantic hotspot groups, minimum 48px targets, readable edge-aware labels, a first-class **Things to do** fallback with action parity, and local Back unwinding (focused detail/picker → object menu → location → preserved map). Artwork uses `contain`, never `cover`, so hotspot coordinates stay aligned with the authored scene.
+- Imported only the **4 runtime Astra assets** needed for this first slice: Weaver Park + Threadtone backgrounds and park-bench + producer-desk props. The broader Astra 25-location package remains design input, not shipped/certified content yet. Save schema remains **17**.
+- Added dedicated Location Scene regression **34/34**, covering exact two-place rollout, geometry/touch constraints, read-only browsing, age/action gates, companion/date filtering, music lifecycle gates, catalog/offer projection, label alignment, and Back-stack contract.
+
+### Certification
+
+- GitHub Actions Run #187 (`35170740515`, job `105041659840`) certified expanded source `c68757f75f38f76fc616589450b1a39b41e1b6d0` from upload wrapper `f3898378133f48f7b60816f3cfb46596f554c781`. Net diff from synchronized Run #186 source `e1787ac018d47b580dd49ac9854c087fc07ec729` is exactly **12 intended source/test/asset files**; workflow import reports 13 changed files because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4** in **61,250 ms**: Engine TypeScript **3,991 ms**, Test TypeScript **6,258 ms**, complete regression wall **35,711 ms**, production build **15,286 ms**. Location Scene **34/34**; Map **46/46**; institution routing **42/42**; Shared Lives **53/53**; Dating **61/61**; Music **76/76**; lifecycle **48/48**; Secret Yuki **36/36**; Character Visual **76/76**; Yuki Art **19/19**; Dynasty **66/66**; Long-Life **105/105**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed at **222 modules**. Town Map lazy JS ~**31.63/9.66 kB gzip** and CSS ~**22.96/4.38**; People remains ~**58.82/17.86**; lazy `characterArtPack` remains ~**971.11/69.18**; main ~**1,360.79/380.23**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA-256 `8225082ce4b5489ceb2efd59a7260afa5a0f3893555b97f38170ac1e1ae69cee`; dependency SHA-256 `a0add8575bcb362a98de2379a894d215f3b1f1d4eb6cf0a0be5318668e2d86b2`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified preflight artifact `10477005329` (`88d522000bd1865d8deba4945e3e023ed10e64dbe08aabda8aa8e61251a48f01`); Pages artifact `10477005335` (`0cbd4c99776cbc127208060ecfd57937e1ea9a49877d7ccc7e32ecfdf40b6b5a`); Pages deployment reported success.
+- Post-certification Feedback Inbox remains **5 total / 0 unresolved by triage**, with no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint `main` advanced to `c68757f75f38f76fc616589450b1a39b41e1b6d0` at `2026-09-17 01:34:16.880968+00`, reviewed count **5**.
+
 ## Secret Yuki durable provenance-routing hotfix — CI Green Run #185 — 2026-09-16
 
 ### Fixed
