@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #190** (`35175656593`) on expanded source **`ebf2ed8eb3a40276e055ce098818398add28b0d6`**, save schema **17**. Runs #189–#190 player-harden the Run #187 dedicated location-scene foundation with immersive full-bleed presentation and a unified collapsible utility drawer while preserving the existing Town Map, gameplay action owners, action economy, and all save/simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this location-scene rollout is post-closeout presentation/navigation work, not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #192** (`35178859400`) on expanded source **`1f5c8d598b6f277f26ffda5d7683d7474141200e`**, save schema **17**. Run #192 widens the certified dedicated location-scene rollout from Weaver Park + Threadtone Music Studio to **Central Everthread Bank** while preserving the existing Town Map, finance/credit/investment owners, action economy, and all save/simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this location-scene rollout is post-closeout presentation/navigation work, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,20 +16,32 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #190**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `ebf2ed8eb3a40276e055ce098818398add28b0d6` at `2026-09-17 02:48:02.61955+00`, reviewed count **5**.
+- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Current active player-facing direction is the dedicated **location-scene rollout**. Run #187 certifies Weaver Park + Threadtone Music Studio as the first two scene-backed map places; Runs #189–#190 incorporate the first direct player-review presentation pass and drawer hotfix. Expand further only after player review confirms the polished interaction model; the remaining Astra location assets are not yet certified/shipped. Character Visual remains a separate approved direction with Runs #170–#185 preserved, and additional Yuki age-stage art can still plug into that existing contract later. No Phase 11 label is implied.
+- Current active player-facing direction is the dedicated **location-scene rollout**. Run #192 certifies **Central Everthread Bank** as the third scene-backed map place on top of the Run #187/#189/#190 Weaver Park + Threadtone foundation. The next gate is direct player-facing review of the Bank scene and focused finance surfaces; only after that approval should one additional Astra location be selected and integrated. The remaining Astra assets are design input, not shipped/certified content. Character Visual remains a separate approved direction with Runs #170–#185 preserved, and additional Yuki age-stage art can still plug into that existing contract later. No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
-Last handoff synchronization: 2026-09-16
+Last handoff synchronization: 2026-09-17
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Runs #189–#190 — immersive scene polish + utility-drawer repair
+## Newest certified gameplay/source — Run #192 — Central Everthread Bank dedicated scene
+
+- Upload wrapper `d0d26c118a378ceabb93aafc97cb0cb24f30d263`; expanded certified source `1f5c8d598b6f277f26ffda5d7683d7474141200e`; Actions Run ID `35178859400`; job `105066477713`. Net diff from synchronized Run #191 source `68d74f6c6204aa85c3dae661b46d2e8101ef5f2d` is exactly **10 intended files**: 4 added and 6 modified. The workflow importer reports 11 changed files only because it removes the uploaded `everthread-source.zip`.
+- Central Everthread Bank is now the third scene-backed place. Its three Astra semantic groups are **Banking kiosk**, **Teller counter**, and **Advisor office**, exposing seven focused panel actions: money summary, bills/payments, accounts, credit offers, borrowing, investments, and credit history. The certified scene catalog is now **3 scenes / 10 semantic groups / 21 scene action bindings / 6 selected Astra runtime assets**.
+- The Bank scene adds no finance shadow state and performs no direct money mutation. `BankLocationPanel` is a focused UI adapter over reusable `MoneySummaryView`, `InvestmentMarketView`, and `CreditBankingFocusedView`; those views continue to call existing Finance, Investment, Credit, Payment, Personal Borrowing, and `GameEngine` owners. The legacy Assets and Credit & Banking surfaces reuse the same focused views where appropriate so presentation does not fork business rules.
+- Bank browsing is intentionally state/RNG/runtime-ID neutral. The scene-level bank gate only exposes focused panels; action-specific ownership remains downstream. In particular, the investment surface retains the established adulthood lock rather than teaching the scene adapter a second age rule. Save schema remains **17**.
+- Location Scene regression expands **40 → 44**. Canonical preflight passed **4/4** in **49,109 ms**: Engine TypeScript **3,276 ms**, Test TypeScript **5,083 ms**, complete regression wall **28,110 ms**, production build **12,636 ms**. Connected suites include base **82/82**, Credit & Banking **75/75**, Payment & Asset Management **81/81**, Map **46/46**, institution routing **42/42**, Music **76/76**, Secret Yuki **36/36**, Character Visual **76/76**, Dynasty **66/66**, Long-Life **105/105**, minigames **19/19**, and feedback **20/20 + 23/23**.
+- Production build **224 modules**. Town Map lazy JS ~**35.48/10.70 gzip kB** and CSS ~**24.42/4.66**; People ~**58.82/17.86**; Player Profile ~**10.20/2.94**; character-art pack ~**971.11/69.18**; main ~**1,361.81/380.49**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA `c857954cf15ed3a761daa9d6d2985d2b793cc9ceb1d6593ea7d04bef23e10731`; dependency SHA `b39ae97fe6ae6ca22ad0b0a777549a134c94e683507c1f917ee6a8b5d8911dac`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10479623295` (`bc100c21ee49fc0a35c74425cbf4c675be72e4b490ca85a99bf8fd27a34026ae`); Pages artifact `10479573465` (`243767c5c4037cfda59418761c6c0d9bfda5f3ba5a98bd403ca08e2ef8b24ae4`); deployment succeeded.
+- Live Feedback Inbox sweep after certification: **5 total / 0 unresolved by triage**, no report newer than `2026-09-15 06:47:52.761298+00`; checkpoint `main` → `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**.
+- Next gate: Mavyy player-facing review of Central Everthread Bank. Do not widen to location #4 until that interaction pass is accepted; then select exactly one next Astra location and repeat owner mapping → regression → full CI certification.
+
+## Prior certified gameplay/source — Runs #189–#190 — immersive scene polish + utility-drawer repair
 
 - Run #189: upload wrapper `5873f70ad500a43b1feaecd5444d136768294468`; expanded source `7509d29baa2538e1e69c7938b1bdba9e3cc29efd`; Actions Run ID `35173827772`; job `105051024289`. It changes exactly **4 source/test files** over synchronized Run #188 `97d8b988cb100568ef164495559c34806a4a1805`.
 - Run #189 makes artwork full-bleed with one shared cover transform for background/hotspots/props, makes the internal header/hotspots transparent overlays, gives copy black-outline/shadow readability, replaces numbered hotspot badges with a hand interaction affordance, and adds a local collapsible utility surface. No gameplay/save authority changes.

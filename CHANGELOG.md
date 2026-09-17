@@ -1,3 +1,21 @@
+## Central Everthread Bank dedicated location scene — CI Green Run #192 — 2026-09-17
+
+### Added / changed
+
+- Added **Central Everthread Bank** as the third dedicated scene-backed Town Map location, preserving the Run #187/#189/#190 full-bleed scene shell, unified utility drawer, map-state preservation, semantic hotspot geometry, Things-to-do parity, and local Back unwinding.
+- Imported only the two Astra runtime assets needed for this slice: `central-everthread-bank.png` and `service-kiosk.png`. The scene defines three semantic groups—Banking kiosk, Teller counter, Advisor office—with seven focused panel bindings for money summary, bills/payments, accounts, credit offers, borrowing, investments, and credit history.
+- Added reusable `MoneySummaryView` and `InvestmentMarketView`, then reused them from both the Bank scene and existing Assets screen. Added `CreditBankingFocusedView` around the already-established credit/payment/borrowing bodies while preserving the public `CreditBankingPanel` API. This reduces presentation drift without moving finance authority into location UI.
+- The Bank scene never mutates money directly and owns no account, debt, credit-score, payment, portfolio, or save state. Mutations continue through existing `GameEngine` actions and established Finance, Credit, Payment, Personal Borrowing, and Investment systems. Scene browsing and availability remain state/RNG/runtime-ID neutral; downstream owners retain action-specific gates such as investment adulthood. Save schema remains **17**.
+- Location Scene regression expands **40 → 44** for exact three-scene rollout, Bank action/group parity, state-neutral child browsing, and kiosk prop geometry. Certified scene totals are **3 surfaces / 10 semantic groups / 21 action bindings / 6 selected Astra runtime assets**.
+
+### Certification
+
+- GitHub Actions Run #192 (`35178859400`, job `105066477713`) certified expanded source `1f5c8d598b6f277f26ffda5d7683d7474141200e` from upload wrapper `d0d26c118a378ceabb93aafc97cb0cb24f30d263`. Net diff from synchronized Run #191 `68d74f6c6204aa85c3dae661b46d2e8101ef5f2d` is exactly **10 intended files**; workflow import reports 11 because it removes `everthread-source.zip`.
+- Canonical preflight passed **4/4** in **49,109 ms**: Engine TypeScript **3,276 ms**, Test TypeScript **5,083 ms**, complete regression wall **28,110 ms**, production build **12,636 ms**. Location Scene **44/44**; Credit & Banking **75/75**; Payment & Asset Management **81/81**; Map **46/46**; institution routing **42/42**; base **82/82**; Music **76/76**; Secret Yuki **36/36**; Character Visual **76/76**; Dynasty **66/66**; Long-Life **105/105**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**.
+- Production build passed at **224 modules**. Town Map lazy JS ~**35.48/10.70 kB gzip** and CSS ~**24.42/4.66**; People ~**58.82/17.86**; Player Profile ~**10.20/2.94**; lazy `characterArtPack` ~**971.11/69.18**; main ~**1,361.81/380.49**. Existing >700 kB warning remains nonblocking.
+- Certified source SHA-256 `c857954cf15ed3a761daa9d6d2985d2b793cc9ceb1d6593ea7d04bef23e10731`; dependency SHA-256 `b39ae97fe6ae6ca22ad0b0a777549a134c94e683507c1f917ee6a8b5d8911dac`; package-lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`. Certified artifact `10479623295` (`bc100c21ee49fc0a35c74425cbf4c675be72e4b490ca85a99bf8fd27a34026ae`); Pages artifact `10479573465` (`243767c5c4037cfda59418761c6c0d9bfda5f3ba5a98bd403ca08e2ef8b24ae4`); deployment reported success.
+- Post-certification live Feedback Inbox sweep remains **5 total / 0 unresolved by triage**, with no report newer than `2026-09-15 06:47:52.761298+00`. Durable review checkpoint `main` advanced to `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**.
+
 ## Dedicated location scenes immersive polish + utility-drawer hotfix — CI Green Runs #189–#190 — 2026-09-16
 
 ### Added / changed

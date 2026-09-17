@@ -1,10 +1,10 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-16
+Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #190 / `ebf2ed8eb3a40276e055ce098818398add28b0d6`
-Certified gameplay baseline: Run #190 / `ebf2ed8eb3a40276e055ce098818398add28b0d6`
+Newest certified expanded gameplay/source: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
+Certified gameplay baseline: Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`
 
 ## Product direction
 
@@ -26,7 +26,21 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified presentation/navigation polish — Runs #189–#190 — immersive scenes + unified utility drawer
+## Newest certified location-scene slice — Run #192 — Central Everthread Bank
+
+Run #192 adds the third dedicated illustrated location without creating a second finance engine.
+
+- Expanded certified source `1f5c8d598b6f277f26ffda5d7683d7474141200e` from wrapper `d0d26c118a378ceabb93aafc97cb0cb24f30d263`; Actions Run `35178859400`, job `105066477713`. Diff from synchronized Run #191 `68d74f6c6204aa85c3dae661b46d2e8101ef5f2d` is exactly **10 intended source/test/asset files**.
+- Central Everthread Bank adds three semantic scene groups and seven focused finance bindings while the Town Map remains the navigation owner. `BankLocationPanel` contains presentation routing only; `MoneySummaryView`, `InvestmentMarketView`, and `CreditBankingFocusedView` reuse existing Finance/Credit/Payment/Borrowing/Investment systems and `GameEngine` mutations. No scene balance, account ledger, credit score, liability, portfolio, or save state is introduced.
+- `AssetsScreen` now consumes the same reusable money/investment views, reducing UI-rule drift instead of copying logic. Existing `CreditBankingPanel` behavior/API remains preserved while its internal focused bodies can also render in the location scene.
+- Certified scene totals: **3 surfaces / 10 semantic groups / 21 action bindings / 6 selected Astra runtime assets**. Town places remain **25**, routed institution services **29**, and save schema **17**.
+- Location Scene **44/44**; Credit & Banking **75/75**; Payment & Asset Management **81/81**; Map **46/46**; institution routing **42/42**; complete established wall Green. Canonical preflight **4/4 Green in 49,109 ms**.
+- Production **224 modules**; Town Map JS ~**35.48/10.70 gzip kB**, CSS ~**24.42/4.66**; People ~**58.82/17.86**; character-art pack ~**971.11/69.18**; main ~**1,361.81/380.49**.
+- Certification hashes/artifacts: source `c857954cf15ed3a761daa9d6d2985d2b793cc9ceb1d6593ea7d04bef23e10731`; dependencies `b39ae97fe6ae6ca22ad0b0a777549a134c94e683507c1f917ee6a8b5d8911dac`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10479623295`; Pages artifact `10479573465`; deployment succeeded.
+- Feedback sweep is **5 total / 0 unresolved** and checkpointed against Run #192 at `2026-09-17 03:49:20.500943+00`.
+- Next step is player-facing Bank review. Do not begin a fourth location until that pass is accepted.
+
+## Prior certified presentation/navigation polish — Runs #189–#190 — immersive scenes + unified utility drawer
 
 Runs #189–#190 preserve the Run #187 action/authority foundation while incorporating direct player review of the first two rooms.
 
@@ -36,7 +50,7 @@ Runs #189–#190 preserve the Run #187 action/authority foundation while incorpo
 - Production remains **222 modules**; Town Map lazy JS ~**32.62/10.03 kB gzip**, CSS ~**24.42/4.66**, People ~**58.82/17.86**, character-art pack ~**971.11/69.18**, main ~**1,360.79/380.22**.
 - Run #190 certification: wrapper `67307cac76713b9cc26d06ede39e421f1b4508f6`; Actions Run ID `35175656593`; job `105056670426`; source SHA `5ab9129e4301e9e35622ccc04cfe52e67ed613084c5ba78583ddac0ad7cce603`; dependency SHA `18709e220caaf49ba0557f9eccc2b1dcc5987dbe14af4186d7ef3971db59ac18`; artifact `10478273242` (`128140b302c6de30b4770ce94ddf559384fdfa7cf7154629c0e87f388960f661`); Pages `10477874907` (`e7b2273920147d9aa85bcbefadf8d314c709a2ff5ec2c79a2c5da3004bfc11d0`); deployment succeeded.
 - Feedback Inbox remains **5 total / 0 unresolved by triage**; checkpoint `main` now points to Run #190 at `2026-09-17 02:48:02.61955+00`.
-- Next step remains player-facing review of the polished Weaver Park + Threadtone shell before widening migration to additional Astra locations.
+- At Run #190, the next gate was player-facing review of the polished Weaver Park + Threadtone shell before widening migration; Run #192 subsequently passed that gate by certifying Central Everthread Bank as the third scene.
 
 ## Prior certified presentation/navigation slice — Run #187 — dedicated location scenes foundation
 

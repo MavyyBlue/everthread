@@ -1,3 +1,7 @@
+## Central Everthread Bank dedicated location scene — Run #192
+
+Run #192 expands the dedicated scene rollout to **3 location-scene surfaces**, **10 semantic object groups**, **21 scene action bindings**, and **6 selected Astra presentation assets** by adding Central Everthread Bank's Banking kiosk, Teller counter, and Advisor office. The seven Bank bindings are focused presentation routes over existing finance, credit, payment, borrowing, and investment owners; they do **not** add new money/debt/account/investment content catalogs or durable state. Certified gameplay/content totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged. The remaining Astra scenes stay unshipped design input until individually integrated and certified.
+
 ## Dedicated location scene polish + drawer hotfix — Runs #189–#190
 
 Runs #189–#190 add **no new gameplay/event/place/career/education/inventory/preference/art definitions** and no durable simulation authority. They refine the already-certified 2-scene / 7-object-group / 14-action-binding Weaver Park + Threadtone presentation shell and its local utility drawer. Certified gameplay/content totals therefore remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components**, the same **4 selected Astra location-scene runtime assets**, and save schema **17** unchanged.
@@ -45,7 +49,7 @@ Run #170 adds **no gameplay/event/place/career/inventory definitions**. It adds 
 Run #168 adds **no gameplay/content definitions**. The Astra-derived local vector library is presentation metadata only, and the Appearance reactivity correction changes render invalidation rather than content. Current certified gameplay totals remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, save schema **17**.
 
 
-Last audited: 2026-09-16
+Last audited: 2026-09-17
 Source of truth: executable definitions under `src/data/`; use `npm run content:audit` after dependencies are installed.
 
 ## Phase 10E / final Phase 10 closeout content note

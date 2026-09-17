@@ -13,9 +13,9 @@ Player reports are QA/development metadata, never simulation truth.
 
 ## Current architecture
 
-Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #172 / `5cf52a39d79f0835c2d9682e21d40c9ace7498c1`**, save schema **17**. Run #172 is the New Life responsive-width hotfix over the approved Run #170 Character Visual foundation and does not reopen Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** remain certified/closed; no Phase 11 label is active.
+Feedback transport/status was certified through Run #111 and remains deployed. Newest certified gameplay/source is **Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`**, save schema **17**. Run #192 is the Central Everthread Bank dedicated-location slice over the certified location-scene foundation and does not reopen Phase 10. Phases 7, 8, **9 — Shared Lives**, and **10 — Living Everthread** remain certified/closed; no Phase 11 label is active.
 
-Post-Run-#172 review sweep on 2026-09-15 found **5 total / 0 unresolved** reports and no receipt newer than `2026-09-15 06:47:52.761298+00`. The stored `main` review-state checkpoint was successfully advanced to Run #172 source `5cf52a39d79f0835c2d9682e21d40c9ace7498c1` at `2026-09-15 18:17:43.686626+00`, reviewed-report count **5**.
+Post-Run-#192 live review sweep on 2026-09-17 found **5 total / 0 unresolved** reports and no receipt newer than `2026-09-15 06:47:52.761298+00`. The stored `main` review-state checkpoint was successfully advanced to Run #192 source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed-report count **5**.
 
 Central Feedback Inbox infrastructure:
 
@@ -96,7 +96,7 @@ A report is not resolved merely because a local patch works. Resolution should p
 
 ## Current queue snapshot
 
-Fresh post-Run-#168 live central-inbox read found **5 rows / 0 unresolved by `triage_status`**. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` points to certified **Run #168 / `f68ffacf47c1fd208f836666fca3b1010a517c85`** at `2026-09-15 13:10:53.355932+00`, with newest report receipt `2026-09-15 06:47:52.761298+00` and reviewed count **5**.
+Fresh post-Run-#192 live central-inbox read found **5 rows / 0 unresolved by `triage_status`**. The stored checkpoint update succeeded: `everthread_feedback_review_state.main` points to certified **Run #192 / `1f5c8d598b6f277f26ffda5d7683d7474141200e`** at `2026-09-17 03:49:20.500943+00`, with newest report receipt `2026-09-15 06:47:52.761298+00` and reviewed count **5**.
 
 - `ET-20260913-A527E2A6`: **resolved → suggestion**, automatic-delivery/status test.
 - `ET-20260913-55F088C9`: **resolved → suggestion**, independent-device submission/status test.
