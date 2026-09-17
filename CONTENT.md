@@ -1,3 +1,7 @@
+## Dedicated location scene polish + drawer hotfix — Runs #189–#190
+
+Runs #189–#190 add **no new gameplay/event/place/career/education/inventory/preference/art definitions** and no durable simulation authority. They refine the already-certified 2-scene / 7-object-group / 14-action-binding Weaver Park + Threadtone presentation shell and its local utility drawer. Certified gameplay/content totals therefore remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components**, the same **4 selected Astra location-scene runtime assets**, and save schema **17** unchanged.
+
 ## Dedicated location scenes first slice — Run #187
 
 Run #187 adds **2 dedicated location-scene surfaces**, **7 semantic object groups**, **14 scene action bindings**, and **4 selected Astra presentation assets** for the already-existing Weaver Park and Threadtone Music Studio places. These are location-presentation/routing definitions over existing gameplay owners, not new Town Place, event, career, education, inventory, or preference catalog entries. Certified gameplay/content totals therefore remain **691 events / 25 Everthread town places / 29 routed institution services / 24 personal inventory items / 38 NPC preference tags**, with **624 modular Character Visual SVG components** and save schema **17** unchanged. The other Astra location scenes remain unshipped design input until separately integrated and certified.

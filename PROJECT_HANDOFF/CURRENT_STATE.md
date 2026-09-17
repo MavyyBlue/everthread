@@ -2,7 +2,7 @@
 
 ## READ THIS FIRST IN A NEW CHAT
 
-The newest certified expanded **gameplay/source** is **GitHub Actions Run #187** (`35170740515`) on expanded source **`c68757f75f38f76fc616589450b1a39b41e1b6d0`**, save schema **17**. Run #187 establishes the first dedicated location-scene presentation/navigation slice for Weaver Park and Threadtone Music Studio while preserving the existing Town Map, gameplay action owners, action economy, and all save/simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this location-scene rollout is post-closeout presentation/navigation work, not Phase 11.**
+The newest certified expanded **gameplay/source** is **GitHub Actions Run #190** (`35175656593`) on expanded source **`ebf2ed8eb3a40276e055ce098818398add28b0d6`**, save schema **17**. Runs #189–#190 player-harden the Run #187 dedicated location-scene foundation with immersive full-bleed presentation and a unified collapsible utility drawer while preserving the existing Town Map, gameplay action owners, action economy, and all save/simulation authorities. **Phase 10 — Living Everthread and the Living World Program remain CLOSED / CERTIFIED; this location-scene rollout is post-closeout presentation/navigation work, not Phase 11.**
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -16,9 +16,9 @@ The newest certified expanded **gameplay/source** is **GitHub Actions Run #187**
 - Phase 10D — Living Map Projection: **CERTIFIED / CLOSED**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
-- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `c68757f75f38f76fc616589450b1a39b41e1b6d0` at `2026-09-17 01:34:16.880968+00`, reviewed count **5**.
+- Feedback Inbox is verified **5 total / 0 unresolved by triage**; durable review-state points to newest gameplay source `ebf2ed8eb3a40276e055ce098818398add28b0d6` at `2026-09-17 02:48:02.61955+00`, reviewed count **5**.
 - Direct Android/player-side QA previously confirmed the Map sheet/navigation/Music Studio corrections and Everthread-only Airport travel rule.
-- Current active player-facing direction is the dedicated **location-scene rollout**. Run #187 certifies Weaver Park + Threadtone Music Studio as the first two scene-backed map places over existing simulation owners. Expand further only after player review confirms this interaction model; the remaining Astra location assets are not yet certified/shipped. Character Visual remains a separate approved direction with Runs #170–#185 preserved, and additional Yuki age-stage art can still plug into that existing contract later. No Phase 11 label is implied.
+- Current active player-facing direction is the dedicated **location-scene rollout**. Run #187 certifies Weaver Park + Threadtone Music Studio as the first two scene-backed map places; Runs #189–#190 incorporate the first direct player-review presentation pass and drawer hotfix. Expand further only after player review confirms the polished interaction model; the remaining Astra location assets are not yet certified/shipped. Character Visual remains a separate approved direction with Runs #170–#185 preserved, and additional Yuki age-stage art can still plug into that existing contract later. No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
@@ -29,7 +29,19 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified gameplay/source — Run #187 — dedicated location scenes first slice
+## Newest certified gameplay/source — Runs #189–#190 — immersive scene polish + utility-drawer repair
+
+- Run #189: upload wrapper `5873f70ad500a43b1feaecd5444d136768294468`; expanded source `7509d29baa2538e1e69c7938b1bdba9e3cc29efd`; Actions Run ID `35173827772`; job `105051024289`. It changes exactly **4 source/test files** over synchronized Run #188 `97d8b988cb100568ef164495559c34806a4a1805`.
+- Run #189 makes artwork full-bleed with one shared cover transform for background/hotspots/props, makes the internal header/hotspots transparent overlays, gives copy black-outline/shadow readability, replaces numbered hotspot badges with a hand interaction affordance, and adds a local collapsible utility surface. No gameplay/save authority changes.
+- Player testing exposed one composition bug: the chevron was positioned independently from Things to do + Map. Run #190 repairs this by making all three one shared utility drawer. `locationSceneUtilityTrayState` projects `expanded | collapsed | hidden`; collapsed retracts the complete button row and leaves only the handle above navigation; object/detail panels hide the whole drawer.
+- Run #190: upload wrapper `67307cac76713b9cc26d06ede39e421f1b4508f6`; expanded certified source `ebf2ed8eb3a40276e055ce098818398add28b0d6`; Actions Run ID `35175656593`; job `105056670426`. Net diff from Run #189 is exactly **4 intended source/test files**.
+- Location Scene regression **40/40**; Map **46/46**; institution routing **42/42**; Shared Lives **53/53**; Dating **61/61**; Music **76/76**; lifecycle **48/48**; Secret Yuki **36/36**; Character Visual **76/76**; Yuki Art **19/19**; Dynasty **66/66**; Long-Life **105/105**; New Life **8/8**; minigames **19/19**; feedback **20/20 + 23/23**. Canonical Run #190 preflight **4/4 Green**, **34,252 ms** total.
+- Production build **222 modules**. Town Map ~**32.62/10.03 gzip kB** JS and ~**24.42/4.66** CSS; People ~**58.82/17.86**; character-art pack ~**971.11/69.18**; main ~**1,360.79/380.22**.
+- Run #190 source SHA `5ab9129e4301e9e35622ccc04cfe52e67ed613084c5ba78583ddac0ad7cce603`; dependency SHA `18709e220caaf49ba0557f9eccc2b1dcc5987dbe14af4186d7ef3971db59ac18`; lock SHA `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10478273242` (`128140b302c6de30b4770ce94ddf559384fdfa7cf7154629c0e87f388960f661`); Pages artifact `10477874907` (`e7b2273920147d9aa85bcbefadf8d314c709a2ff5ec2c79a2c5da3004bfc11d0`); deployment succeeded.
+- Feedback Inbox: **5 total / 0 unresolved by triage**; checkpoint `main` → `ebf2ed8eb3a40276e055ce098818398add28b0d6` at `2026-09-17 02:48:02.61955+00`.
+- Next gate remains another player-facing pass of the polished Park + Threadtone shell before widening migration to additional Astra locations.
+
+## Prior certified gameplay/source — Run #187 — dedicated location scenes first slice
 
 - Upload wrapper `f3898378133f48f7b60816f3cfb46596f554c781`; expanded certified source `c68757f75f38f76fc616589450b1a39b41e1b6d0`; Actions Run ID `35170740515`; job `105041659840`. Net diff from synchronized Run #186 `e1787ac018d47b580dd49ac9854c087fc07ec729` is exactly **12 intended source/test/asset files**.
 - Only Weaver Park and Threadtone Music Studio are scene-enabled. The map stays mounted underneath; returning preserves local map camera/filter/search state and keeps the originating pin selected. Other town places continue their existing behavior until separately migrated/certified.

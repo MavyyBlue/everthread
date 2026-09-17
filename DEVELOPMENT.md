@@ -3,8 +3,8 @@
 Last updated: 2026-09-16
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded gameplay/source: Run #187 / `c68757f75f38f76fc616589450b1a39b41e1b6d0`
-Certified gameplay baseline: Run #187 / `c68757f75f38f76fc616589450b1a39b41e1b6d0`
+Newest certified expanded gameplay/source: Run #190 / `ebf2ed8eb3a40276e055ce098818398add28b0d6`
+Certified gameplay baseline: Run #190 / `ebf2ed8eb3a40276e055ce098818398add28b0d6`
 
 ## Product direction
 
@@ -26,7 +26,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified presentation/navigation slice — Run #187 — dedicated location scenes foundation
+## Newest certified presentation/navigation polish — Runs #189–#190 — immersive scenes + unified utility drawer
+
+Runs #189–#190 preserve the Run #187 action/authority foundation while incorporating direct player review of the first two rooms.
+
+- Run #189 expanded source `7509d29baa2538e1e69c7938b1bdba9e3cc29efd` switches the scene shell to edge-to-edge cover geometry with shared stage math for artwork/hotspots/props, transparent overlay header/hotspots, outlined label text, hand interact affordances, and a locally collapsible utility surface. No scene state enters `GameState`; no gameplay owner changes.
+- Run #190 expanded source `ebf2ed8eb3a40276e055ce098818398add28b0d6` fixes the player-reported drawer bug by making the handle + Things to do + Map one shared utility drawer. Expanded/collapsed/hidden behavior is projected by `locationSceneUtilityTrayState`; collapsing retracts the entire footer row, and opening an object panel hides the drawer as one unit.
+- Location Scene regression is now **40/40**. Canonical Run #190 preflight is **4/4 Green** in **34,252 ms**. Connected Map **46/46**, institution routing **42/42**, Shared Lives **53/53**, Dating **61/61**, Music **76/76**, lifecycle **48/48**, Secret Yuki **36/36**, Character Visual **76/76**, Dynasty **66/66**, Long-Life **105/105**, plus the complete established wall remain Green.
+- Production remains **222 modules**; Town Map lazy JS ~**32.62/10.03 kB gzip**, CSS ~**24.42/4.66**, People ~**58.82/17.86**, character-art pack ~**971.11/69.18**, main ~**1,360.79/380.22**.
+- Run #190 certification: wrapper `67307cac76713b9cc26d06ede39e421f1b4508f6`; Actions Run ID `35175656593`; job `105056670426`; source SHA `5ab9129e4301e9e35622ccc04cfe52e67ed613084c5ba78583ddac0ad7cce603`; dependency SHA `18709e220caaf49ba0557f9eccc2b1dcc5987dbe14af4186d7ef3971db59ac18`; artifact `10478273242` (`128140b302c6de30b4770ce94ddf559384fdfa7cf7154629c0e87f388960f661`); Pages `10477874907` (`e7b2273920147d9aa85bcbefadf8d314c709a2ff5ec2c79a2c5da3004bfc11d0`); deployment succeeded.
+- Feedback Inbox remains **5 total / 0 unresolved by triage**; checkpoint `main` now points to Run #190 at `2026-09-17 02:48:02.61955+00`.
+- Next step remains player-facing review of the polished Weaver Park + Threadtone shell before widening migration to additional Astra locations.
+
+## Prior certified presentation/navigation slice — Run #187 — dedicated location scenes foundation
 
 Run #187 certifies the first two dedicated illustrated place surfaces without changing simulation/save authority.
 
