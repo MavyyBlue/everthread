@@ -1,4 +1,4 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-market';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
@@ -6,14 +6,15 @@ export type LocationSceneRealtyActionId='homes.catalog'|'homes.owned'|'homes.mor
 export type LocationSceneResidentialActionId='home.neighbors'|'home.visits'|'shared.home.hangout'|'shared.home.cook'|'shared.home.sleepover';
 export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts'|'shop.inventory';
 export type LocationSceneDinerActionId='shop.diner';
+export type LocationSceneMarketActionId='shop.groceries'|'shop.market.inventory';
 export type LocationSceneSchoolPanelActionId='school.records'|'school.groups';
 export type LocationSceneActionId=
-  |'wellness.walk'|'wellness.run'|'wellness.meditate'|'wellness.gym'|'wellness.martial'
+  |'wellness.walk'|'wellness.run'|'wellness.meditate'|'wellness.gym'|'wellness.martial'|'wellness.diet'
   |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
   |'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'
   |'shared.diner.meal'|'date.diner'|'shared.gym.together'|'date.gym'|'shared.school.social'
   |'school.study'|'school.skip'|'school.dropout'|'school.volunteer'|LocationSceneSchoolPanelActionId
-  |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId
+  |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId|LocationSceneMarketActionId
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
@@ -41,6 +42,7 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'wellness.meditate':{id:'wellness.meditate',label:'Meditate',description:'Settle into a quiet moment.',kind:'action',risk:'normal'},
   'wellness.gym':{id:'wellness.gym',label:'Work out',description:'Use the fitness area for a workout.',kind:'action',risk:'normal'},
   'wellness.martial':{id:'wellness.martial',label:'Martial arts',description:'Practice in the martial arts area.',kind:'action',risk:'normal'},
+  'wellness.diet':{id:'wellness.diet',label:'Eat intentionally',description:'Make a considered food choice through the existing wellness system.',kind:'action',risk:'normal'},
   'shared.park.walk':{id:'shared.park.walk',label:'Walk together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'weaver-park',activityId:'park_walk'}},
   'shared.park.play':{id:'shared.park.play',label:'Play outside',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'weaver-park',activityId:'park_play'}},
   'date.park':{id:'date.park',label:'Park date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'weaver-park',activityId:'park_walk'}},
@@ -84,6 +86,8 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'shared.diner.meal':{id:'shared.diner.meal',label:'Share a meal',description:'Choose someone to share a booth and a meal with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'nightjar-diner',activityId:'diner_meal'}},
   'date.diner':{id:'date.diner',label:'Diner date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'nightjar-diner',activityId:'diner_meal'}},
   'shop.diner':{id:'shop.diner',label:'Counter goods',description:'Browse the real personal items already sold at Nightjar Diner and see what you have bought here.',kind:'panel',risk:'normal'},
+  'shop.groceries':{id:'shop.groceries',label:'Food & household items',description:'Browse the real personal-item catalogue entries already assigned to Everthread Market.',kind:'panel',risk:'normal'},
+  'shop.market.inventory':{id:'shop.market.inventory',label:'Your Market purchases',description:'Review personal items you actually acquired from Everthread Market.',kind:'panel',risk:'normal'},
   'shared.gym.together':{id:'shared.gym.together',label:'Train together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'pulseworks-gym',activityId:'gym_session'}},
   'date.gym':{id:'date.gym',label:'Workout date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'pulseworks-gym',activityId:'gym_session'}},
   'school.study':{id:'school.study',label:'Study harder',description:'Put extra effort into your current studies.',kind:'action',risk:'normal'},
@@ -195,6 +199,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'desk',label:'Study desk',description:'School effort',actionIds:['school.study','school.skip'],order:1,hitRect:[.2667,.58,.4666,.32]},
       {id:'classroom',label:'Classroom',description:'Your education',actionIds:['school.records','school.dropout'],order:2,hitRect:[.02,.335,.28,.19]},
       {id:'clubs',label:'Activity board',description:'School community',actionIds:['school.groups','school.volunteer','shared.school.social'],order:3,hitRect:[.71,.245,.28,.19]},
+    ],
+  },
+  {
+    id:'everthread-market',label:'Everthread Market',tagline:'Everyday things, close to home.',
+    background:'./location-scenes/backgrounds/everthread-market.png',propFile:'./location-scenes/props/grocery-cart.png',canvas:[1024,1536],
+    propAlphaBounds:[0,17,1222,1237],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'cart',label:'Shopping cart',description:'Food & household items',actionIds:['shop.groceries'],order:1,hitRect:[.26291,.58,.47418,.32]},
+      {id:'produce',label:'Produce stand',description:'Food choices',actionIds:['wellness.diet'],order:2,hitRect:[.06,.355,.28,.19]},
+      {id:'pantry',label:'Pantry shelves',description:'Your Market purchases',actionIds:['shop.market.inventory'],order:3,hitRect:[.72,.285,.28,.19]},
     ],
   },
 ] as const;

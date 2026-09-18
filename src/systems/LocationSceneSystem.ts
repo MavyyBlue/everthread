@@ -52,6 +52,8 @@ export function locationSceneMallPersonalCatalogue(giftsOnly=false){
 export function locationSceneMallOwnedPersonalItems(state:GameState){return locationSceneOwnedPersonalItems(state,'crossroads-mall');}
 export function locationSceneDinerPersonalCatalogue(){return locationScenePersonalCatalogue('nightjar-diner');}
 export function locationSceneDinerOwnedPersonalItems(state:GameState){return locationSceneOwnedPersonalItems(state,'nightjar-diner');}
+export function locationSceneMarketPersonalCatalogue(){return locationScenePersonalCatalogue('everthread-market');}
+export function locationSceneMarketOwnedPersonalItems(state:GameState){return locationSceneOwnedPersonalItems(state,'everthread-market');}
 export function locationSceneMallCollectibleCatalogue(){return collectibleDefinitions;}
 
 export function locationSceneSchoolProjection(state:GameState){
@@ -106,7 +108,7 @@ export function locationSceneLabelAlignment(rect:LocationSceneRect):LocationScen
 }
 
 const wellnessActionMap:Partial<Record<LocationSceneActionId,keyof typeof WELLNESS_MIN_AGES>>={
-  'wellness.walk':'walking','wellness.run':'running','wellness.meditate':'meditation','wellness.gym':'gym','wellness.martial':'martial_arts',
+  'wellness.walk':'walking','wellness.run':'running','wellness.meditate':'meditation','wellness.gym':'gym','wellness.martial':'martial_arts','wellness.diet':'diet',
 };
 
 function musicTrack(state:GameState){return state.specialCareers.music??{};}

@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperti
 import { BottomSheet } from './BottomSheet';
 import { EverthreadIcon } from './EverthreadIcon';
 import { formatMoney } from '../core/format';
-import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneDinerActionId, type LocationSceneMallActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneSchoolPanelActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
+import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneDinerActionId, type LocationSceneMallActionId, type LocationSceneMarketActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneSchoolPanelActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
 import { gameEngine } from '../stores/gameStore';
 import { BankLocationPanel } from './BankLocationPanel';
 import { MotorsLocationPanel } from './MotorsLocationPanel';
@@ -11,6 +11,7 @@ import { ResidentialLocationPanel } from './ResidentialLocationPanel';
 import { MallLocationPanel } from './MallLocationPanel';
 import { DinerLocationPanel } from './DinerLocationPanel';
 import { SchoolLocationPanel } from './SchoolLocationPanel';
+import { MarketLocationPanel } from './MarketLocationPanel';
 import {
   coverLocationScene,
   locationSceneActionAvailability,
@@ -39,7 +40,8 @@ type DetailState=
   |{kind:'residential';actionId:LocationSceneResidentialActionId|'homes.residence'}
   |{kind:'mall';actionId:LocationSceneMallActionId}
   |{kind:'diner';actionId:LocationSceneDinerActionId}
-  |{kind:'school';actionId:LocationSceneSchoolPanelActionId};
+  |{kind:'school';actionId:LocationSceneSchoolPanelActionId}
+  |{kind:'market';actionId:LocationSceneMarketActionId};
 
 function unavailableResult(reason:string):EngineResult{return{success:false,messages:[{text:reason}]};}
 function actionIcon(actionId:LocationSceneActionId){
@@ -47,6 +49,7 @@ function actionIcon(actionId:LocationSceneActionId){
   if(actionId.startsWith('motors.')||actionId==='license.driving')return'car' as const;
   if(actionId.startsWith('homes.'))return'key' as const;
   if(actionId==='shop.diner')return'diner' as const;
+  if(actionId==='shop.groceries'||actionId==='shop.market.inventory')return'market' as const;
   if(actionId.startsWith('shop.'))return'mall' as const;
   if(actionId.startsWith('home.')||actionId.startsWith('shared.home')||actionId==='date.home')return'home' as const;
   if(actionId.startsWith('music.'))return'music' as const;
@@ -63,9 +66,10 @@ function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='crossroads-mall')return'mall' as const;
   if(placeId==='nightjar-diner')return'diner' as const;
   if(placeId==='everthread-school')return'school' as const;
+  if(placeId==='everthread-market')return'market' as const;
   return'music' as const;
 }
-function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:placeId==='pulseworks-gym'?'gym' as const:placeId==='everthread-school'?'school' as const:'music' as const;}
+function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:placeId==='pulseworks-gym'?'gym' as const:placeId==='everthread-school'?'school' as const:placeId==='everthread-market'?'market' as const:'music' as const;}
 function confirmationCopy(actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'){
   if(actionId==='music.leave')return'Your completed music history, skills, earnings, releases, and relationships stay recorded. Leaving frees the special-career commitment slot.';
   if(actionId==='music.retire')return'Retirement preserves your completed music history and closes the current professional chapter. Return rules remain owned by the existing career lifecycle.';
@@ -184,6 +188,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       case'wellness.meditate':result=gameEngine.performActivity('meditation');break;
       case'wellness.gym':result=gameEngine.performActivity('gym');break;
       case'wellness.martial':result=gameEngine.performActivity('martial_arts');break;
+      case'wellness.diet':result=gameEngine.performActivity('diet');break;
       case'school.study':result=gameEngine.performActivity('study');break;
       case'school.skip':result=gameEngine.performActivity('skip_class');break;
       case'school.dropout':result=gameEngine.dropOut();break;
@@ -209,6 +214,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
     if(placeId==='threadwell-residential'&&(actionId==='homes.residence'||actionId==='home.neighbors'||actionId==='home.visits'||actionId==='shared.home.hangout'||actionId==='shared.home.cook'||actionId==='shared.home.sleepover')){setDetail({kind:'residential',actionId:actionId as LocationSceneResidentialActionId|'homes.residence'});return;}
     if(actionId.startsWith('homes.')){setDetail({kind:'realty',actionId:actionId as LocationSceneRealtyActionId});return;}
     if(actionId==='shop.diner'){setDetail({kind:'diner',actionId});return;}
+    if(actionId==='shop.groceries'||actionId==='shop.market.inventory'){setDetail({kind:'market',actionId});return;}
     if(actionId.startsWith('shop.')){setDetail({kind:'mall',actionId:actionId as LocationSceneMallActionId});return;}
     if(actionId==='school.records'||actionId==='school.groups'){setDetail({kind:'school',actionId});return;}
     if(action.risk==='confirm'&&(actionId==='music.leave'||actionId==='music.retire'||actionId==='school.skip'||actionId==='school.dropout')){setDetail({kind:'confirm',actionId});return;}
@@ -233,7 +239,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   };
 
   const prop=locationScenePropRect(scene.propAlphaBounds,stage,scene.propPlacement.width,scene.propPlacement.maxHeight,scene.propPlacement.baseline);
-  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
+  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'||detail?.kind==='market'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
 
   return <section ref={sceneRef} className="location-scene" aria-label={scene.label}>
     <header className="location-scene__header" aria-hidden={Boolean(selectedGroupId)}>
@@ -266,7 +272,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       </footer>
     </div>
 
-    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet} wide={detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='school'}>
+    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet} wide={detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='school'||detail?.kind==='market'}>
       {selectedGroupId&&!detail&&<div className="location-scene__sheet">
         {selectedGroupId!=='__all'&&selectedGroup&&<><p className="eyebrow">{scene.label}</p><h3>{selectedGroup.description}</h3></>}
         <div className="location-scene__action-list">{visibleActions.map(({group,actionId})=>{const action=LOCATION_SCENE_ACTIONS[actionId],availability=locationSceneActionAvailability(state,actionId);return <button key={`${group.id}:${actionId}`} disabled={!availability.available} onClick={()=>chooseAction(actionId)}>
@@ -336,6 +342,12 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
         <p className="eyebrow">Everthread Community School</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
         <SchoolLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
         <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to school</button>
+      </div>}
+
+      {detail?.kind==='market'&&<div className="location-scene__focused">
+        <p className="eyebrow">Everthread Market · Grocery Store</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
+        <MarketLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
+        <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to Market</button>
       </div>}
 
       {detail?.kind==='partnership'&&music&&<div className="location-scene__focused">
