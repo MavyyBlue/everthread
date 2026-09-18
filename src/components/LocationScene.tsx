@@ -15,6 +15,7 @@ import { MarketLocationPanel } from './MarketLocationPanel';
 import { CityHallLocationPanel } from './CityHallLocationPanel';
 import { CourthouseLocationPanel } from './CourthouseLocationPanel';
 import { BusinessDistrictLocationPanel } from './BusinessDistrictLocationPanel';
+import { WorkplaceLocationPanel } from './WorkplaceLocationPanel';
 import {
   coverLocationScene,
   locationSceneActionAvailability,
@@ -24,6 +25,7 @@ import {
   locationSceneCompanions,
   locationSceneMusicPartnershipDecisionAvailability,
   locationSceneMusicProjection,
+  locationSceneWorkplaceProjection,
   locationScenePropRect,
   locationSceneUtilityTrayState,
   placeLocationSceneRect,
@@ -47,7 +49,8 @@ type DetailState=
   |{kind:'market';actionId:LocationSceneMarketActionId}
   |{kind:'cityhall';actionId:LocationSceneCityHallPanelActionId}
   |{kind:'courthouse';actionId:LocationSceneCourthouseActionId}
-  |{kind:'businessdistrict';actionId:LocationSceneBusinessDistrictPanelActionId};
+  |{kind:'businessdistrict';actionId:LocationSceneBusinessDistrictPanelActionId}
+  |{kind:'workplace'};
 
 function unavailableResult(reason:string):EngineResult{return{success:false,messages:[{text:reason}]};}
 function actionIcon(actionId:LocationSceneActionId){
@@ -121,6 +124,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   const groups=useMemo(()=>[...scene.groups].sort((a,b)=>a.order-b.order),[scene.groups]);
   const selectedGroup=groups.find(group=>group.id===selectedGroupId);
   const music=placeId==='threadtone-music-studio'?locationSceneMusicProjection(state):undefined;
+  const workplace=locationSceneWorkplaceProjection(state,placeId);
   const utilityTrayState=locationSceneUtilityTrayState(trayCollapsed,Boolean(selectedGroupId));
 
   useLayoutEffect(()=>{
@@ -135,7 +139,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
     rearmSceneHistory();
     const onPopState=()=>{
       const step=locationSceneBackStep(Boolean(detailRef.current),Boolean(selectedGroupIdRef.current));
-      if(step==='detail'){detailRef.current=undefined;setDetail(undefined);rearmSceneHistory();return;}
+      if(step==='detail'){if(detailRef.current?.kind==='workplace'){detailRef.current=undefined;selectedGroupIdRef.current=undefined;setDetail(undefined);setSelectedGroupId(undefined);}else{detailRef.current=undefined;setDetail(undefined);}rearmSceneHistory();return;}
       if(step==='group'){selectedGroupIdRef.current=undefined;setSelectedGroupId(undefined);queueMicrotask(()=>groupInvokerRef.current?.focus());rearmSceneHistory();return;}
       onCloseRef.current();
     };
@@ -151,7 +155,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       if(event.key!=='Escape')return;
       event.preventDefault();
       const step=locationSceneBackStep(Boolean(detail),Boolean(selectedGroupId));
-      if(step==='detail'){setDetail(undefined);return;}
+      if(step==='detail'){if(detail?.kind==='workplace'){setDetail(undefined);setSelectedGroupId(undefined);}else setDetail(undefined);return;}
       if(step==='group'){setSelectedGroupId(undefined);queueMicrotask(()=>groupInvokerRef.current?.focus());return;}
       if(history.state?.everthreadLocationScene===placeId)history.back();else onCloseRef.current();
     };
@@ -180,7 +184,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
 
   const requestClose=()=>{if(history.state?.everthreadLocationScene===placeId)history.back();else onCloseRef.current();};
   const closeSheet=()=>{
-    if(detail){setDetail(undefined);return;}
+    if(detail){if(detail.kind==='workplace'){setDetail(undefined);setSelectedGroupId(undefined);queueMicrotask(()=>groupInvokerRef.current?.focus());}else setDetail(undefined);return;}
     setSelectedGroupId(undefined);queueMicrotask(()=>groupInvokerRef.current?.focus());
   };
   const openGroup=(group:LocationSceneGroupDefinition,event?:ReactMouseEvent<HTMLElement>)=>{
@@ -189,6 +193,9 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   };
   const openAllActions=(event:ReactMouseEvent<HTMLButtonElement>)=>{
     groupInvokerRef.current=event.currentTarget;setDetail(undefined);setSelectedGroupId('__all');
+  };
+  const openWorkplace=(event:ReactMouseEvent<HTMLButtonElement>)=>{
+    groupInvokerRef.current=event.currentTarget;setSelectedGroupId('__workplace');setDetail({kind:'workplace'});
   };
   const visibleActions=selectedGroupId==='__all'?groups.flatMap(group=>group.actionIds.map(actionId=>({group,actionId}))):selectedGroup?selectedGroup.actionIds.map(actionId=>({group:selectedGroup,actionId})):[];
 
@@ -264,7 +271,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   };
 
   const prop=locationScenePropRect(scene.propAlphaBounds,stage,scene.propPlacement.width,scene.propPlacement.maxHeight,scene.propPlacement.baseline);
-  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'||detail?.kind==='courthouse'||detail?.kind==='businessdistrict'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
+  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='workplace'?'Your Workplace':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'||detail?.kind==='courthouse'||detail?.kind==='businessdistrict'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
 
   return <section ref={sceneRef} className="location-scene" aria-label={scene.label}>
     <header className="location-scene__header" aria-hidden={Boolean(selectedGroupId)}>
@@ -291,13 +298,14 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       <button className="location-scene__tray-toggle" onClick={()=>setTrayCollapsed(value=>!value)} aria-expanded={utilityTrayState==='expanded'} aria-controls="location-scene-utility-tray" aria-label={utilityTrayState==='collapsed'?'Show location controls':'Hide location controls'}>
         <EverthreadIcon name="chevron" size={18}/>
       </button>
-      <footer id="location-scene-utility-tray" className="location-scene__footer" hidden={utilityTrayState!=='expanded'}>
+      <footer id="location-scene-utility-tray" className="location-scene__footer" hidden={utilityTrayState!=='expanded'} style={workplace.entries.length?{gridTemplateColumns:'1.2fr 1fr .8fr'}:undefined}>
         <button onClick={openAllActions} aria-haspopup="dialog"><EverthreadIcon name="plus" size={19}/><span><strong>Things to do</strong><small>{groups.length} spots · {groups.reduce((sum,group)=>sum+group.actionIds.length,0)} actions</small></span></button>
+        {workplace.entries.length>0&&<button onClick={openWorkplace} aria-haspopup="dialog"><EverthreadIcon name="business" size={19}/><span><strong>Your Workplace</strong><small>{workplace.entries.length} active {workplace.entries.length===1?'job':'jobs'} here</small></span></button>}
         <button onClick={requestClose}><EverthreadIcon name="map" size={19}/><span><strong>Map</strong><small>Return to Everthread</small></span></button>
       </footer>
     </div>
 
-    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet} wide={detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'}>
+    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet} wide={detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'||detail?.kind==='workplace'}>
       {selectedGroupId&&!detail&&<div className="location-scene__sheet">
         {selectedGroupId!=='__all'&&selectedGroup&&<><p className="eyebrow">{scene.label}</p><h3>{selectedGroup.description}</h3></>}
         <div className="location-scene__action-list">{visibleActions.map(({group,actionId})=>{const action=LOCATION_SCENE_ACTIONS[actionId],availability=locationSceneActionAvailability(state,actionId);return <button key={`${group.id}:${actionId}`} disabled={!availability.available} onClick={()=>chooseAction(actionId)}>
@@ -391,6 +399,12 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
         <p className="eyebrow">Loomworks Business District</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
         <BusinessDistrictLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
         <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to Loomworks</button>
+      </div>}
+
+      {detail?.kind==='workplace'&&<div className="location-scene__focused">
+        <p className="eyebrow">{scene.label}</p><h3>Your Workplace</h3><p>Workplace controls appear here only because one of your real jobs is physically based at this location. The location's original activities remain unchanged.</p>
+        <WorkplaceLocationPanel state={state} placeId={placeId} onResult={onResult}/>
+        <button className="secondary-button full-button location-scene__sheet-close" onClick={closeSheet}>Back to {scene.label}</button>
       </div>}
 
       {detail?.kind==='partnership'&&music&&<div className="location-scene__focused">

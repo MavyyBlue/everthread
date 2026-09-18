@@ -29,6 +29,8 @@ export const ACTION_POLICIES = {
   'career.freelance': { maxPerAge: 4, message: 'You have already taken on several freelance gigs this year.' },
   'career.part_time.start': { maxPerAge: 2, message: 'You have already made enough serious part-time job starts this year.' },
   'career.part_time.job': { maxPerAge: 1, message: 'You already pursued that part-time job this year.' },
+  'career.part_time.work_harder': { maxPerAge: 1, message: 'You already made an extra push at that part-time job this year.' },
+  'career.part_time.raise': { maxPerAge: 1, message: 'You already asked for a raise at that part-time job this year.' },
   'workplace.activity.total': { maxPerAge: 2, message: 'You have already committed substantial extra time to workplace relationships this year.' },
   'workplace.activity.kind': { maxPerAge: 1, message: 'You already focused on that workplace activity this year.' },
   'workplace.feedback': { maxPerAge: 1, message: 'You already had a major feedback conversation with your manager this year.' },

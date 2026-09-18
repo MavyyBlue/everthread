@@ -2,6 +2,8 @@ import { countryById } from '../data/countries';
 import { jobById } from '../data/jobs';
 import { departmentsForIndustry, partTimeJobById, partTimeJobs, workplaceRosterSize } from '../data/workplaces';
 import { clamp } from '../core/math';
+import { workplaceRoleTitle, workplaceVenueByPlaceId, workplaceVenuesForPartTimeJob } from '../data/workplaceLocations';
+import type { LocationScenePlaceId } from '../data/locationScenes';
 import { createRng } from '../core/rng';
 import { makeStateId } from '../core/ids';
 import { actionAllowed, consumeAction } from '../core/actionEconomy';
@@ -135,7 +137,7 @@ export function migrateLegacyWorkplaceWorlds(state:GameState){
 function memberRole(world:SocialWorld,npcId:string){return world.members.find(member=>member.npcId===npcId&&member.leftAge===undefined)?.role;}
 export function workplaceRoleForNpc(state:GameState,npcId:string){for(const world of state.socialWorlds.filter(w=>w.kind==='workplace')){const member=world.members.find(item=>item.npcId===npcId);if(member)return{world,role:member.role};}return undefined;}
 
-function workplaceRecord(state:GameState,world:SocialWorld):CareerRecord|PartTimeCareerRecord|undefined{
+export function workplaceRecord(state:GameState,world:SocialWorld):CareerRecord|PartTimeCareerRecord|undefined{
   const key=world.workplace?.employmentKey;if(!key)return undefined;
   if(world.workplace?.employmentKind==='full_time'){const all=[...(state.employment.history??[]),...(state.employment.current?[state.employment.current]:[])];return all.find(record=>employmentRecordKey(record,'full_time')===key);}
   return [...(state.employment.partTimeHistory??[]),...(state.employment.partTimeJobs??[])].find(record=>employmentRecordKey(record,'part_time')===key);
@@ -190,10 +192,10 @@ export function processWorkplaceYear(state:GameState){
   state.rngCounter=rng.counter();
 }
 
-function primaryWorkplace(state:GameState){return currentWorkplaceWorld(state);}
+function primaryWorkplace(state:GameState,worldId?:string){if(worldId){const exact=state.socialWorlds.find(world=>world.id===worldId&&world.kind==='workplace'&&world.active&&world.workplace);if(exact)return exact;}return currentWorkplaceWorld(state);}
 
-export function collaborateAtWork(state:GameState):EngineResult{
-  const world=primaryWorkplace(state);if(!world?.workplace)return{success:false,messages:[{text:'You do not currently have a workplace to collaborate in.'}]};
+export function collaborateAtWork(state:GameState,worldId?:string):EngineResult{
+  const world=primaryWorkplace(state,worldId);if(!world?.workplace)return{success:false,messages:[{text:'You do not currently have a workplace to collaborate in.'}]};
   const gate=consumeAction(state,[{policy:'workplace.activity.total'},{policy:'workplace.activity.kind',target:'collaborate'}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(`${state.seed}-work-collaborate`,state.rngCounter);const peers=world.members.filter(member=>member.leftAge===undefined&&['coworker','direct_report'].includes(member.role)&&state.npcs[member.npcId]?.alive);const target=peers.length?rng.pick(peers):undefined;
   const record=workplaceRecord(state,world);if(record)record.performance=clamp(record.performance+rng.int(3,5));state.character.secondary.workPerformance=state.employment.current?.performance??state.character.secondary.workPerformance;state.character.secondary.stress=clamp(state.character.secondary.stress+2);world.workplace.morale=clamp(world.workplace.morale+3);world.workplace.tension=clamp(world.workplace.tension-2);
@@ -201,16 +203,16 @@ export function collaborateAtWork(state:GameState):EngineResult{
   state.rngCounter=rng.counter();return{success:true,messages:[{text:target?`You collaborated closely with ${state.npcs[target.npcId]!.firstName}. Your work and team relationships improved.`:'You put focused effort into helping your team.'}]};
 }
 
-export function networkAtWork(state:GameState):EngineResult{
-  const world=primaryWorkplace(state);if(!world?.workplace)return{success:false,messages:[{text:'You do not currently have a workplace network.'}]};
+export function networkAtWork(state:GameState,worldId?:string):EngineResult{
+  const world=primaryWorkplace(state,worldId);if(!world?.workplace)return{success:false,messages:[{text:'You do not currently have a workplace network.'}]};
   const gate=consumeAction(state,[{policy:'workplace.activity.total'},{policy:'workplace.activity.kind',target:'network'}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(`${state.seed}-work-network`,state.rngCounter);const members=rng.shuffle(world.members.filter(member=>member.leftAge===undefined&&state.npcs[member.npcId]?.alive)).slice(0,3);
   for(const member of members){const rel=workRelation(state,member.npcId);if(rel)rel.score=clamp(rel.score+rng.int(1,4));addMemory(state,member.npcId,'work_network',3,`${state.character.firstName} made an effort to build a stronger professional connection.`);}
   state.character.secondary.charisma=clamp(state.character.secondary.charisma+2);state.character.secondary.reputation=clamp(state.character.secondary.reputation+2);world.workplace.reputation=clamp(world.workplace.reputation+4);state.rngCounter=rng.counter();return{success:true,messages:[{text:'You invested time in your workplace network and professional reputation.'}]};
 }
 
-export function askBossForFeedback(state:GameState):EngineResult{
-  const world=primaryWorkplace(state);const bossId=world?.workplace?.managerNpcId;const boss=bossId?state.npcs[bossId]:undefined;if(!world?.workplace||!boss?.alive)return{success:false,messages:[{text:'You do not currently have an available manager to ask.'}]};
+export function askBossForFeedback(state:GameState,worldId?:string):EngineResult{
+  const world=primaryWorkplace(state,worldId);const bossId=world?.workplace?.managerNpcId;const boss=bossId?state.npcs[bossId]:undefined;if(!world?.workplace||!boss?.alive)return{success:false,messages:[{text:'You do not currently have an available manager to ask.'}]};
   const gate=consumeAction(state,{policy:'workplace.feedback',target:world.id});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rel=workRelation(state,boss.id);const record=workplaceRecord(state,world);const rng=createRng(`${state.seed}-boss-feedback`,state.rngCounter);const reception=(rel?.score??45)+boss.hiddenOpinion+state.character.secondary.reputation*.25+rng.int(-12,12);
   const gain=reception>=80?rng.int(5,8):reception>=45?rng.int(2,5):0;if(record)record.performance=clamp(record.performance+gain);if(reception<35){state.character.secondary.stress=clamp(state.character.secondary.stress+4);if(rel)rel.score=clamp(rel.score-2);}else{state.character.secondary.confidence=clamp(state.character.secondary.confidence+2);if(rel)rel.score=clamp(rel.score+2);}world.workplace.reputation=clamp(world.workplace.reputation+(reception>=45?2:-2));addMemory(state,boss.id,'work_feedback',reception>=45?4:-3,`${state.character.firstName} asked for direct feedback about their work.`);state.rngCounter=rng.counter();scheduleWorkplaceFeedbackStory(state,world.id,boss.id);return{success:true,messages:[{text:reception>=80?`${boss.firstName} gives you unusually useful feedback. Your performance improves noticeably.`:reception>=45?`${boss.firstName} gives you constructive feedback.`:`${boss.firstName} is not especially receptive, and the conversation is uncomfortable.`}]};
@@ -231,14 +233,37 @@ export function partTimeHourLimit(state:GameState){const inSchool=state.educatio
 export function totalPartTimeHours(state:GameState){return (state.employment.partTimeJobs??[]).reduce((sum,record)=>sum+record.hoursPerWeek,0);}
 export function availablePartTimeJobs(state:GameState){return partTimeJobs.filter(job=>state.character.age>=job.minAge&&!state.employment.partTimeJobs?.some(record=>record.jobId===job.id));}
 
-export function startPartTimeJob(state:GameState,jobId:string,hoursPerWeek=10):EngineResult{
+export interface LocationAwarePartTimeOffer{offerId:string;job:(typeof partTimeJobs)[number];placeId?:LocationScenePlaceId;placeLabel?:string;title:string;company?:string}
+export function availablePartTimeJobOffers(state:GameState):LocationAwarePartTimeOffer[]{
+  return availablePartTimeJobs(state).flatMap(job=>{
+    const venues=workplaceVenuesForPartTimeJob(job.id);
+    if(!venues.length)return[{offerId:job.id,job,title:job.title}];
+    return venues.map(venue=>({offerId:`${job.id}@${venue.placeId}`,job,placeId:venue.placeId,placeLabel:venue.label,title:workplaceRoleTitle(job.id,job.title,venue.placeId),company:venue.label}));
+  });
+}
+
+export function startPartTimeJob(state:GameState,jobId:string,hoursPerWeek=10,workplacePlaceId?:string):EngineResult{
   const def=partTimeJobById[jobId];if(!def)return{success:false,messages:[{text:'That part-time role is no longer available.'}]};if(state.character.age<def.minAge)return{success:false,messages:[{text:`${def.title} is not available at your age.`}]};
+  const requestedVenue=workplacePlaceId?workplaceVenueByPlaceId(workplacePlaceId):undefined;if(workplacePlaceId&&(!requestedVenue||!requestedVenue.partTimeJobIds.includes(jobId)))return{success:false,messages:[{text:'That workplace is not connected to this part-time role.'}]};const venue=requestedVenue??workplaceVenuesForPartTimeJob(jobId)[0];
   state.employment.partTimeJobs??=[];state.employment.partTimeHistory??=[];if(state.employment.partTimeJobs.some(record=>record.jobId===jobId))return{success:false,messages:[{text:'You already hold that part-time role.'}]};if(state.employment.partTimeJobs.length>=3)return{success:false,messages:[{text:'You cannot hold more than three part-time jobs at once.'}]};
   const hours=Math.max(5,Math.min(15,Math.round(hoursPerWeek/5)*5));if(totalPartTimeHours(state)+hours>partTimeHourLimit(state))return{success:false,messages:[{text:`Your current school/work commitments leave room for only ${partTimeHourLimit(state)} part-time hours per week.`}]};
-  const gate=consumeAction(state,[{policy:'career.part_time.start'},{policy:'career.part_time.job',target:jobId}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  const applicationTarget=workplacePlaceId?`${jobId}@${workplacePlaceId}`:jobId;const gate=consumeAction(state,[{policy:'career.part_time.start'},{policy:'career.part_time.job',target:applicationTarget}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   const rng=createRng(`${state.seed}-part-time-application`,state.rngCounter);const preferred=def.preferredStat?Number((state.character.secondary as unknown as Record<string,number>)[def.preferredStat]??(state.character.stats as unknown as Record<string,number>)[def.preferredStat]??50):50;const score=preferred*.35+state.character.secondary.discipline*.25+state.character.secondary.charisma*.2+state.character.secondary.reputation*.2+rng.int(-18,18);const success=score>=40;state.rngCounter=rng.counter();
   if(!success)return{success:false,messages:[{text:`You applied for the ${def.title} shift, but the employer chose someone else.`}]};
-  const country=countryById[state.character.countryId];const annual=Math.round(def.hourlyRate*hours*52*(country?.salaryMultiplier??1)*state.economy.salaryIndex);const company=`${def.industry} ${rng.pick(['Co-op','Services','Center','Group','Works','Collective'])}`;state.rngCounter=rng.counter();const record:PartTimeCareerRecord={jobId:def.id,title:def.title,company,startAge:state.character.age,salary:annual,performance:52,level:1,hoursPerWeek:hours};state.employment.partTimeJobs.push(record);state.employment.retired=false;state.employment.partTimeJobIds=[...new Set([...(state.employment.partTimeJobIds??[]),jobId])];ensureWorkplaceForCareerRecord(state,record,'part_time',true);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',importance:2,text:`You started part-time work as ${def.title} for about ${hours} hours per week.`});return{success:true,messages:[{text:`You started as a part-time ${def.title} (${hours} hours/week, about ${annual.toLocaleString()} per year).`}]};
+  const country=countryById[state.character.countryId];const annual=Math.round(def.hourlyRate*hours*52*(country?.salaryMultiplier??1)*state.economy.salaryIndex);const generatedCompany=`${def.industry} ${rng.pick(['Co-op','Services','Center','Group','Works','Collective'])}`;const company=venue?.label??generatedCompany;state.rngCounter=rng.counter();const title=workplaceRoleTitle(def.id,def.title,venue?.placeId);const record:PartTimeCareerRecord={jobId:def.id,title,company,startAge:state.character.age,salary:annual,performance:52,level:1,hoursPerWeek:hours};state.employment.partTimeJobs.push(record);state.employment.retired=false;state.employment.partTimeJobIds=[...new Set([...(state.employment.partTimeJobIds??[]),jobId])];ensureWorkplaceForCareerRecord(state,record,'part_time',true);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(venue?{placeId:venue.placeId}:{}),importance:2,text:`You started part-time work as ${title} at ${company} for about ${hours} hours per week.`});return{success:true,messages:[{text:`You started as a part-time ${title} at ${company} (${hours} hours/week, about ${annual.toLocaleString()} per year).`}]};
+}
+
+export function workHarderPartTime(state:GameState,jobId:string):EngineResult{
+  const record=state.employment.partTimeJobs?.find(item=>item.jobId===jobId);if(!record)return{success:false,messages:[{text:'You do not currently hold that part-time job.'}]};
+  const key=employmentRecordKey(record,'part_time');const gate=consumeAction(state,{policy:'career.part_time.work_harder',target:key});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
+  record.performance=clamp(record.performance+6);state.character.secondary.stress=clamp(state.character.secondary.stress+3);const world=workplaceForCareerRecord(state,record,'part_time');if(world?.workplace){world.workplace.reputation=clamp(world.workplace.reputation+2);world.workplace.tension=clamp(world.workplace.tension+1);}
+  return{success:true,messages:[{text:`You put extra effort into your ${record.title} shift. Performance rose, and so did stress.`}]};
+}
+
+export function askPartTimeRaise(state:GameState,jobId:string):EngineResult{
+  const record=state.employment.partTimeJobs?.find(item=>item.jobId===jobId);if(!record)return{success:false,messages:[{text:'You do not currently hold that part-time job.'}]};const def=partTimeJobById[jobId];if(!def)return{success:false,messages:[{text:'That part-time role is no longer available.'}]};
+  const country=countryById[state.character.countryId];const ceiling=Math.max(1,Math.round(def.hourlyRate*record.hoursPerWeek*52*(country?.salaryMultiplier??1)*state.economy.salaryIndex*1.6));if(record.salary>=ceiling)return{success:false,messages:[{text:'Your pay is already at the top of this part-time role’s current band.'}]};
+  const key=employmentRecordKey(record,'part_time');const gate=consumeAction(state,{policy:'career.part_time.raise',target:key});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};const world=workplaceForCareerRecord(state,record,'part_time');const bossRel=world?.workplace?.managerNpcId?state.relationships.find(rel=>rel.npcId===world.workplace!.managerNpcId&&!rel.estranged):undefined;const rng=createRng(`${state.seed}-part-time-raise`,state.rngCounter);const success=rng.chance(clamp(record.performance+state.character.secondary.charisma/2+(bossRel?.score??50)*.15-52,8,82)/100);if(success){const pct=rng.int(4,10);record.salary=Math.min(ceiling,Math.round(record.salary*(1+pct/100)));}else record.performance=clamp(record.performance-rng.int(0,2));state.rngCounter=rng.counter();return{success,messages:[{text:success?`Your part-time raise was approved. New annualized pay: ${record.salary.toLocaleString()}.`:'Your part-time raise request was declined.'}]};
 }
 
 export function quitPartTimeJob(state:GameState,jobId:string):EngineResult{

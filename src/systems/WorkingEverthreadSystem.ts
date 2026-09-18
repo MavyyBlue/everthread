@@ -1,9 +1,10 @@
 import { EVERTHREAD_CITY, EVERTHREAD_COUNTRY_ID, locationLabel } from '../data/countries';
 import { BUSINESS_DISTRICT_RULES, POST_SECONDARY_STAGES, workingDistrictRuleForIndustry } from '../data/workingEverthread';
+import { workplaceVenueForCompany } from '../data/workplaceLocations';
 import { TOWN_DISTRICTS, TOWN_PLACES } from '../data/townPlaces';
 import type { Business, GameState, SocialWorld } from '../types/game';
 import type { WorkingEverthreadLocation, WorkingEverthreadProjection } from '../types/workingEverthread';
-import { activeWorkplaceWorlds } from './WorkplaceSystem';
+import { activeWorkplaceWorlds, employmentRecordKey } from './WorkplaceSystem';
 
 const DISTRICT_BY_ID=new Map(TOWN_DISTRICTS.map(item=>[item.id,item] as const));
 const PLACE_BY_ID=new Map(TOWN_PLACES.map(item=>[item.id,item] as const));
@@ -21,8 +22,22 @@ export function schoolInstitutionLocation(state:GameState):WorkingEverthreadLoca
   return{id:`institution:${world.id}`,kind:'institution',sourceId:world.id,name:world.name,countryId:world.countryId,city:world.city,active:world.active,...fields,detail:fields.inEverthread?`${postSecondary?'Post-secondary':'School'} life is rooted in ${fields.locationLabel}.`:`Current school world in ${fields.locationLabel}.`};
 }
 
-export function workplaceWorldLocation(world:SocialWorld):WorkingEverthreadLocation|undefined{
-  if(world.kind!=='workplace'||!world.workplace)return;const rule=workingDistrictRuleForIndustry(world.workplace.industry);const fields=locationFields(world.countryId,world.city,rule.districtId,rule.anchorPlaceId);
+function workplaceJobId(state:GameState|undefined,world:SocialWorld){
+  if(!state||world.kind!=='workplace'||!world.workplace)return undefined;
+  const kind=world.workplace.employmentKind;
+  if(kind==='full_time'){
+    const records=[...(state.employment.history??[]),...(state.employment.current?[state.employment.current]:[])];
+    return records.find(record=>employmentRecordKey(record,'full_time')===world.workplace!.employmentKey)?.jobId;
+  }
+  return [...(state.employment.partTimeHistory??[]),...(state.employment.partTimeJobs??[])].find(record=>employmentRecordKey(record,'part_time')===world.workplace!.employmentKey)?.jobId;
+}
+
+export function workplaceWorldLocation(world:SocialWorld,state?:GameState):WorkingEverthreadLocation|undefined{
+  if(world.kind!=='workplace'||!world.workplace)return;
+  const jobId=workplaceJobId(state,world);
+  const venue=workplaceVenueForCompany(world.name,world.workplace.industry,jobId);
+  const rule=venue?{districtId:venue.districtId,anchorPlaceId:venue.placeId}:workingDistrictRuleForIndustry(world.workplace.industry);
+  const fields=locationFields(world.countryId,world.city,rule.districtId,rule.anchorPlaceId);
   return{id:`workplace:${world.id}`,kind:'workplace',sourceId:world.id,name:world.name,countryId:world.countryId,city:world.city,active:world.active,...fields,detail:fields.inEverthread?`${world.workplace.department} · ${world.workplace.industry} work based in ${fields.locationLabel}.`:`${world.workplace.department} · ${world.workplace.industry} workplace in ${fields.locationLabel}.`};
 }
 
@@ -32,5 +47,5 @@ export function businessWorkLocation(state:GameState,business:Business):WorkingE
 }
 
 export function workingEverthreadProjection(state:GameState):WorkingEverthreadProjection{
-  return{institution:schoolInstitutionLocation(state),workplaces:activeWorkplaceWorlds(state).map(world=>workplaceWorldLocation(world)!).filter(Boolean),businesses:state.businesses.map(business=>businessWorkLocation(state,business))};
+  return{institution:schoolInstitutionLocation(state),workplaces:activeWorkplaceWorlds(state).map(world=>workplaceWorldLocation(world,state)!).filter(Boolean),businesses:state.businesses.map(business=>businessWorkLocation(state,business))};
 }

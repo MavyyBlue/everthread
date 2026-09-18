@@ -13,7 +13,8 @@ import { romanticDatePlanFor } from './RomanticDateSystem';
 import { canDropOut } from './EducationSystem';
 import { currentSchoolWorld, schoolAdmissionsFactors } from './SchoolWorldSystem';
 import { businessWorkLocation, schoolInstitutionLocation, workplaceWorldLocation } from './WorkingEverthreadSystem';
-import { currentWorkplaceWorld } from './WorkplaceSystem';
+import { activeWorkplaceWorlds, currentWorkplaceWorld, workplaceRecord } from './WorkplaceSystem';
+import { workplaceRoleTitle } from '../data/workplaceLocations';
 import { FREELANCE_MIN_AGE } from './CareerSystem';
 import { projectYouthSocialPlans } from './YouthSocialSystem';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
@@ -69,10 +70,20 @@ export function locationSceneLegalProjection(state:GameState){
 }
 
 export function locationSceneBusinessDistrictProjection(state:GameState){
-  const workplace=currentWorkplaceWorld(state);const workplaceLocation=workplace?workplaceWorldLocation(workplace):undefined;
+  const workplace=currentWorkplaceWorld(state);const workplaceLocation=workplace?workplaceWorldLocation(workplace,state):undefined;
   const localWorkplace=Boolean(workplaceLocation?.inEverthread&&workplaceLocation.anchorPlaceId==='loomworks-business-district');
   const businesses=state.businesses.map(business=>({business,location:businessWorkLocation(state,business)}));
   return{workplace,workplaceLocation,localWorkplace,businesses,localBusinesses:businesses.filter(entry=>entry.location.inEverthread&&entry.location.anchorPlaceId==='loomworks-business-district')};
+}
+
+
+export function locationSceneWorkplaceProjection(state:GameState,placeId:string){
+  const entries=activeWorkplaceWorlds(state).flatMap(world=>{
+    const location=workplaceWorldLocation(world,state);if(!location?.inEverthread||location.anchorPlaceId!==placeId)return[];
+    const record=workplaceRecord(state,world);if(!record)return[];
+    return[{world,record,location,kind:world.workplace!.employmentKind,displayTitle:workplaceRoleTitle(record.jobId,record.title,location.anchorPlaceId)}];
+  });
+  return{placeId,entries,fullTime:entries.find(entry=>entry.kind==='full_time'),partTime:entries.filter(entry=>entry.kind==='part_time')};
 }
 
 export function locationSceneSchoolProjection(state:GameState){

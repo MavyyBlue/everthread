@@ -10,11 +10,13 @@ import { actionGateStatus, consumeAction } from '../core/actionEconomy';
 import { currentWorkplaceWorld, syncWorkplaceWorlds } from './WorkplaceSystem';
 import { worldConditionModifiers } from './WorldConditionSystem';
 import { workplaceWorldLocation } from './WorkingEverthreadSystem';
+import { workplaceRoleTitle, workplaceVenueByPlaceId, workplaceVenuesForIndustry } from '../data/workplaceLocations';
+import type { LocationScenePlaceId } from '../data/locationScenes';
 
 export const FREELANCE_MIN_AGE=14;
 export const MINIMUM_FULL_TIME_JOB_AGE=Math.min(...jobs.map(job=>job.minAge));
 
-function currentWorkplacePlaceId(state:GameState){const world=currentWorkplaceWorld(state);if(!world)return;const location=workplaceWorldLocation(world);return location?.inEverthread?location.anchorPlaceId:undefined;}
+function currentWorkplacePlaceId(state:GameState){const world=currentWorkplaceWorld(state);if(!world)return;const location=workplaceWorldLocation(world,state);return location?.inEverthread?location.anchorPlaceId:undefined;}
 
 function completedPrograms(state:GameState) { return state.education.filter(e=>e.graduated).map(e=>e.programId).filter(Boolean) as string[]; }
 function hasSecondary(state:GameState) { return state.education.some(e=>e.stage==='secondary'&&e.graduated); }
@@ -60,12 +62,22 @@ export function availableJobs(state:GameState) {
   return jobs.filter(j=>qualifiesForJob(state,j)).sort((a,b)=>a.salaryRange[0]-b.salaryRange[0]);
 }
 
-export function applyForJob(state:GameState,jobId:string):EngineResult {
+export interface LocationAwareJobOffer{offerId:string;job:ContentJob;placeId?:LocationScenePlaceId;placeLabel?:string;title:string;company?:string}
+export function availableJobOffers(state:GameState):LocationAwareJobOffer[]{
+  return availableJobs(state).flatMap(job=>{
+    const venues=workplaceVenuesForIndustry(job.industry);
+    if(!venues.length)return[{offerId:job.id,job,title:job.title}];
+    return venues.map(venue=>({offerId:`${job.id}@${venue.placeId}`,job,placeId:venue.placeId,placeLabel:venue.label,title:workplaceRoleTitle(job.id,job.title,venue.placeId),company:venue.label}));
+  });
+}
+
+export function applyForJob(state:GameState,jobId:string,workplacePlaceId?:string):EngineResult {
   const job=jobById[jobId]; if(!job) return {success:false,messages:[{text:'That job listing is no longer available.'}]};
+  const requestedVenue=workplacePlaceId?workplaceVenueByPlaceId(workplacePlaceId):undefined;if(workplacePlaceId&&(!requestedVenue||!requestedVenue.fullTimeIndustries.includes(job.industry)))return{success:false,messages:[{text:'That workplace is not connected to this role.'}]};const venue=requestedVenue??workplaceVenuesForIndustry(job.industry)[0];
   if(state.legal.imprisoned) return {success:false,messages:[{text:'You cannot apply for ordinary jobs while imprisoned.'}]};
   const startGate=actionGateStatus(state,{policy:'career.job_start'});if(!startGate.allowed)return{success:false,messages:[{text:startGate.message!}]};
   if(!qualifiesForJob(state,job)) return {success:false,messages:[{text:`You do not currently meet the requirements for ${job.title}.`}]};
-  const applicationGate=consumeAction(state,[{policy:'career.application.total'},{policy:'career.application.job',target:job.id}]);if(!applicationGate.allowed)return{success:false,messages:[{text:applicationGate.message!}]};
+  const applicationTarget=workplacePlaceId?`${job.id}@${workplacePlaceId}`:job.id;const applicationGate=consumeAction(state,[{policy:'career.application.total'},{policy:'career.application.job',target:applicationTarget}]);if(!applicationGate.allowed)return{success:false,messages:[{text:applicationGate.message!}]};
   const rng=createRng(state.seed,state.rngCounter);
   const interviewScore=state.character.secondary.charisma*.25+state.character.secondary.discipline*.15+state.character.stats.intelligence*.2+state.character.secondary.reputation*.15+rng.int(0,35)+worldConditionModifiers(state).jobApplicationScoreDelta;
   const legalPenalty=state.legal.criminalRecord.filter(r=>r.convicted).length*8;
@@ -77,13 +89,13 @@ export function applyForJob(state:GameState,jobId:string):EngineResult {
   }
   if(state.employment.current){ state.employment.current.endAge=state.character.age; state.employment.history.push({...state.employment.current}); }
   const country=countryById[state.character.countryId]; const salary=Math.round(rng.int(job.salaryRange[0],job.salaryRange[1])*(country?.salaryMultiplier??1)*state.economy.salaryIndex);
-  state.employment.current={jobId:job.id,title:job.title,company:generateCompany(job.industry,rng.int(0,999)),startAge:state.character.age,salary,performance:55,level:Number(job.id.match(/_(\d+)$/)?.[1]??1)};
+  const companyRoll=rng.int(0,999);const title=workplaceRoleTitle(job.id,job.title,venue?.placeId);state.employment.current={jobId:job.id,title,company:venue?.label??generateCompany(job.industry,companyRoll),startAge:state.character.age,salary,performance:55,level:Number(job.id.match(/_(\d+)$/)?.[1]??1)};
   state.employment.retired=false;
   consumeAction(state,{policy:'career.job_start'});
   state.character.secondary.workPerformance=55;
   syncWorkplaceWorlds(state,true);
-  const placeId=currentWorkplacePlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(placeId?{placeId}:{}),importance:3,text:`You accepted a position as ${job.title} at ${state.employment.current.company}.`,moneyDelta:salary});
-  return {success:true,messages:[{text:`Hired as ${job.title} for ${salary.toLocaleString()} per year.`}]};
+  const placeId=currentWorkplacePlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(placeId?{placeId}:{}),importance:3,text:`You accepted a position as ${title} at ${state.employment.current.company}.`,moneyDelta:salary});
+  return {success:true,messages:[{text:`Hired as ${title} for ${salary.toLocaleString()} per year.`}]};
 }
 
 function generateCompany(industry:string,n:number){
@@ -98,7 +110,7 @@ export function processCareerYear(state:GameState) {
   const rng=createRng(state.seed,state.rngCounter);
   const workplace=currentWorkplaceWorld(state);
   const workplaceState=workplace?.workplace?.employmentKind==='full_time'?workplace.workplace:undefined;
-  const workplacePlaceId=workplace?workplaceWorldLocation(workplace)?.anchorPlaceId:undefined;
+  const workplacePlaceId=workplace?workplaceWorldLocation(workplace,state)?.anchorPlaceId:undefined;
   const bossRel=workplaceState?.managerNpcId?state.relationships.find(rel=>rel.npcId===workplaceState.managerNpcId&&!rel.estranged):undefined;
   const annualWageGrowth=state.economy.lastSalaryGrowthRate??0;
   if(annualWageGrowth!==0) current.salary=Math.min(salaryCeiling(state,job),Math.max(1,Math.round(current.salary*(1+annualWageGrowth))));
@@ -119,14 +131,14 @@ export function processCareerYear(state:GameState) {
 
   if(job.promotionPath && years>=Math.max(2,job.experienceRequirement) && current.performance>=70 && rng.chance(.18 + current.performance/500 + (workplaceState?.reputation??50)/1000)) {
     const next=jobById[job.promotionPath]; if(next){
-      current.jobId=next.id; current.title=next.title; current.level+=1; current.salary=Math.min(salaryCeiling(state,next),Math.round(current.salary*rng.int(112,128)/100)); current.performance=58;
+      const currentVenue=workplaceVenueByPlaceId(workplacePlaceId??'');const nextTitle=workplaceRoleTitle(next.id,next.title,currentVenue?.placeId);current.jobId=next.id; current.title=nextTitle; current.level+=1; current.salary=Math.min(salaryCeiling(state,next),Math.round(current.salary*rng.int(112,128)/100)); current.performance=58;
       if(workplaceState)workplaceState.reputation=clamp(workplaceState.reputation+6);
-      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:3,text:`You were promoted to ${next.title} at ${current.company}.`,moneyDelta:current.salary});
+      state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:3,text:`You were promoted to ${nextTitle} at ${current.company}.`,moneyDelta:current.salary});
     }
   } else {
     const previous=jobs.find(candidate=>candidate.promotionPath===job.id);
     if(previous&&current.performance<38&&rng.chance(.20)){
-      current.jobId=previous.id;current.title=previous.title;current.level=Math.max(1,current.level-1);current.salary=Math.max(1,Math.round(current.salary*rng.int(76,88)/100));current.performance=46;
+      current.jobId=previous.id;current.title=workplaceRoleTitle(previous.id,previous.title,workplacePlaceId);current.level=Math.max(1,current.level-1);current.salary=Math.max(1,Math.round(current.salary*rng.int(76,88)/100));current.performance=46;
       if(workplaceState){workplaceState.reputation=clamp(workplaceState.reputation-7);workplaceState.tension=clamp(workplaceState.tension+5);}
       state.character.stats.happiness=clamp(state.character.stats.happiness-7);
       state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'career',...(workplacePlaceId?{placeId:workplacePlaceId}:{}),importance:3,text:`After a difficult review cycle, you were demoted to ${previous.title}.`});

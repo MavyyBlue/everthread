@@ -1,3 +1,4 @@
+import { defaultWorkplaceVenueForIndustry } from './workplaceLocations';
 export interface WorkingDistrictRule {districtId:string;anchorPlaceId?:string}
 
 const MARKET_ROW=new Set(['Retail','Food Service','Coffee & Bakery','Hospitality','Hospitality Culinary','Real Estate']);
@@ -14,11 +15,12 @@ const EXACT_WORK_ANCHORS:Record<string,string>={
 };
 
 export function workingDistrictRuleForIndustry(industry:string):WorkingDistrictRule{
+  const implemented=defaultWorkplaceVenueForIndustry(industry);if(implemented)return{districtId:implemented.districtId,anchorPlaceId:implemented.placeId};
   if(MARKET_ROW.has(industry))return{districtId:'market-row',...(EXACT_WORK_ANCHORS[industry]?{anchorPlaceId:EXACT_WORK_ANCHORS[industry]}:{})};
   if(CENTRAL_WEAVE.has(industry))return{districtId:'central-weave',...(EXACT_WORK_ANCHORS[industry]?{anchorPlaceId:EXACT_WORK_ANCHORS[industry]}:{})};
   if(CAMPUS_GREEN.has(industry))return{districtId:'campus-green',...(EXACT_WORK_ANCHORS[industry]?{anchorPlaceId:EXACT_WORK_ANCHORS[industry]}:{})};
   if(SOUTH_BELT.has(industry))return{districtId:'south-belt',...(EXACT_WORK_ANCHORS[industry]?{anchorPlaceId:EXACT_WORK_ANCHORS[industry]}:{})};
-  return{districtId:'eastworks',anchorPlaceId:'loomworks-business-district'};
+  return{districtId:'eastworks'};
 }
 
 export const BUSINESS_DISTRICT_RULES:Record<string,WorkingDistrictRule>={
