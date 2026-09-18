@@ -3,7 +3,7 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #212 / `7dde94325f56a2f44172b5de65709700b5ad73ea`
+Newest certified expanded source: Run #222 / `0d33b637849d9aa7965997c3fef271af5d819b78`
 Certified gameplay baseline: Run #212 / `7dde94325f56a2f44172b5de65709700b5ad73ea`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
@@ -43,9 +43,9 @@ Run #212 adds the eighth dedicated illustrated location while preserving persona
 
 `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#8, and lightweight exact references from Astra Yuki's original v1 source package.
 
-The original 89,718,869-byte `everthread-location-scenes-v1.zip` is preserved losslessly as four browser-safe byte parts because browser/mobile GitHub uploads cap each file at 25 MiB. The archive and mirrored source references are non-runtime design provenance: they add no gameplay/content authority and must never be copied wholesale into `public/`.
+The original 89,718,869-byte `everthread-location-scenes-v1.zip` is preserved losslessly as five browser-safe raw byte parts, each no larger than 20,000,000 bytes. GitHub's mobile/web commit path rejected the earlier 24 MiB parts because 24 MiB equals 25,165,824 bytes, so the split contract was corrected while preserving the exact original archive checksum. Run #222 certifies the final cleaned archive tree: all five authoritative parts are under `SOURCE_PACKAGE/parts/`, their repository blobs match the generated chunks, the two accidental duplicate placements are removed, and reconstruction yields SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. The archive and mirrored source references are non-runtime design provenance: they add no gameplay/content authority and must never be copied wholesale into `public/`.
 
-After this handoff/archive synchronization certifies, select exactly one **Location #9** only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
+After the corrected five-part handoff metadata itself is certified, select exactly one **Location #9** only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
 
 ## Newest certified gameplay hotfix — Run #210 — scheduled-date location navigation
 

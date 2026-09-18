@@ -2,7 +2,7 @@
 
 This directory is intentionally created by the documentation/handoff overlay before the large binary pieces are uploaded.
 
-The exact original `everthread-location-scenes-v1.zip` is **89,718,869 bytes** and cannot be uploaded as one file through GitHub's browser/mobile UI because that path caps each file at 25 MiB. The archive is therefore preserved losslessly as four raw byte parts. Upload all four files listed in `../PARTS.sha256` into this directory without renaming or modifying them.
+The exact original `everthread-location-scenes-v1.zip` is **89,718,869 bytes** and could not be committed through GitHub's browser/mobile path as one file; that path also rejected the initial 24 MiB split (24 MiB = 25,165,824 bytes). The archive is therefore preserved losslessly as five raw byte parts, each no larger than 20,000,000 bytes. Run #222 certifies all five authoritative parts present here, with no duplicate archive chunks remaining elsewhere in the repository.
 
 Reconstruct from the repository root on a local checkout:
 

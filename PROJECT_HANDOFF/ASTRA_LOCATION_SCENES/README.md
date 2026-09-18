@@ -4,7 +4,8 @@ This folder is the durable continuation point for Everthread's post-Phase-10 ill
 
 ## Current certified status
 
-- Newest certified gameplay/source: **Run #212** / `7dde94325f56a2f44172b5de65709700b5ad73ea`.
+- Newest certified repository/handoff source: **Run #222** / `0d33b637849d9aa7965997c3fef271af5d819b78`.
+- Newest certified gameplay source: **Run #212** / `7dde94325f56a2f44172b5de65709700b5ad73ea`.
 - Nightjar Diner is certified Location #8 and has passed direct Android/player acceptance.
 - Dedicated scene totals: **8 scenes / 25 semantic groups / 48 scene action bindings / 16 selected Astra runtime assets**.
 - Location Scene regression: **99/99**.
@@ -20,7 +21,7 @@ This folder is the durable continuation point for Everthread's post-Phase-10 ill
 - `SOURCE_REFERENCE/` — exact lightweight reference material from Astra Yuki's original v1 handoff: manifests, data, design docs, hotspot/UI SVGs, integration contract, prompt provenance, and validation metadata.
 - `SOURCE_PACKAGE/` — checksum/reconstruction contract for the **exact original** `everthread-location-scenes-v1.zip`.
 
-The full original Astra ZIP is 89,718,869 bytes. Because GitHub browser/mobile uploads cap each file at 25 MiB, its preservation contract uses four raw byte parts under `SOURCE_PACKAGE/parts/`. **Archive completeness is determined by presence + checksum, not this sentence:** if any of the four files listed in `SOURCE_PACKAGE/PARTS.sha256` is missing, finish that non-runtime archive upload before Location #9. The parts are not runtime assets. Reconstruct them only for source review; import exactly one chosen background/prop pair into `public/location-scenes/` per bounded certified scene slice.
+The full original Astra ZIP is 89,718,869 bytes. GitHub's mobile/web commit path rejected 24 MiB parts (24 MiB = 25,165,824 bytes), so the preservation contract uses five raw byte parts under `SOURCE_PACKAGE/parts/`, each no larger than 20,000,000 bytes. **Run #222 certifies the archive as complete:** all five listed parts are present in the authoritative folder, repository blob identities match the generated chunks, no stray duplicate chunks remain, and reconstruction yields SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. The parts are not runtime assets. Reconstruct them only for source review; import exactly one chosen background/prop pair into `public/location-scenes/` per bounded certified scene slice.
 
 ## Fresh-chat bootstrap
 

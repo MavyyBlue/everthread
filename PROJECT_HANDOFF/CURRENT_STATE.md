@@ -1,6 +1,6 @@
 # Everthread — Current State
 
-The newest certified expanded **repository/source and gameplay implementation** is **GitHub Actions Run #212** (`35275536409`) on expanded source **`7dde94325f56a2f44172b5de65709700b5ad73ea`**, save schema **17**. Run #212 certifies **Nightjar Diner as dedicated Location #8** and preserves the generalized Run #210 scheduled-date navigation: accepted invitations remain the existing `relationship.romance.pendingDate` truth, and compatible declared location scenes consume that plan through the established Romantic Date owner. Mavyy subsequently completed direct Android/player acceptance of Nightjar and reported that it works. Nightjar reuses real Shared Experience, Romantic Date, and Personal Inventory owners and intentionally adds no hunger/nourishment economy, diner ledger, second date state, or scene-local inventory truth. QA-4 remains unchanged with all 82 core cases and 77 specialized suites mandatory and exact handshake `core=81+1/82 specialized=76+1/77 overlap=0`. The temporary QA optimization program remains closed at QA-4. **After the Nightjar documentation + Astra source-handoff/archive synchronization certifies, select exactly one next Astra-backed Location #9 from current repository truth and revalidate its owning systems before implementation.** Phase 10 and the Living World Program remain closed/certified; this rollout is not Phase 11.
+The newest certified expanded **repository/handoff source** is **GitHub Actions Run #222** (`35285417933`) on commit **`0d33b637849d9aa7965997c3fef271af5d819b78`**, while the newest certified **gameplay implementation** remains Run #212 / **`7dde94325f56a2f44172b5de65709700b5ad73ea`**, save schema **17**. Run #212 certifies **Nightjar Diner as dedicated Location #8** and preserves the generalized Run #210 scheduled-date navigation. Run #222 certifies the cleaned Astra source-package handoff only: all five exact archive parts are in `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/SOURCE_PACKAGE/parts/`, the stray root `part-00` and duplicate parent-level `part-02` are removed, and the five-part reconstruction preserves original SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. QA-4 remains unchanged with all 82 core cases and 77 specialized suites mandatory and exact handshake `core=81+1/82 specialized=76+1/77 overlap=0`; Location Scene remains **99/99**, production remains **229 modules**, and the temporary QA optimization program remains closed at QA-4. **Once the corrected five-part metadata synchronization is Green, select exactly one Astra-backed Location #9 from current repository truth and revalidate its owning systems before implementation.** Phase 10 and the Living World Program remain closed/certified; this rollout is not Phase 11.
 
 - Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **17**
@@ -27,7 +27,16 @@ Public build line: `0.12.0 pre-release`
 Certified save schema: `17`
 Candidate save schema: none
 
-## Newest certified repository/gameplay source — Run #212 — Nightjar Diner dedicated scene
+## Newest certified repository/handoff source — Run #222 — Astra source archive closeout
+
+- Final cleaned commit: `0d33b637849d9aa7965997c3fef271af5d819b78`; Actions Run `35285417933`, job `105416605994`.
+- The exact Astra v1 ZIP is preserved as five raw parts under `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/SOURCE_PACKAGE/parts/`: four parts are exactly 20,000,000 bytes and the fifth is 9,718,869 bytes. All five repository Git blobs match the locally generated chunks.
+- The five parts reconstruct to SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. No source-package part remains at repository root or directly under `SOURCE_PACKAGE/`.
+- This is non-runtime handoff provenance only. Gameplay remains Run #212; save schema remains **17**.
+- Run #222 canonical preflight is **6/6 Green**, Location Scene **99/99**, QA-4 handshake `core=81+1/82 specialized=76+1/77 overlap=0`, wall **5/5**, production **229 modules**, Pages Green.
+- Certified source SHA `f5d1383727ad2179b46697a071495dd1be062934512b9d1d0f43ba26d24d4172`; dependencies `fb24428557ffe8b5ed09fc9d71518410d38fd28521728f6d4147627e316824f9`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10524029877`; Pages artifact `10524330641`.
+
+## Certified gameplay source — Run #212 — Nightjar Diner dedicated scene
 
 - Upload wrapper `d47c70fe75b23fe4585543ddb029f8b8f5818c38`; expanded certified source `7dde94325f56a2f44172b5de65709700b5ad73ea`; Actions Run `35275536409`, job `105385139759`. Net persistent diff from synchronized Run #211 `3f869498c7245c741e255023015ae77ffdd97e0c` is exactly **7 intended files**: Nightjar background + diner-table assets, new `DinerLocationPanel`, shared scene/data/system wiring, and expansion of the existing Location Scene regression. The importer reports 8 changed paths only because it removes transient `everthread-source.zip`.
 - **Nightjar Diner is the eighth dedicated location scene.** Its three semantic groups are **Your table**, **Diner counter**, and **Window booth**, exposing Share a meal, Diner date, Counter goods, and a second booth entry into the same shared-meal plan. Certified scene totals are now **8 scenes / 25 semantic groups / 48 scene action bindings / 16 selected Astra runtime assets**. Town places remain **25** and routed institution services remain **29**.
@@ -41,8 +50,8 @@ Candidate save schema: none
 ## Astra source-package continuation contract
 
 - Read `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/README.md` and `IMPLEMENTATION_PLAYBOOK.md` before selecting another location.
-- The folder mirrors exact lightweight Astra v1 source references and preserves the exact original ZIP via four browser-safe raw byte parts. These files are provenance only and must not become runtime/content authority.
-- **Next gate after this handoff/archive synchronization certifies:** select exactly one Location #9 from the remaining 17 Astra-backed candidates after a fresh owner/source/test audit. Do not preselect from historical action maps.
+- The folder mirrors exact lightweight Astra v1 source references and preserves the exact original ZIP via five browser-safe raw byte parts, each no larger than 20,000,000 bytes. The earlier 24 MiB parts were rejected by GitHub's mobile/web commit path because 24 MiB equals 25,165,824 bytes; the corrected split preserves the same original ZIP checksum. These files are provenance only and must not become runtime/content authority.
+- **Next gate after the corrected five-part metadata synchronization is Green:** select exactly one Location #9 from the remaining 17 Astra-backed candidates after a fresh owner/source/test audit. Do not preselect from historical action maps.
 
 ## Newest certified repository/gameplay source — Run #210 — scheduled-date navigation closeout
 

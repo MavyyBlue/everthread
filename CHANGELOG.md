@@ -1,3 +1,19 @@
+## Astra source archive preservation closeout — CI Green Run #222 — 2026-09-17
+
+### Added / changed
+
+- Completed the durable Astra v1 source-package preservation under `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/SOURCE_PACKAGE/parts/`. The exact original 89,718,869-byte ZIP is stored as **five** raw byte parts: four 20,000,000-byte parts plus one 9,718,869-byte tail.
+- The initial 24 MiB split was rejected by GitHub's mobile/web commit path because 24 MiB equals 25,165,824 bytes. The corrected split changes only chunk boundaries; reconstructing the five parts yields the unchanged original SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`.
+- Verified the repository Git blobs for all five authoritative parts against the locally generated chunks, then removed the accidental root-level `part-00` and the duplicate `SOURCE_PACKAGE/part-02`. No stray source-package chunks remain outside `SOURCE_PACKAGE/parts/`.
+- This archive is non-runtime design provenance. It does not add gameplay content, state, RNG, save schema, runtime assets, QA topology, or a new implementation authority.
+
+### Certification
+
+- GitHub Actions Run #222 (`35285417933`, job `105416605994`) certified the final cleaned repository tree `0d33b637849d9aa7965997c3fef271af5d819b78`.
+- Canonical preflight passed **6/6**; Location Scene remains **99/99**; QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`; the complete wall passed **5/5**; production remains **229 modules**; save schema remains **17**.
+- Certified source SHA-256 `f5d1383727ad2179b46697a071495dd1be062934512b9d1d0f43ba26d24d4172`; dependency SHA-256 `fb24428557ffe8b5ed09fc9d71518410d38fd28521728f6d4147627e316824f9`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10524029877` (`89857dcd2f9a549c8f928ea7d215863a98c193f58c9ae8557abf5772e24ba7d0`); Pages artifact `10524330641` (`89bc9877e5ec5ae3885785401aefe05bfbb3fab35507dbd7abaafe034909d501`); Pages deployment Green.
+- Gameplay implementation remains Run #212 / `7dde94325f56a2f44172b5de65709700b5ad73ea`; Run #222 is a handoff/archive certification closeout.
+
 ## Nightjar Diner device acceptance + Astra location-source handoff — CI Green Run #212 — 2026-09-17
 
 ### Added / changed
@@ -6,7 +22,7 @@
 - Nightjar is a presentation/routing adapter over existing systems. Shared meals remain Shared Experience truth; dates remain Romantic Date truth and reuse the Run #210 accepted `relationship.romance.pendingDate` bridge; counter purchases remain `PersonalInventorySystem` truth through `gameEngine.purchasePersonalItem`.
 - Astra's broad counter concept was intentionally narrowed to the **six real Nightjar-specific personal items already authored in Everthread**. No hunger/nourishment model, priced meal ledger, grocery economy, diner inventory authority, second relationship/date state, or scene-local cash balance was invented. Browsing is read-only and RNG-neutral.
 - Mavyy completed direct Android/player acceptance after Run #212 and reported Nightjar works on-device. The Location #8 tactile/player-facing gate is closed.
-- Added a durable `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` continuation folder. It records the certified scene ledger, remaining-source inventory, preservation-first implementation playbook, and exact lightweight references from Astra Yuki's original v1 handoff. The exact original 89,718,869-byte source ZIP is staged for lossless preservation as four browser-safe byte parts because GitHub browser/mobile uploads cap one file at 25 MiB. These archive/reference files are non-runtime provenance only.
+- Added a durable `PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` continuation folder. It records the certified scene ledger, remaining-source inventory, preservation-first implementation playbook, and exact lightweight references from Astra Yuki's original v1 handoff. The exact original 89,718,869-byte source ZIP is preserved losslessly as five browser-safe raw byte parts, each no larger than 20,000,000 bytes. The initial 24 MiB split was rejected by GitHub's mobile/web commit path because 24 MiB is 25,165,824 bytes, so the archive contract was corrected without changing the original ZIP bytes or checksum. These archive/reference files are non-runtime provenance only.
 
 ### Certification
 
