@@ -1,4 +1,4 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-market'|'everthread-city-hall'|'everthread-courthouse'|'loomworks-business-district';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-college'|'everthread-market'|'everthread-city-hall'|'everthread-courthouse'|'loomworks-business-district';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
@@ -8,6 +8,7 @@ export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts
 export type LocationSceneDinerActionId='shop.diner';
 export type LocationSceneMarketActionId='shop.groceries'|'shop.market.inventory';
 export type LocationSceneSchoolPanelActionId='school.records'|'school.groups';
+export type LocationSceneCollegePanelActionId='college.admissions'|'college.records';
 export type LocationSceneBusinessPanelActionId='business.start'|'business.manage';
 export type LocationSceneCityHallPanelActionId='politics.record'|LocationSceneBusinessPanelActionId;
 export type LocationSceneBusinessDistrictPanelActionId='work.role'|'work.jobs'|'work.parttime'|LocationSceneBusinessPanelActionId;
@@ -18,6 +19,7 @@ export type LocationSceneActionId=
   |'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'
   |'shared.diner.meal'|'date.diner'|'shared.gym.together'|'date.gym'|'shared.school.social'
   |'school.study'|'school.skip'|'school.dropout'|'school.volunteer'|LocationSceneSchoolPanelActionId
+  |'college.study'|'college.dropout'|LocationSceneCollegePanelActionId
   |'politics.local'|'politics.regional'|'politics.national'|'politics.speech'|'politics.leave'|LocationSceneCityHallPanelActionId
   |LocationSceneCourthouseActionId|LocationSceneBusinessDistrictPanelActionId
   |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId|LocationSceneMarketActionId
@@ -104,6 +106,10 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'school.groups':{id:'school.groups',label:'Clubs & teams',description:'Join, participate in, or leave your current school groups.',kind:'panel',risk:'normal'},
   'school.volunteer':{id:'school.volunteer',label:'Volunteer',description:'Take part in your current school community.',kind:'action',risk:'normal'},
   'shared.school.social':{id:'shared.school.social',label:'School social',description:'Choose a current school peer to spend time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'everthread-school',activityId:'school_social'}},
+  'college.admissions':{id:'college.admissions',label:'Programs & admissions',description:'Compare the established post-secondary programs and apply through the existing education system.',kind:'panel',risk:'normal'},
+  'college.study':{id:'college.study',label:'Study harder',description:'Put extra effort into your current post-secondary program.',kind:'action',risk:'normal'},
+  'college.records':{id:'college.records',label:'College record',description:'Review your current post-secondary academics, conduct, and education history.',kind:'panel',risk:'normal'},
+  'college.dropout':{id:'college.dropout',label:'Leave education',description:'Leave your current post-secondary program through the existing education system.',kind:'action',risk:'confirm'},
   'politics.record':{id:'politics.record',label:'Public office',description:'Review your office, approval, political career world, and public-life history.',kind:'panel',risk:'normal'},
   'politics.leave':{id:'politics.leave',label:'Leave Politics',description:'Step away from politics while preserving completed public-life history and relationships.',kind:'action',risk:'confirm'},
   'politics.local':{id:'politics.local',label:'Run local',description:'Launch the existing local-office campaign using its real funding and action rules.',kind:'action',risk:'normal'},
@@ -223,6 +229,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'desk',label:'Study desk',description:'School effort',actionIds:['school.study','school.skip'],order:1,hitRect:[.2667,.58,.4666,.32]},
       {id:'classroom',label:'Classroom',description:'Your education',actionIds:['school.records','school.dropout'],order:2,hitRect:[.02,.335,.28,.19]},
       {id:'clubs',label:'Activity board',description:'School community',actionIds:['school.groups','school.volunteer','shared.school.social'],order:3,hitRect:[.71,.245,.28,.19]},
+    ],
+  },
+  {
+    id:'everthread-college',label:'Everthread College',tagline:'Make space for your next chapter.',
+    background:'./location-scenes/backgrounds/everthread-college.png',propFile:'./location-scenes/props/service-kiosk.png',canvas:[1024,1536],
+    propAlphaBounds:[97,32,1101,1199],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'kiosk',label:'Campus kiosk',description:'Programs & admissions',actionIds:['college.admissions'],order:1,hitRect:[.27962,.58,.44077,.32]},
+      {id:'library',label:'College library',description:'Study & progress',actionIds:['college.study','college.records'],order:2,hitRect:[.03,.345,.28,.19]},
+      {id:'admissions',label:'Admissions office',description:'Your enrollment',actionIds:['college.admissions','college.dropout'],order:3,hitRect:[.70,.355,.28,.19]},
     ],
   },
   {

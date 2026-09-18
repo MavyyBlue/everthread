@@ -86,12 +86,15 @@ export function locationSceneWorkplaceProjection(state:GameState,placeId:string)
   return{placeId,entries,fullTime:entries.find(entry=>entry.kind==='full_time'),partTime:entries.filter(entry=>entry.kind==='part_time')};
 }
 
-export function locationSceneSchoolProjection(state:GameState){
+function locationSceneEducationProjection(state:GameState,placeId:'everthread-school'|'everthread-college'){
   const currentRecord=[...state.education].reverse().find(record=>!record.graduated&&!record.droppedOut&&!record.endAge);
   const world=currentSchoolWorld(state);const institution=schoolInstitutionLocation(state);
-  const local=Boolean(currentRecord&&world?.school&&institution?.inEverthread&&institution.anchorPlaceId==='everthread-school');
+  const local=Boolean(currentRecord&&world?.school&&institution?.inEverthread&&institution.anchorPlaceId===placeId);
   return{local,currentRecord:local?currentRecord:undefined,world:local?world:undefined,institution,factors:schoolAdmissionsFactors(state)};
 }
+
+export function locationSceneSchoolProjection(state:GameState){return locationSceneEducationProjection(state,'everthread-school');}
+export function locationSceneCollegeProjection(state:GameState){return locationSceneEducationProjection(state,'everthread-college');}
 
 function locationSceneSchoolUnavailableReason(state:GameState){
   const projection=locationSceneSchoolProjection(state);
@@ -99,6 +102,14 @@ function locationSceneSchoolUnavailableReason(state:GameState){
   if(projection.institution.inEverthread&&projection.institution.anchorPlaceId==='everthread-college')return'Your current education is based at Everthread College.';
   if(!projection.institution.inEverthread)return`Your current school is in ${projection.institution.locationLabel}, not at Everthread Community School.`;
   return'You are not currently enrolled at Everthread Community School.';
+}
+
+function locationSceneCollegeUnavailableReason(state:GameState){
+  const projection=locationSceneCollegeProjection(state);
+  if(!projection.institution)return'You are not currently enrolled in a post-secondary program.';
+  if(projection.institution.inEverthread&&projection.institution.anchorPlaceId==='everthread-school')return'Your current education is based at Everthread Community School.';
+  if(!projection.institution.inEverthread)return`Your current education is in ${projection.institution.locationLabel}, not at Everthread College.`;
+  return'You are not currently enrolled at Everthread College.';
 }
 
 export function locationSceneCompanionPlan(actionId:LocationSceneActionId){return LOCATION_SCENE_ACTIONS[actionId]?.companionPlan;}
@@ -224,6 +235,15 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     if(actionId==='shared.school.social'){
       const companions=locationSceneCompanions(state,actionId);return companions.length?{available:true}:{available:false,reason:'No eligible current school peer is available for a school social right now.'};
     }
+  }
+  if(actionId.startsWith('college.')){
+    if(actionId==='college.admissions')return state.character.age>=17?{available:true}:{available:false,reason:'Post-secondary admissions become available at age 17.'};
+    const college=locationSceneCollegeProjection(state);if(!college.local)return{available:false,reason:locationSceneCollegeUnavailableReason(state)};
+    if(actionId==='college.records')return{available:true};
+    if(actionId==='college.study'){
+      const gate=actionGateStatus(state,{policy:'education.effort'});return gate.allowed?{available:true}:{available:false,reason:gate.message};
+    }
+    if(actionId==='college.dropout')return canDropOut(state)?{available:true}:{available:false,reason:'Your current program cannot be left right now.'};
   }
   const companionPlan=locationSceneCompanionPlan(actionId);
   if(companionPlan){
