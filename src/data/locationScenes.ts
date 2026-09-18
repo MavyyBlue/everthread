@@ -1,4 +1,4 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
@@ -6,11 +6,13 @@ export type LocationSceneRealtyActionId='homes.catalog'|'homes.owned'|'homes.mor
 export type LocationSceneResidentialActionId='home.neighbors'|'home.visits'|'shared.home.hangout'|'shared.home.cook'|'shared.home.sleepover';
 export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts'|'shop.inventory';
 export type LocationSceneDinerActionId='shop.diner';
+export type LocationSceneSchoolPanelActionId='school.records'|'school.groups';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'|'wellness.gym'|'wellness.martial'
   |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
   |'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'
-  |'shared.diner.meal'|'date.diner'|'shared.gym.together'|'date.gym'
+  |'shared.diner.meal'|'date.diner'|'shared.gym.together'|'date.gym'|'shared.school.social'
+  |'school.study'|'school.skip'|'school.dropout'|'school.volunteer'|LocationSceneSchoolPanelActionId
   |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
@@ -84,6 +86,13 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'shop.diner':{id:'shop.diner',label:'Counter goods',description:'Browse the real personal items already sold at Nightjar Diner and see what you have bought here.',kind:'panel',risk:'normal'},
   'shared.gym.together':{id:'shared.gym.together',label:'Train together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'pulseworks-gym',activityId:'gym_session'}},
   'date.gym':{id:'date.gym',label:'Workout date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'pulseworks-gym',activityId:'gym_session'}},
+  'school.study':{id:'school.study',label:'Study harder',description:'Put extra effort into your current studies.',kind:'action',risk:'normal'},
+  'school.skip':{id:'school.skip',label:'Skip class',description:'Miss class and accept the existing academic and conduct consequences.',kind:'action',risk:'confirm'},
+  'school.records':{id:'school.records',label:'School record',description:'Attendance, conduct, academics, and education history.',kind:'panel',risk:'normal'},
+  'school.dropout':{id:'school.dropout',label:'Leave education',description:'Review whether you can leave your current school stage.',kind:'action',risk:'confirm'},
+  'school.groups':{id:'school.groups',label:'Clubs & teams',description:'Join, participate in, or leave your current school groups.',kind:'panel',risk:'normal'},
+  'school.volunteer':{id:'school.volunteer',label:'Volunteer',description:'Take part in your current school community.',kind:'action',risk:'normal'},
+  'shared.school.social':{id:'shared.school.social',label:'School social',description:'Choose a current school peer to spend time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'everthread-school',activityId:'school_social'}},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -176,6 +185,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'bench',label:'Training bench',description:'Personal fitness & time together',actionIds:['wellness.gym','shared.gym.together','date.gym'],order:1,hitRect:[.26217,.58,.47565,.32]},
       {id:'fitness',label:'Fitness floor',description:'Train with purpose',actionIds:['wellness.gym'],order:2,hitRect:[.10,.345,.28,.19]},
       {id:'dojo',label:'Martial arts room',description:'Technique & practice',actionIds:['wellness.martial'],order:3,hitRect:[.69,.335,.28,.19]},
+    ],
+  },
+  {
+    id:'everthread-school',label:'Everthread Community School',tagline:'A place to learn and belong.',
+    background:'./location-scenes/backgrounds/everthread-school.png',propFile:'./location-scenes/props/student-desk.png',canvas:[1024,1536],
+    propAlphaBounds:[0,2,1184,1218],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'desk',label:'Study desk',description:'School effort',actionIds:['school.study','school.skip'],order:1,hitRect:[.2667,.58,.4666,.32]},
+      {id:'classroom',label:'Classroom',description:'Your education',actionIds:['school.records','school.dropout'],order:2,hitRect:[.02,.335,.28,.19]},
+      {id:'clubs',label:'Activity board',description:'School community',actionIds:['school.groups','school.volunteer','shared.school.social'],order:3,hitRect:[.71,.245,.28,.19]},
     ],
   },
 ] as const;

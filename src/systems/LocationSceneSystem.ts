@@ -8,6 +8,10 @@ import { specialCareerExitGate } from './SpecialCareerExitSystem';
 import { specialCareerLifecycleView, specialCareerRetirementGate } from './SpecialCareerLifecycleSystem';
 import { musicCatalog, musicPartnershipOffer } from './MusicCareerCycleSystem';
 import { romanticDatePlanFor } from './RomanticDateSystem';
+import { canDropOut } from './EducationSystem';
+import { currentSchoolWorld, schoolAdmissionsFactors } from './SchoolWorldSystem';
+import { schoolInstitutionLocation } from './WorkingEverthreadSystem';
+import { projectYouthSocialPlans } from './YouthSocialSystem';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
 import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from './ResidentialLifeSystem';
 import { personalInventoryCatalogForPlace, personalInventoryOwnedFromPlace } from './PersonalInventorySystem';
@@ -49,6 +53,21 @@ export function locationSceneMallOwnedPersonalItems(state:GameState){return loca
 export function locationSceneDinerPersonalCatalogue(){return locationScenePersonalCatalogue('nightjar-diner');}
 export function locationSceneDinerOwnedPersonalItems(state:GameState){return locationSceneOwnedPersonalItems(state,'nightjar-diner');}
 export function locationSceneMallCollectibleCatalogue(){return collectibleDefinitions;}
+
+export function locationSceneSchoolProjection(state:GameState){
+  const currentRecord=[...state.education].reverse().find(record=>!record.graduated&&!record.droppedOut&&!record.endAge);
+  const world=currentSchoolWorld(state);const institution=schoolInstitutionLocation(state);
+  const local=Boolean(currentRecord&&world?.school&&institution?.inEverthread&&institution.anchorPlaceId==='everthread-school');
+  return{local,currentRecord:local?currentRecord:undefined,world:local?world:undefined,institution,factors:schoolAdmissionsFactors(state)};
+}
+
+function locationSceneSchoolUnavailableReason(state:GameState){
+  const projection=locationSceneSchoolProjection(state);
+  if(!projection.institution)return'You are not currently enrolled in school.';
+  if(projection.institution.inEverthread&&projection.institution.anchorPlaceId==='everthread-college')return'Your current education is based at Everthread College.';
+  if(!projection.institution.inEverthread)return`Your current school is in ${projection.institution.locationLabel}, not at Everthread Community School.`;
+  return'You are not currently enrolled at Everthread Community School.';
+}
 
 export function locationSceneCompanionPlan(actionId:LocationSceneActionId){return LOCATION_SCENE_ACTIONS[actionId]?.companionPlan;}
 
@@ -127,7 +146,10 @@ export function locationSceneCompanions(state:GameState,actionId:LocationSceneAc
   const candidates:LocationSceneCompanionOption[]=[];
   for(const relationship of state.relationships){
     const npc=state.npcs[relationship.npcId];if(!npc?.alive)continue;
-    if(plan.kind==='shared'){
+    if(actionId==='shared.school.social'){
+      const schoolSocial=projectYouthSocialPlans(state,npc.id).find(option=>option.id==='school-social'&&option.allowed&&option.currentSchoolPeer);
+      if(schoolSocial)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:`${relationship.type.replaceAll('_',' ')} · current school peer`});
+    }else if(plan.kind==='shared'){
       const availability=sharedExperienceAvailability(state,npc.id,plan.placeId,plan.activityId);
       if(availability.allowed)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:`${relationship.type.replaceAll('_',' ')} · relationship ${Math.round(relationship.score)}`});
     }else{
@@ -146,6 +168,20 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     if(state.character.age<minAge)return{available:false,reason:`${definition.label} becomes available at age ${minAge}.`};
     const gate=actionGateStatus(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:wellness}]);
     return gate.allowed?{available:true}:{available:false,reason:gate.message};
+  }
+  if(actionId.startsWith('school.')||actionId==='shared.school.social'){
+    const school=locationSceneSchoolProjection(state);if(!school.local)return{available:false,reason:locationSceneSchoolUnavailableReason(state)};
+    if(actionId==='school.records'||actionId==='school.groups')return{available:true};
+    if(actionId==='school.study'||actionId==='school.skip'){
+      const gate=actionGateStatus(state,{policy:'education.effort'});return gate.allowed?{available:true}:{available:false,reason:gate.message};
+    }
+    if(actionId==='school.dropout')return canDropOut(state)?{available:true}:{available:false,reason:'Compulsory schooling cannot be left at your current age.'};
+    if(actionId==='school.volunteer'){
+      const gate=actionGateStatus(state,{policy:'school.community'});return gate.allowed?{available:true}:{available:false,reason:gate.message};
+    }
+    if(actionId==='shared.school.social'){
+      const companions=locationSceneCompanions(state,actionId);return companions.length?{available:true}:{available:false,reason:'No eligible current school peer is available for a school social right now.'};
+    }
   }
   const companionPlan=locationSceneCompanionPlan(actionId);
   if(companionPlan){
