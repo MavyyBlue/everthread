@@ -1,3 +1,21 @@
+## Everthread Courthouse device acceptance + Location #13 closeout — CI Green Run #232 — 2026-09-18
+
+### Added / changed
+
+- Added **Everthread Courthouse** as the thirteenth dedicated illustrated location using Astra-derived `everthread-courthouse.png` while reusing the already-certified `records-desk.png` from City Hall. Three semantic groups—Case desk, Courtroom, and Consultation room—expose four scene bindings: Your Case, Legal Status, a second Your Case entry, and Legal Record.
+- Courthouse remains a presentation/routing adapter over established legal truth. Pending charge, legal status, criminal record, representation cost, plea choice, conviction/sentencing, cash mutation, and legal RNG remain the existing CrimeSystem/GameEngine owners.
+- The bounded slice intentionally adds no shadow court docket, lawyer inventory, sentencing ledger, legal wallet, duplicate conviction state, alternate action ledger, prison action, appeal authority, or crime catalogue. Correctional/prison actions remain outside the Courthouse. Read-only case/status/history browsing remains save-, RNG-, runtime-id-, and action-ledger-neutral.
+- Mavyy completed direct Android/player acceptance after Run #232 and reported the Courthouse worked. The Location #13 tactile/player-facing gate is closed.
+- Save schema remains **17**. No migration, QA-topology change, dependency change, event scheduler, or new durable gameplay authority was introduced.
+
+### Certification
+
+- GitHub Actions Run #232 (`35372584755`, job `105689785838`) certified expanded source `1ba66017ccbb21211e5c307d630ef72cf1e20346` from upload wrapper `b197ce9204c0f4040906b3adb9c1a03140424432`. Persistent gameplay diff from synchronized Run #231 `275501a8c4962734be90b64b1b14593bba10cabb` is exactly **6 intended files**: one Courthouse runtime background plus the focused panel, shared scene/data/system wiring, and Location Scene regression. The already-certified records desk is reused byte-for-byte rather than imported again.
+- Location Scene regression expanded **151 → 162** and passed **162/162**. Connected certified coverage includes Town Map **46/46**, Institution Routing **42/42**, and Integrated Long-Life **105/105**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 47,373 ms**: Engine TS **4,079 ms**, Test TS **6,168 ms**, App TS **9,292 ms**, Node/Vite TS **960 ms**, complete regression wall **22,254 ms**, production build **4,605 ms**. Production transformed **233 modules**.
+- Certified source SHA-256 `cf0732b98fe1d613e8061968f489ba438038315fcb525aa5483943348d884d9b`; dependency SHA-256 `1c2ec0683b75dcade93311d03673bf2f3b62b63355e374b0ef1533ddc29002b7`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10559170563` (`2999369185941ade10235ad24f5e7b713b458b2201848cfef1578539a9d3898f`); Pages artifact `10558975706` (`bb8361249cfa7321968011c22a1ec35ca955292163c2813a2b1f25e2edf01eb3`); Pages deployment Green.
+- Certified scene totals are now **13 scenes / 40 semantic groups / 75 scene action bindings / 25 selected Astra runtime assets**. After this documentation-only synchronization certifies, Location #14 remains unchosen; **12** Astra-backed source scenes remain and the normal owner/source/test audit still applies to whichever Mavyy selects.
+
 ## Everthread City Hall device acceptance + Location #12 closeout — CI Green Run #230 — 2026-09-18
 
 ### Added / changed

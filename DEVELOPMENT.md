@@ -3,8 +3,8 @@
 Last updated: 2026-09-18
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #230 / `f1c211013444c122f62553178e1fe23502db79fc`
-Certified gameplay baseline: Run #230 / `f1c211013444c122f62553178e1fe23502db79fc`
+Newest certified expanded source: Run #232 / `1ba66017ccbb21211e5c307d630ef72cf1e20346`
+Certified gameplay baseline: Run #232 / `1ba66017ccbb21211e5c307d630ef72cf1e20346`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,17 +27,17 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified location-scene slice — Run #230 — Everthread City Hall
+## Newest certified location-scene slice — Run #232 — Everthread Courthouse
 
-Run #230 adds the twelfth dedicated illustrated location while preserving Politics career-world, BusinessSystem, action-economy, save, RNG, institution-routing, and QA authorities.
+Run #232 adds the thirteenth dedicated illustrated location while preserving CrimeSystem/legal state, cash, legal RNG, correctional/appeal ownership, save, institution-routing, and QA authorities.
 
-- Expanded source `f1c211013444c122f62553178e1fe23502db79fc` from wrapper `b33ebf7bb49eac9294382f10a21163dababb33c5`; Actions Run `35355817457`, job `105634782985`. Persistent diff from synchronized Run #229 `1f147796aec8a6222bdffd7ff241050c081f8758` is exactly **7 intended files**.
-- City Hall uses three semantic groups—Civic desk, Council chamber, Company desk—and eight bindings: Public office, Leave Politics, Run local, Run regional, Run national, Give a speech, Start company, and Your companies. Scene totals become **12 / 37 / 71 / 24** (scenes / groups / bindings / selected Astra runtime assets).
-- The scene is a thin adapter only. Office history, campaigns, speeches, and Politics exit remain the existing Politics career owners; company creation, product setup, tuning, and company state remain BusinessSystem/GameEngine truth. No municipal ledger, permit system, city-fee economy, election scheduler, civic reputation, campaign shadow state, duplicate company registry, or scene-local business wallet was introduced.
-- Browsing office/company projections is deterministic and read-only until an established action commits. Existing campaign funding, age/eligibility, action limits, Politics RNG, company cash/product mutation, lifecycle archival, and business ownership rules remain authoritative.
-- Location Scene regression expanded **136 → 151** and passed **151/151** in CI. Politics Career World remains **80/80**, Ownership/Work **35/35**, Town Map **46/46**, Institution Routing **42/42**, Working Everthread **50/50**, NPC Asset Ownership **82/82**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
-- Canonical Run #230 preflight passed **6/6 in 50,523 ms**: Engine TS **4,242 ms**, Test TS **6,566 ms**, App TS **9,920 ms**, Node/Vite TS **1,005 ms**, regression wall **24,117 ms**, production build **4,658 ms**. Production transformed **232 modules**. Certified artifact `10552035413`; Pages artifact `10552010515`; deployment Green.
-- Direct Android/player acceptance passed after Run #230. Mavyy reported City Hall works. Location #12's device gate is closed.
+- Expanded source `1ba66017ccbb21211e5c307d630ef72cf1e20346` from wrapper `b197ce9204c0f4040906b3adb9c1a03140424432`; Actions Run `35372584755`, job `105689785838`. Persistent diff from synchronized Run #231 `275501a8c4962734be90b64b1b14593bba10cabb` is exactly **6 intended files**.
+- Courthouse uses three semantic groups—Case desk, Courtroom, Consultation room—and four bindings: Your Case, Legal Status, a second Your Case entry, and Legal Record. Scene totals become **13 / 40 / 75 / 25** (scenes / groups / bindings / selected Astra runtime assets). The scene reuses City Hall's already-certified records desk; only the Courthouse background is a newly selected Astra runtime asset.
+- The scene is a thin adapter only. Pending charge, representation/plea resolution, conviction/sentence outcomes, legal status, criminal record, cash mutation, and legal RNG remain existing CrimeSystem/GameEngine truth. Correctional/prison actions and appeal authority remain outside the Courthouse. No shadow court docket, lawyer inventory, sentencing ledger, legal wallet, duplicate conviction history, alternate action ledger, or scene-local legal state was introduced.
+- Browsing case/status/history projections is deterministic and read-only. Existing representation costs, pending-charge identity, legal RNG, conviction/sentence rules, imprisonment/fugitive state, and criminal-history records remain authoritative.
+- Location Scene regression expanded **151 → 162** and passed **162/162** in CI. Town Map remains **46/46**, Institution Routing **42/42**, Integrated Long-Life **105/105**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #232 preflight passed **6/6 in 47,373 ms**: Engine TS **4,079 ms**, Test TS **6,168 ms**, App TS **9,292 ms**, Node/Vite TS **960 ms**, regression wall **22,254 ms**, production build **4,605 ms**. Production transformed **233 modules**. Certified artifact `10559170563`; Pages artifact `10558975706`; deployment Green.
+- Direct Android/player acceptance passed after Run #232. Mavyy reported the Courthouse worked. Location #13's device gate is closed.
 
 ## Prior certified location-scene slice — Run #228 — Everthread Market / Grocery Store
 
