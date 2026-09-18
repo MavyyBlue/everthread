@@ -23,10 +23,11 @@ These source counts are **not** runtime content counts. Only assets explicitly c
 - Location #6: **Threadwell Residential District** (`threadwell-residential`) — Run #207
 - Location #7: **Crossroads Mall** (`crossroads-mall`) — Run #209
 - Location #8: **Nightjar Diner** (`nightjar-diner`) — Run #212
+- Location #9: **Pulseworks Gym** (`pulseworks-gym`) — Run #224
 
 ## Remaining Astra-backed candidates
 
-Exactly **17** source scenes remain unshipped. Do not preselect one from this list; perform a fresh owner/source/test audit against the newest certified repository first.
+Exactly **16** source scenes remain unshipped. Do not preselect one from this list; perform a fresh owner/source/test audit against the newest certified repository first.
 
 - `blackline-freight-yard`
 - `everthread-air-terminal`
@@ -43,7 +44,6 @@ Exactly **17** source scenes remain unshipped. Do not preselect one from this li
 - `facet-modeling-agency`
 - `loomworks-business-district`
 - `public-safety-center`
-- `pulseworks-gym`
 - `silverframe-studios`
 
-The original action map for any remaining candidate is advisory. If it requests gameplay Everthread does not currently own, narrow or reinterpret the scene around real owners rather than inventing a parallel system. Hearthline (no fake tenant lease-signing) and Nightjar (no fake food/nourishment economy) are precedent.
+The original action map for any remaining candidate is advisory. If it requests gameplay Everthread does not currently own, narrow or reinterpret the scene around real owners rather than inventing a parallel system. Hearthline (no fake tenant lease-signing), Nightjar (no fake food/nourishment economy), and Pulseworks (no scene-local combat challenge/lifecycle authority) are precedent.

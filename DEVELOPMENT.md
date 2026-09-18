@@ -3,8 +3,8 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #222 / `0d33b637849d9aa7965997c3fef271af5d819b78`
-Certified gameplay baseline: Run #212 / `7dde94325f56a2f44172b5de65709700b5ad73ea`
+Newest certified expanded source: Run #224 / `08a27517d42081ddb22c6587308a15da55669d2c`
+Certified gameplay baseline: Run #224 / `08a27517d42081ddb22c6587308a15da55669d2c`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,7 +27,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified location-scene slice — Run #212 — Nightjar Diner
+## Newest certified location-scene slice — Run #224 — Pulseworks Gym
+
+Run #224 adds the ninth dedicated illustrated location while preserving wellness, shared-experience, romantic-date, action-economy, save, RNG, combat-career, minigame, and QA authorities.
+
+- Expanded source `08a27517d42081ddb22c6587308a15da55669d2c` from wrapper `2c80c1617a50d9d5354707882b839386d3c97164`; Actions Run `35305049420`, job `105475409391`. Persistent diff from synchronized Run #223 `0e25206cbad8fa043d86abdab0283c367f8c9882` is exactly **6 intended files**.
+- Pulseworks uses three semantic groups—Training bench, Fitness floor, Martial arts room—and five bindings: Work out, Train together, Workout date, a second Work out affordance, and Martial arts. Scene totals become **9 / 28 / 53 / 18** (scenes / groups / bindings / selected Astra runtime assets).
+- The scene is a thin adapter only. `wellness.gym` and `wellness.martial` commit through existing wellness actions, shared training uses the existing `pulseworks-gym` / `gym_session` Shared Experience plan, and Workout date consumes the established Romantic Date accepted-plan truth. No gym-specific fitness state, relationship/date state, action ledger, or RNG stream was introduced.
+- Astra's combat-career `train`, `fight`, and `leave` concepts are intentionally excluded from this bounded slice. The current scene action contract does not own challenge/minigame routing or combat-career lifecycle controls, so adding them here would widen the architecture rather than project existing location-safe owners.
+- Location Scene regression expanded **99 → 111** and passed **111/111** in CI. Shared Experience remains **53/53**, Dating Momentum **61/61**, Town Map **46/46**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #224 preflight passed **6/6 in 51,123 ms**: Engine TS **4,259 ms**, Test TS **6,814 ms**, App TS **9,589 ms**, Node/Vite TS **1,033 ms**, regression wall **24,697 ms**, production build **4,713 ms**. Production transformed **229 modules**. Certified artifact `10530537991`; Pages artifact `10530478164`; deployment Green.
+- Direct Android/player acceptance passed after Run #224. Mavyy reported Pulseworks works great. Location #9's device gate is closed.
+
+## Prior certified location-scene slice — Run #212 — Nightjar Diner
 
 Run #212 adds the eighth dedicated illustrated location while preserving personal-inventory, shared-experience, romantic-date, action-economy, save, RNG, and QA authorities.
 
@@ -41,11 +53,11 @@ Run #212 adds the eighth dedicated illustrated location while preserving persona
 
 ## Astra location source continuation handoff
 
-`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#8, and lightweight exact references from Astra Yuki's original v1 source package.
+`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#9, and lightweight exact references from Astra Yuki's original v1 source package.
 
 The original 89,718,869-byte `everthread-location-scenes-v1.zip` is preserved losslessly as five browser-safe raw byte parts, each no larger than 20,000,000 bytes. GitHub's mobile/web commit path rejected the earlier 24 MiB parts because 24 MiB equals 25,165,824 bytes, so the split contract was corrected while preserving the exact original archive checksum. Run #222 certifies the final cleaned archive tree: all five authoritative parts are under `SOURCE_PACKAGE/parts/`, their repository blobs match the generated chunks, the two accidental duplicate placements are removed, and reconstruction yields SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. The archive and mirrored source references are non-runtime design provenance: they add no gameplay/content authority and must never be copied wholesale into `public/`.
 
-After the corrected five-part handoff metadata itself is certified, select exactly one **Location #9** only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
+The archive preservation remains certified provenance. After this Pulseworks documentation-only synchronization is Green, select exactly one **Location #10** from the remaining 16 candidates only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
 
 ## Newest certified gameplay hotfix — Run #210 — scheduled-date location navigation
 

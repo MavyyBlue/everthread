@@ -12,7 +12,10 @@ These are the Astra-backed scenes already integrated into runtime. Do not re-imp
 | 6 | Threadwell Residential District | #207 | `90e16923efa896da52750e7241b5387ca02da1ad` | `assets/backgrounds/threadwell-residential.png` · `36fff3545a82…` | `assets/props/neighborhood-board.png` · `99e9b64315a7…` |
 | 7 | Crossroads Mall | #209 | `487ea66dd589bf7d35efce29ab8ebba8a5313b44` | `assets/backgrounds/crossroads-mall.png` · `a5bbcf760b9e…` | `assets/props/shopping-display.png` · `8ecac9fa34b7…` |
 | 8 | Nightjar Diner | #212 | `7dde94325f56a2f44172b5de65709700b5ad73ea` | `assets/backgrounds/nightjar-diner.png` · `75b96fd0517b…` | `assets/props/diner-table.png` · `82b42285b9f5…` |
+| 9 | Pulseworks Gym | #224 | `08a27517d42081ddb22c6587308a15da55669d2c` | `assets/backgrounds/pulseworks-gym.png` · `37e765635d61…` | `assets/props/fitness-bench.png` · `84533c2f1bb8…` |
 
 Run #210 is a cross-scene dating-navigation hotfix rather than a new location. It made accepted `relationship.romance.pendingDate` plans consumable by every compatible scene action through declarative `companionPlan` metadata. Nightjar immediately reuses that contract for `date.diner`.
 
-After Run #212 the certified scene totals are **8 / 25 / 48 / 16** (scenes / semantic groups / action bindings / selected Astra runtime assets).
+Run #224 adds Pulseworks as a thin projection over existing wellness, Shared Experience `gym_session`, and Romantic Date `gym_session` owners. Astra combat challenge/lifecycle controls remain deliberately unshipped in this bounded slice rather than creating a parallel combat/minigame authority.
+
+After Run #224 the certified scene totals are **9 / 28 / 53 / 18** (scenes / semantic groups / action bindings / selected Astra runtime assets).

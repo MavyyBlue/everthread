@@ -1,3 +1,21 @@
+## Pulseworks Gym device acceptance + Location #9 closeout — CI Green Run #224 — 2026-09-17
+
+### Added / changed
+
+- Added **Pulseworks Gym** as the ninth dedicated illustrated location using Astra-derived `pulseworks-gym.png` and `fitness-bench.png`. Three semantic groups—Training bench, Fitness floor, and Martial arts room—expose five bindings: Work out, Train together, Workout date, a second Work out affordance, and Martial arts.
+- Pulseworks remains a presentation/routing adapter over established owners. Work out and Martial arts use the existing wellness activity path; Train together uses the existing Shared Experience `pulseworks-gym` / `gym_session` plan; Workout date uses the existing Romantic Date `gym_session` plan and one authoritative accepted `relationship.romance.pendingDate` state.
+- Astra's combat-career Train/Fight/Leave concepts were intentionally not added in this bounded slice. The existing Location Scene contract does not own challenge/minigame routing or combat-career lifecycle controls, so no parallel combat state or scene-only challenge authority was introduced.
+- Mavyy completed direct Android/player acceptance after Run #224 and reported Pulseworks works great on-device. The Location #9 tactile/player-facing gate is closed.
+- Save schema remains **17**. No migration, new durable state, new RNG stream, QA-topology change, dependency change, event scheduler, or alternate action ledger was introduced.
+
+### Certification
+
+- GitHub Actions Run #224 (`35305049420`, job `105475409391`) certified expanded source `08a27517d42081ddb22c6587308a15da55669d2c` from upload wrapper `2c80c1617a50d9d5354707882b839386d3c97164`. Persistent gameplay diff from synchronized Run #223 `0e25206cbad8fa043d86abdab0283c367f8c9882` is exactly **6 intended files**: two Pulseworks runtime PNGs plus four location-scene source/test files.
+- Location Scene regression expanded **99 → 111** and passed **111/111**. Connected certified coverage includes Shared Experience **53/53**, Dating Momentum **61/61**, and Town Map **46/46**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 51,123 ms**: Engine TS **4,259 ms**, Test TS **6,814 ms**, App TS **9,589 ms**, Node/Vite TS **1,033 ms**, complete regression wall **24,697 ms**, production build **4,713 ms**. Production transformed **229 modules**.
+- Certified source SHA-256 `0184959e200056970410f3bd0caea2bccc75e1a3598bffb47d90817db9294a8d`; dependency SHA-256 `e84ab9c2002ac17f4ea6964ed4d750e1cee349de4cd40cf2be184efbd2285b55`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10530537991` (`3f077b1aa2c9d1f783225853c7f85e6f4fca4dd51fd43f947b9bf54010dc196e`); Pages artifact `10530478164` (`e78df25d7b60ab5a695a7ead9ca4cc99778f17a183ec5bed947c8fa4cf172c97`); Pages deployment Green.
+- Certified scene totals are now **9 scenes / 28 semantic groups / 53 scene action bindings / 18 selected Astra runtime assets**. After this documentation-only synchronization certifies, select exactly one remaining Astra-backed **Location #10** after a fresh repository owner/source/test audit; 16 source scenes remain unshipped.
+
 ## Astra source archive preservation closeout — CI Green Run #222 — 2026-09-17
 
 ### Added / changed
