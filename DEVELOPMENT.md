@@ -3,8 +3,8 @@
 Last updated: 2026-09-18
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #228 / `96042ae010c5962f59b466c89e82bce0c2bf9a5c`
-Certified gameplay baseline: Run #228 / `96042ae010c5962f59b466c89e82bce0c2bf9a5c`
+Newest certified expanded source: Run #230 / `f1c211013444c122f62553178e1fe23502db79fc`
+Certified gameplay baseline: Run #230 / `f1c211013444c122f62553178e1fe23502db79fc`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,7 +27,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified location-scene slice — Run #228 — Everthread Market / Grocery Store
+## Newest certified location-scene slice — Run #230 — Everthread City Hall
+
+Run #230 adds the twelfth dedicated illustrated location while preserving Politics career-world, BusinessSystem, action-economy, save, RNG, institution-routing, and QA authorities.
+
+- Expanded source `f1c211013444c122f62553178e1fe23502db79fc` from wrapper `b33ebf7bb49eac9294382f10a21163dababb33c5`; Actions Run `35355817457`, job `105634782985`. Persistent diff from synchronized Run #229 `1f147796aec8a6222bdffd7ff241050c081f8758` is exactly **7 intended files**.
+- City Hall uses three semantic groups—Civic desk, Council chamber, Company desk—and eight bindings: Public office, Leave Politics, Run local, Run regional, Run national, Give a speech, Start company, and Your companies. Scene totals become **12 / 37 / 71 / 24** (scenes / groups / bindings / selected Astra runtime assets).
+- The scene is a thin adapter only. Office history, campaigns, speeches, and Politics exit remain the existing Politics career owners; company creation, product setup, tuning, and company state remain BusinessSystem/GameEngine truth. No municipal ledger, permit system, city-fee economy, election scheduler, civic reputation, campaign shadow state, duplicate company registry, or scene-local business wallet was introduced.
+- Browsing office/company projections is deterministic and read-only until an established action commits. Existing campaign funding, age/eligibility, action limits, Politics RNG, company cash/product mutation, lifecycle archival, and business ownership rules remain authoritative.
+- Location Scene regression expanded **136 → 151** and passed **151/151** in CI. Politics Career World remains **80/80**, Ownership/Work **35/35**, Town Map **46/46**, Institution Routing **42/42**, Working Everthread **50/50**, NPC Asset Ownership **82/82**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #230 preflight passed **6/6 in 50,523 ms**: Engine TS **4,242 ms**, Test TS **6,566 ms**, App TS **9,920 ms**, Node/Vite TS **1,005 ms**, regression wall **24,117 ms**, production build **4,658 ms**. Production transformed **232 modules**. Certified artifact `10552035413`; Pages artifact `10552010515`; deployment Green.
+- Direct Android/player acceptance passed after Run #230. Mavyy reported City Hall works. Location #12's device gate is closed.
+
+## Prior certified location-scene slice — Run #228 — Everthread Market / Grocery Store
 
 Run #228 adds the eleventh dedicated illustrated location while preserving Personal Inventory, cash, wellness, action-economy, save, RNG, gifting, map-routing, and QA authorities.
 
@@ -77,11 +89,11 @@ Run #212 adds the eighth dedicated illustrated location while preserving persona
 
 ## Astra location source continuation handoff
 
-`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#11, and lightweight exact references from Astra Yuki's original v1 source package.
+`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#12, and lightweight exact references from Astra Yuki's original v1 source package.
 
 The original 89,718,869-byte `everthread-location-scenes-v1.zip` is preserved losslessly as five browser-safe raw byte parts, each no larger than 20,000,000 bytes. GitHub's mobile/web commit path rejected the earlier 24 MiB parts because 24 MiB equals 25,165,824 bytes, so the split contract was corrected while preserving the exact original archive checksum. Run #222 certifies the final cleaned archive tree: all five authoritative parts are under `SOURCE_PACKAGE/parts/`, their repository blobs match the generated chunks, the two accidental duplicate placements are removed, and reconstruction yields SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. The archive and mirrored source references are non-runtime design provenance: they add no gameplay/content authority and must never be copied wholesale into `public/`.
 
-The archive preservation remains certified provenance. After this Market documentation-only synchronization is Green, select exactly one **Location #12** from the remaining 14 candidates only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
+The archive preservation remains certified provenance. After this City Hall documentation-only synchronization is Green, select exactly one **Location #13** from the remaining 13 candidates only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
 
 ## Newest certified gameplay hotfix — Run #210 — scheduled-date location navigation
 

@@ -4,20 +4,20 @@ This folder is the durable continuation point for Everthread's post-Phase-10 ill
 
 ## Current certified status
 
-- Newest certified gameplay source: **Run #228** / `96042ae010c5962f59b466c89e82bce0c2bf9a5c`.
-- Everthread Market / Grocery Store is certified Location #11 and has passed direct Android/player acceptance; Everthread Community School remains certified Location #10.
+- Newest certified gameplay source: **Run #230** / `f1c211013444c122f62553178e1fe23502db79fc`.
+- Everthread City Hall is certified Location #12 and has passed direct Android/player acceptance; Everthread Market / Grocery Store remains certified Location #11.
 - The Astra archive-provenance closeout remains Run #222 / `0d33b637849d9aa7965997c3fef271af5d819b78`; its five-part source package remains non-runtime provenance.
-- Dedicated scene totals: **11 scenes / 34 semantic groups / 63 scene action bindings / 22 selected Astra runtime assets**.
-- Location Scene regression: **136/136**.
+- Dedicated scene totals: **12 scenes / 37 semantic groups / 71 scene action bindings / 24 selected Astra runtime assets**.
+- Location Scene regression: **151/151**.
 - QA-4 remains the final QA-infrastructure baseline: `core=81+1/82 specialized=76+1/77 overlap=0`.
 - Save schema remains **17**.
-- **Location #12 is deliberately unchosen.** After the Market documentation synchronization is Green, select exactly one of the remaining 14 Astra-backed locations; Mavyy may choose the creative candidate, followed by the normal fresh repository owner/source/test audit.
+- **Location #13 is deliberately unchosen.** After the City Hall documentation synchronization is Green, select exactly one of the remaining 13 Astra-backed locations; Mavyy may choose the creative candidate, followed by the normal fresh repository owner/source/test audit.
 
 ## What is stored here
 
-- `IMPLEMENTATION_PLAYBOOK.md` — the preservation-first implementation method used for Locations #1–#11.
+- `IMPLEMENTATION_PLAYBOOK.md` — the preservation-first implementation method used for Locations #1–#12.
 - `CERTIFIED_SCENE_LEDGER.md` — which Astra scenes/assets are already runtime-certified and where.
-- `PACKAGE_INVENTORY.md` — original Astra package counts plus the remaining 14 scene candidates.
+- `PACKAGE_INVENTORY.md` — original Astra package counts plus the remaining 13 scene candidates.
 - `SOURCE_REFERENCE/` — exact lightweight reference material from Astra Yuki's original v1 handoff: manifests, data, design docs, hotspot/UI SVGs, integration contract, prompt provenance, and validation metadata.
 - `SOURCE_PACKAGE/` — checksum/reconstruction contract for the **exact original** `everthread-location-scenes-v1.zip`.
 

@@ -1,3 +1,21 @@
+## Everthread City Hall device acceptance + Location #12 closeout — CI Green Run #230 — 2026-09-18
+
+### Added / changed
+
+- Added **Everthread City Hall** as the twelfth dedicated illustrated location using Astra-derived `everthread-city-hall.png` and `records-desk.png`. Three semantic groups—Civic desk, Council chamber, and Company desk—expose eight bindings: Public office, Leave Politics, Run local, Run regional, Run national, Give a speech, Start company, and Your companies.
+- City Hall remains a presentation/routing adapter over established owners. Office history, campaigns, speeches, and Politics exit remain the existing Politics career-world/lifecycle paths; company creation and management remain BusinessSystem/GameEngine truth.
+- The bounded slice intentionally adds no municipal ledger, permits, city-fee economy, election scheduler, civic-reputation authority, parallel campaign state, duplicate company registry, or scene-local business wallet. Read-only civic/company browsing remains RNG-neutral until an existing action commits.
+- Mavyy completed direct Android/player acceptance after Run #230 and reported City Hall works. The Location #12 tactile/player-facing gate is closed.
+- Save schema remains **17**. No migration, QA-topology change, dependency change, event scheduler, alternate action ledger, or new durable gameplay authority was introduced.
+
+### Certification
+
+- GitHub Actions Run #230 (`35355817457`, job `105634782985`) certified expanded source `f1c211013444c122f62553178e1fe23502db79fc` from upload wrapper `b33ebf7bb49eac9294382f10a21163dababb33c5`. Persistent gameplay diff from synchronized Run #229 `1f147796aec8a6222bdffd7ff241050c081f8758` is exactly **7 intended files**: two City Hall runtime PNGs plus five location-scene/panel/test source files.
+- Location Scene regression expanded **136 → 151** and passed **151/151**. Connected certified coverage includes Politics Career World **80/80**, Ownership/Work **35/35**, Town Map **46/46**, Institution Routing **42/42**, Working Everthread **50/50**, and NPC Asset Ownership **82/82**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 50,523 ms**: Engine TS **4,242 ms**, Test TS **6,566 ms**, App TS **9,920 ms**, Node/Vite TS **1,005 ms**, complete regression wall **24,117 ms**, production build **4,658 ms**. Production transformed **232 modules**.
+- Certified source SHA-256 `a19d649da362b04257734ad539f4418db6a285c060462b117032c167741bff8a`; dependency SHA-256 `052d4419b200f514b2d13af14c3e688e6a125c43c4c29d63215a4072d17bda2b`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10552035413` (`c49434bce7b87a320d91c92f139c61265f2eb5a225edf197d8ce68f8c81abef2`); Pages artifact `10552010515` (`5e0db1afcaa0bce2e15295c18a6dd6b9f0486b90b621082f4e6af82abb367e96`); Pages deployment Green.
+- Certified scene totals are now **12 scenes / 37 semantic groups / 71 scene action bindings / 24 selected Astra runtime assets**. After this documentation-only synchronization certifies, Location #13 remains unchosen; **13** Astra-backed source scenes remain and the normal owner/source/test audit still applies to whichever Mavyy selects.
+
 ## Everthread Market / Grocery Store device acceptance + Location #11 closeout — CI Green Run #228 — 2026-09-18
 
 ### Added / changed
