@@ -1,5 +1,6 @@
 import { actionGateStatus } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneCompanionPlanDefinition, type LocationSceneRect } from '../data/locationScenes';
+import { crimeById } from '../data/crimes';
 import { collectibleDefinitions, propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { MUSIC_RELEASE_MIN_AGE, SPECIAL_CAREER_MIN_AGES } from './SpecialCareerSystem';
 import { WELLNESS_MIN_AGES } from './HealthSystem';
@@ -56,6 +57,14 @@ export function locationSceneDinerOwnedPersonalItems(state:GameState){return loc
 export function locationSceneMarketPersonalCatalogue(){return locationScenePersonalCatalogue('everthread-market');}
 export function locationSceneMarketOwnedPersonalItems(state:GameState){return locationSceneOwnedPersonalItems(state,'everthread-market');}
 export function locationSceneMallCollectibleCatalogue(){return collectibleDefinitions;}
+
+export function locationSceneLegalProjection(state:GameState){
+  const pendingCrimeId=typeof state.flags.pendingCharge==='string'?state.flags.pendingCharge:undefined;
+  const history=state.legal.criminalRecord.map(record=>({record,crime:crimeById[record.crimeId]}));
+  const fugitive=state.flags.fugitive===true;
+  const statusLabel=state.legal.imprisoned?'In custody':fugitive?'Fugitive':pendingCrimeId?'Pending case':state.legal.investigationHeat>0?'Under scrutiny':'No active proceeding';
+  return{pendingCrimeId,pendingCrime:pendingCrimeId?crimeById[pendingCrimeId]:undefined,history,convictions:history.filter(entry=>entry.record.convicted).length,fugitive,statusLabel};
+}
 
 export function locationSceneSchoolProjection(state:GameState){
   const currentRecord=[...state.education].reverse().find(record=>!record.graduated&&!record.droppedOut&&!record.endAge);
@@ -233,6 +242,7 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
   }
   if(actionId==='music.catalog'||actionId==='music.partnership')return{available:true};
   if(actionId==='politics.record'||actionId==='business.start'||actionId==='business.manage')return{available:true};
+  if(actionId==='legal.case'||actionId==='legal.status'||actionId==='legal.history')return{available:true};
   if(actionId==='politics.leave'){const gate=specialCareerExitGate(state,'politics');return gate.allowed?{available:true}:{available:false,reason:gate.message};}
   const campaignLevel=politicsCampaignLevel(actionId);
   if(campaignLevel!==undefined){
