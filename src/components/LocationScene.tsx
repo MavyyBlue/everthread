@@ -61,7 +61,7 @@ function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='nightjar-diner')return'diner' as const;
   return'music' as const;
 }
-function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:'music' as const;}
+function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:placeId==='pulseworks-gym'?'gym' as const:'music' as const;}
 function InteractHandIcon({size=24}:{size?:number}){
   return <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.5 16V9.5a2 2 0 0 1 4 0V15m0-4.5V7.5a2 2 0 0 1 4 0V15m0-4V9a2 2 0 0 1 4 0v7m0-3.5v-1a2 2 0 0 1 4 0V20c0 5.5-3.7 9-9.2 9h-1.1c-4.2 0-7.1-2-9-5l-3-4.7a2.1 2.1 0 0 1 3.1-2.8l3.2 2.4V16Z"/></svg>;
 }
@@ -165,6 +165,8 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       case'wellness.walk':result=gameEngine.performActivity('walking');break;
       case'wellness.run':result=gameEngine.performActivity('running');break;
       case'wellness.meditate':result=gameEngine.performActivity('meditation');break;
+      case'wellness.gym':result=gameEngine.performActivity('gym');break;
+      case'wellness.martial':result=gameEngine.performActivity('martial_arts');break;
       case'music.practice':result=gameEngine.musicPractice('vocals');break;
       case'music.tour':result=gameEngine.musicTour();break;
       case'music.song':result=gameEngine.musicRelease('song');break;

@@ -87,7 +87,7 @@ export function locationSceneLabelAlignment(rect:LocationSceneRect):LocationScen
 }
 
 const wellnessActionMap:Partial<Record<LocationSceneActionId,keyof typeof WELLNESS_MIN_AGES>>={
-  'wellness.walk':'walking','wellness.run':'running','wellness.meditate':'meditation',
+  'wellness.walk':'walking','wellness.run':'running','wellness.meditate':'meditation','wellness.gym':'gym','wellness.martial':'martial_arts',
 };
 
 function musicTrack(state:GameState){return state.specialCareers.music??{};}

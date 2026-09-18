@@ -1,4 +1,4 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
@@ -7,10 +7,10 @@ export type LocationSceneResidentialActionId='home.neighbors'|'home.visits'|'sha
 export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts'|'shop.inventory';
 export type LocationSceneDinerActionId='shop.diner';
 export type LocationSceneActionId=
-  |'wellness.walk'|'wellness.run'|'wellness.meditate'
+  |'wellness.walk'|'wellness.run'|'wellness.meditate'|'wellness.gym'|'wellness.martial'
   |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
   |'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'
-  |'shared.diner.meal'|'date.diner'
+  |'shared.diner.meal'|'date.diner'|'shared.gym.together'|'date.gym'
   |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
@@ -37,6 +37,8 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'wellness.walk':{id:'wellness.walk',label:'Walk',description:'Take an easy walk through the park.',kind:'action',risk:'normal'},
   'wellness.run':{id:'wellness.run',label:'Run',description:'Follow the running trail at your own pace.',kind:'action',risk:'normal'},
   'wellness.meditate':{id:'wellness.meditate',label:'Meditate',description:'Settle into a quiet moment.',kind:'action',risk:'normal'},
+  'wellness.gym':{id:'wellness.gym',label:'Work out',description:'Use the fitness area for a workout.',kind:'action',risk:'normal'},
+  'wellness.martial':{id:'wellness.martial',label:'Martial arts',description:'Practice in the martial arts area.',kind:'action',risk:'normal'},
   'shared.park.walk':{id:'shared.park.walk',label:'Walk together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'weaver-park',activityId:'park_walk'}},
   'shared.park.play':{id:'shared.park.play',label:'Play outside',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'weaver-park',activityId:'park_play'}},
   'date.park':{id:'date.park',label:'Park date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'weaver-park',activityId:'park_walk'}},
@@ -80,6 +82,8 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'shared.diner.meal':{id:'shared.diner.meal',label:'Share a meal',description:'Choose someone to share a booth and a meal with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'nightjar-diner',activityId:'diner_meal'}},
   'date.diner':{id:'date.diner',label:'Diner date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'nightjar-diner',activityId:'diner_meal'}},
   'shop.diner':{id:'shop.diner',label:'Counter goods',description:'Browse the real personal items already sold at Nightjar Diner and see what you have bought here.',kind:'panel',risk:'normal'},
+  'shared.gym.together':{id:'shared.gym.together',label:'Train together',description:'Choose someone to spend this time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'pulseworks-gym',activityId:'gym_session'}},
+  'date.gym':{id:'date.gym',label:'Workout date',description:'Meet someone who accepted your scheduled date.',kind:'companion',risk:'normal',companionPlan:{kind:'date',placeId:'pulseworks-gym',activityId:'gym_session'}},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -162,6 +166,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'table',label:'Your table',description:'A little time together',actionIds:['shared.diner.meal','date.diner'],order:1,hitRect:[.26268,.58,.47464,.32]},
       {id:'counter',label:'Diner counter',description:'Nightjar goods & keepsakes',actionIds:['shop.diner'],order:2,hitRect:[.02,.295,.28,.19]},
       {id:'booth',label:'Window booth',description:'A shared meal',actionIds:['shared.diner.meal'],order:3,hitRect:[.65,.335,.28,.19]},
+    ],
+  },
+  {
+    id:'pulseworks-gym',label:'Pulseworks Gym',tagline:'Build strength at your pace.',
+    background:'./location-scenes/backgrounds/pulseworks-gym.png',propFile:'./location-scenes/props/fitness-bench.png',canvas:[1024,1536],
+    propAlphaBounds:[24,40,1203,1214],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'bench',label:'Training bench',description:'Personal fitness & time together',actionIds:['wellness.gym','shared.gym.together','date.gym'],order:1,hitRect:[.26217,.58,.47565,.32]},
+      {id:'fitness',label:'Fitness floor',description:'Train with purpose',actionIds:['wellness.gym'],order:2,hitRect:[.10,.345,.28,.19]},
+      {id:'dojo',label:'Martial arts room',description:'Technique & practice',actionIds:['wellness.martial'],order:3,hitRect:[.69,.335,.28,.19]},
     ],
   },
 ] as const;
