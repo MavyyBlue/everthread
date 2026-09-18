@@ -35,7 +35,7 @@ function clone<T>(value:T):T{return structuredClone(value);}
 export function runPhase9ERealGiftsRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9E real-gifts regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 real gifts must reuse schema-17 inventory/relationship state without a save-schema bump');
+  verify(CURRENT_SAVE_VERSION===18,'01 real gifts must reuse schema-17 inventory/relationship state without a save-schema bump');
   verify(personalItemDefinitions.length===24&&personalItemDefinitions.every(item=>item.preferenceTags.length>=2),'02 all 24 Phase 8D personal items must remain usable as preference-tagged gift content');
 
   const projection=giftState('phase9e-projection');addItem(projection.state,projection.item.itemId,'gift-instance-2');const collectibleCount=projection.state.assets.collectibles.length;projection.state.assets.collectibles.push({id:'valuable-asset',itemId:'art_1',name:'Valuable Artwork',estimatedValue:5000,authenticity:99,condition:95,rarity:'rare'});const beforeProjection=JSON.stringify(projection.state),projectionRng=projection.state.rngCounter,projectionId=projection.state.idCounter;const options=projectPersonalGiftOptions(projection.state,projection.npc.id);

@@ -102,7 +102,7 @@ export function runCharacterVisualRegression(){
 
   const legacy=structuredClone(baseline) as GameState;delete legacy.character.appearance.visual;
   const migrated=migrateSave(structuredClone(legacy));
-  verify(migrated.saveVersion===17&&Boolean(migrated.character.appearance.visual),'current schema-17 saves without modular portrait data should normalize without a schema bump');
+  verify(migrated.saveVersion===18&&Boolean(migrated.character.appearance.visual),'current schema-17 saves without modular portrait data should normalize without a schema bump');
   const remigrated=migrateSave(structuredClone(migrated));
   verify(JSON.stringify(remigrated.character.appearance)===JSON.stringify(migrated.character.appearance),'appearance normalization should be deterministic and idempotent');
   verify(migrated.rngCounter===legacy.rngCounter&&migrated.idCounter===legacy.idCounter,'legacy appearance normalization must consume no gameplay RNG or runtime IDs');

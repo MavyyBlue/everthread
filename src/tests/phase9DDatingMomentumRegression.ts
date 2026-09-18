@@ -52,7 +52,7 @@ function clone<T>(value:T):T{return structuredClone(value);}
 export function runPhase9DDatingMomentumRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9D dating/momentum regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 dating/momentum must extend existing Relationship state without a schema bump');
+  verify(CURRENT_SAVE_VERSION===18,'01 dating/momentum must extend existing Relationship state without a schema bump');
   verify(ROMANTIC_DATE_PLANS.length===8,'02 the first dating slice should expose eight meaningful date plans rather than cosmetic duplicates');
   verify(new Set(ROMANTIC_DATE_PLANS.map(plan=>plan.id)).size===ROMANTIC_DATE_PLANS.length,'03 date-plan ids must be unique');
   verify(ROMANTIC_DATE_PLANS.every(plan=>plan.minAge>=14),'04 every authored date plan must respect the established dating minimum age');
@@ -134,7 +134,7 @@ export function runPhase9DDatingMomentumRegression(){
 
   const malformed=datingState('phase9d-malformed');malformed.rel.romance={pendingDate:{acceptedYear:Number.NaN,acceptedAge:-4},dateHistory:Array.from({length:12},(_,index)=>({year:2040+index,age:index-2,placeId:'nightjar-diner',activityId:'diner_meal',approval:index===0?250:70,band:'good' as const}))};enforceStateInvariants(malformed.state);verify((malformed.rel.romance?.dateHistory?.length??0)<=ROMANTIC_DATE_HISTORY_LIMIT&&!malformed.rel.romance?.pendingDate&&malformed.rel.romance!.dateHistory!.every(entry=>entry.approval>=0&&entry.approval<=100&&entry.age>=0)&&validateState(malformed.state).length===0,'52 invariant repair must bound/sanitize romantic history and remove malformed pending-date state deterministically');
 
-  const roundTrip=datingState(successSeed);goodHistory(roundTrip.state,roundTrip.rel,2);roundTrip.rel.romance!.pendingDate={acceptedYear:roundTrip.state.currentYear,acceptedAge:roundTrip.state.character.age};const imported=importSave(exportSave(roundTrip.state));const importedRel=imported.relationships.find(rel=>rel.npcId===roundTrip.npc.id)!;verify(JSON.stringify(importedRel.romance)===JSON.stringify(roundTrip.rel.romance),'53 save round-trip must preserve exact bounded date history and a legitimate pending accepted date on schema 17');
+  const roundTrip=datingState(successSeed);goodHistory(roundTrip.state,roundTrip.rel,2);roundTrip.rel.romance!.pendingDate={acceptedYear:roundTrip.state.currentYear,acceptedAge:roundTrip.state.character.age};const imported=importSave(exportSave(roundTrip.state));const importedRel=imported.relationships.find(rel=>rel.npcId===roundTrip.npc.id)!;verify(JSON.stringify(importedRel.romance)===JSON.stringify(roundTrip.rel.romance),'53 save round-trip must preserve exact bounded date history and a legitimate pending accepted date on current schema 18');
 
   const dynasty=datingState('phase9d-dynasty');goodHistory(dynasty.state,dynasty.rel,3);const heir=addNpc(dynasty.state,'phase9d-heir',22,'child');heir.npc.parentIds=[dynasty.state.character.id];dynasty.state.character.alive=false;const continuation=continueAsChild(dynasty.state,heir.npc.id);const inheritedFriend=dynasty.state.relationships.find(rel=>rel.npcId==='dating-target');verify(continuation.success&&inheritedFriend?.type==='friend'&&inheritedFriend.romance===undefined,'54 descendant continuation must not inherit the previous protagonist romantic-date history or pending momentum');
 

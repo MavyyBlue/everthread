@@ -29,8 +29,8 @@ function clone<T>(value:T):T{return structuredClone(value);}
 export function runPhase9BSharedExperienceRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9B shared-experience regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 Shared Experience Foundation must not create a new save schema when it only writes established relationship/memory/timeline authorities');
-  verify(SHARED_EXPERIENCE_ACTIVITIES.length===12,'02 the shared registry should preserve the ten Phase 9B activities plus the two Phase 9C youth extensions');
+  verify(CURRENT_SAVE_VERSION===18,'01 Shared Experience Foundation must not create a new save schema when it only writes established relationship/memory/timeline authorities');
+  verify(SHARED_EXPERIENCE_ACTIVITIES.length===13,'02 the shared registry should preserve the Phase 9 foundations plus the one College campus social extension');
   verify(new Set(SHARED_EXPERIENCE_ACTIVITIES.map(activity=>activity.id)).size===SHARED_EXPERIENCE_ACTIVITIES.length,'03 shared-experience activity ids must be unique');
   const placeIds=new Set(TOWN_PLACES.map(place=>place.id));
   verify(SHARED_EXPERIENCE_ACTIVITIES.every(activity=>activity.placeIds.length>0&&activity.placeIds.every(id=>placeIds.has(id))),'04 every activity must resolve only through canonical Everthread place ids');
@@ -122,7 +122,7 @@ export function runPhase9BSharedExperienceRegression(){
   verify(['old-memory-0','old-memory-1','old-memory-2','old-memory-3','old-memory-4'].every(id=>bounded.npc.memories.some(memory=>memory.id===id)),'48 bounded relationship memory trimming must preserve established permanent memories when capacity allows');
 
   const migrated=migrateSave(clone(committed.state));
-  verify(migrated.saveVersion===17&&migrated.relationships.find(rel=>rel.npcId===committed.npc.id)?.score===committed.rel.score,'49 save normalization must preserve committed shared-experience relationship consequences without a new parallel ledger');
+  verify(migrated.saveVersion===18&&migrated.relationships.find(rel=>rel.npcId===committed.npc.id)?.score===committed.rel.score,'49 save normalization must preserve committed shared-experience relationship consequences without a new parallel ledger');
   verify(migrated.npcs[committed.npc.id]?.memories.some(memory=>memory.kind==='shared_experience:park_walk')===true,'50 save normalization must preserve meaningful shared-experience NPC history');
 
   const engineFixture=adultState('phase9b-engine');engineFixture.npc.preferences=profile(['food','local','social']);engineFixture.state.settings.autoSave=false;const globals=globalThis as unknown as {localStorage?:Storage};if(!globals.localStorage)Object.defineProperty(globalThis,'localStorage',{value:{length:0,clear(){},getItem(){return null;},key(){return null;},removeItem(){},setItem(){}},configurable:true});const engine=new GameEngine(engineFixture.state);const revisionBefore=engine.getRevision();const engineResult=engine.shareExperience(engineFixture.npc.id,'nightjar-diner','diner_meal');

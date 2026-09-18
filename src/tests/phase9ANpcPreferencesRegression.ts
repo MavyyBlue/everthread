@@ -42,7 +42,7 @@ export function runPhase9ANpcPreferencesRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9A NPC-preference regression failed: ${message}`);}
 
   const fresh=createNewGame({seed:'phase9a-fresh'});
-  verify(CURRENT_SAVE_VERSION===17&&fresh.saveVersion===17,'01 Phase 9A must advance the current save schema to 17');
+  verify(CURRENT_SAVE_VERSION===18&&fresh.saveVersion===18,'01 Phase 9A must advance the current save schema to 17');
   verify(Object.values(fresh.npcs).every(npc=>npc.preferences===undefined),'02 newborn lives must keep intrinsic preference storage lazy until an NPC becomes socially relevant');
   verify(fresh.relationships.every(rel=>rel.knownPreferenceTags===undefined),'03 newborn relationship knowledge must also remain lazy instead of bloating untouched fresh saves');
   verify(NPC_PREFERENCE_TAG_IDS.length===38&&npcPreferenceTagDefinitions.length===38,'04 the shared preference vocabulary must contain 38 authored tags');
@@ -71,7 +71,7 @@ export function runPhase9ANpcPreferencesRegression(){
 
   const migrationSource=createNewGame({seed:'phase9a-migration'});migrationSource.character.age=32;for(const rel of migrationSource.relationships){rel.yearsKnown=20;rel.score=88;delete rel.knownPreferenceTags;}for(const npc of Object.values(migrationSource.npcs))delete npc.preferences;migrationSource.saveVersion=16;
   const migrationRng=migrationSource.rngCounter,migrationId=migrationSource.idCounter;const migratedA=migrateSave(structuredClone(migrationSource)),migratedB=migrateSave(structuredClone(migrationSource));
-  verify(migratedA.saveVersion===17&&Object.values(migratedA.npcs).every(npc=>Boolean(npc.preferences)),'17 schema-16 relationship targets must migrate to schema 17 with durable intrinsic NPC preference profiles');
+  verify(migratedA.saveVersion===18&&Object.values(migratedA.npcs).every(npc=>Boolean(npc.preferences)),'17 schema-16 relationship targets must migrate through the preference-profile step and into current schema 18');
   verify(migratedA.rngCounter===migrationRng&&migratedA.idCounter===migrationId,'18 preference migration must consume neither gameplay RNG nor runtime ids');
   verify(JSON.stringify(migratedA)===JSON.stringify(migratedB),'19 identical schema-16 inputs must migrate deterministically');
   const remigrated=migrateSave(structuredClone(migratedA));verify(JSON.stringify(remigrated)===JSON.stringify(migratedA),'20 current-schema preference normalization must be idempotent');

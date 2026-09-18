@@ -8,6 +8,7 @@ import { acceptAssetFinanceOffer, bestAssetFinanceOffer, getAssetFinanceOffers }
 import { addUnsecuredDebt } from './FinanceSystem';
 import { schedulePropertyRenovationStory } from './SystemicStorySystem';
 import { EVERTHREAD_CITY } from '../data/countries';
+import { clearCampusHousingForAlternativeHome } from './ResidentialLifeSystem';
 
 const propertyPlaceId=(location:string)=>location===EVERTHREAD_CITY?'threadwell-residential':undefined;
 
@@ -49,7 +50,7 @@ export function buyProperty(state:GameState,typeId:string,useMortgage=true,offer
   if(!useMortgage)state.finances.cash-=price;
   const propertyId=makeStateId(state,'property');
   if(mortgageId){const loan=state.finances.liabilities.find(item=>item.id===mortgageId);if(loan)loan.assetId=propertyId;}
-  const becomesHome=!state.assets.properties.some(item=>item.location===state.character.city&&!item.rental);
+  const becomesHome=!state.residentialLife?.campusHousing&&!state.assets.properties.some(item=>item.location===state.character.city&&!item.rental);
   state.assets.properties.push({id:propertyId,typeId:def.id,name:def.name,location:state.character.city,purchasePrice:price,marketValue:price,condition:90,age:0,amenities:[...def.amenities],mortgageId,origin:'purchased',...(becomesHome?{primaryResidence:true}:{})});
   state.flags.financiallyIndependent=true;state.flags.financialSupportChoiceMade=true;
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',...(propertyPlaceId(state.character.city)?{placeId:propertyPlaceId(state.character.city)}:{}),importance:3,text:useMortgage?`You purchased a ${def.name} in ${state.character.city} with financing.`:`You purchased a ${def.name} in ${state.character.city} outright.`,moneyDelta:-amountDue,...(financeDetail?{detail:financeDetail}:{})});
@@ -78,7 +79,7 @@ export function setPrimaryResidence(state:GameState,propertyId:string):EngineRes
   const p=state.assets.properties.find(item=>item.id===propertyId)!;
   const removedListing=Boolean(p.rental);if(removedListing)delete p.rental;
   for(const property of state.assets.properties)property.primaryResidence=property.id===p.id||undefined;
-  state.flags.financiallyIndependent=true;state.flags.financialSupportChoiceMade=true;
+  state.flags.financiallyIndependent=true;state.flags.financialSupportChoiceMade=true;clearCampusHousingForAlternativeHome(state);
   state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'asset',...(propertyPlaceId(p.location)?{placeId:propertyPlaceId(p.location)}:{}),importance:2,text:`You made ${p.name} your home in ${p.location}.${removedListing?' You took it off the rental market first.':''}`});
   return{success:true,stateChanges:['property.residence'],messages:[{text:`${p.name} is now your home${removedListing?' and is no longer listed for rent':''}.`}]};
 }

@@ -121,8 +121,8 @@ export function runPhase9GSharedLivesCloseoutRegression(){
   let checks=0;
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9G Shared Lives closeout regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 Phase 9 closeout must preserve schema 17; the Shared Lives stack needs no new durable authority');
-  verify(NPC_PREFERENCE_TAG_IDS.length===38&&SHARED_EXPERIENCE_ACTIVITIES.length===12&&YOUTH_SOCIAL_PLANS.length===11&&personalItemDefinitions.length===24&&CROSS_WORLD_CHEMISTRY_PLANS.length===22,'02 closeout must preserve the certified Phase 9 content foundations rather than inflate counts for certification');
+  verify(CURRENT_SAVE_VERSION===18,'01 Phase 9 closeout remains compatible with schema 18; the Shared Lives stack adds no parallel durable authority');
+  verify(NPC_PREFERENCE_TAG_IDS.length===38&&SHARED_EXPERIENCE_ACTIVITIES.length===13&&YOUTH_SOCIAL_PLANS.length===11&&personalItemDefinitions.length===24&&CROSS_WORLD_CHEMISTRY_PLANS.length===22,'02 closeout must preserve the certified Phase 9 content foundations rather than inflate counts for certification');
 
   const fresh=closeoutState('phase9g-fresh');
   verify(!('sharedLives' in (fresh as unknown as Record<string,unknown>))&&!('experienceHistory' in (fresh as unknown as Record<string,unknown>))&&!('chemistryHistory' in (fresh as unknown as Record<string,unknown>))&&!('giftHistory' in (fresh as unknown as Record<string,unknown>)),'03 GameState must still contain no parallel Shared Lives/experience/chemistry/gift ledger');

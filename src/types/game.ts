@@ -814,6 +814,16 @@ export interface GameFlags {
   [key: string]: boolean | number | string;
 }
 
+export interface ResidentialLifeState {
+  campusHousing?: {
+    kind: 'college_dorm';
+    placeId: 'everthread-college';
+    schoolWorldId: Id;
+    startedAge: number;
+    previousPrimaryResidencePropertyId?: Id;
+  };
+}
+
 export interface GameState {
   saveVersion: number;
   slotId: string;
@@ -829,6 +839,7 @@ export interface GameState {
   employment: EmploymentState;
   finances: FinancesState;
   assets: AssetState;
+  residentialLife: ResidentialLifeState;
   personalInventory: PersonalInventoryState;
   investments: InvestmentState;
   businesses: Business[];

@@ -66,7 +66,7 @@ export function runPhase8CInstitutionRoutingRegression(){
   const state=createNewGame({seed:'phase8c-routing'});const before=JSON.stringify(state);const rngBefore=state.rngCounter,idBefore=state.idCounter;
   createInstitutionRouteRequest('loomline-motors','browse-vehicles',42);createInstitutionRouteRequest('everthread-general-hospital','healthcare',43);resolveInstitutionDestination('politics');
   verify(JSON.stringify(state)===before&&state.rngCounter===rngBefore&&state.idCounter===idBefore,'37 routing resolution must not mutate GameState, consume gameplay RNG, or allocate runtime ids');
-  verify(state.saveVersion===CURRENT_SAVE_VERSION&&CURRENT_SAVE_VERSION===17,'38 institution routing must stay ephemeral and require no save-schema bump');
+  verify(state.saveVersion===CURRENT_SAVE_VERSION&&CURRENT_SAVE_VERSION===18,'38 institution routing must stay ephemeral and require no save-schema bump');
   const hidden=buildTownMapProjection(state);
   verify(!hidden.places.some(item=>item.id==='blackline-freight-yard'),'39 routing metadata must not bypass certified underworld discovery projection');
   state.specialCareers.crimeOrg={active:true,rank:'associate',standing:20};

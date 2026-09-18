@@ -64,6 +64,7 @@ function actionIcon(actionId:LocationSceneActionId){
   if(actionId.startsWith('shop.'))return'mall' as const;
   if(actionId.startsWith('home.')||actionId.startsWith('shared.home')||actionId==='date.home')return'home' as const;
   if(actionId.startsWith('music.'))return'music' as const;
+  if(actionId==='college.housing')return'home' as const;
   if(actionId.startsWith('school.')||actionId.startsWith('college.'))return'school' as const;
   if(actionId.startsWith('politics.'))return'cityhall' as const;
   if(actionId.startsWith('business.')||actionId.startsWith('work.'))return'business' as const;
@@ -79,6 +80,7 @@ function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='threadwell-residential')return'home' as const;
   if(placeId==='crossroads-mall')return'mall' as const;
   if(placeId==='nightjar-diner')return'diner' as const;
+  if(placeId==='everthread-college'&&groupId==='housing')return'home' as const;
   if(placeId==='everthread-school'||placeId==='everthread-college')return'school' as const;
   if(placeId==='everthread-market')return'market' as const;
   if(placeId==='everthread-city-hall')return'cityhall' as const;
@@ -248,7 +250,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
     if(actionId==='shop.groceries'||actionId==='shop.market.inventory'){setDetail({kind:'market',actionId});return;}
     if(actionId.startsWith('shop.')){setDetail({kind:'mall',actionId:actionId as LocationSceneMallActionId});return;}
     if(actionId==='school.records'||actionId==='school.groups'){setDetail({kind:'school',actionId});return;}
-    if(actionId==='college.admissions'||actionId==='college.records'){setDetail({kind:'college',actionId});return;}
+    if(actionId==='college.admissions'||actionId==='college.groups'||actionId==='college.housing'){setDetail({kind:'college',actionId});return;}
     if(actionId==='work.role'||actionId==='work.jobs'||actionId==='work.parttime'||(placeId==='loomworks-business-district'&&(actionId==='business.start'||actionId==='business.manage'))){setDetail({kind:'businessdistrict',actionId:actionId as LocationSceneBusinessDistrictPanelActionId});return;}
     if(actionId==='politics.record'||actionId==='business.start'||actionId==='business.manage'){setDetail({kind:'cityhall',actionId});return;}
     if(actionId==='legal.case'||actionId==='legal.status'||actionId==='legal.history'){setDetail({kind:'courthouse',actionId});return;}

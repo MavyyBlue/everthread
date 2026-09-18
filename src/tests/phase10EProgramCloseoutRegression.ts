@@ -74,7 +74,7 @@ export async function runPhase10EProgramCloseoutRegression(){
   function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 10E Program Closeout regression failed: ${message}`);}
   const approx=(a:number,b:number,tolerance:number,message:string)=>verify(Math.abs(a-b)<=tolerance,`${message} (${a} vs ${b})`);
 
-  verify(CURRENT_SAVE_VERSION===17,'01 program closeout must preserve certified save schema 17');
+  verify(CURRENT_SAVE_VERSION===18,'01 program closeout must preserve current save schema 18');
   const routeCount=TOWN_PLACES.reduce((sum,place)=>sum+(place.routes?.length??0),0);
   verify(TOWN_PLACES.length===25&&routeCount===29,'02 closeout must preserve the player-tested 25-place / 29-route Everthread town rather than pad content');
   const fresh=state('10e-fresh');

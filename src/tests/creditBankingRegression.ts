@@ -31,7 +31,7 @@ export function runCreditBankingRegression(){
   function approx(actual:number,expected:number,tolerance:number,message:string){verify(Math.abs(actual-expected)<=tolerance,`${message} (expected ${expected}±${tolerance}, got ${actual})`);}
 
   const fresh=createNewGame({seed:'credit-fresh'});
-  verify(fresh.saveVersion===17&&SAVE_VERSION===17,'Phase 6A credit state remains valid under current save schema 17');
+  verify(fresh.saveVersion===18&&SAVE_VERSION===18,'Phase 6A credit state remains valid under current save schema 18');
   verify(Array.isArray(fresh.finances.credit.accounts)&&fresh.finances.credit.accounts.length===0,'fresh lives initialize an empty credit-account authority');
   verify(fresh.finances.credit.transactions.length===0&&fresh.finances.credit.inquiries.length===0,'fresh credit history begins empty');
   verify(creditAvailable(fresh)===0&&creditCardDebt(fresh)===0&&securedCreditDeposits(fresh)===0,'fresh lives do not invent borrowing capacity, revolving debt, or secured deposits');
@@ -39,7 +39,7 @@ export function runCreditBankingRegression(){
 
   const legacy=createNewGame({seed:'credit-v10-migration'});legacy.saveVersion=10;const legacyRng=legacy.rngCounter;delete (legacy.finances as unknown as {credit?:unknown}).credit;
   const migrated=migrateSave(legacy);
-  verify(migrated.saveVersion===17&&Boolean(migrated.finances.credit),'v10 saves migrate to current schema 17 with credit state');
+  verify(migrated.saveVersion===18&&Boolean(migrated.finances.credit),'v10 saves migrate to current schema 18 with credit state');
   verify(migrated.rngCounter===legacyRng,'credit migration consumes no player RNG');
   verify(migrated.finances.credit.accounts.length===0&&validateState(migrated).length===0,'credit migration is empty, deterministic, and invariant-clean');
   const remigrated=migrateSave(migrated);verify(JSON.stringify(remigrated.finances.credit)===JSON.stringify(migrated.finances.credit),'current-schema credit normalization is idempotent');

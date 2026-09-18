@@ -1,8 +1,7 @@
-import { actionAllowed } from '../core/actionEconomy';
 import type { LocationSceneSchoolPanelActionId } from '../data/locationScenes';
-import { gameEngine } from '../stores/gameStore';
 import { locationSceneSchoolProjection } from '../systems/LocationSceneSystem';
 import type { EngineResult, GameState } from '../types/game';
+import { SchoolGroupList } from './SchoolGroupList';
 
 function recordStatus(record:GameState['education'][number]){
   if(record.graduated)return'Graduated';
@@ -32,18 +31,5 @@ export function SchoolLocationPanel({state,actionId,onResult}:{state:GameState;a
     <div className="stack">{[...state.education].reverse().map((record,index)=><div className="owned-card" key={`${record.stage}:${record.startAge}:${record.institution}:${index}`}><span><strong>{record.major??record.stage.replaceAll('_',' ')}</strong><small>{record.institution} · age {record.startAge}{record.endAge!==undefined?`–${record.endAge}`:''} · performance {Math.round(record.performance)}</small></span><b>{recordStatus(record)}</b></div>)}</div>
   </div>;
 
-  const activeGroups=world.groups.filter(group=>group.playerJoinedAge!==undefined&&group.playerLeftAge===undefined);
-  const visibleGroups=world.groups.filter(group=>group.playerJoinedAge!==undefined||state.character.age>=group.minAge);
-  return <div className="location-scene__school-panel">
-    <div className="location-scene__status-card"><small>School activities</small><strong>{activeGroups.length}/3 active</strong><span>Groups remain part of your persistent school world.</span></div>
-    <div className="school-group-list">{visibleGroups.map(group=>{
-      const joined=group.playerJoinedAge!==undefined&&group.playerLeftAge===undefined;
-      const canJoin=!joined&&activeGroups.length<3&&state.character.age>=group.minAge&&actionAllowed(state,[{policy:'school.group.join'},{policy:'school.group.join.target',target:group.id}]);
-      const canAttend=joined&&actionAllowed(state,[{policy:'school.group.activity.total'},{policy:'school.group.activity.target',target:group.id}]);
-      return <article className={`school-group-card ${joined?'joined':''}`} key={group.id}>
-        <div><strong>{group.name}</strong><small>{group.kind} · {group.memberNpcIds.length} recurring people{joined?` · ${group.playerRole??'member'}`:''}</small></div>
-        <div className="school-group-actions">{joined?<><button disabled={!canAttend} onClick={()=>onResult(gameEngine.attendSchoolGroup(group.id))}>{canAttend?'Participate':'Done this year'}</button><button className="secondary-button" onClick={()=>onResult(gameEngine.leaveSchoolGroup(group.id))}>Leave</button></>:<button disabled={!canJoin} onClick={()=>onResult(gameEngine.joinSchoolGroup(group.id))}>{canJoin?'Join':'Unavailable'}</button>}</div>
-      </article>;
-    })}</div>
-  </div>;
+  return <SchoolGroupList state={state} world={world} onResult={onResult}/>;
 }

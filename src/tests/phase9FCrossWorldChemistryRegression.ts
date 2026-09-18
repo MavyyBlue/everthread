@@ -40,7 +40,7 @@ function addOrg(value:GameState,npcId:string,kind:CrossWorldChemistryContextKind
 export function runPhase9FCrossWorldChemistryRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9F cross-world chemistry regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 cross-world chemistry must reuse schema 17 without adding durable state');
+  verify(CURRENT_SAVE_VERSION===18,'01 cross-world chemistry must remain compatible with schema 18 without adding durable state');
   verify(CROSS_WORLD_CHEMISTRY_PLANS.length===22&&new Set(CROSS_WORLD_CHEMISTRY_PLANS.map(plan=>plan.id)).size===22,'02 the authored cross-world plan registry must contain 22 unique plans');
   const expectedKinds:CrossWorldChemistryContextKind[]=['school','family','friend','workplace','acting','music','sports','modeling','racing','directing','combat','military','politics'];
   verify(expectedKinds.every(kind=>CROSS_WORLD_CHEMISTRY_PLANS.some(plan=>plan.contextKinds.includes(kind))),'03 every required school/family/friend/work/career context must have authored plans');

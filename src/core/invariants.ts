@@ -12,6 +12,7 @@ import { NPC_PREFERENCE_AVERSION_LIMIT, NPC_PREFERENCE_DISLIKE_LIMIT, NPC_PREFER
 import { ROMANTIC_DATE_HISTORY_LIMIT } from '../data/romanticDates';
 import { TOWN_PLACES } from '../data/townPlaces';
 import { normalizeNpcVisualState, validateNpcVisualState } from '../systems/NpcVisualSystem';
+import { normalizeResidentialLifeState } from '../systems/ResidentialLifeSystem';
 
 const PHASE4_SPECIAL_WORLD_KINDS = ['acting','music','sports','combat','military','politics','modeling','racing','directing'] as const;
 type Phase4SpecialWorldKind = typeof PHASE4_SPECIAL_WORLD_KINDS[number];
@@ -138,6 +139,8 @@ export function enforceStateInvariants(state: GameState): GameState {
   state.legal.sentenceRemaining = Math.max(0, state.legal.sentenceRemaining);
   state.fame.fame = clamp(state.fame.fame);
   state.fame.publicReputation = clamp(state.fame.publicReputation);
+
+  normalizeResidentialLifeState(state);
 
   // Residential identity stays on the existing property records. Legacy/current-schema saves
   // may omit the optional Phase 10A metadata, so normalize it deterministically without RNG/ids.
@@ -324,9 +327,13 @@ export function validateState(state: GameState): string[] {
   if (spouses.length > 1) errors.push('Multiple active spouses');
   if (state.relationships.some(r => !state.npcs[r.npcId])) errors.push('Relationship references missing NPC');
   errors.push(...validateNpcVisualState(state));
+  if(!state.residentialLife)errors.push('Missing residential life state');
+  const campusHousing=state.residentialLife?.campusHousing;
+  if(campusHousing&&(campusHousing.kind!=='college_dorm'||campusHousing.placeId!=='everthread-college'||typeof campusHousing.schoolWorldId!=='string'||campusHousing.startedAge<0))errors.push('Invalid campus housing state');
   const playerPrimaryResidences=state.assets.properties.filter(property=>property.primaryResidence===true);
   if(playerPrimaryResidences.length>1)errors.push('Multiple player primary residences');
   if(state.character.age<18&&playerPrimaryResidences.length)errors.push('Minor player cannot have an independent primary residence');
+  if(campusHousing&&playerPrimaryResidences.length)errors.push('Campus housing and an owned primary residence cannot both be current');
   for(const property of state.assets.properties){
     if(property.origin!==undefined&&property.origin!=='purchased'&&property.origin!=='inherited')errors.push(`Property ${property.id} has invalid origin`);
     if(property.origin!=='inherited'&&property.inheritedFromNpcId)errors.push(`Property ${property.id} has invalid inheritance provenance`);

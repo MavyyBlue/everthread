@@ -1,7 +1,7 @@
 import type { Id } from './game';
 import type { NpcPreferenceTag } from './npcPreferences';
 
-export type ResidenceKind = 'owned' | 'family' | 'rented' | 'shared' | 'institutional';
+export type ResidenceKind = 'owned' | 'family' | 'rented' | 'shared' | 'campus' | 'institutional';
 export type ResidentialPlanTarget = 'player' | 'npc' | 'best';
 
 export interface ResidenceProjection {

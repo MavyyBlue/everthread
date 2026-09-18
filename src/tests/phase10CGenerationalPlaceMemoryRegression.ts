@@ -39,7 +39,7 @@ function milestone(id:string,placeId:string,importance:1|2|3=3,age=30):TimelineE
 export function runPhase10CGenerationalPlaceMemoryRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 10C Generational Place Memory regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 Generational Place Memory must remain compatible with save schema 17');
+  verify(CURRENT_SAVE_VERSION===18,'01 Generational Place Memory must remain compatible with save schema 18');
   const fresh=state('10c-fresh');verify(!('placeMemory' in (fresh as unknown as Record<string,unknown>))&&!('placeHistory' in (fresh as unknown as Record<string,unknown>))&&!('locationLedger' in (fresh as unknown as Record<string,unknown>)),'02 GameState must not gain a parallel place-history/location ledger');
   verify(COMPLETED_LIFE_PLACE_MILESTONE_LIMIT===12&&PLACE_LEGACY_PER_PLACE_LIMIT===6&&PLACE_LEGACY_PLACE_LIMIT===8&&PLACE_LEGACY_TOTAL_LIMIT===24,'03 all place-legacy histories must be explicitly bounded');
 
@@ -81,7 +81,7 @@ export function runPhase10CGenerationalPlaceMemoryRegression(){
   verify(archived.timeline.some(entry=>entry.id==='death-park')&&archived.timeline.some(entry=>entry.id==='death-diner'),'31 CompletedLife still preserves the full authoritative life timeline; the place snapshot is only an index/projection aid');
   const legacyLife=clone(archived);delete legacyLife.placeMilestones;verify(completedLifePlaceMilestones(legacyLife).length===2,'32 old schema-17 completed lives without the optional snapshot derive place memory from their existing timeline without migration RNG');
 
-  const saved=state('10c-save');saved.businesses.push(business({id:'saved-family',origin:'inherited',inheritedFromNpcId:'saved-parent'}));saved.timeline.push(milestone('saved-place','nightjar-diner',3));checkDeath(saved,true);const loaded=importSave(exportSave(saved));verify(loaded.saveVersion===17&&loaded.businesses[0]?.origin==='inherited'&&loaded.businesses[0]?.inheritedFromNpcId==='saved-parent','33 schema-17 save/load preserves optional business family provenance');
+  const saved=state('10c-save');saved.businesses.push(business({id:'saved-family',origin:'inherited',inheritedFromNpcId:'saved-parent'}));saved.timeline.push(milestone('saved-place','nightjar-diner',3));checkDeath(saved,true);const loaded=importSave(exportSave(saved));verify(loaded.saveVersion===18&&loaded.businesses[0]?.origin==='inherited'&&loaded.businesses[0]?.inheritedFromNpcId==='saved-parent','33 schema-17 save/load preserves optional business family provenance');
   verify(loaded.completedLives.at(-1)?.placeMilestones?.some(item=>item.placeId==='nightjar-diner')===true,'34 schema-17 save/load preserves the bounded completed-life place index');
   verify(exportSave(importSave(exportSave(loaded)))===exportSave(loaded),'35 once normalized, repeated schema-17 save/load cycles remain idempotent with 10C optional metadata');
 

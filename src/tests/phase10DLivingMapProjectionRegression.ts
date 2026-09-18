@@ -2,6 +2,7 @@ import { enforceStateInvariants, validateState } from '../core/invariants';
 import { CURRENT_SAVE_VERSION } from '../core/saveVersion';
 import { EVERTHREAD_CITY, EVERTHREAD_COUNTRY_ID } from '../data/countries';
 import { createNewGame } from '../systems/CharacterSystem';
+import { ensureSchoolWorldForEducationRecord } from '../systems/SchoolWorldSystem';
 import { ensureNpcLife } from '../systems/NpcLifeSystem';
 import {
   LIVING_MAP_CONTEXTS_PER_TARGET_LIMIT,
@@ -11,6 +12,7 @@ import {
   livingMapProjection,
 } from '../systems/LivingMapSystem';
 import { buildTownMapProjection, townMapSemanticView } from '../systems/TownMapSystem';
+import { moveIntoCollegeDorm } from '../systems/ResidentialLifeSystem';
 import type { Business, GameState, Npc, PropertyAsset, SocialWorld, TimelineEntry } from '../types/game';
 
 function clone<T>(value:T):T{return structuredClone(value);}
@@ -26,7 +28,7 @@ function kinds(value:ReturnType<typeof livingMapPlaceContext>){return value?.con
 export function runPhase10DLivingMapProjectionRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 10D Living Map Projection regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 Living Map Projection must remain save-schema neutral at version 17');
+  verify(CURRENT_SAVE_VERSION===18,'01 Living Map Projection remains projection-only while consuming the current schema-18 residence authority');
   const fresh=state('10d-fresh');verify(!('livingMap' in (fresh as unknown as Record<string,unknown>))&&!('mapContexts' in (fresh as unknown as Record<string,unknown>))&&!('mapPins' in (fresh as unknown as Record<string,unknown>)),'02 GameState must not gain a persisted map-context or pin ledger');
   verify(LIVING_MAP_CONTEXTS_PER_TARGET_LIMIT===6&&LIVING_MAP_TOTAL_CONTEXT_LIMIT===32,'03 living-map context must have explicit century-safe bounds');
 
@@ -93,6 +95,13 @@ export function runPhase10DLivingMapProjectionRegression(){
 
   const deterministicA=clone(bounded),deterministicB=clone(bounded);verify(JSON.stringify(livingMapProjection(deterministicA))===JSON.stringify(livingMapProjection(deterministicB))&&JSON.stringify(deterministicA)===JSON.stringify(deterministicB),'49 large living-map projections remain deterministic and read-only');
   enforceStateInvariants(owned);enforceStateInvariants(school);enforceStateInvariants(exactWork);enforceStateInvariants(exactBusiness);enforceStateInvariants(legacy);const issues=[...validateState(owned),...validateState(school),...validateState(exactWork),...validateState(exactBusiness),...validateState(legacy)];verify(issues.length===0,`50 representative 10D states remain invariant-clean because living-map context is projection-only (${issues.join(' | ')})`);
+
+
+  const dorm=state('10d-campus-home');dorm.character.age=20;dorm.currentYear=2060;const dormRecord:GameState['education'][number]={stage:'university',institution:'Everthread Institute of Biology',programId:'biology',major:'Biology',startAge:18,graduated:false,droppedOut:false,scholarship:false,performance:dorm.character.secondary.academicPerformance};dorm.education=[dormRecord];ensureSchoolWorldForEducationRecord(dorm,dormRecord,false);dorm.assets.properties.push(property({id:'dorm-owned-home',primaryResidence:true}));verify(moveIntoCollegeDorm(dorm).success,'51 a valid post-secondary student can establish ResidentialLife-owned campus housing before Living Map projection');const dormProjection=livingMapProjection(dorm);const dormCollege=livingMapPlaceContext(dormProjection,'everthread-college'),dormThreadwell=livingMapPlaceContext(dormProjection,'threadwell-residential');
+  verify(dormCollege?.contexts.some(item=>item.kind==='home'&&item.label==='You live here')===true&&dormCollege.contexts.some(item=>item.kind==='school'&&item.label==='Current school')===true,'52 College can simultaneously project the player current residence and current institution without merging their source meanings');
+  verify(dormThreadwell?.contexts.some(item=>item.kind==='property')===true&&!dormThreadwell?.contexts.some(item=>item.kind==='home'),'53 an owned off-campus home remains visible as property in Threadwell while the residence context moves to College');
+  const dormMapSearch=buildTownMapProjection(dorm,{query:'you live here'});verify(dormMapSearch.places.some(item=>item.id==='everthread-college')&&!dormMapSearch.places.some(item=>item.id==='threadwell-residential'),'54 Town Map search follows the derived campus residence instead of leaving a stale Threadwell home result');
+  const dormBefore=JSON.stringify(dorm),dormRng=dorm.rngCounter,dormId=dorm.idCounter,dormRevision=dorm.actionLedger.revision;livingMapProjection(dorm);buildTownMapProjection(dorm);verify(JSON.stringify(dorm)===dormBefore&&dorm.rngCounter===dormRng&&dorm.idCounter===dormId&&dorm.actionLedger.revision===dormRevision,'55 campus-residence Living Map/Town Map browsing remains strictly read-only and RNG/runtime-ID/action-ledger neutral');
 
   return checks;
 }

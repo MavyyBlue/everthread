@@ -1,16 +1,21 @@
 import { FAMILY_RELATIONSHIP_TYPE_SET } from '../core/familyRelations';
+import { makeStateId } from '../core/ids';
 import { EVERTHREAD_CITY, EVERTHREAD_COUNTRY_ID } from '../data/countries';
 import { RESIDENTIAL_LIFE_PLANS, residentialLifePlanById } from '../data/residentialLife';
-import type { GameState, Npc, PropertyAsset, Relationship } from '../types/game';
+import { POST_SECONDARY_STAGES } from '../data/workingEverthread';
+import type { EngineResult, GameState, Npc, PropertyAsset, Relationship } from '../types/game';
 import type { NpcPropertyHolding } from '../types/npcAssets';
 import type { NpcHouseholdProjection, ResidenceProjection, ResidentialPlan, ResidentialPlanDefinition } from '../types/residentialLife';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
+import { schoolWorldForEducationRecord } from './SchoolWorldSystem';
+import { schoolInstitutionLocation } from './WorkingEverthreadSystem';
 
 const RESIDENTIAL_SOCIAL_TYPES=new Set<GameState['relationships'][number]['type']>([
   'parent','stepparent','grandparent','sibling','half_sibling','stepsibling','aunt_uncle','cousin','niece_nephew','child','grandchild',
   'friend','best_friend','classmate','partner','fiance','spouse',
 ]);
 const THREADWELL_PLACE_ID='threadwell-residential';
+const COLLEGE_PLACE_ID='everthread-college';
 
 function inEverthread(countryId:string,city:string){return countryId===EVERTHREAD_COUNTRY_ID&&city===EVERTHREAD_CITY;}
 function inheritedFromLabel(state:GameState,npcId?:string){const npc=npcId?state.npcs[npcId]:undefined;return npc?`${npc.firstName} ${npc.lastName}`:undefined;}
@@ -18,6 +23,77 @@ function localPlayerProperties(state:GameState){return state.assets.properties.f
 function localNpcProperties(npc:Npc){return (npc.assetPortfolio?.properties??[]).filter(property=>property.location===npc.city);}
 function preferredPlayerProperty(state:GameState){const local=localPlayerProperties(state);return local.find(property=>property.primaryResidence)??local[0];}
 function preferredNpcProperty(npc:Npc){const local=localNpcProperties(npc);return local.find(property=>property.primaryResidence)??local[0];}
+
+function campusEnrollmentContext(state:GameState){
+  const currentRecord=[...state.education].reverse().find(record=>!record.graduated&&!record.droppedOut&&!record.endAge);
+  if(!currentRecord||!POST_SECONDARY_STAGES.has(currentRecord.stage))return{eligible:false as const,reason:'Campus housing requires an active post-secondary enrollment.'};
+  const world=schoolWorldForEducationRecord(state,currentRecord);
+  const institution=schoolInstitutionLocation(state);
+  if(!world?.active||!world.school)return{eligible:false as const,reason:'Campus housing requires the persistent school world for your active post-secondary enrollment.'};
+  if(!institution?.inEverthread||institution.anchorPlaceId!==COLLEGE_PLACE_ID)return{eligible:false as const,reason:'Campus housing is available only while your current program is based at Everthread College.'};
+  return{eligible:true as const,worldId:world.id,currentRecord,world,institution};
+}
+
+function restorePreviousPrimaryResidence(state:GameState,propertyId?:string){
+  if(!propertyId||state.character.age<18)return;
+  const property=state.assets.properties.find(item=>item.id===propertyId&&item.location===state.character.city&&!item.rental);
+  if(!property)return;
+  for(const item of state.assets.properties)item.primaryResidence=item.id===property.id||undefined;
+}
+
+function clearCampusHousing(state:GameState,restorePrevious:boolean){
+  state.residentialLife??={};
+  const housing=state.residentialLife.campusHousing;if(!housing)return false;
+  const previous=housing.previousPrimaryResidencePropertyId;delete state.residentialLife.campusHousing;
+  if(restorePrevious)restorePreviousPrimaryResidence(state,previous);
+  return true;
+}
+
+export function campusHousingAvailability(state:GameState){
+  if(state.legal.imprisoned||state.legal.sentenceRemaining>0)return{allowed:false as const,reason:'Campus housing is unavailable while your residence is institutional.'};
+  const context=campusEnrollmentContext(state);
+  return context.eligible?{allowed:true as const,schoolWorldId:context.worldId}:{allowed:false as const,reason:context.reason};
+}
+
+export function normalizeResidentialLifeState(state:GameState){
+  state.residentialLife??={};
+  const housing=state.residentialLife.campusHousing;if(!housing)return state.residentialLife;
+  const validShape=housing.kind==='college_dorm'&&housing.placeId===COLLEGE_PLACE_ID&&typeof housing.schoolWorldId==='string'&&Number.isFinite(housing.startedAge)&&housing.startedAge>=0;
+  const context=campusEnrollmentContext(state);
+  const institutional=state.legal.imprisoned||state.legal.sentenceRemaining>0;
+  if(!validShape||institutional||!context.eligible||context.worldId!==housing.schoolWorldId){clearCampusHousing(state,true);return state.residentialLife;}
+  for(const property of state.assets.properties)delete property.primaryResidence;
+  return state.residentialLife;
+}
+
+export const migrateResidentialLifeState=normalizeResidentialLifeState;
+
+export function moveIntoCollegeDorm(state:GameState):EngineResult{
+  state.residentialLife??={};if(state.residentialLife.campusHousing)return{success:false,messages:[{text:'You already live in Everthread College campus housing.'}]};
+  const availability=campusHousingAvailability(state);if(!availability.allowed||!availability.schoolWorldId)return{success:false,messages:[{text:availability.reason??'Campus housing is not currently available.'}]};
+  const previousPrimary=state.assets.properties.find(property=>property.primaryResidence===true)?.id;
+  for(const property of state.assets.properties)delete property.primaryResidence;
+  state.residentialLife.campusHousing={kind:'college_dorm',placeId:COLLEGE_PLACE_ID,schoolWorldId:availability.schoolWorldId,startedAge:state.character.age,...(previousPrimary?{previousPrimaryResidencePropertyId:previousPrimary}:{})};
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',placeId:COLLEGE_PLACE_ID,importance:2,text:'You moved into Everthread College campus housing. Housing is included with your current enrollment, with no separate rent or financing contract.'});
+  return{success:true,stateChanges:['residence'],messages:[{text:'You moved into an Everthread College dorm. Campus housing is included with your enrollment; no separate rent or financing was created.'}]};
+}
+
+export function moveOutOfCollegeDorm(state:GameState):EngineResult{
+  if(!state.residentialLife?.campusHousing)return{success:false,messages:[{text:'You are not currently living in campus housing.'}]};
+  clearCampusHousing(state,true);
+  state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',placeId:COLLEGE_PLACE_ID,importance:2,text:'You moved out of Everthread College campus housing.'});
+  return{success:true,stateChanges:['residence'],messages:[{text:'You moved out of campus housing. Your prior eligible home was restored when available.'}]};
+}
+
+export function clearCampusHousingForAlternativeHome(state:GameState){return clearCampusHousing(state,false);}
+
+export function syncCampusHousingEligibility(state:GameState,announce=true){
+  const housing=state.residentialLife?.campusHousing;if(!housing)return false;
+  const context=campusEnrollmentContext(state);if(context.eligible&&context.worldId===housing.schoolWorldId)return false;
+  clearCampusHousing(state,true);
+  if(announce)state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',placeId:COLLEGE_PLACE_ID,importance:2,text:'Your Everthread College campus housing ended with your post-secondary enrollment.'});
+  return true;
+}
 
 function playerOwnedResidence(state:GameState,property:PropertyAsset):ResidenceProjection{
   const inheritedFrom=inheritedFromLabel(state,property.inheritedFromNpcId);
@@ -35,6 +111,9 @@ function playerOwnedResidence(state:GameState,property:PropertyAsset):ResidenceP
 export function playerResidenceProjection(state:GameState):ResidenceProjection{
   if(state.legal.imprisoned||state.legal.sentenceRemaining>0)return{kind:'institutional',city:state.character.city,label:'Correctional residence',detail:'Your current residence is institutional while you are incarcerated.',familyLandmark:false,visitable:false,reason:'Home visits are unavailable while you are incarcerated.'};
   const everthread=inEverthread(state.character.countryId,state.character.city);
+  const housing=state.residentialLife?.campusHousing;
+  if(housing&&everthread){const context=campusEnrollmentContext(state);if(context.eligible&&context.worldId===housing.schoolWorldId)return{kind:'campus',city:state.character.city,label:'Your Everthread College dorm',detail:'Campus housing included with your current post-secondary enrollment.',placeId:COLLEGE_PLACE_ID,familyLandmark:false,visitable:true};}
+
   if(state.character.age>=18){const property=preferredPlayerProperty(state);if(property)return playerOwnedResidence(state,property);}
   const family=state.character.age<18||state.flags.financiallyIndependent===false;
   return{

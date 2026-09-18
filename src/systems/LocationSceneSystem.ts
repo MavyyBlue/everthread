@@ -18,6 +18,7 @@ import { workplaceRoleTitle } from '../data/workplaceLocations';
 import { FREELANCE_MIN_AGE } from './CareerSystem';
 import { projectYouthSocialPlans } from './YouthSocialSystem';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
+import { campusHousingAvailability } from './ResidentialLifeSystem';
 import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from './ResidentialLifeSystem';
 import { personalInventoryCatalogForPlace, personalInventoryOwnedFromPlace } from './PersonalInventorySystem';
 import type { GameState } from '../types/game';
@@ -202,6 +203,9 @@ export function locationSceneCompanions(state:GameState,actionId:LocationSceneAc
     if(actionId==='shared.school.social'){
       const schoolSocial=projectYouthSocialPlans(state,npc.id).find(option=>option.id==='school-social'&&option.allowed&&option.currentSchoolPeer);
       if(schoolSocial)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:`${relationship.type.replaceAll('_',' ')} · current school peer`});
+    }else if(actionId==='shared.college.social'){
+      const college=locationSceneCollegeProjection(state);const member=college.world?.members.find(item=>item.npcId===npc.id&&item.role==='classmate'&&item.leftAge===undefined);
+      if(member){const availability=sharedExperienceAvailability(state,npc.id,plan.placeId,plan.activityId);if(availability.allowed)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:`${relationship.type.replaceAll('_',' ')} · current College classmate`});}
     }else if(plan.kind==='shared'){
       const availability=sharedExperienceAvailability(state,npc.id,plan.placeId,plan.activityId);
       if(availability.allowed)candidates.push({npcId:npc.id,name:`${npc.firstName} ${npc.lastName}`,detail:`${relationship.type.replaceAll('_',' ')} · relationship ${Math.round(relationship.score)}`});
@@ -239,11 +243,16 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
   if(actionId.startsWith('college.')){
     if(actionId==='college.admissions')return state.character.age>=17?{available:true}:{available:false,reason:'Post-secondary admissions become available at age 17.'};
     const college=locationSceneCollegeProjection(state);if(!college.local)return{available:false,reason:locationSceneCollegeUnavailableReason(state)};
-    if(actionId==='college.records')return{available:true};
+    if(actionId==='college.groups')return{available:true};
+    if(actionId==='college.housing'){const housing=campusHousingAvailability(state);return housing.allowed||state.residentialLife?.campusHousing?{available:true}:{available:false,reason:housing.reason};}
     if(actionId==='college.study'){
       const gate=actionGateStatus(state,{policy:'education.effort'});return gate.allowed?{available:true}:{available:false,reason:gate.message};
     }
     if(actionId==='college.dropout')return canDropOut(state)?{available:true}:{available:false,reason:'Your current program cannot be left right now.'};
+  }
+  if(actionId==='shared.college.social'){
+    const college=locationSceneCollegeProjection(state);if(!college.local)return{available:false,reason:locationSceneCollegeUnavailableReason(state)};
+    const companions=locationSceneCompanions(state,actionId);return companions.length?{available:true}:{available:false,reason:'No eligible current College classmate is available to socialize right now.'};
   }
   const companionPlan=locationSceneCompanionPlan(actionId);
   if(companionPlan){

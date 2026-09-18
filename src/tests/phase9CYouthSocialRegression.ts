@@ -30,12 +30,12 @@ function clone<T>(value:T):T{return structuredClone(value);}
 export function runPhase9CYouthSocialRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 9C youth-social regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 youth social life must reuse established relationship/school/shared-experience state without a schema bump');
+  verify(CURRENT_SAVE_VERSION===18,'01 youth social life must reuse established relationship/school/shared-experience state without a schema bump');
   verify(YOUTH_SOCIAL_PLANS.length===11,'02 youth social life should expose eleven curated age-aware plans rather than cosmetic duplicates');
   verify(new Set(YOUTH_SOCIAL_PLANS.map(plan=>plan.id)).size===YOUTH_SOCIAL_PLANS.length,'03 youth plan ids must be unique');
   verify(YOUTH_SOCIAL_PLANS.every(plan=>plan.minAge>=3&&plan.maxAge<=17&&plan.minAge<=plan.maxAge),'04 every youth plan must stay inside the intended childhood/teen range');
   verify(YOUTH_SOCIAL_PLANS.every(plan=>sharedExperienceActivityById[plan.activityId]?.placeIds.includes(plan.placeId)),'05 every youth plan must resolve through a canonical Phase 9B activity/place pair');
-  verify(SHARED_EXPERIENCE_ACTIVITIES.length===12&&sharedExperienceActivityById.sleepover?.maxAge===17&&sharedExperienceActivityById.school_social?.maxAge===17,'06 Phase 9C should add youth-specific shared activities with explicit teen ceilings');
+  verify(SHARED_EXPERIENCE_ACTIVITIES.length===13&&sharedExperienceActivityById.sleepover?.maxAge===17&&sharedExperienceActivityById.school_social?.maxAge===17,'06 Phase 9C should add youth-specific shared activities with explicit teen ceilings');
 
   const child=youthState('phase9c-child',3,3,'classmate');
   const childPlans=projectYouthSocialPlans(child.state,child.npc.id);

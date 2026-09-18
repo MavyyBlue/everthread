@@ -26,7 +26,7 @@ function businessFixture(overrides:Partial<Business>={}):Business{return{id:'biz
 export function runPhase10BWorkingEverthreadRegression(){
   let checks=0;function verify(condition:unknown,message:string):asserts condition{checks+=1;if(!condition)throw new Error(`Phase 10B Working Everthread regression failed: ${message}`);}
 
-  verify(CURRENT_SAVE_VERSION===17,'01 Working Everthread must remain backward-compatible with schema 17');
+  verify(CURRENT_SAVE_VERSION===18,'01 Working Everthread must remain backward-compatible under schema 18');
   const fresh=state('10b-fresh');verify(!('workLifeState' in (fresh as unknown as Record<string,unknown>))&&!('workplaceLedger' in (fresh as unknown as Record<string,unknown>))&&!('businessLocationLedger' in (fresh as unknown as Record<string,unknown>)),'02 GameState must not gain a parallel workplace/business/location ledger');
 
   const school=state('10b-school');school.socialWorlds.push(schoolWorld('school-k12','secondary'));

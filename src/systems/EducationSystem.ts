@@ -9,6 +9,7 @@ import { createRng } from '../core/rng';
 import { consumeAction } from '../core/actionEconomy';
 import { ensureSchoolWorldForEducationRecord, noteSkippingClass, noteStudying, schoolAdmissionsFactors, syncSchoolWorlds } from './SchoolWorldSystem';
 import { schoolInstitutionLocation } from './WorkingEverthreadSystem';
+import { syncCampusHousingEligibility } from './ResidentialLifeSystem';
 
 function activeRecord(state:GameState) { return [...state.education].reverse().find(r=>!r.graduated&&!r.droppedOut&&!r.endAge); }
 function currentSchoolPlaceId(state:GameState){const location=schoolInstitutionLocation(state);return location?.inEverthread?location.anchorPlaceId:undefined;}
@@ -59,6 +60,7 @@ export function processEducationYear(state:GameState) {
     }else processAcademicYear(state,current);
   }
   syncSchoolWorlds(state,true);
+  syncCampusHousingEligibility(state,true);
 }
 
 export function studyHarder(state:GameState):EngineResult {
@@ -105,6 +107,6 @@ export function canDropOut(state:GameState):boolean {
   return active.stage==='secondary'&&state.character.age>=profile.minimumLeavingAge;
 }
 
-export function dropOut(state:GameState):EngineResult {const active=activeRecord(state);if(!active)return{success:false,messages:[{text:'There is no active program to leave.'}]};if(!canDropOut(state)){const leavingAge=schoolProfileFor(state.character.countryId).minimumLeavingAge;return{success:false,messages:[{text:`Compulsory schooling cannot be left before age ${leavingAge} in this country's simplified school profile.`}]};}active.droppedOut=true;active.endAge=state.character.age;const placeId=currentSchoolPlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',...(placeId?{placeId}:{}),importance:3,text:`You dropped out of ${active.institution}.`});syncSchoolWorlds(state,false);return{success:true,messages:[{text:'You left your program. The decision is part of your permanent life history.'}]};}
+export function dropOut(state:GameState):EngineResult {const active=activeRecord(state);if(!active)return{success:false,messages:[{text:'There is no active program to leave.'}]};if(!canDropOut(state)){const leavingAge=schoolProfileFor(state.character.countryId).minimumLeavingAge;return{success:false,messages:[{text:`Compulsory schooling cannot be left before age ${leavingAge} in this country's simplified school profile.`}]};}active.droppedOut=true;active.endAge=state.character.age;const placeId=currentSchoolPlaceId(state);state.timeline.push({id:makeStateId(state,'timeline'),year:state.currentYear,age:state.character.age,category:'school',...(placeId?{placeId}:{}),importance:3,text:`You dropped out of ${active.institution}.`});syncSchoolWorlds(state,false);syncCampusHousingEligibility(state,true);return{success:true,messages:[{text:'You left your program. The decision is part of your permanent life history.'}]};}
 
 export function availablePrograms(state:GameState){return educationPrograms.filter(program=>state.character.age>=17&&state.character.stats.intelligence>=program.minIntelligence-18);}
