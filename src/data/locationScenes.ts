@@ -1,4 +1,4 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-market';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-market'|'everthread-city-hall';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
@@ -8,12 +8,14 @@ export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts
 export type LocationSceneDinerActionId='shop.diner';
 export type LocationSceneMarketActionId='shop.groceries'|'shop.market.inventory';
 export type LocationSceneSchoolPanelActionId='school.records'|'school.groups';
+export type LocationSceneCityHallPanelActionId='politics.record'|'business.start'|'business.manage';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'|'wellness.gym'|'wellness.martial'|'wellness.diet'
   |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
   |'shared.mall.browse'|'shared.mall.games'|'shared.mall.movie'|'date.mall'
   |'shared.diner.meal'|'date.diner'|'shared.gym.together'|'date.gym'|'shared.school.social'
   |'school.study'|'school.skip'|'school.dropout'|'school.volunteer'|LocationSceneSchoolPanelActionId
+  |'politics.local'|'politics.regional'|'politics.national'|'politics.speech'|'politics.leave'|LocationSceneCityHallPanelActionId
   |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId|LocationSceneMarketActionId
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
@@ -97,6 +99,14 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'school.groups':{id:'school.groups',label:'Clubs & teams',description:'Join, participate in, or leave your current school groups.',kind:'panel',risk:'normal'},
   'school.volunteer':{id:'school.volunteer',label:'Volunteer',description:'Take part in your current school community.',kind:'action',risk:'normal'},
   'shared.school.social':{id:'shared.school.social',label:'School social',description:'Choose a current school peer to spend time with.',kind:'companion',risk:'normal',companionPlan:{kind:'shared',placeId:'everthread-school',activityId:'school_social'}},
+  'politics.record':{id:'politics.record',label:'Public office',description:'Review your office, approval, political career world, and public-life history.',kind:'panel',risk:'normal'},
+  'politics.leave':{id:'politics.leave',label:'Leave Politics',description:'Step away from politics while preserving completed public-life history and relationships.',kind:'action',risk:'confirm'},
+  'politics.local':{id:'politics.local',label:'Run local',description:'Launch the existing local-office campaign using its real funding and action rules.',kind:'action',risk:'normal'},
+  'politics.regional':{id:'politics.regional',label:'Run regional',description:'Launch the existing regional-office campaign using its real funding and action rules.',kind:'action',risk:'normal'},
+  'politics.national':{id:'politics.national',label:'Run national',description:'Launch the existing national-office campaign using its real funding and action rules.',kind:'action',risk:'normal'},
+  'politics.speech':{id:'politics.speech',label:'Give a speech',description:'Address the public through the existing Politics career action.',kind:'action',risk:'normal'},
+  'business.start':{id:'business.start',label:'Start a company',description:'Choose an existing Everthread industry and found a company through BusinessSystem.',kind:'panel',risk:'normal'},
+  'business.manage':{id:'business.manage',label:'Your companies',description:'Review and manage the companies already owned by this life.',kind:'panel',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -209,6 +219,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'cart',label:'Shopping cart',description:'Food & household items',actionIds:['shop.groceries'],order:1,hitRect:[.26291,.58,.47418,.32]},
       {id:'produce',label:'Produce stand',description:'Food choices',actionIds:['wellness.diet'],order:2,hitRect:[.06,.355,.28,.19]},
       {id:'pantry',label:'Pantry shelves',description:'Your Market purchases',actionIds:['shop.market.inventory'],order:3,hitRect:[.72,.285,.28,.19]},
+    ],
+  },
+  {
+    id:'everthread-city-hall',label:'Everthread City Hall',tagline:'A voice in the life of the town.',
+    background:'./location-scenes/backgrounds/everthread-city-hall.png',propFile:'./location-scenes/props/records-desk.png',canvas:[1024,1536],
+    propAlphaBounds:[38,31,1184,1223],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'desk',label:'Civic desk',description:'Public office',actionIds:['politics.record','politics.leave'],order:1,hitRect:[.26765,.58,.46469,.32]},
+      {id:'council',label:'Council chamber',description:'Campaign & public life',actionIds:['politics.local','politics.regional','politics.national','politics.speech'],order:2,hitRect:[.03,.375,.28,.19]},
+      {id:'companies',label:'Company desk',description:'Business services',actionIds:['business.start','business.manage'],order:3,hitRect:[.68,.375,.28,.19]},
     ],
   },
 ] as const;

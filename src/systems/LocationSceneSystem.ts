@@ -1,11 +1,12 @@
 import { actionGateStatus } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneCompanionPlanDefinition, type LocationSceneRect } from '../data/locationScenes';
 import { collectibleDefinitions, propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
-import { MUSIC_RELEASE_MIN_AGE } from './SpecialCareerSystem';
+import { MUSIC_RELEASE_MIN_AGE, SPECIAL_CAREER_MIN_AGES } from './SpecialCareerSystem';
 import { WELLNESS_MIN_AGES } from './HealthSystem';
 import { specialCareerStartGate } from './CommitmentSystem';
 import { specialCareerExitGate } from './SpecialCareerExitSystem';
 import { specialCareerLifecycleView, specialCareerRetirementGate } from './SpecialCareerLifecycleSystem';
+import { activePoliticsCareerWorld, politicsCareerWorldView, politicsCareerWorlds, politicsOfficeLabel } from './PoliticsCareerWorldSystem';
 import { musicCatalog, musicPartnershipOffer } from './MusicCareerCycleSystem';
 import { romanticDatePlanFor } from './RomanticDateSystem';
 import { canDropOut } from './EducationSystem';
@@ -114,6 +115,16 @@ const wellnessActionMap:Partial<Record<LocationSceneActionId,keyof typeof WELLNE
 function musicTrack(state:GameState){return state.specialCareers.music??{};}
 function numberValue(value:unknown,fallback=0){return typeof value==='number'&&Number.isFinite(value)?value:fallback;}
 
+function politicsTrack(state:GameState){return state.specialCareers.politics??{};}
+function politicsCampaignLevel(actionId:LocationSceneActionId){return actionId==='politics.local'?1:actionId==='politics.regional'?3:actionId==='politics.national'?4:undefined;}
+export function locationScenePoliticsCampaignBudget(actionId:LocationSceneActionId){const level=politicsCampaignLevel(actionId);return level===undefined?undefined:Math.max(5000,level*25000);}
+export function locationScenePoliticsProjection(state:GameState){
+  const track=politicsTrack(state),world=activePoliticsCareerWorld(state),view=world?politicsCareerWorldView(state,world):undefined;
+  const office=numberValue(track.office);const approval=numberValue(track.approval,office>0?55:0);
+  const history=politicsCareerWorlds(state).slice().sort((a,b)=>(b.endedAge??b.startedAge)-(a.endedAge??a.startedAge)||b.startedAge-a.startedAge||b.id.localeCompare(a.id));
+  return{office,officeLabel:office>0?politicsOfficeLabel(office):'No elected office',approval,electionsWon:numberValue(track.electionsWon),status:typeof track.status==='string'?track.status:office>0?'in office':'not in office',world,view,history};
+}
+
 export function coverLocationScene(width:number,height:number):LocationSceneStage{
   const safeWidth=Math.max(1,width),safeHeight=Math.max(1,height);
   const scale=Math.max(safeWidth/1024,safeHeight/1536);
@@ -221,6 +232,20 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     const gate=specialCareerRetirementGate(state,'music');return gate.allowed?{available:true}:{available:false,reason:gate.message};
   }
   if(actionId==='music.catalog'||actionId==='music.partnership')return{available:true};
+  if(actionId==='politics.record'||actionId==='business.start'||actionId==='business.manage')return{available:true};
+  if(actionId==='politics.leave'){const gate=specialCareerExitGate(state,'politics');return gate.allowed?{available:true}:{available:false,reason:gate.message};}
+  const campaignLevel=politicsCampaignLevel(actionId);
+  if(campaignLevel!==undefined){
+    if(state.character.age<SPECIAL_CAREER_MIN_AGES.politics)return{available:false,reason:`Political campaigns become available at age ${SPECIAL_CAREER_MIN_AGES.politics}.`};
+    const start=specialCareerStartGate(state,'politics');if(!start.allowed)return{available:false,reason:start.message};
+    const budget=Math.max(5000,campaignLevel*25000);if(state.finances.cash<budget)return{available:false,reason:`This campaign needs at least ${budget.toLocaleString()} in available game funds.`};
+    const gate=actionGateStatus(state,{policy:'special.campaign'});return gate.allowed?{available:true}:{available:false,reason:gate.message};
+  }
+  if(actionId==='politics.speech'){
+    const office=numberValue(politicsTrack(state).office);if(office<=0)return{available:false,reason:'You do not currently hold elected office.'};
+    const start=specialCareerStartGate(state,'politics');if(!start.allowed)return{available:false,reason:start.message};
+    const gate=actionGateStatus(state,[{policy:'special.politics.total'},{policy:'special.politics.kind',target:'speech'}]);return gate.allowed?{available:true}:{available:false,reason:gate.message};
+  }
   if(actionId.startsWith('bank.'))return{available:true};
   if(actionId==='motors.catalog'||actionId==='motors.owned'||actionId==='motors.finance')return{available:true};
   if(actionId.startsWith('homes.'))return{available:true};

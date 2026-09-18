@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperti
 import { BottomSheet } from './BottomSheet';
 import { EverthreadIcon } from './EverthreadIcon';
 import { formatMoney } from '../core/format';
-import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneDinerActionId, type LocationSceneMallActionId, type LocationSceneMarketActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneSchoolPanelActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
+import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneCityHallPanelActionId, type LocationSceneDinerActionId, type LocationSceneMallActionId, type LocationSceneMarketActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneSchoolPanelActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
 import { gameEngine } from '../stores/gameStore';
 import { BankLocationPanel } from './BankLocationPanel';
 import { MotorsLocationPanel } from './MotorsLocationPanel';
@@ -12,6 +12,7 @@ import { MallLocationPanel } from './MallLocationPanel';
 import { DinerLocationPanel } from './DinerLocationPanel';
 import { SchoolLocationPanel } from './SchoolLocationPanel';
 import { MarketLocationPanel } from './MarketLocationPanel';
+import { CityHallLocationPanel } from './CityHallLocationPanel';
 import {
   coverLocationScene,
   locationSceneActionAvailability,
@@ -30,7 +31,7 @@ import type { EngineResult, GameState } from '../types/game';
 import './LocationScene.css';
 
 type DetailState=
-  |{kind:'confirm';actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'}
+  |{kind:'confirm';actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'|'politics.leave'}
   |{kind:'companion';actionId:LocationSceneActionId}
   |{kind:'catalog';actionId:'music.catalog'}
   |{kind:'partnership';actionId:'music.partnership'}
@@ -41,7 +42,8 @@ type DetailState=
   |{kind:'mall';actionId:LocationSceneMallActionId}
   |{kind:'diner';actionId:LocationSceneDinerActionId}
   |{kind:'school';actionId:LocationSceneSchoolPanelActionId}
-  |{kind:'market';actionId:LocationSceneMarketActionId};
+  |{kind:'market';actionId:LocationSceneMarketActionId}
+  |{kind:'cityhall';actionId:LocationSceneCityHallPanelActionId};
 
 function unavailableResult(reason:string):EngineResult{return{success:false,messages:[{text:reason}]};}
 function actionIcon(actionId:LocationSceneActionId){
@@ -54,6 +56,8 @@ function actionIcon(actionId:LocationSceneActionId){
   if(actionId.startsWith('home.')||actionId.startsWith('shared.home')||actionId==='date.home')return'home' as const;
   if(actionId.startsWith('music.'))return'music' as const;
   if(actionId.startsWith('school.'))return'school' as const;
+  if(actionId.startsWith('politics.'))return'cityhall' as const;
+  if(actionId.startsWith('business.'))return'business' as const;
   if(actionId.startsWith('shared.')||actionId.startsWith('date.'))return'people' as const;
   return'leaf' as const;
 }
@@ -67,20 +71,23 @@ function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='nightjar-diner')return'diner' as const;
   if(placeId==='everthread-school')return'school' as const;
   if(placeId==='everthread-market')return'market' as const;
+  if(placeId==='everthread-city-hall')return'cityhall' as const;
   return'music' as const;
 }
-function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:placeId==='pulseworks-gym'?'gym' as const:placeId==='everthread-school'?'school' as const:placeId==='everthread-market'?'market' as const:'music' as const;}
-function confirmationCopy(actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'){
+function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:placeId==='pulseworks-gym'?'gym' as const:placeId==='everthread-school'?'school' as const:placeId==='everthread-market'?'market' as const:placeId==='everthread-city-hall'?'cityhall' as const:'music' as const;}
+function confirmationCopy(actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'|'politics.leave'){
   if(actionId==='music.leave')return'Your completed music history, skills, earnings, releases, and relationships stay recorded. Leaving frees the special-career commitment slot.';
   if(actionId==='music.retire')return'Retirement preserves your completed music history and closes the current professional chapter. Return rules remain owned by the existing career lifecycle.';
   if(actionId==='school.skip')return'Skipping class uses your school-effort choice for this year and can lower academics, attendance, conduct, and discipline through the existing education systems.';
-  return'Leaving education ends your current school record and archives its persistent school world. This decision remains part of your permanent life history.';
+  if(actionId==='school.dropout')return'Leaving education ends your current school record and archives its persistent school world. This decision remains part of your permanent life history.';
+  return'Leaving Politics releases the special-career commitment while preserving completed offices, election history, public-life relationships, and archived political career worlds.';
 }
-function confirmationButton(actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'){
+function confirmationButton(actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'|'politics.leave'){
   if(actionId==='music.leave')return'Confirm leave';
   if(actionId==='music.retire')return'Confirm retirement';
   if(actionId==='school.skip')return'Skip class';
-  return'Leave education';
+  if(actionId==='school.dropout')return'Leave education';
+  return'Leave Politics';
 }
 
 function InteractHandIcon({size=24}:{size?:number}){
@@ -199,6 +206,11 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       case'music.album':result=gameEngine.musicRelease('album');break;
       case'music.leave':result=gameEngine.leaveSpecialCareer('music');break;
       case'music.retire':result=gameEngine.retireSpecialCareer('music');break;
+      case'politics.local':result=gameEngine.campaign(1);break;
+      case'politics.regional':result=gameEngine.campaign(3);break;
+      case'politics.national':result=gameEngine.campaign(4);break;
+      case'politics.speech':result=gameEngine.politicalAction('speech');break;
+      case'politics.leave':result=gameEngine.leaveSpecialCareer('politics');break;
       default:onResult(unavailableResult('That location action needs a focused selection first.'));return;
     }
     onResult(result);if(result.success){setDetail(undefined);setSelectedGroupId(undefined);}
@@ -217,7 +229,8 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
     if(actionId==='shop.groceries'||actionId==='shop.market.inventory'){setDetail({kind:'market',actionId});return;}
     if(actionId.startsWith('shop.')){setDetail({kind:'mall',actionId:actionId as LocationSceneMallActionId});return;}
     if(actionId==='school.records'||actionId==='school.groups'){setDetail({kind:'school',actionId});return;}
-    if(action.risk==='confirm'&&(actionId==='music.leave'||actionId==='music.retire'||actionId==='school.skip'||actionId==='school.dropout')){setDetail({kind:'confirm',actionId});return;}
+    if(actionId==='politics.record'||actionId==='business.start'||actionId==='business.manage'){setDetail({kind:'cityhall',actionId});return;}
+    if(action.risk==='confirm'&&(actionId==='music.leave'||actionId==='music.retire'||actionId==='school.skip'||actionId==='school.dropout'||actionId==='politics.leave')){setDetail({kind:'confirm',actionId});return;}
     executeDirect(actionId);
   };
 
@@ -239,7 +252,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   };
 
   const prop=locationScenePropRect(scene.propAlphaBounds,stage,scene.propPlacement.width,scene.propPlacement.maxHeight,scene.propPlacement.baseline);
-  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'||detail?.kind==='market'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
+  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
 
   return <section ref={sceneRef} className="location-scene" aria-label={scene.label}>
     <header className="location-scene__header" aria-hidden={Boolean(selectedGroupId)}>
@@ -272,7 +285,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       </footer>
     </div>
 
-    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet} wide={detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='school'||detail?.kind==='market'}>
+    <BottomSheet open={Boolean(selectedGroupId)} title={sheetTitle} onClose={closeSheet} wide={detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'}>
       {selectedGroupId&&!detail&&<div className="location-scene__sheet">
         {selectedGroupId!=='__all'&&selectedGroup&&<><p className="eyebrow">{scene.label}</p><h3>{selectedGroup.description}</h3></>}
         <div className="location-scene__action-list">{visibleActions.map(({group,actionId})=>{const action=LOCATION_SCENE_ACTIONS[actionId],availability=locationSceneActionAvailability(state,actionId);return <button key={`${group.id}:${actionId}`} disabled={!availability.available} onClick={()=>chooseAction(actionId)}>
@@ -348,6 +361,12 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
         <p className="eyebrow">Everthread Market · Grocery Store</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
         <MarketLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
         <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to Market</button>
+      </div>}
+
+      {detail?.kind==='cityhall'&&<div className="location-scene__focused">
+        <p className="eyebrow">Everthread City Hall</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
+        <CityHallLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
+        <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to City Hall</button>
       </div>}
 
       {detail?.kind==='partnership'&&music&&<div className="location-scene__focused">
