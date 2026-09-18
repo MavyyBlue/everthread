@@ -4,20 +4,20 @@ This folder is the durable continuation point for Everthread's post-Phase-10 ill
 
 ## Current certified status
 
-- Newest certified gameplay source: **Run #224** / `08a27517d42081ddb22c6587308a15da55669d2c`.
-- Pulseworks Gym is certified Location #9 and has passed direct Android/player acceptance.
+- Newest certified gameplay source: **Run #226** / `72666ff23d167c4088bde1b13fd5a1a121bf45af`.
+- Everthread Community School is certified Location #10 and has passed direct Android/player acceptance; Pulseworks Gym remains certified Location #9.
 - The Astra archive-provenance closeout remains Run #222 / `0d33b637849d9aa7965997c3fef271af5d819b78`; its five-part source package remains non-runtime provenance.
-- Dedicated scene totals: **9 scenes / 28 semantic groups / 53 scene action bindings / 18 selected Astra runtime assets**.
-- Location Scene regression: **111/111**.
+- Dedicated scene totals: **10 scenes / 31 semantic groups / 60 scene action bindings / 20 selected Astra runtime assets**.
+- Location Scene regression: **126/126**.
 - QA-4 remains the final QA-infrastructure baseline: `core=81+1/82 specialized=76+1/77 overlap=0`.
 - Save schema remains **17**.
-- **Location #10 is deliberately unchosen.** After the Pulseworks documentation synchronization is Green, select exactly one of the remaining 16 Astra-backed locations only after a fresh repository owner/source/test audit.
+- **Location #11 is deliberately unchosen.** After the School documentation synchronization is Green, select exactly one of the remaining 15 Astra-backed locations; Mavyy may choose the creative candidate, followed by the normal fresh repository owner/source/test audit.
 
 ## What is stored here
 
-- `IMPLEMENTATION_PLAYBOOK.md` — the preservation-first implementation method used for Locations #1–#9.
+- `IMPLEMENTATION_PLAYBOOK.md` — the preservation-first implementation method used for Locations #1–#10.
 - `CERTIFIED_SCENE_LEDGER.md` — which Astra scenes/assets are already runtime-certified and where.
-- `PACKAGE_INVENTORY.md` — original Astra package counts plus the remaining 16 scene candidates.
+- `PACKAGE_INVENTORY.md` — original Astra package counts plus the remaining 15 scene candidates.
 - `SOURCE_REFERENCE/` — exact lightweight reference material from Astra Yuki's original v1 handoff: manifests, data, design docs, hotspot/UI SVGs, integration contract, prompt provenance, and validation metadata.
 - `SOURCE_PACKAGE/` — checksum/reconstruction contract for the **exact original** `everthread-location-scenes-v1.zip`.
 

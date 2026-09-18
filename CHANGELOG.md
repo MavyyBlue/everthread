@@ -1,3 +1,21 @@
+## Everthread Community School device acceptance + Location #10 closeout — CI Green Run #226 — 2026-09-17
+
+### Added / changed
+
+- Added **Everthread Community School** as the tenth dedicated illustrated location using Astra-derived `everthread-school.png` and `student-desk.png`. Three semantic groups—Study desk, Classroom, and Activity board—expose seven bindings: Study harder, Skip class, School record, Leave education, Clubs & teams, Volunteer, and School social.
+- School remains a presentation/routing adapter over established owners. Study harder, Skip class, and Leave education remain `EducationSystem` actions; record/group/community state remains `SchoolWorldSystem` truth; School social filters to actual current classmates before committing through the existing Shared Experience `everthread-school` / `school_social` plan.
+- Physical-location truth is preserved. Everthread Community School only projects the active compulsory-school world anchored there; post-secondary education stays at Everthread College and remote school worlds stay external. Compulsory leaving-age rules, youth social ceilings, action limits, and skip-class RNG/consequences remain existing behavior.
+- Mavyy completed direct Android/player acceptance after Run #226 and reported School works great on-device. The Location #10 tactile/player-facing gate is closed.
+- Save schema remains **17**. No migration, duplicate education/school/peer state, new RNG stream, QA-topology change, dependency change, event scheduler, or alternate action ledger was introduced. Read-only School browsing remains save/RNG/runtime-id/action-ledger neutral.
+
+### Certification
+
+- GitHub Actions Run #226 (`35308793999`, job `105486329254`) certified expanded source `72666ff23d167c4088bde1b13fd5a1a121bf45af` from upload wrapper `638564e03f5526f0039b954e1c7ee6c68cfd89ea`. Persistent gameplay diff from synchronized Run #225 `e3b540335271285492a1e88d85b9df52223c1fa4` is exactly **7 intended files**: two School runtime PNGs plus five location-scene/panel/test source files.
+- Location Scene regression expanded **111 → 126** and passed **126/126**. Connected certified coverage includes Shared Experience **53/53**, Youth Social **40/40**, Working Everthread **50/50**, Town Map **46/46**, and Institution Routing **42/42**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 46,357 ms**: Engine TS **4,113 ms**, Test TS **5,920 ms**, App TS **8,821 ms**, Node/Vite TS **974 ms**, complete regression wall **22,006 ms**, production build **4,508 ms**. Production transformed **230 modules**.
+- Certified source SHA-256 `93add0d2b9753fb1b9fb53d2b0b02996ad7eea01f9b1067ccbe79c0544c1bd53`; dependency SHA-256 `a9e8cd5dc446e419b8c3415edb93853293717c55c6c48d1c9e8f183c22deba92`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10532801871` (`aa00d2cd0107f6d45172e9deff3ece7a03f8699ce89f2fe01faaf860acb0fb99`); Pages artifact `10532557229` (`388fe469095e6e060484477e0c8be363c6588a2b0a90dc7b4f2f6e5b7b53b232`); Pages deployment Green.
+- Certified scene totals are now **10 scenes / 31 semantic groups / 60 scene action bindings / 20 selected Astra runtime assets**. After this documentation-only synchronization certifies, Location #11 remains unchosen; 15 Astra-backed source scenes remain and the normal owner/source/test audit still applies to whichever Mavyy selects.
+
 ## Pulseworks Gym device acceptance + Location #9 closeout — CI Green Run #224 — 2026-09-17
 
 ### Added / changed

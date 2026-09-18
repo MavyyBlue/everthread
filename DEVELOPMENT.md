@@ -3,8 +3,8 @@
 Last updated: 2026-09-17
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #224 / `08a27517d42081ddb22c6587308a15da55669d2c`
-Certified gameplay baseline: Run #224 / `08a27517d42081ddb22c6587308a15da55669d2c`
+Newest certified expanded source: Run #226 / `72666ff23d167c4088bde1b13fd5a1a121bf45af`
+Certified gameplay baseline: Run #226 / `72666ff23d167c4088bde1b13fd5a1a121bf45af`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,7 +27,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified location-scene slice — Run #224 — Pulseworks Gym
+## Newest certified location-scene slice — Run #226 — Everthread Community School
+
+Run #226 adds the tenth dedicated illustrated location while preserving education, SchoolWorld, Youth Social, Shared Experience, institution-location, action-economy, save, RNG, and QA authorities.
+
+- Expanded source `72666ff23d167c4088bde1b13fd5a1a121bf45af` from wrapper `638564e03f5526f0039b954e1c7ee6c68cfd89ea`; Actions Run `35308793999`, job `105486329254`. Persistent diff from synchronized Run #225 `e3b540335271285492a1e88d85b9df52223c1fa4` is exactly **7 intended files**.
+- School uses three semantic groups—Study desk, Classroom, Activity board—and seven bindings: Study harder, Skip class, School record, Leave education, Clubs & teams, Volunteer, and School social. Scene totals become **10 / 31 / 60 / 20** (scenes / groups / bindings / selected Astra runtime assets).
+- The scene is a thin adapter only. Study/skip/dropout remain `EducationSystem` mutations; records/groups/volunteering remain `SchoolWorldSystem` truth; School social filters to current SchoolWorld classmates and commits through the existing Shared Experience `everthread-school` / `school_social` plan. No duplicate enrollment, academic, attendance/conduct, group, peer, action-ledger, or RNG authority was introduced.
+- Physical locality is preserved: only the active compulsory-school world anchored to Everthread Community School is projected. Post-secondary education stays anchored to Everthread College, remote school worlds stay external, compulsory leaving-age and youth ceilings remain existing owner rules, and all read-only School projections remain save/RNG/runtime-id/action-ledger neutral.
+- Location Scene regression expanded **111 → 126** and passed **126/126** in CI. Shared Experience remains **53/53**, Youth Social **40/40**, Working Everthread **50/50**, Town Map **46/46**, Institution Routing **42/42**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #226 preflight passed **6/6 in 46,357 ms**: Engine TS **4,113 ms**, Test TS **5,920 ms**, App TS **8,821 ms**, Node/Vite TS **974 ms**, regression wall **22,006 ms**, production build **4,508 ms**. Production transformed **230 modules**. Certified artifact `10532801871`; Pages artifact `10532557229`; deployment Green.
+- Direct Android/player acceptance passed after Run #226. Mavyy reported School works great. Location #10's device gate is closed.
+
+## Prior certified location-scene slice — Run #224 — Pulseworks Gym
 
 Run #224 adds the ninth dedicated illustrated location while preserving wellness, shared-experience, romantic-date, action-economy, save, RNG, combat-career, minigame, and QA authorities.
 
@@ -53,11 +65,11 @@ Run #212 adds the eighth dedicated illustrated location while preserving persona
 
 ## Astra location source continuation handoff
 
-`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#9, and lightweight exact references from Astra Yuki's original v1 source package.
+`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#10, and lightweight exact references from Astra Yuki's original v1 source package.
 
 The original 89,718,869-byte `everthread-location-scenes-v1.zip` is preserved losslessly as five browser-safe raw byte parts, each no larger than 20,000,000 bytes. GitHub's mobile/web commit path rejected the earlier 24 MiB parts because 24 MiB equals 25,165,824 bytes, so the split contract was corrected while preserving the exact original archive checksum. Run #222 certifies the final cleaned archive tree: all five authoritative parts are under `SOURCE_PACKAGE/parts/`, their repository blobs match the generated chunks, the two accidental duplicate placements are removed, and reconstruction yields SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. The archive and mirrored source references are non-runtime design provenance: they add no gameplay/content authority and must never be copied wholesale into `public/`.
 
-The archive preservation remains certified provenance. After this Pulseworks documentation-only synchronization is Green, select exactly one **Location #10** from the remaining 16 candidates only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
+The archive preservation remains certified provenance. After this School documentation-only synchronization is Green, select exactly one **Location #11** from the remaining 15 candidates only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
 
 ## Newest certified gameplay hotfix — Run #210 — scheduled-date location navigation
 

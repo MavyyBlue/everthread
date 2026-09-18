@@ -13,9 +13,12 @@ These are the Astra-backed scenes already integrated into runtime. Do not re-imp
 | 7 | Crossroads Mall | #209 | `487ea66dd589bf7d35efce29ab8ebba8a5313b44` | `assets/backgrounds/crossroads-mall.png` · `a5bbcf760b9e…` | `assets/props/shopping-display.png` · `8ecac9fa34b7…` |
 | 8 | Nightjar Diner | #212 | `7dde94325f56a2f44172b5de65709700b5ad73ea` | `assets/backgrounds/nightjar-diner.png` · `75b96fd0517b…` | `assets/props/diner-table.png` · `82b42285b9f5…` |
 | 9 | Pulseworks Gym | #224 | `08a27517d42081ddb22c6587308a15da55669d2c` | `assets/backgrounds/pulseworks-gym.png` · `37e765635d61…` | `assets/props/fitness-bench.png` · `84533c2f1bb8…` |
+| 10 | Everthread Community School | #226 | `72666ff23d167c4088bde1b13fd5a1a121bf45af` | `assets/backgrounds/everthread-school.png` · `7d4d8765ead3…` | `assets/props/student-desk.png` · `55c28824a9e4…` |
 
 Run #210 is a cross-scene dating-navigation hotfix rather than a new location. It made accepted `relationship.romance.pendingDate` plans consumable by every compatible scene action through declarative `companionPlan` metadata. Nightjar immediately reuses that contract for `date.diner`.
 
 Run #224 adds Pulseworks as a thin projection over existing wellness, Shared Experience `gym_session`, and Romantic Date `gym_session` owners. Astra combat challenge/lifecycle controls remain deliberately unshipped in this bounded slice rather than creating a parallel combat/minigame authority.
 
-After Run #224 the certified scene totals are **9 / 28 / 53 / 18** (scenes / semantic groups / action bindings / selected Astra runtime assets).
+Run #226 adds Everthread Community School as a thin projection over `EducationSystem`, `SchoolWorldSystem`, current-school peer truth, Shared Experience `school_social`, and existing institution locality. College/external-school truth remains outside the Community School scene.
+
+After Run #226 the certified scene totals are **10 / 31 / 60 / 20** (scenes / semantic groups / action bindings / selected Astra runtime assets).
