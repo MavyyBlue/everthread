@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperti
 import { BottomSheet } from './BottomSheet';
 import { EverthreadIcon } from './EverthreadIcon';
 import { formatMoney } from '../core/format';
-import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneCityHallPanelActionId, type LocationSceneCourthouseActionId, type LocationSceneDinerActionId, type LocationSceneMallActionId, type LocationSceneMarketActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneSchoolPanelActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
+import { LOCATION_SCENE_ACTIONS, locationSceneDefinition, type LocationSceneActionId, type LocationSceneBankActionId, type LocationSceneBusinessDistrictPanelActionId, type LocationSceneCityHallPanelActionId, type LocationSceneCourthouseActionId, type LocationSceneDinerActionId, type LocationSceneMallActionId, type LocationSceneMarketActionId, type LocationSceneMotorsActionId, type LocationSceneRealtyActionId, type LocationSceneResidentialActionId, type LocationSceneSchoolPanelActionId, type LocationSceneGroupDefinition, type LocationScenePlaceId } from '../data/locationScenes';
 import { gameEngine } from '../stores/gameStore';
 import { BankLocationPanel } from './BankLocationPanel';
 import { MotorsLocationPanel } from './MotorsLocationPanel';
@@ -14,6 +14,7 @@ import { SchoolLocationPanel } from './SchoolLocationPanel';
 import { MarketLocationPanel } from './MarketLocationPanel';
 import { CityHallLocationPanel } from './CityHallLocationPanel';
 import { CourthouseLocationPanel } from './CourthouseLocationPanel';
+import { BusinessDistrictLocationPanel } from './BusinessDistrictLocationPanel';
 import {
   coverLocationScene,
   locationSceneActionAvailability,
@@ -45,7 +46,8 @@ type DetailState=
   |{kind:'school';actionId:LocationSceneSchoolPanelActionId}
   |{kind:'market';actionId:LocationSceneMarketActionId}
   |{kind:'cityhall';actionId:LocationSceneCityHallPanelActionId}
-  |{kind:'courthouse';actionId:LocationSceneCourthouseActionId};
+  |{kind:'courthouse';actionId:LocationSceneCourthouseActionId}
+  |{kind:'businessdistrict';actionId:LocationSceneBusinessDistrictPanelActionId};
 
 function unavailableResult(reason:string):EngineResult{return{success:false,messages:[{text:reason}]};}
 function actionIcon(actionId:LocationSceneActionId){
@@ -59,7 +61,7 @@ function actionIcon(actionId:LocationSceneActionId){
   if(actionId.startsWith('music.'))return'music' as const;
   if(actionId.startsWith('school.'))return'school' as const;
   if(actionId.startsWith('politics.'))return'cityhall' as const;
-  if(actionId.startsWith('business.'))return'business' as const;
+  if(actionId.startsWith('business.')||actionId.startsWith('work.'))return'business' as const;
   if(actionId.startsWith('legal.'))return'justice' as const;
   if(actionId.startsWith('shared.')||actionId.startsWith('date.'))return'people' as const;
   return'leaf' as const;
@@ -76,9 +78,10 @@ function groupIcon(placeId:LocationScenePlaceId,groupId:string){
   if(placeId==='everthread-market')return'market' as const;
   if(placeId==='everthread-city-hall')return'cityhall' as const;
   if(placeId==='everthread-courthouse')return'justice' as const;
+  if(placeId==='loomworks-business-district')return'business' as const;
   return'music' as const;
 }
-function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:placeId==='pulseworks-gym'?'gym' as const:placeId==='everthread-school'?'school' as const:placeId==='everthread-market'?'market' as const:placeId==='everthread-city-hall'?'cityhall' as const:placeId==='everthread-courthouse'?'justice' as const:'music' as const;}
+function placeIcon(placeId:LocationScenePlaceId){return placeId==='weaver-park'?'park' as const:placeId==='central-everthread-bank'?'bank' as const:placeId==='loomline-motors'?'car' as const:placeId==='hearthline-realty'?'key' as const:placeId==='threadwell-residential'?'home' as const:placeId==='crossroads-mall'?'mall' as const:placeId==='nightjar-diner'?'diner' as const:placeId==='pulseworks-gym'?'gym' as const:placeId==='everthread-school'?'school' as const:placeId==='everthread-market'?'market' as const:placeId==='everthread-city-hall'?'cityhall' as const:placeId==='everthread-courthouse'?'justice' as const:placeId==='loomworks-business-district'?'business' as const:'music' as const;}
 function confirmationCopy(actionId:'music.leave'|'music.retire'|'school.skip'|'school.dropout'|'politics.leave'){
   if(actionId==='music.leave')return'Your completed music history, skills, earnings, releases, and relationships stay recorded. Leaving frees the special-career commitment slot.';
   if(actionId==='music.retire')return'Retirement preserves your completed music history and closes the current professional chapter. Return rules remain owned by the existing career lifecycle.';
@@ -215,6 +218,9 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
       case'politics.national':result=gameEngine.campaign(4);break;
       case'politics.speech':result=gameEngine.politicalAction('speech');break;
       case'politics.leave':result=gameEngine.leaveSpecialCareer('politics');break;
+      case'work.freelance.writing':result=gameEngine.performActivity('freelance_writing');break;
+      case'work.freelance.programming':result=gameEngine.performActivity('freelance_programming');break;
+      case'work.freelance.design':result=gameEngine.performActivity('freelance_design');break;
       default:onResult(unavailableResult('That location action needs a focused selection first.'));return;
     }
     onResult(result);if(result.success){setDetail(undefined);setSelectedGroupId(undefined);}
@@ -233,6 +239,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
     if(actionId==='shop.groceries'||actionId==='shop.market.inventory'){setDetail({kind:'market',actionId});return;}
     if(actionId.startsWith('shop.')){setDetail({kind:'mall',actionId:actionId as LocationSceneMallActionId});return;}
     if(actionId==='school.records'||actionId==='school.groups'){setDetail({kind:'school',actionId});return;}
+    if(actionId==='work.role'||actionId==='work.jobs'||actionId==='work.parttime'||(placeId==='loomworks-business-district'&&(actionId==='business.start'||actionId==='business.manage'))){setDetail({kind:'businessdistrict',actionId:actionId as LocationSceneBusinessDistrictPanelActionId});return;}
     if(actionId==='politics.record'||actionId==='business.start'||actionId==='business.manage'){setDetail({kind:'cityhall',actionId});return;}
     if(actionId==='legal.case'||actionId==='legal.status'||actionId==='legal.history'){setDetail({kind:'courthouse',actionId});return;}
     if(action.risk==='confirm'&&(actionId==='music.leave'||actionId==='music.retire'||actionId==='school.skip'||actionId==='school.dropout'||actionId==='politics.leave')){setDetail({kind:'confirm',actionId});return;}
@@ -257,7 +264,7 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
   };
 
   const prop=locationScenePropRect(scene.propAlphaBounds,stage,scene.propPlacement.width,scene.propPlacement.maxHeight,scene.propPlacement.baseline);
-  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'||detail?.kind==='courthouse'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
+  const sheetTitle=detail?.kind==='confirm'?'Confirm choice':detail?.kind==='companion'?LOCATION_SCENE_ACTIONS[detail.actionId].label:detail?.kind==='catalog'?'Your music':detail?.kind==='partnership'?'Distribution offers':detail?.kind==='bank'||detail?.kind==='motors'||detail?.kind==='realty'||detail?.kind==='residential'||detail?.kind==='mall'||detail?.kind==='diner'||detail?.kind==='school'||detail?.kind==='market'||detail?.kind==='cityhall'||detail?.kind==='courthouse'||detail?.kind==='businessdistrict'?LOCATION_SCENE_ACTIONS[detail.actionId].label:selectedGroupId==='__all'?'Things to do':selectedGroup?.label??scene.label;
 
   return <section ref={sceneRef} className="location-scene" aria-label={scene.label}>
     <header className="location-scene__header" aria-hidden={Boolean(selectedGroupId)}>
@@ -378,6 +385,12 @@ export function LocationScene({state,placeId,onClose,onResult}:{state:GameState;
         <p className="eyebrow">Everthread Courthouse</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
         <CourthouseLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
         <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to Courthouse</button>
+      </div>}
+
+      {detail?.kind==='businessdistrict'&&<div className="location-scene__focused">
+        <p className="eyebrow">Loomworks Business District</p><h3>{LOCATION_SCENE_ACTIONS[detail.actionId].label}</h3><p>{LOCATION_SCENE_ACTIONS[detail.actionId].description}</p>
+        <BusinessDistrictLocationPanel state={state} actionId={detail.actionId} onResult={onResult}/>
+        <button className="secondary-button full-button location-scene__sheet-close" onClick={()=>setDetail(undefined)}>Back to Loomworks</button>
       </div>}
 
       {detail?.kind==='partnership'&&music&&<div className="location-scene__focused">

@@ -1,4 +1,4 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-market'|'everthread-city-hall'|'everthread-courthouse';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-market'|'everthread-city-hall'|'everthread-courthouse'|'loomworks-business-district';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
@@ -8,7 +8,9 @@ export type LocationSceneMallActionId='shop.style'|'shop.collection'|'shop.gifts
 export type LocationSceneDinerActionId='shop.diner';
 export type LocationSceneMarketActionId='shop.groceries'|'shop.market.inventory';
 export type LocationSceneSchoolPanelActionId='school.records'|'school.groups';
-export type LocationSceneCityHallPanelActionId='politics.record'|'business.start'|'business.manage';
+export type LocationSceneBusinessPanelActionId='business.start'|'business.manage';
+export type LocationSceneCityHallPanelActionId='politics.record'|LocationSceneBusinessPanelActionId;
+export type LocationSceneBusinessDistrictPanelActionId='work.role'|'work.jobs'|'work.parttime'|LocationSceneBusinessPanelActionId;
 export type LocationSceneCourthouseActionId='legal.case'|'legal.status'|'legal.history';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'|'wellness.gym'|'wellness.martial'|'wellness.diet'
@@ -17,8 +19,9 @@ export type LocationSceneActionId=
   |'shared.diner.meal'|'date.diner'|'shared.gym.together'|'date.gym'|'shared.school.social'
   |'school.study'|'school.skip'|'school.dropout'|'school.volunteer'|LocationSceneSchoolPanelActionId
   |'politics.local'|'politics.regional'|'politics.national'|'politics.speech'|'politics.leave'|LocationSceneCityHallPanelActionId
-  |LocationSceneCourthouseActionId
+  |LocationSceneCourthouseActionId|LocationSceneBusinessDistrictPanelActionId
   |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId|LocationSceneMarketActionId
+  |'work.freelance.writing'|'work.freelance.programming'|'work.freelance.design'
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
   |LocationSceneBankActionId|LocationSceneMotorsActionId|LocationSceneRealtyActionId;
 export type LocationSceneActionKind='action'|'companion'|'panel';
@@ -109,6 +112,12 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'politics.speech':{id:'politics.speech',label:'Give a speech',description:'Address the public through the existing Politics career action.',kind:'action',risk:'normal'},
   'business.start':{id:'business.start',label:'Start a company',description:'Choose an existing Everthread industry and found a company through BusinessSystem.',kind:'panel',risk:'normal'},
   'business.manage':{id:'business.manage',label:'Your companies',description:'Review and manage the companies already owned by this life.',kind:'panel',risk:'normal'},
+  'work.role':{id:'work.role',label:'Your workplace',description:'Review your current ordinary role and use workplace actions only when it is actually based in Loomworks.',kind:'panel',risk:'normal'},
+  'work.jobs':{id:'work.jobs',label:'Job listings',description:'Browse qualified full-time listings through the existing CareerSystem.',kind:'panel',risk:'normal'},
+  'work.parttime':{id:'work.parttime',label:'Part-time work',description:'Review and apply for age-appropriate flexible work through the existing WorkplaceSystem.',kind:'panel',risk:'normal'},
+  'work.freelance.writing':{id:'work.freelance.writing',label:'Writing',description:'Take a writing freelance gig through the existing career action.',kind:'action',risk:'normal'},
+  'work.freelance.programming':{id:'work.freelance.programming',label:'Programming',description:'Take a programming freelance gig through the existing career action.',kind:'action',risk:'normal'},
+  'work.freelance.design':{id:'work.freelance.design',label:'Design',description:'Take a design freelance gig through the existing career action.',kind:'action',risk:'normal'},
   'legal.case':{id:'legal.case',label:'Your case',description:'Review a pending criminal case, representation, and plea choices through the existing legal owner.',kind:'panel',risk:'normal'},
   'legal.status':{id:'legal.status',label:'Legal status',description:'Review current legal heat, pending proceedings, custody, and fugitive status without creating a new legal ledger.',kind:'panel',risk:'normal'},
   'legal.history':{id:'legal.history',label:'Legal record',description:'Review the criminal record already stored by the existing CrimeSystem.',kind:'panel',risk:'normal'},
@@ -244,6 +253,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'desk',label:'Case desk',description:'Your pending case',actionIds:['legal.case'],order:1,hitRect:[.26765,.58,.46469,.32]},
       {id:'courtroom',label:'Courtroom',description:'Current legal status',actionIds:['legal.status'],order:2,hitRect:[.07,.365,.28,.19]},
       {id:'consult',label:'Consultation room',description:'Case & legal record',actionIds:['legal.case','legal.history'],order:3,hitRect:[.62,.365,.28,.19]},
+    ],
+  },
+  {
+    id:'loomworks-business-district',label:'Loomworks Business District',tagline:'Build the working part of your life.',
+    background:'./location-scenes/backgrounds/loomworks-business-district.png',propFile:'./location-scenes/props/work-desk.png',canvas:[1024,1536],
+    propAlphaBounds:[9,0,1217,1222],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'desk',label:'Work desk',description:'Your local workplace',actionIds:['work.role'],order:1,hitRect:[.2609765625,.58,.478037109375,.32]},
+      {id:'jobs',label:'Employment office',description:'Jobs & flexible work',actionIds:['work.jobs','work.parttime','work.freelance.writing','work.freelance.programming','work.freelance.design'],order:2,hitRect:[.02,.335,.28,.19]},
+      {id:'companies',label:'Company office',description:'Your companies',actionIds:['business.start','business.manage'],order:3,hitRect:[.67,.365,.28,.19]},
     ],
   },
 ] as const;

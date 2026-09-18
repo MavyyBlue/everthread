@@ -12,7 +12,9 @@ import { musicCatalog, musicPartnershipOffer } from './MusicCareerCycleSystem';
 import { romanticDatePlanFor } from './RomanticDateSystem';
 import { canDropOut } from './EducationSystem';
 import { currentSchoolWorld, schoolAdmissionsFactors } from './SchoolWorldSystem';
-import { schoolInstitutionLocation } from './WorkingEverthreadSystem';
+import { businessWorkLocation, schoolInstitutionLocation, workplaceWorldLocation } from './WorkingEverthreadSystem';
+import { currentWorkplaceWorld } from './WorkplaceSystem';
+import { FREELANCE_MIN_AGE } from './CareerSystem';
 import { projectYouthSocialPlans } from './YouthSocialSystem';
 import { sharedExperienceAvailability } from './SharedExperienceSystem';
 import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from './ResidentialLifeSystem';
@@ -64,6 +66,13 @@ export function locationSceneLegalProjection(state:GameState){
   const fugitive=state.flags.fugitive===true;
   const statusLabel=state.legal.imprisoned?'In custody':fugitive?'Fugitive':pendingCrimeId?'Pending case':state.legal.investigationHeat>0?'Under scrutiny':'No active proceeding';
   return{pendingCrimeId,pendingCrime:pendingCrimeId?crimeById[pendingCrimeId]:undefined,history,convictions:history.filter(entry=>entry.record.convicted).length,fugitive,statusLabel};
+}
+
+export function locationSceneBusinessDistrictProjection(state:GameState){
+  const workplace=currentWorkplaceWorld(state);const workplaceLocation=workplace?workplaceWorldLocation(workplace):undefined;
+  const localWorkplace=Boolean(workplaceLocation?.inEverthread&&workplaceLocation.anchorPlaceId==='loomworks-business-district');
+  const businesses=state.businesses.map(business=>({business,location:businessWorkLocation(state,business)}));
+  return{workplace,workplaceLocation,localWorkplace,businesses,localBusinesses:businesses.filter(entry=>entry.location.inEverthread&&entry.location.anchorPlaceId==='loomworks-business-district')};
 }
 
 export function locationSceneSchoolProjection(state:GameState){
@@ -241,7 +250,11 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     const gate=specialCareerRetirementGate(state,'music');return gate.allowed?{available:true}:{available:false,reason:gate.message};
   }
   if(actionId==='music.catalog'||actionId==='music.partnership')return{available:true};
-  if(actionId==='politics.record'||actionId==='business.start'||actionId==='business.manage')return{available:true};
+  if(actionId==='politics.record'||actionId==='business.start'||actionId==='business.manage'||actionId==='work.role'||actionId==='work.jobs'||actionId==='work.parttime')return{available:true};
+  if(actionId==='work.freelance.writing'||actionId==='work.freelance.programming'||actionId==='work.freelance.design'){
+    if(state.character.age<FREELANCE_MIN_AGE)return{available:false,reason:`Freelance work becomes available at age ${FREELANCE_MIN_AGE}.`};
+    const gate=actionGateStatus(state,{policy:'career.freelance'});return gate.allowed?{available:true}:{available:false,reason:gate.message};
+  }
   if(actionId==='legal.case'||actionId==='legal.status'||actionId==='legal.history')return{available:true};
   if(actionId==='politics.leave'){const gate=specialCareerExitGate(state,'politics');return gate.allowed?{available:true}:{available:false,reason:gate.message};}
   const campaignLevel=politicsCampaignLevel(actionId);
