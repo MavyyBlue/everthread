@@ -3,8 +3,8 @@
 Last updated: 2026-09-18
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #232 / `1ba66017ccbb21211e5c307d630ef72cf1e20346`
-Certified gameplay baseline: Run #232 / `1ba66017ccbb21211e5c307d630ef72cf1e20346`
+Newest certified expanded source: Run #235 / `a1cfded8bc8453e16af955f3297bd2b8285ad3bf`
+Certified gameplay baseline: Run #235 / `a1cfded8bc8453e16af955f3297bd2b8285ad3bf`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,7 +27,22 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified location-scene slice — Run #232 — Everthread Courthouse
+## Newest certified location-scene/workplace slice — Runs #234–#235 — Loomworks Business District
+
+Run #234 adds Loomworks as the fourteenth dedicated illustrated location; Run #235 certifies the player-driven correction that makes real implemented locations the physical workplace for suitable ordinary full-time and part-time jobs while keeping Loomworks as the employment/application and company-services hub.
+
+- Run #234 expanded source `9a78cce777469638b2dd5a0d9a30ee286bc997f4` from wrapper `5780d2a00937c3c13a719b0fb1ac113a22b959be`; Run #235 expanded source `a1cfded8bc8453e16af955f3297bd2b8285ad3bf` from wrapper `dca60961c3ee8756e533ede0c53fd0e3be1d389e`. The Run #235 correction is exactly **15 intended source/test files**, zero deletions, no docs/assets/schema changes.
+- Loomworks retains three semantic groups—Work Desk, Employment Office, Company Office—and the scene totals are **14 / 43 / 83 / 27** (scenes / groups / bindings / selected Astra runtime assets).
+- `src/data/workplaceLocations.ts` is the presentation/location catalogue for ordinary-work venues. It does **not** own employment. CareerSystem owns the job; WorkplaceSystem/SocialWorld owns the persistent manager/coworker world; RelationshipSystem owns personal relationship state; the Map/location scene only projects where that authoritative record physically lives.
+- Implemented venues currently cover appropriate ordinary work at Weaver Park, Central Everthread Bank, Loomline Motors, Hearthline Realty & Leasing, Crossroads Mall, Nightjar Diner, Pulseworks Gym, Everthread Community School, Everthread Market, Everthread City Hall, and Everthread Courthouse. A location's original shopping/social/civic/legal/education/etc. purpose remains unchanged; **Your Workplace** is conditional additive UI only.
+- Loomworks is deliberately excluded as a fallback workplace. Ordinary work without an implemented real venue remains district-level until the correct location exists. Do not route generic Technology/office/etc. jobs to Loomworks merely because they are in Eastworks.
+- Existing schema-17 saves remain compatible without rewriting employment/world keys. Legacy records infer a deterministic venue where one exists; new venue-aware offers use existing company/title fields and employer-specific application targets. Promotions/demotions preserve venue-aware titles. Read-only venue projection is save/RNG/runtime-id/action-ledger neutral.
+- Certified coverage after the correction: Location Scene **182/182**, Working Everthread **50/50**, Living Map **50/50**, Ownership/Work **35/35**, Town Map **46/46**, Institution Routing **42/42**, Cross-World Chemistry **43/43**, People/Threadspace **57 checks**, Commitment **10/10**, Integrated Long-Life **105/105**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #235 preflight passed **6/6**; production transformed **237 modules**. Certified source SHA `859bfcad99fea9e5d3e6fc937a680c2afb76be4b84e63be973ea4547999430aa`; artifact `10565922723`; Pages artifact `10565957748`; deployment Green.
+- Direct Android/player acceptance passed after Run #235. Mavyy confirmed the corrected actual-location workplace flow works great. Location #14's device gate is closed.
+- Documentation note: the Run #235 certified tree still contained stale top-level Run #232 handoff wording despite the earlier docs sync. This docs-only closeout intentionally repairs that drift without changing gameplay.
+
+## Prior certified location-scene slice — Run #232 — Everthread Courthouse
 
 Run #232 adds the thirteenth dedicated illustrated location while preserving CrimeSystem/legal state, cash, legal RNG, correctional/appeal ownership, save, institution-routing, and QA authorities.
 
@@ -431,7 +446,7 @@ Run #160 / `8ce87ad1e812ed94a9918684b3b52452826f0ce9` is the certified Phase 10D
 Run #156 / `a497aa1bbec357fe12755383acb7053ab5d0ea67` is the certified Phase 10B gameplay/source baseline on save schema **17**. Canonical preflight passed 4/4 stages and Pages deployment succeeded.
 
 - `WorkingEverthreadSystem` is a **read-only projection** over authoritative SchoolWorld, Workplace/SocialWorld, Business, Town Place, and location truth. It creates no durable work-location ledger and writes no projection back into `GameState`.
-- Active local school worlds resolve to the existing School/College anchors; active local workplace worlds resolve by real industry to existing Everthread districts/landmarks. Remote worlds remain remote and receive no Everthread district.
+- Active local school worlds resolve to the existing School/College anchors. Ordinary workplace worlds now resolve through the certified physical-workplace contract: a suitable implemented venue is used when one exists, while otherwise the workplace remains district-level rather than inventing a landmark. Loomworks is the employment/application hub and is not a fallback workplace. Remote worlds remain remote and receive no Everthread district.
 - Player businesses now persist optional founding `countryId` / `city` on the existing `Business` record; `NpcBusinessHolding` preserves the same provenance through estate conversion. Companies therefore remain where they were founded when protagonists relocate or ownership passes to descendants.
 - New/legacy business-location repair remains deterministic, idempotent, RNG-neutral, and runtime-ID neutral. Player legacy businesses repair from the protagonist location; NPC legacy businesses repair from the owning NPC location.
 - Career and Assets expose the derived location labels; AI semantic inspection observes the same projections. Phase 10A residence projection remains unchanged and isolated.

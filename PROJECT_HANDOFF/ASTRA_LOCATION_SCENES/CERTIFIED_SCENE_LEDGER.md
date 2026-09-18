@@ -17,6 +17,7 @@ These are the Astra-backed scenes already integrated into runtime. Do not re-imp
 | 11 | Everthread Market / Grocery Store | #228 | `96042ae010c5962f59b466c89e82bce0c2bf9a5c` | `assets/backgrounds/everthread-market.png` · `813943fc560b…` | `assets/props/grocery-cart.png` · `2b3842409d91…` |
 | 12 | Everthread City Hall | #230 | `f1c211013444c122f62553178e1fe23502db79fc` | `assets/backgrounds/everthread-city-hall.png` · `ca1cb5e57fec…` | `assets/props/records-desk.png` · `28451aee2ec0…` |
 | 13 | Everthread Courthouse | #232 | `1ba66017ccbb21211e5c307d630ef72cf1e20346` | `assets/backgrounds/everthread-courthouse.png` · `a39e8ea80321…` | `assets/props/records-desk.png` · `28451aee2ec0…` (reused) |
+| 14 | Loomworks Business District | #234 + #235 correction | `a1cfded8bc8453e16af955f3297bd2b8285ad3bf` | `assets/backgrounds/loomworks-business-district.png` · `cccebd85f2b7…` | `assets/props/work-desk.png` · `1bc8355394e8…` |
 
 Run #210 is a cross-scene dating-navigation hotfix rather than a new location. It made accepted `relationship.romance.pendingDate` plans consumable by every compatible scene action through declarative `companionPlan` metadata. Nightjar immediately reuses that contract for `date.diner`.
 
@@ -30,4 +31,10 @@ Run #230 adds Everthread City Hall as a thin projection over the existing Politi
 
 Run #232 adds Everthread Courthouse as a thin projection over the existing pending legal case, legal status, criminal record, and CrimeSystem/GameEngine case-resolution owners. The already-certified records desk is reused. Court dockets, lawyer inventory, sentencing ledgers, legal wallets, duplicate conviction history, prison/appeal authority, alternate action ledgers, and the crime catalogue remain deliberately unshipped.
 
-After Run #232 the certified scene totals are **13 / 40 / 75 / 25** (scenes / semantic groups / action bindings / selected Astra runtime assets).
+After Run #232 the certified scene totals were **13 / 40 / 75 / 25** (scenes / semantic groups / action bindings / selected Astra runtime assets).
+Run #234 adds Loomworks Business District as the employment/application and company-services scene over existing CareerSystem/BusinessSystem owners. Run #235 corrects workplace locality across already-implemented scenes: suitable ordinary full-time/part-time jobs gain conditional workplace controls at their real venue while each scene keeps its original purpose. CareerSystem, WorkplaceSystem/SocialWorld, RelationshipSystem, and existing action-economy policies remain authoritative.
+
+The workplace-location catalogue is presentation/routing metadata, not durable employment truth. Existing save keys are not rewritten, location projection is deterministic/RNG-neutral, and jobs without a suitable implemented venue remain district-level rather than fabricating Loomworks as a workplace. This actual-location workplace contract is now precedent for future scenes.
+
+After Run #235 the certified scene totals are **14 / 43 / 83 / 27** (scenes / semantic groups / action bindings / selected Astra runtime assets).
+

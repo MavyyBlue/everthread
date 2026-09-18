@@ -1,3 +1,25 @@
+## Loomworks Business District device acceptance + physical workplace routing closeout — CI Green Runs #234–#235 — 2026-09-18
+
+### Added / changed
+
+- Added **Loomworks Business District** as dedicated Location #14 using Astra-derived `loomworks-business-district.png` and `work-desk.png`. Its authored Work Desk, Employment Office, and Company Office groups expose ordinary-employment discovery plus established company formation/management without creating a second CareerSystem, BusinessSystem, salary ledger, company registry, or workplace state.
+- Loomworks is now explicitly the **employment/application and company-services hub, not a universal workplace**. Full-time and part-time work that has a suitable already-implemented Everthread venue resolves to that real scene; work without a real venue remains district-level rather than fabricating a Loomworks workplace.
+- Added one shared conditional **Your Workplace** layer to existing location scenes. A scene keeps every original purpose and interaction; workplace controls appear only when an authoritative active full-time or part-time record resolves to that place. The layer reuses CareerSystem/WorkplaceSystem for effort, raises, manager feedback, collaboration/networking, resignation/quit, and the same persistent boss/coworker NPCs already visible in People/Threadspace.
+- Existing saves are preserved without a schema bump. Historical employment/world keys are not rewritten; old records derive a deterministic physical venue from the existing job/industry where possible. The player-reported `Cafe Assistant · Bright Group` case therefore keeps its authoritative employment/coworker identity while resolving physically to Nightjar Diner and presenting a location-appropriate Diner role. New venue-aware offers persist through existing employment fields rather than introducing a shadow workplace ID.
+- Venue-aware applications are employer-specific, so two real locations may offer the same underlying ladder without sharing an application target. Location-aware role titles survive promotion/demotion. Read-only venue projection is RNG-neutral and does not consume runtime IDs or action-ledger entries.
+- Mavyy completed direct Android/player acceptance after Run #235 and confirmed the corrected workplace flow works great. Location #14's tactile/device gate is closed.
+- Save schema remains **17**. No new gameplay authority, migration ledger, duplicate relationship graph, parallel workplace roster, dependency change, QA-topology change, or scene-local durable career state was introduced.
+- This documentation closeout also repairs **handoff drift discovered in the Run #235 certified tree**: several status documents still described Run #232 / Location #14 unchosen. Gameplay/source certification was not affected; this docs-only synchronization reconciles those surfaces directly to certified Run #235 truth.
+
+### Certification
+
+- Run #234 (`35377505019`, job `105705573775`) certified the initial Loomworks scene on expanded source `9a78cce777469638b2dd5a0d9a30ee286bc997f4` from wrapper `5780d2a00937c3c13a719b0fb1ac113a22b959be`.
+- Run #235 (`35391106935`, job `105749418441`) certified the physical-workplace correction on expanded source `a1cfded8bc8453e16af955f3297bd2b8285ad3bf` from wrapper `dca60961c3ee8756e533ede0c53fd0e3be1d389e`. Persistent correction diff from Run #234 is exactly **15 intended source/test files**, with zero deletions and no docs/assets/save-schema changes.
+- Location Scene passed **182/182**; Working Everthread **50/50**; Living Map Projection **50/50**; Ownership/Work **35/35**; Town Map **46/46**; Institution Routing **42/42**; Cross-World Chemistry **43/43**; People/Threadspace **57 checks**; Commitment Exclusivity **10/10**; Integrated Long-Life **105/105**.
+- QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`. Canonical Run #235 preflight passed **6/6** in about **49.6 s**; production transformed **237 modules**.
+- Certified source SHA-256 `859bfcad99fea9e5d3e6fc937a680c2afb76be4b84e63be973ea4547999430aa`; dependency SHA-256 `ebb9f8c1458089744ed868c3ab7b7a816230e79fd953adf277374b36c971408d`; lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10565922723` (`a8f12f76400f6f5929250963da9a38fb6af08d52d4d90291e80e090dbc4ead6d`); Pages artifact `10565957748` (`a797ee62c1a300cd681495adbb77f0ca6fa066831972552a98e5d7220b51fe30`); Pages deployment Green.
+- Certified scene totals are now **14 scenes / 43 semantic groups / 83 scene action bindings / 27 selected Astra runtime assets**. After this documentation-only synchronization certifies, Location #15 remains deliberately unchosen; **11** Astra-backed source scenes remain.
+
 ## Everthread Courthouse device acceptance + Location #13 closeout — CI Green Run #232 — 2026-09-18
 
 ### Added / changed
