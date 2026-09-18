@@ -1,10 +1,10 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-17
+Last updated: 2026-09-18
 Current build line: 0.12.0 pre-release
 Certified save schema: 17
-Newest certified expanded source: Run #226 / `72666ff23d167c4088bde1b13fd5a1a121bf45af`
-Certified gameplay baseline: Run #226 / `72666ff23d167c4088bde1b13fd5a1a121bf45af`
+Newest certified expanded source: Run #228 / `96042ae010c5962f59b466c89e82bce0c2bf9a5c`
+Certified gameplay baseline: Run #228 / `96042ae010c5962f59b466c89e82bce0c2bf9a5c`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
 ## Product direction
@@ -27,7 +27,19 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified location-scene slice — Run #226 — Everthread Community School
+## Newest certified location-scene slice — Run #228 — Everthread Market / Grocery Store
+
+Run #228 adds the eleventh dedicated illustrated location while preserving Personal Inventory, cash, wellness, action-economy, save, RNG, gifting, map-routing, and QA authorities.
+
+- Expanded source `96042ae010c5962f59b466c89e82bce0c2bf9a5c` from wrapper `0e39d2710288beace3158a43c20c90e0fede7af5`; Actions Run `35313340457`, job `105499683779`. Persistent diff from synchronized Run #227 `16c8c0b4cc847d208022a9f0e1221749479ef687` is exactly **7 intended files**.
+- Market uses three semantic groups—Shopping cart, Produce stand, Pantry shelves—and three bindings: Food & household items, Eat intentionally, and Your Market purchases. Scene totals become **11 / 34 / 63 / 22** (scenes / groups / bindings / selected Astra runtime assets).
+- The scene is a thin adapter only. Shopping and owned-purchase history project the existing Everthread Market personal-item catalogue and owned inventory; purchase mutation remains `gameEngine.purchasePersonalItem`. Eat intentionally remains the existing wellness `diet` action. No hunger meter, consumable grocery stack, pantry quantity, nutrition ledger, grocery wallet, second household budget, duplicate inventory, or shadow cash balance was introduced.
+- Browsing catalogue/ownership/availability is deterministic and read-only until an existing purchase or wellness command commits. Existing purchase action limits, cash checks, inventory instances, gift compatibility, and wellness age/action gates remain authoritative.
+- Location Scene regression expanded **126 → 136** and passed **136/136** in CI. Town Map remains **46/46**, Institution Routing **42/42**, Player Profile/Inventory **63/63**, Real Gifts **60/60**, and QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
+- Canonical Run #228 preflight passed **6/6 in 49,318 ms**: Engine TS **4,216 ms**, Test TS **6,512 ms**, App TS **9,413 ms**, Node/Vite TS **996 ms**, regression wall **23,632 ms**, production build **4,535 ms**. Production transformed **231 modules**. Certified artifact `10534102937`; Pages artifact `10534387024`; deployment Green.
+- Direct Android/player acceptance passed after Run #228. Mavyy reported the Grocery Store works correctly. Location #11's device gate is closed.
+
+## Prior certified location-scene slice — Run #226 — Everthread Community School
 
 Run #226 adds the tenth dedicated illustrated location while preserving education, SchoolWorld, Youth Social, Shared Experience, institution-location, action-economy, save, RNG, and QA authorities.
 
@@ -65,11 +77,11 @@ Run #212 adds the eighth dedicated illustrated location while preserving persona
 
 ## Astra location source continuation handoff
 
-`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#10, and lightweight exact references from Astra Yuki's original v1 source package.
+`PROJECT_HANDOFF/ASTRA_LOCATION_SCENES/` is the durable fresh-chat continuation point for the remaining illustrated rollout. It contains the certified-scene ledger, remaining-location inventory, the exact implementation method used across Locations #1–#11, and lightweight exact references from Astra Yuki's original v1 source package.
 
 The original 89,718,869-byte `everthread-location-scenes-v1.zip` is preserved losslessly as five browser-safe raw byte parts, each no larger than 20,000,000 bytes. GitHub's mobile/web commit path rejected the earlier 24 MiB parts because 24 MiB equals 25,165,824 bytes, so the split contract was corrected while preserving the exact original archive checksum. Run #222 certifies the final cleaned archive tree: all five authoritative parts are under `SOURCE_PACKAGE/parts/`, their repository blobs match the generated chunks, the two accidental duplicate placements are removed, and reconstruction yields SHA-256 `220503b851ef4e49a79ff3bc553ca887effb7e23733de1ab2f6e30e555d2f3f1`. The archive and mirrored source references are non-runtime design provenance: they add no gameplay/content authority and must never be copied wholesale into `public/`.
 
-The archive preservation remains certified provenance. After this School documentation-only synchronization is Green, select exactly one **Location #11** from the remaining 15 candidates only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
+The archive preservation remains certified provenance. After this Market documentation-only synchronization is Green, select exactly one **Location #12** from the remaining 14 candidates only after a fresh audit against the newest certified repository. Do not infer the next owner from Astra design notes alone.
 
 ## Newest certified gameplay hotfix — Run #210 — scheduled-date location navigation
 

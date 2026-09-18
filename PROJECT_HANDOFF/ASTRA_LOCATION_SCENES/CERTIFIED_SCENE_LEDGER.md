@@ -14,6 +14,7 @@ These are the Astra-backed scenes already integrated into runtime. Do not re-imp
 | 8 | Nightjar Diner | #212 | `7dde94325f56a2f44172b5de65709700b5ad73ea` | `assets/backgrounds/nightjar-diner.png` · `75b96fd0517b…` | `assets/props/diner-table.png` · `82b42285b9f5…` |
 | 9 | Pulseworks Gym | #224 | `08a27517d42081ddb22c6587308a15da55669d2c` | `assets/backgrounds/pulseworks-gym.png` · `37e765635d61…` | `assets/props/fitness-bench.png` · `84533c2f1bb8…` |
 | 10 | Everthread Community School | #226 | `72666ff23d167c4088bde1b13fd5a1a121bf45af` | `assets/backgrounds/everthread-school.png` · `7d4d8765ead3…` | `assets/props/student-desk.png` · `55c28824a9e4…` |
+| 11 | Everthread Market / Grocery Store | #228 | `96042ae010c5962f59b466c89e82bce0c2bf9a5c` | `assets/backgrounds/everthread-market.png` · `813943fc560b…` | `assets/props/grocery-cart.png` · `2b3842409d91…` |
 
 Run #210 is a cross-scene dating-navigation hotfix rather than a new location. It made accepted `relationship.romance.pendingDate` plans consumable by every compatible scene action through declarative `companionPlan` metadata. Nightjar immediately reuses that contract for `date.diner`.
 
@@ -21,4 +22,6 @@ Run #224 adds Pulseworks as a thin projection over existing wellness, Shared Exp
 
 Run #226 adds Everthread Community School as a thin projection over `EducationSystem`, `SchoolWorldSystem`, current-school peer truth, Shared Experience `school_social`, and existing institution locality. College/external-school truth remains outside the Community School scene.
 
-After Run #226 the certified scene totals are **10 / 31 / 60 / 20** (scenes / semantic groups / action bindings / selected Astra runtime assets).
+Run #228 adds Everthread Market / Grocery Store as a thin projection over the existing Everthread Market Personal Inventory catalogue/ownership/purchase path plus the existing wellness `diet` action. Hunger, consumable grocery quantities, pantry state, and alternate household-budget truth remain deliberately unshipped.
+
+After Run #228 the certified scene totals are **11 / 34 / 63 / 22** (scenes / semantic groups / action bindings / selected Astra runtime assets).

@@ -1,3 +1,21 @@
+## Everthread Market / Grocery Store device acceptance + Location #11 closeout — CI Green Run #228 — 2026-09-18
+
+### Added / changed
+
+- Added **Everthread Market / Grocery Store** as the eleventh dedicated illustrated location using Astra-derived `everthread-market.png` and `grocery-cart.png`. Three semantic groups—Shopping cart, Produce stand, and Pantry shelves—expose three bindings: Food & household items, Eat intentionally, and Your Market purchases.
+- Market remains a presentation/routing adapter over established owners. Food & household shopping and Market purchase history project the existing place-filtered Personal Inventory catalogue and owned-item records; purchases remain `gameEngine.purchasePersonalItem`. Eat intentionally remains the existing wellness `diet` action and is not silently coupled to shopping.
+- The bounded slice intentionally adds no hunger/nourishment meter, consumable grocery quantities, pantry ledger, nutrition ledger, grocery wallet, second household budget, duplicate inventory, shadow cash balance, or Market-specific RNG authority. Browsing remains read-only and RNG-neutral until an existing action commits.
+- Mavyy completed direct Android/player acceptance after Run #228 and reported the Grocery Store works correctly. The Location #11 tactile/player-facing gate is closed.
+- Save schema remains **17**. No migration, QA-topology change, dependency change, event scheduler, alternate action ledger, or new durable gameplay authority was introduced.
+
+### Certification
+
+- GitHub Actions Run #228 (`35313340457`, job `105499683779`) certified expanded source `96042ae010c5962f59b466c89e82bce0c2bf9a5c` from upload wrapper `0e39d2710288beace3158a43c20c90e0fede7af5`. Persistent gameplay diff from synchronized Run #227 `16c8c0b4cc847d208022a9f0e1221749479ef687` is exactly **7 intended files**: two Market runtime PNGs plus five location-scene/panel/test source files.
+- Location Scene regression expanded **126 → 136** and passed **136/136**. Connected certified coverage includes Town Map **46/46**, Institution Routing **42/42**, Player Profile/Inventory **63/63**, and Real Gifts **60/60**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`, with all **82 core / 77 specialized** mandatory and zero overlap.
+- Canonical preflight passed **6/6 in 49,318 ms**: Engine TS **4,216 ms**, Test TS **6,512 ms**, App TS **9,413 ms**, Node/Vite TS **996 ms**, complete regression wall **23,632 ms**, production build **4,535 ms**. Production transformed **231 modules**.
+- Certified source SHA-256 `69d9faa7d60db73422ebf54b44544a6c288ffd5ca163da2f0d11d56e27951554`; dependency SHA-256 `9e7aaecacc54467fc88371759ab0881d347d5732928dc21282845240757f3215`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10534102937` (`e41943a173f1af31e8ec2fdae9b831cd0530a8b71d72ce13644306d6abc2c325`); Pages artifact `10534387024` (`08783fa5460aa9a5bedebfcc32e3b7b4b7a644bc439c3021a035d50f28c6967f`); Pages deployment Green.
+- Certified scene totals are now **11 scenes / 34 semantic groups / 63 scene action bindings / 22 selected Astra runtime assets**. After this documentation-only synchronization certifies, Location #12 remains unchosen; **14** Astra-backed source scenes remain and the normal owner/source/test audit still applies to whichever Mavyy selects.
+
 ## Everthread Community School device acceptance + Location #10 closeout — CI Green Run #226 — 2026-09-17
 
 ### Added / changed

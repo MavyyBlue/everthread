@@ -25,10 +25,11 @@ These source counts are **not** runtime content counts. Only assets explicitly c
 - Location #8: **Nightjar Diner** (`nightjar-diner`) — Run #212
 - Location #9: **Pulseworks Gym** (`pulseworks-gym`) — Run #224
 - Location #10: **Everthread Community School** (`everthread-school`) — Run #226
+- Location #11: **Everthread Market / Grocery Store** (`everthread-market`) — Run #228
 
 ## Remaining Astra-backed candidates
 
-Exactly **15** source scenes remain unshipped. Do not preselect one from this list; perform a fresh owner/source/test audit against the newest certified repository first.
+Exactly **14** source scenes remain unshipped. Do not preselect one from this list; perform a fresh owner/source/test audit against the newest certified repository first.
 
 - `blackline-freight-yard`
 - `everthread-air-terminal`
@@ -38,7 +39,6 @@ Exactly **15** source scenes remain unshipped. Do not preselect one from this li
 - `everthread-courthouse`
 - `everthread-defense-garrison`
 - `everthread-general-hospital`
-- `everthread-market`
 - `everthread-speedway`
 - `everthread-stadium`
 - `facet-modeling-agency`
@@ -46,4 +46,4 @@ Exactly **15** source scenes remain unshipped. Do not preselect one from this li
 - `public-safety-center`
 - `silverframe-studios`
 
-The original action map for any remaining candidate is advisory. If it requests gameplay Everthread does not currently own, narrow or reinterpret the scene around real owners rather than inventing a parallel system. Hearthline (no fake tenant lease-signing), Nightjar (no fake food/nourishment economy), Pulseworks (no scene-local combat challenge/lifecycle authority), and School (no duplicate enrollment/peer truth or College locality leakage) are precedent.
+The original action map for any remaining candidate is advisory. If it requests gameplay Everthread does not currently own, narrow or reinterpret the scene around real owners rather than inventing a parallel system. Hearthline (no fake tenant lease-signing), Nightjar (no fake food/nourishment economy), Pulseworks (no scene-local combat challenge/lifecycle authority), School (no duplicate enrollment/peer truth or College locality leakage), and Market (no hunger/consumable-grocery/pantry-budget shadow state) are precedent.
