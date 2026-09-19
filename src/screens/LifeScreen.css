@@ -1,0 +1,35 @@
+/* Journal hierarchy: one compact overview, quiet disclosures, then the story. */
+.life-screen--journal .life-overview{border-bottom:1px solid var(--line);padding:0 2px}
+.life-profile-link{display:flex;align-items:center;gap:12px;width:100%;min-height:80px;padding:8px 0;background:transparent;text-align:left}
+.life-profile-copy{display:grid;gap:3px;flex:1;min-width:0}
+.life-profile-copy>strong{font-size:1.12rem;line-height:1.25;overflow-wrap:anywhere}
+.life-profile-copy>span:last-child{font-size:.76rem;color:var(--muted)}
+.life-profile-copy .eyebrow{font-size:.59rem;margin:0}
+.life-profile-affordance{display:flex;align-items:center;gap:2px;font-size:.7rem;color:var(--muted)}
+.life-vitals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:10px 0 14px}
+.life-vitals .stat-label{font-size:.72rem;gap:4px;flex-wrap:wrap}
+.life-disclosure{font-size:.8rem}
+.life-disclosure>summary{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 0;cursor:pointer;list-style:none;font-weight:750}
+.life-disclosure>summary::-webkit-details-marker{display:none}
+.life-disclosure>summary::after{content:'+';font-size:1.1rem;font-weight:400;flex:none;color:var(--muted);width:14px;text-align:center}
+.life-disclosure[open]>summary::after{content:'−'}
+.life-disclosure-meta{margin-left:auto;color:var(--muted);font-size:.7rem;font-weight:500;text-align:right}
+.life-disclosure-body{padding:0 0 14px}
+.life-finances{border-top:1px solid var(--line)}
+.life-screen--journal .quick-facts{grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 10px}
+.life-screen--journal .quick-facts strong{white-space:normal;overflow-wrap:anywhere}
+.life-worlds{border-bottom:1px solid var(--line);margin:0 2px}
+.life-worlds .world-condition-item{box-shadow:none}
+.life-screen--journal .life-journal{margin-top:22px;padding:0 2px;border:0;background:transparent;box-shadow:none}
+.life-journal>.section-heading{align-items:center;padding-bottom:14px;border-bottom:1px solid var(--everthread-frame);gap:12px}
+.life-journal h1{font-size:clamp(1.35rem,4.6vw,1.85rem);font-weight:650;line-height:1.2;letter-spacing:-.035em;margin:0}
+.life-journal>.section-heading>span{font-size:.67rem;color:var(--muted);flex-shrink:0}
+.life-journal .eyebrow{font-size:.6rem;margin-bottom:6px}
+.life-journal .timeline-entry{padding:16px 0;gap:14px}
+.life-journal .timeline-copy h3{font-size:.92rem;margin-bottom:6px}
+.life-journal .timeline-copy p{font-size:.84rem;line-height:1.65}
+.life-journal .timeline-symbol{box-shadow:none;background:var(--surface);border:1px solid var(--everthread-frame)}
+.life-journal .timeline-entry:not(:last-child)::before{top:48px;bottom:-16px}
+.life-journal .importance-3 .timeline-copy{border-left:2px solid var(--everthread-gold);padding-left:12px}
+@media(max-width:520px){.life-vitals{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px}}
+@media(max-width:380px){.life-profile-affordance{font-size:0}.life-profile-copy>strong{font-size:1rem}}

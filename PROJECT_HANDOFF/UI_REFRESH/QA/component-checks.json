@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "count": 16,
+  "checks": [
+    "Life timeline title renders",
+    "Persistent Worlds remains discoverable when stable",
+    "Compact player summary opens the existing player profile",
+    "Banking remains reachable from Life & finances",
+    "Opening banking leaves the saved game unchanged",
+    "NPC opens on Interact with Talk available",
+    "NPC details do not crowd the initial interaction view",
+    "Profile section navigation preserves all game state, RNG, IDs and saves",
+    "About retains interests, connections and life information",
+    "Selecting another NPC resets to Interact",
+    "Talk routes to the existing conversation owner and selected NPC",
+    "Used social action stays disabled under its existing action policy",
+    "Used action exposes a visible explanation",
+    "Deceased NPC cannot receive a social action",
+    "Deceased NPC has no gift interaction group",
+    "Memories remain reachable for deceased NPC"
+  ]
+}

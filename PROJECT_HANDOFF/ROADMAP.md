@@ -1,5 +1,14 @@
 # Everthread — Roadmap
 
+## Active candidate — Life journal and NPC profile refresh — 2026-09-19
+
+Mavyy explicitly prioritized a sleeker player-facing UI over selecting Location #16. This presentation-only candidate makes **Your Life Timeline** the Life page focal point while retaining the player profile, four primary stats, finances/banking and Persistent Worlds. Ordinary NPC profiles use Interact / About / Memories with expandable action groups. No new gameplay, persistence, RNG, location, or character-portrait authority is introduced; schema remains 18.
+
+Baseline verified live: GitHub Actions **Run #239** (`35415723021`) completed successfully, including the certified artifact named for expanded source **`cd6d115c0db5b6a1513e5209976dafb999797c5a`**. That exact commit was cloned; Run #238 remains the latest gameplay baseline before this UI candidate. The earlier documentation-only closeout is complete. This candidate is **not yet CI-certified or Android/player-accepted**. See `PROJECT_HANDOFF/UI_REFRESH/README.md` for scope, verification evidence, environment limitations and review steps. Do not label it Run #240 or promote it before fresh CI evidence.
+
+Location #16 remains unchosen and paused behind this user-requested UI review. Existing location, QA-4, Yuki Threadroom, Career/Workplace, saves and deterministic simulation boundaries are preserved.
+
+
 This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
 
 ## Closed macro program — Living World Program

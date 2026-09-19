@@ -1,3 +1,11 @@
+## Pending certification — Life journal + NPC profile refresh — 2026-09-19
+
+- Made Your Life Timeline the Life page headline and primary reading surface, with a compact linked player identity, primary stats, expandable Life & finances, and Persistent Worlds summary.
+- Grouped ordinary NPC profiles into Interact, About and Memories. Kept Talk / Compliment / Spend time up front; retained gifts, home visits, shared outings, dating, relationship choices, family planning and workplace actions in expandable groups.
+- Preserved portrait reveal/aging and all action eligibility/owner calls. Replaced technical portrait copy with player-facing identity text. Exhausted social actions show a short visible explanation. Pending dates remain visible in the Dating summary.
+- Reused teal/gold and user appearance tokens; scoped styles to Life and ordinary NPC sheets. No save, engine, schema, dependency, map or QA-runner source changes.
+- Baseline: CI Green #239 / `cd6d115c0db5b6a1513e5209976dafb999797c5a`. Candidate validation and limitations are recorded in `PROJECT_HANDOFF/UI_REFRESH/README.md`; CI and Android acceptance remain pending.
+
 ## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18
 
 ### Added / changed

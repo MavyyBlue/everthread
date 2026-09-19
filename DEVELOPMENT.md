@@ -7,6 +7,12 @@ Newest certified expanded source: Run #238 / `1f3786df83a37a4756a2da670566b0ceeb
 Certified gameplay baseline: Run #238 / `1f3786df83a37a4756a2da670566b0ceeb5fc2b3`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
+## Current UI candidate — journal / ordinary NPC profiles
+
+Mavyy requested a bounded Life-page and NPC-profile makeover on the Run #239 source. `LifeScreen.tsx` and its scoped `LifeScreen.css` own the compact overview / journal hierarchy. `PeopleScreen.tsx` and `NpcProfile.css` own profile-section and disclosure presentation; they delegate all real actions to unchanged existing owners. Section state and native disclosure state are ephemeral UI state. `Timeline` retains its bounded render window, ordering and Show older entries behavior. Profile identity remains linked to the existing player sheet and inventory. `YukiThreadroom` routing stays intact.
+
+See `PROJECT_HANDOFF/UI_REFRESH/README.md` before integrating. This is a pending-certification candidate, not an already released change. The preceding baseline labels remain historical certification facts.
+
 ## Product direction
 
 Everthread: Life Unwritten is an original, mobile-first procedural life simulator. The central interaction is Age Up: one year advances the world, connected systems process in a deterministic order, events may interrupt for a decision, consequences persist, and death can hand the family thread to a descendant.

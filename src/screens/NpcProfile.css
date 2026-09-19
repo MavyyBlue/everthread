@@ -1,0 +1,31 @@
+/* Scoped to ordinary profiles; Yuki's dedicated room keeps its own layout. */
+.npc-profile{min-width:0}
+.npc-profile .npc-visual-identity{display:flex;align-items:center;gap:18px;padding:4px 0 18px;margin:0;background:transparent;border:0;border-radius:0;box-shadow:none}
+.npc-profile .npc-visual-identity>div:last-child{min-width:0}
+.npc-profile .npc-visual-identity h3{font-size:1.6rem;letter-spacing:-.035em;margin-bottom:6px;overflow-wrap:anywhere}
+.npc-profile .npc-visual-identity .muted{font-size:.78rem;line-height:1.5;margin-bottom:6px}
+.npc-profile .npc-visual-identity small{font-size:.69rem;line-height:1.4;display:block}
+.npc-relationship-summary{display:flex;flex-wrap:wrap;gap:10px 24px;padding:12px 0;border-top:1px solid var(--line);font-size:.73rem;color:var(--muted)}
+.npc-relationship-summary strong{color:var(--text);font-size:.9rem;margin-left:6px;font-variant-numeric:tabular-nums}
+.npc-profile-nav{display:flex;gap:4px;position:sticky;top:-14px;z-index:2;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line)}
+.npc-profile-nav button{flex:1;min-width:0;min-height:48px;border-radius:12px;background:transparent;color:var(--muted);font-size:.8rem;font-weight:750}
+.npc-profile-nav button[aria-pressed="true"]{background:color-mix(in srgb,var(--everthread-teal) 12%,var(--surface));color:var(--text);box-shadow:inset 0 -2px var(--everthread-gold)}
+.npc-profile-panel{padding:16px 0 8px}
+.npc-profile-panel>.action-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 14px}
+.npc-profile .action-grid button{min-height:48px;padding:10px 8px;font-size:.78rem;white-space:normal;overflow-wrap:anywhere;box-shadow:none}
+.npc-profile-disclosure{border-bottom:1px solid var(--line)}
+.npc-profile-disclosure>summary{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;font-size:.84rem;font-weight:700;padding:12px 2px}
+.npc-profile-disclosure>summary::-webkit-details-marker{display:none}
+.npc-profile-disclosure>summary::after{content:'+';font-size:1.1rem;color:var(--muted);font-weight:400}
+.npc-profile-disclosure[open]>summary::after{content:'−'}
+.npc-profile .sheet-section{padding:14px 0;margin:0;border-top:0}
+.npc-profile .sheet-section h3{font-size:.85rem;margin-bottom:10px}
+.npc-profile .sheet-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 12px}
+.npc-profile .sheet-stat-grid>div{background:transparent;padding:10px 0;border-bottom:1px solid var(--line);border-radius:0}
+.npc-profile .sheet-stat-grid strong{white-space:normal;overflow-wrap:anywhere;line-height:1.45}
+.npc-profile .memory{font-size:.8rem;line-height:1.65}
+.npc-profile-panel[aria-label="Memories with this person"] .memory{padding:12px 0 12px 16px;border-left:1px solid var(--everthread-gold);margin:0 0 8px;background:transparent;border-radius:0}
+.npc-profile .muted{font-size:.78rem;line-height:1.6}
+.npc-profile .action-grid button:disabled{opacity:.6}
+@media(max-width:360px){.npc-profile .npc-visual-identity{gap:12px}.npc-profile .npc-visual-identity h3{font-size:1.3rem}.npc-profile-panel>.action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.npc-profile .action-grid button small{display:block;font-size:.6rem;font-weight:500;margin-top:4px}

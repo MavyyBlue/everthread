@@ -1,0 +1,432 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> everthread-life-unwritten@0.12.0 preflight
+> node scripts/everthread-preflight.mjs
+
+Everthread canonical pre-deployment verification
+Mode: standard
+Package: 0.12.0
+Node: v24.19.0
+Commit/baseline: cd6d115c0db5b6a1513e5209976dafb999797c5a
+Working tree: dirty (stage evidence is diagnostic only; not reusable certification evidence)
+
+=== Everthread Preflight: Engine TypeScript ===
+$ npm run typecheck:engine
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> everthread-life-unwritten@0.12.0 typecheck:engine
+> tsc -p tsconfig.engine.json --noEmit
+
+
+=== Everthread Preflight: Test TypeScript ===
+$ npm run typecheck:tests
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> everthread-life-unwritten@0.12.0 typecheck:tests
+> tsc -p tsconfig.tests.json --noEmit
+
+
+=== Everthread Preflight: App TypeScript ===
+$ npm run typecheck:app
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> everthread-life-unwritten@0.12.0 typecheck:app
+> tsc -p tsconfig.app.json --noEmit
+
+
+=== Everthread Preflight: Node / Vite Config TypeScript ===
+$ npm run typecheck:node
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> everthread-life-unwritten@0.12.0 typecheck:node
+> tsc -p tsconfig.node.json --noEmit
+
+
+=== Everthread Preflight: Complete Regression Wall ===
+$ npm test
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> everthread-life-unwritten@0.12.0 test
+> node scripts/run-regression-wall.mjs --workers=2
+
+Everthread regression process isolation — workers=2, lanes=standard+heavy
+--- Standard regression lane output ---
+Everthread registered regression lane — standard
+Everthread regression suite — 81 passed, 0 failed
+PASS  seeded RNG counter jump matches sequential consumption exactly
+PASS  seeded character generation is behaviorally deterministic
+PASS  age up increments exactly once and unresolved events block aging
+PASS  newborns cannot trade investments or initiate vacations
+PASS  wellness activities unlock at age-appropriate childhood and teen stages
+PASS  dependent minors do not accumulate ordinary personal insolvency debt
+PASS  negative dependent-minor cash is covered by guardians instead of converted to debt
+PASS  death probability rises materially with age at equal health
+PASS  post-secondary education can create safe structured student debt
+PASS  qualified adults can obtain at least one entry career without corrupting state
+PASS  senior career listings require actual relevant experience
+PASS  career effort and raise requests are limited to one use per year
+PASS  central action ledger enforces compound limits atomically and resets by age
+PASS  failed job applications consume the attempt and cannot be rerolled on the same listing
+PASS  wellness actions cannot be spammed into unlimited same-year stat gains
+PASS  relationship interactions have per-person and per-action yearly limits
+PASS  publicity income cannot be rerolled indefinitely in one year
+PASS  time-intensive business progression is limited per year
+PASS  property renovation has a real cooldown and no instant net-worth arbitrage
+PASS  collectible hunting cannot reroll the same item indefinitely in one year
+PASS  failed-but-executed engine actions still emit their mutated state
+PASS  annual salary is credited once with predictable baseline expenses
+PASS  school friendships cannot bypass dating and marriage age rules
+PASS  adult dating does not generate minor partners
+PASS  biological parenting rejects an underage partner
+PASS  biological parenting creates a one-year pregnancy and blocks same-year retry spam
+PASS  autonomous close-family NPCs can build linked careers, partnerships and descendants
+PASS  player romantic partners are protected from autonomous matchmaking
+PASS  delayed romantic consequences preserve the exact NPC target across years
+PASS  delayed NPC consequences cancel when the required relationship no longer exists
+PASS  non-NPC delayed consequences preserve origin age context
+PASS  first delayed-consequence content set wires all five story chains
+PASS  state invariants collapse duplicate active spouses
+PASS  criminal cases can progress from incident to resolved charge
+PASS  descendant continuation preserves estate assets without duplicating full net worth as cash
+PASS  multi-heir estate settlement divides investments and retained assets instead of gifting everything to the selected child
+PASS  continued descendants retain established career spouse and children
+PASS  wealthy NPC parents can leave inheritance directly to the player character
+PASS  three-generation continuation preserves lineage without estate duplication
+PASS  eight-generation continuation keeps rich NPC histories valid and lifetime cast growth bounded
+PASS  wealth-source breakdown reconciles exactly to net worth
+PASS  identical seeded action histories serialize identically including runtime IDs
+PASS  state-scoped runtime IDs remain unique across a long generated life
+PASS  rewind migrates legacy snapshots before restoring them
+PASS  save migrations restore current required structures
+PASS  v5 migration preserves consumed yearly actions in the central ledger
+PASS  v4 migration repairs the runaway salary exploit and impossible senior role
+PASS  mobile money formatting keeps extreme sandbox values compact
+PASS  mortgage underwriting rejects clearly unaffordable purchases
+PASS  annual cash shortfalls become structured debt without negative cash
+PASS  repeated severe shortfalls surface financial crisis without silently forcing bankruptcy
+PASS  two sustained mortgage shortfalls can foreclose while preserving residual equity correctly
+PASS  people folders separate immediate family, extended relatives, and friends without losing real NPC links
+PASS  relationship graph does not invent NPC-to-NPC links between unrelated friends
+PASS  minigame score modifies world outcomes without replacing character progression
+PASS  accessibility minigame skip is seeded, bounded, and improves with character skill
+PASS  independent life saves allocate stable non-colliding slot ids
+PASS  family legacy showcase can feature a stronger earlier generation and falls back after its save is removed
+PASS  country school profiles create persistent staged school worlds and preserve prior rosters
+PASS  v6 migration reconstructs school social worlds from existing education history
+PASS  compulsory school cannot be dropped before the country leaving age
+PASS  school groups create bounded persistent involvement that improves the admissions profile
+PASS  attendance and academic misconduct persist into school conduct instead of being stat-only actions
+PASS  post-secondary admissions reward school history without letting activities replace academic readiness
+PASS  workplace changes archive prior employers while preserving former coworkers
+PASS  v7 migration reconstructs persistent workplaces and initializes part-time employment state
+PASS  workplace collaboration, networking, and manager feedback use bounded yearly opportunity
+PASS  part-time jobs respect shared weekly hour capacity and contribute taxable income
+PASS  workplace affiliation survives when a coworker becomes a real friend
+PASS  targeted workplace events bind to actual current coworkers and managers
+PASS  generational handoff does not inherit the previous protagonist workplace
+PASS  autonomous blended-family formation preserves real stepfamily links to the player
+PASS  NPC household relocation keeps partners and dependent children together
+PASS  stable low-fertility close-family couples can adopt without creating broken lineage links
+PASS  v8 migration deterministically initializes persistent NPC life histories without consuming player RNG
+PASS  NPC education, custody, health, finance, and public-life state advance as persistent bounded history
+PASS  NPC housing value follows the bounded housing market instead of deterministic depreciation
+PASS  NPC hidden opinions and emotional memories influence long-term relationship drift
+PASS  adult descendant continuation preserves real NPC education career health legal fame and debt history
+PASS  background NPC autonomy remains population-bounded across decades while preserving offscreen lives
+PASS  procedural market remains finite through a century of updates
+Everthread base-case timing — 81 cases in 2609 ms
+CASE_TIMING 042 510ms PASS class=standard — identical seeded action histories serialize identically including runtime IDs
+CASE_TIMING 040 485ms PASS class=standard — eight-generation continuation keeps rich NPC histories valid and lifetime cast growth bounded
+CASE_TIMING 043 353ms PASS class=standard — state-scoped runtime IDs remain unique across a long generated life
+CASE_TIMING 039 137ms PASS class=standard — three-generation continuation preserves lineage without estate duplication
+CASE_TIMING 024 105ms PASS class=standard — adult dating does not generate minor partners
+CASE_TIMING 079 81ms PASS class=standard — adult descendant continuation preserves real NPC education career health legal fame and debt history
+CASE_TIMING 071 71ms PASS class=standard — generational handoff does not inherit the previous protagonist workplace
+CASE_TIMING 035 66ms PASS class=standard — descendant continuation preserves estate assets without duplicating full net worth as cash
+CASE_TIMING 037 65ms PASS class=standard — continued descendants retain established career spouse and children
+CASE_TIMING 080 60ms PASS class=standard — background NPC autonomy remains population-bounded across decades while preserving offscreen lives
+CASE_TIMING 036 56ms PASS class=standard — multi-heir estate settlement divides investments and retained assets instead of gifting everything to the selected child
+CASE_TIMING 060 49ms PASS class=standard — v6 migration reconstructs school social worlds from existing education history
+CASE_TIMING 059 47ms PASS class=standard — country school profiles create persistent staged school worlds and preserve prior rosters
+CASE_TIMING 047 31ms PASS class=standard — v4 migration repairs the runaway salary exploit and impossible senior role
+CASE_TIMING 009 30ms PASS class=standard — post-secondary education can create safe structured student debt
+CASE_TIMING 068 30ms PASS class=standard — part-time jobs respect shared weekly hour capacity and contribute taxable income
+CASE_TIMING 003 27ms PASS class=standard — age up increments exactly once and unresolved events block aging
+CASE_TIMING 065 23ms PASS class=standard — workplace changes archive prior employers while preserving former coworkers
+CASE_TIMING 046 22ms PASS class=standard — v5 migration preserves consumed yearly actions in the central ledger
+CASE_TIMING 064 22ms PASS class=standard — post-secondary admissions reward school history without letting activities replace academic readiness
+CASE_TIMING 010 21ms PASS class=standard — qualified adults can obtain at least one entry career without corrupting state
+CASE_TIMING 062 21ms PASS class=standard — school groups create bounded persistent involvement that improves the admissions profile
+CASE_TIMING 063 20ms PASS class=standard — attendance and academic misconduct persist into school conduct instead of being stat-only actions
+CASE_TIMING 061 19ms PASS class=standard — compulsory school cannot be dropped before the country leaving age
+CASE_TIMING 027 13ms PASS class=standard — autonomous close-family NPCs can build linked careers, partnerships and descendants
+CASE_TIMING 066 13ms PASS class=standard — v7 migration reconstructs persistent workplaces and initializes part-time employment state
+CASE_TIMING 070 13ms PASS class=standard — targeted workplace events bind to actual current coworkers and managers
+CASE_TIMING 002 12ms PASS class=standard — seeded character generation is behaviorally deterministic
+CASE_TIMING 067 11ms PASS class=standard — workplace collaboration, networking, and manager feedback use bounded yearly opportunity
+CASE_TIMING 069 11ms PASS class=standard — workplace affiliation survives when a coworker becomes a real friend
+CASE_TIMING 026 10ms PASS class=standard — biological parenting creates a one-year pregnancy and blocks same-year retry spam
+CASE_TIMING 044 8ms PASS class=standard — rewind migrates legacy snapshots before restoring them
+CASE_TIMING 072 7ms PASS class=standard — autonomous blended-family formation preserves real stepfamily links to the player
+CASE_TIMING 028 6ms PASS class=standard — player romantic partners are protected from autonomous matchmaking
+CASE_TIMING 034 6ms PASS class=standard — criminal cases can progress from incident to resolved charge
+CASE_TIMING 011 5ms PASS class=standard — senior career listings require actual relevant experience
+CASE_TIMING 033 5ms PASS class=standard — state invariants collapse duplicate active spouses
+CASE_TIMING 058 5ms PASS class=standard — family legacy showcase can feature a stronger earlier generation and falls back after its save is removed
+CASE_TIMING 004 4ms PASS class=standard — newborns cannot trade investments or initiate vacations
+CASE_TIMING 006 4ms PASS class=standard — dependent minors do not accumulate ordinary personal insolvency debt
+CASE_TIMING 016 4ms PASS class=standard — relationship interactions have per-person and per-action yearly limits
+CASE_TIMING 018 4ms PASS class=standard — time-intensive business progression is limited per year
+CASE_TIMING 019 4ms PASS class=standard — property renovation has a real cooldown and no instant net-worth arbitrage
+CASE_TIMING 020 4ms PASS class=standard — collectible hunting cannot reroll the same item indefinitely in one year
+CASE_TIMING 021 4ms PASS class=standard — failed-but-executed engine actions still emit their mutated state
+CASE_TIMING 023 4ms PASS class=standard — school friendships cannot bypass dating and marriage age rules
+CASE_TIMING 029 4ms PASS class=standard — delayed romantic consequences preserve the exact NPC target across years
+CASE_TIMING 045 4ms PASS class=standard — save migrations restore current required structures
+CASE_TIMING 049 4ms PASS class=standard — mortgage underwriting rejects clearly unaffordable purchases
+CASE_TIMING 052 4ms PASS class=standard — two sustained mortgage shortfalls can foreclose while preserving residual equity correctly
+CASE_TIMING 073 4ms PASS class=standard — NPC household relocation keeps partners and dependent children together
+CASE_TIMING 074 4ms PASS class=standard — stable low-fertility close-family couples can adopt without creating broken lineage links
+CASE_TIMING 076 4ms PASS class=standard — NPC education, custody, health, finance, and public-life state advance as persistent bounded history
+CASE_TIMING 077 4ms PASS class=standard — NPC housing value follows the bounded housing market instead of deterministic depreciation
+CASE_TIMING 081 4ms PASS class=standard — procedural market remains finite through a century of updates
+CASE_TIMING 001 3ms PASS class=standard — seeded RNG counter jump matches sequential consumption exactly
+CASE_TIMING 005 3ms PASS class=standard — wellness activities unlock at age-appropriate childhood and teen stages
+CASE_TIMING 007 3ms PASS class=standard — negative dependent-minor cash is covered by guardians instead of converted to debt
+CASE_TIMING 012 3ms PASS class=standard — career effort and raise requests are limited to one use per year
+CASE_TIMING 013 3ms PASS class=standard — central action ledger enforces compound limits atomically and resets by age
+CASE_TIMING 014 3ms PASS class=standard — failed job applications consume the attempt and cannot be rerolled on the same listing
+CASE_TIMING 015 3ms PASS class=standard — wellness actions cannot be spammed into unlimited same-year stat gains
+CASE_TIMING 030 3ms PASS class=standard — delayed NPC consequences cancel when the required relationship no longer exists
+CASE_TIMING 031 3ms PASS class=standard — non-NPC delayed consequences preserve origin age context
+CASE_TIMING 038 3ms PASS class=standard — wealthy NPC parents can leave inheritance directly to the player character
+CASE_TIMING 041 3ms PASS class=standard — wealth-source breakdown reconciles exactly to net worth
+CASE_TIMING 050 3ms PASS class=standard — annual cash shortfalls become structured debt without negative cash
+CASE_TIMING 051 3ms PASS class=standard — repeated severe shortfalls surface financial crisis without silently forcing bankruptcy
+CASE_TIMING 053 3ms PASS class=standard — people folders separate immediate family, extended relatives, and friends without losing real NPC links
+CASE_TIMING 054 3ms PASS class=standard — relationship graph does not invent NPC-to-NPC links between unrelated friends
+CASE_TIMING 055 3ms PASS class=standard — minigame score modifies world outcomes without replacing character progression
+CASE_TIMING 056 3ms PASS class=standard — accessibility minigame skip is seeded, bounded, and improves with character skill
+CASE_TIMING 075 3ms PASS class=standard — v8 migration deterministically initializes persistent NPC life histories without consuming player RNG
+CASE_TIMING 078 3ms PASS class=standard — NPC hidden opinions and emotional memories influence long-term relationship drift
+CASE_TIMING 008 2ms PASS class=standard — death probability rises materially with age at equal health
+CASE_TIMING 017 2ms PASS class=standard — publicity income cannot be rerolled indefinitely in one year
+CASE_TIMING 022 2ms PASS class=standard — annual salary is credited once with predictable baseline expenses
+CASE_TIMING 025 2ms PASS class=standard — biological parenting rejects an underage partner
+CASE_TIMING 032 0ms PASS class=standard — first delayed-consequence content set wires all five story chains
+CASE_TIMING 048 0ms PASS class=standard — mobile money formatting keeps extreme sandbox values compact
+CASE_TIMING 057 0ms PASS class=standard — independent life saves allocate stable non-colliding slot ids
+Special-career world regression: 77/77 checks passed.
+Music career regression: 76/76 checks passed.
+Social-affiliation regression: 23/23 checks passed.
+Modeling career regression: 46/46 checks passed.
+Racing career regression: 86/86 checks passed.
+Coherence regression: 37/37 checks passed.
+Stress / career-freedom regression: 64/64 checks passed.
+Event-target role regression: 4/4 checks passed.
+Commitment exclusivity regression: 10/10 checks passed.
+Career / relationship coherence regression: 19/19 checks passed.
+Special-career influence regression: 25/25 checks passed.
+Contextual info regression: 8/8 checks passed.
+Special-career lifecycle regression: 48/48 checks passed.
+Special-career story regression: 37/37 checks passed.
+Special-career path-story regression: 68/68 checks passed.
+Combat-career world regression: 51/51 checks passed.
+Military-career world regression: 65/65 checks passed.
+Politics-career world regression: 80/80 checks passed.
+Phase 4 closeout regression: 88/88 checks passed.
+Random-event coherence regression: 77/77 checks passed.
+People Threadspace regression: 57/57 checks passed.
+AI interaction testbench regression: 82/82 checks passed.
+Phase 5 estate-planning regression: 46/46 checks passed.
+Phase 5 estate-administration regression: 63/63 checks passed.
+Family continuity regression: 18/18 checks passed.
+Visual identity regression: 12/12 checks passed.
+Family reproduction regression: 52/52 checks passed.
+Secret-code regression: 36/36 checks passed.
+Rewind scaling regression: 16/16 checks passed.
+NPC household coherence regression: 35/35 checks passed.
+NPC health / mortality regression: 18/18 checks passed.
+Age-aware reproduction regression: 22/22 checks passed.
+NPC orientation coherence regression: 55/55 checks passed.
+Collision-aware naming regression: 32/32 checks passed.
+Relationship microcopy regression: 69/69 checks passed.
+Action VFX regression: 58/58 checks passed.
+NPC asset ownership regression: 82/82 checks passed.
+Timeline scaling regression: 11/11 checks passed.
+Family topology regression: 40/40 checks passed.
+Dynasty transition regression: 66/66 checks passed.
+Credit & banking regression: 75/75 checks passed.
+Asset financing regression: 77/77 checks passed.
+Asset delinquency regression: 82/82 checks passed.
+Payment & asset management regression: 81/81 checks passed.
+Personal borrowing & recovery regression: 31/31 checks passed.
+Household finance & crisis regression: 21/21 checks passed.
+Phase 7A persistent consequence regression: 36/36 checks passed.
+Phase 7B1 systemic story regression: 33/33 checks passed.
+Phase 7B2 ownership/work regression: 35/35 checks passed.
+Phase 7B3 special-career echo regression: 36/36 checks passed.
+Phase 7C world-condition regression: 42/42 checks passed.
+Phase 8A setting-foundation regression: 25/25 checks passed.
+Phase 8B town-map regression: 46/46 checks passed.
+Phase 8C institution-routing regression: 42/42 checks passed.
+Phase 8D player-profile/inventory regression: 63/63 checks passed.
+Threadspace load recovery regression: 10/10 checks passed.
+Phase 8E closeout regression: 34/34 checks passed.
+Phase 9A NPC-preference regression: 45/45 checks passed.
+Phase 9B shared-experience regression: 53/53 checks passed.
+Phase 9C youth-social regression: 40/40 checks passed.
+Phase 9D dating/momentum regression: 61/61 checks passed.
+Phase 9E real-gifts regression: 60/60 checks passed.
+Phase 9F cross-world chemistry regression: 43/43 checks passed.
+Phase 9G Shared Lives closeout regression: 41/41 checks passed.
+Phase 10A Residential Life regression: 90/90 checks passed.
+Phase 10B Working Everthread regression: 51/51 checks passed.
+Phase 10C Generational Place Memory regression: 50/50 checks passed.
+Phase 10D Living Map Projection regression: 55/55 checks passed.
+Pre-Phase 10E player-UX regression: 20/20 checks passed.
+Phase 10E Program Closeout regression: 103/103 checks passed.
+UI iconography & theme reactivity regression: 183/183 checks passed.
+Character Visual regression: 76/76 checks passed.
+Family Visual Inheritance regression: 27/27 checks passed.
+Progressive-disclosure UX regression: 25/25 checks passed.
+Yuki Threadroom art regression: 19/19 checks passed.
+Location scene first-slice regression: 205/205 checks passed.
+Everthread registered regression timing [standard] — 77 suites in 11315 ms
+SUITE_TIMING core-regression-suite-standard 2609ms PASSED checks=81 class=standard — Everthread regression suite (standard lane)
+SUITE_TIMING dynasty-transition 921ms PASSED checks=66 class=standard — Dynasty transition regression
+SUITE_TIMING location-scene 580ms PASSED checks=205 class=standard — Location scene first-slice regression
+SUITE_TIMING collision-aware-naming 573ms PASSED checks=32 class=standard — Collision-aware naming regression
+SUITE_TIMING npc-asset-ownership 377ms PASSED checks=82 class=standard — NPC asset ownership regression
+SUITE_TIMING phase-10-aresidential-life 372ms PASSED checks=90 class=standard — Phase 10A Residential Life regression
+SUITE_TIMING estate-administration 363ms PASSED checks=63 class=standard — Phase 5 estate-administration regression
+SUITE_TIMING npc-orientation-coherence 356ms PASSED checks=55 class=standard — NPC orientation coherence regression
+SUITE_TIMING special-career-path-story 328ms PASSED checks=68 class=standard — Special-career path-story regression
+SUITE_TIMING military-career-world 303ms PASSED checks=65 class=standard — Military-career world regression
+SUITE_TIMING politics-career-world 231ms PASSED checks=80 class=standard — Politics-career world regression
+SUITE_TIMING phase-4-closeout 217ms PASSED checks=88 class=standard — Phase 4 closeout regression
+SUITE_TIMING special-career-influence 209ms PASSED checks=25 class=standard — Special-career influence regression
+SUITE_TIMING persistent-consequence 197ms PASSED checks=36 class=standard — Phase 7A persistent consequence regression
+SUITE_TIMING estate-planning 189ms PASSED checks=46 class=standard — Phase 5 estate-planning regression
+SUITE_TIMING racing-career 177ms PASSED checks=86 class=standard — Racing career regression
+SUITE_TIMING phase-10-eprogram-closeout 168ms PASSED checks=103 class=standard — Phase 10E Program Closeout regression
+SUITE_TIMING phase-9-fcross-world-chemistry 138ms PASSED checks=43 class=standard — Phase 9F cross-world chemistry regression
+SUITE_TIMING phase-9-ereal-gifts 135ms PASSED checks=60 class=standard — Phase 9E real-gifts regression
+SUITE_TIMING phase-10-cgenerational-place-memory 131ms PASSED checks=50 class=standard — Phase 10C Generational Place Memory regression
+SUITE_TIMING special-career-world 130ms PASSED checks=77 class=standard — Special-career world regression
+SUITE_TIMING phase-9-ddating-momentum 129ms PASSED checks=61 class=standard — Phase 9D dating/momentum regression
+SUITE_TIMING family-topology 128ms PASSED checks=40 class=standard — Family topology regression
+SUITE_TIMING combat-career-world 120ms PASSED checks=51 class=standard — Combat-career world regression
+SUITE_TIMING phase-9-anpc-preferences 113ms PASSED checks=45 class=standard — Phase 9A NPC-preference regression
+SUITE_TIMING phase-7-b-3-special-career-echo 111ms PASSED checks=36 class=standard — Phase 7B3 special-career echo regression
+SUITE_TIMING phase-9-gshared-lives-closeout 110ms PASSED checks=41 class=standard — Phase 9G Shared Lives closeout regression
+SUITE_TIMING special-career-lifecycle 107ms PASSED checks=48 class=standard — Special-career lifecycle regression
+SUITE_TIMING phase-8-dplayer-profile-inventory 100ms PASSED checks=63 class=standard — Phase 8D player-profile/inventory regression
+SUITE_TIMING rewind-scaling 95ms PASSED checks=16 class=standard — Rewind scaling regression
+SUITE_TIMING special-career-story 88ms PASSED checks=37 class=standard — Special-career story regression
+SUITE_TIMING age-aware-reproduction 85ms PASSED checks=22 class=standard — Age-aware reproduction regression
+SUITE_TIMING music-career 84ms PASSED checks=76 class=standard — Music career regression
+SUITE_TIMING ai-interaction 76ms PASSED checks=82 class=standard — AI interaction testbench regression
+SUITE_TIMING family-visual-inheritance 73ms PASSED checks=27 class=standard — Family Visual Inheritance regression
+SUITE_TIMING phase-7-b-2-ownership-work 71ms PASSED checks=35 class=standard — Phase 7B2 ownership/work regression
+SUITE_TIMING modeling-career 66ms PASSED checks=46 class=standard — Modeling career regression
+SUITE_TIMING phase-10-dliving-map-projection 65ms PASSED checks=55 class=standard — Phase 10D Living Map Projection regression
+SUITE_TIMING payment-asset-management 61ms PASSED checks=81 class=standard — Payment & asset management regression
+SUITE_TIMING progressive-disclosure 61ms PASSED checks=25 class=standard — Progressive-disclosure UX regression
+SUITE_TIMING stress-career 61ms PASSED checks=64 class=standard — Stress / career-freedom regression
+SUITE_TIMING phase-9-bshared-experience 52ms PASSED checks=53 class=standard — Phase 9B shared-experience regression
+SUITE_TIMING asset-delinquency 46ms PASSED checks=82 class=standard — Asset delinquency regression
+SUITE_TIMING asset-financing 45ms PASSED checks=77 class=standard — Asset financing regression
+SUITE_TIMING phase-9-cyouth-social 44ms PASSED checks=40 class=standard — Phase 9C youth-social regression
+SUITE_TIMING phase-7-cworld-condition 42ms PASSED checks=42 class=standard — Phase 7C world-condition regression
+SUITE_TIMING npc-health-mortality 41ms PASSED checks=18 class=standard — NPC health / mortality regression
+SUITE_TIMING phase-10-bworking-everthread 41ms PASSED checks=51 class=standard — Phase 10B Working Everthread regression
+SUITE_TIMING event-coherence 40ms PASSED checks=77 class=standard — Random-event coherence regression
+SUITE_TIMING people-workspace 40ms PASSED checks=57 class=standard — People Threadspace regression
+SUITE_TIMING family-reproduction 36ms PASSED checks=52 class=standard — Family reproduction regression
+SUITE_TIMING relationship-microcopy 35ms PASSED checks=69 class=standard — Relationship microcopy regression
+SUITE_TIMING npc-household-coherence 33ms PASSED checks=35 class=standard — NPC household coherence regression
+SUITE_TIMING phase-7-bsystemic-story 31ms PASSED checks=33 class=standard — Phase 7B1 systemic story regression
+SUITE_TIMING credit-banking 30ms PASSED checks=75 class=standard — Credit & banking regression
+SUITE_TIMING secret-code 23ms PASSED checks=36 class=standard — Secret-code regression
+SUITE_TIMING contextual-info 22ms PASSED checks=8 class=standard — Contextual info regression
+SUITE_TIMING phase-8-ecloseout 20ms PASSED checks=34 class=standard — Phase 8E closeout regression
+SUITE_TIMING coherence 18ms PASSED checks=37 class=standard — Coherence regression
+SUITE_TIMING family-continuity 17ms PASSED checks=18 class=standard — Family continuity regression
+SUITE_TIMING household-finance 17ms PASSED checks=21 class=standard — Household finance & crisis regression
+SUITE_TIMING character-visual 16ms PASSED checks=76 class=standard — Character Visual regression
+SUITE_TIMING commitment-exclusivity 15ms PASSED checks=10 class=standard — Commitment exclusivity regression
+SUITE_TIMING personal-borrowing 13ms PASSED checks=31 class=standard — Personal borrowing & recovery regression
+SUITE_TIMING phase-8-asetting-foundation 13ms PASSED checks=25 class=standard — Phase 8A setting-foundation regression
+SUITE_TIMING pre-phase-10-eplayer-ux 12ms PASSED checks=20 class=standard — Pre-Phase 10E player-UX regression
+SUITE_TIMING career-relationship-coherence 11ms PASSED checks=19 class=standard — Career / relationship coherence regression
+SUITE_TIMING social-affiliation 11ms PASSED checks=23 class=standard — Social-affiliation regression
+SUITE_TIMING action-vfx 10ms PASSED checks=58 class=standard — Action VFX regression
+SUITE_TIMING phase-8-btown-map 5ms PASSED checks=46 class=standard — Phase 8B town-map regression
+SUITE_TIMING event-target 4ms PASSED checks=4 class=standard — Event-target role regression
+SUITE_TIMING phase-8-cinstitution-routing 4ms PASSED checks=42 class=standard — Phase 8C institution-routing regression
+SUITE_TIMING visual-identity 4ms PASSED checks=12 class=standard — Visual identity regression
+SUITE_TIMING ui-iconography 3ms PASSED checks=183 class=standard — UI iconography & theme reactivity regression
+SUITE_TIMING yuki-threadroom-art 3ms PASSED checks=19 class=standard — Yuki Threadroom art regression
+SUITE_TIMING threadspace-load-recovery 1ms PASSED checks=10 class=standard — Threadspace load recovery regression
+SUITE_TIMING timeline-scaling 0ms PASSED checks=11 class=standard — Timeline scaling regression
+SHARD_TIMING standard 11687ms PASS — Standard regression lane
+--- Heavy regression lane output ---
+Everthread registered regression lane — heavy
+Everthread regression suite — 1 passed, 0 failed
+PASS  multi-life integration smoke run completes without state anomalies
+Everthread base-case timing — 1 cases in 12345 ms
+CASE_TIMING 082 12345ms PASS class=heavy — multi-life integration smoke run completes without state anomalies
+Integrated long-life regression: 105/105 checks passed.
+Everthread registered regression timing [heavy] — 2 suites in 14999 ms
+SUITE_TIMING core-regression-suite-heavy 12345ms PASSED checks=1 class=heavy — Everthread regression suite (heavy lane)
+SUITE_TIMING integrated-long-life 2653ms PASSED checks=105 class=heavy — Integrated long-life regression
+SHARD_TIMING heavy 15376ms PASS — Heavy regression lane
+SHARD_COVERAGE core=81+1/82 specialized=76+1/77 overlap=0
+New Life responsive layout regression: 8/8 checks passed.
+Activity-specific minigame regression: 19/19 checks passed.
+Activity feedback reporting regression: 20/20 checks passed.
+Feedback central inbox regression: 23/23 checks passed.
+Everthread regression-wall timing — 5/5 stages completed in 15833 ms
+WALL_TIMING registered-regressions 15382ms PASS — Registered regression suites
+WALL_TIMING new-life-layout 57ms PASS — New Life responsive layout
+WALL_TIMING activity-minigames 93ms PASS — Activity-specific minigames
+WALL_TIMING feedback-reporting 151ms PASS — Activity feedback reporting
+WALL_TIMING feedback-remote 149ms PASS — Feedback central inbox
+
+=== Everthread Preflight: Production Build ===
+$ npm run build
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> everthread-life-unwritten@0.12.0 build
+> vite build && node scripts/write-build-info.mjs dist/build-info.json
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 241 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   0.92 kB │ gzip:   0.48 kB
+dist/assets/everthread-town-map-ojgGjwhN.png    405.17 kB
+dist/assets/PlayerProfileSheet-lf06dIx_.css       3.82 kB │ gzip:   1.01 kB
+dist/assets/TownMapScreen-VnWhYgyv.css           24.57 kB │ gzip:   4.70 kB
+dist/assets/PeopleScreen-Cw-LeW8U.css            25.72 kB │ gzip:   5.35 kB
+dist/assets/index-DGSvwHgY.css                   90.78 kB │ gzip:  16.77 kB
+dist/assets/YouthSocialSystem-FQ2oXgNH.js         4.03 kB │ gzip:   1.58 kB │ map:     9.96 kB
+dist/assets/PlayerProfileSheet-Be0MMOMG.js       10.20 kB │ gzip:   2.95 kB │ map:    22.96 kB
+dist/assets/react-DPIr46qh.js                    11.92 kB │ gzip:   4.23 kB │ map:    44.70 kB
+dist/assets/PeopleScreen-D1HfThGm.js             56.71 kB │ gzip:  17.10 kB │ map:   166.20 kB
+dist/assets/TownMapScreen-DXgrgaAu.js           130.88 kB │ gzip:  30.52 kB │ map:   310.14 kB
+dist/assets/characterArtPack-Dt5rsEcV.js        971.11 kB │ gzip:  69.18 kB │ map: 1,144.78 kB
+dist/assets/index-IjGRaH2o.js                 1,375.95 kB │ gzip: 384.60 kB │ map: 3,842.06 kB
+
+(!) Some chunks are larger than 700 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.00s
+Everthread build info: 0.12.0 · cd6d115c0db5b6a1513e5209976dafb999797c5a
+
+EVERTHREAD PREFLIGHT GREEN — 6/6 stages passed.
+Report: /workspace/scratch/1f0fc0492cf2/everthread/.everthread/preflight-report.json
+Verified commit/baseline: cd6d115c0db5b6a1513e5209976dafb999797c5a
