@@ -1,3 +1,24 @@
+## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18
+
+### Added / changed
+
+- Added **Everthread College as dedicated Location #15** in Run #237, then applied Mavyy's direct player-review revision in Run #238: the kiosk is the single Admissions surface, the Library owns Study Harder + real current-classmate socializing + persistent College groups, and the former duplicate Admissions Office is now **Residence Life**.
+- College remains an adapter over established EducationSystem, SchoolWorldSystem, Shared Experience/Relationship, CareerSystem/WorkplaceSystem, action-economy, and map authorities. University/Library/tutoring workplace locality uses the already-certified conditional **Your Workplace** layer rather than a second employment screen/state.
+- Added optional **campus dorm residency** as durable `ResidentialLifeSystem` state. It is not a property, rental lease, mortgage, financing product, cash balance, or debt. Owned homes remain assets; Living Map derives College as the current home through `playerResidenceProjection` while owned Threadwell property can remain separately visible.
+- Education lifecycle invalidates dorm eligibility on graduation/dropout; choosing an owned property as home exits campus housing through the Property/ResidentialLife seam; incarceration retains higher-priority institutional residence; descendant continuation does not inherit a predecessor's dorm assignment.
+- The durable residence assignment legitimately advances save schema **17 → 18**. Migration is deterministic/idempotent, initializes empty campus-housing state for old saves, and consumes no gameplay RNG or runtime IDs. Rewind, save/load/import/export, old saves, enrollment endings, property transitions, and one-current-residence invariants are regression-covered.
+- The age-18 financial-independence event wording was made residence-neutral so a campus resident is not falsely described as living in the family household; choice IDs and finance behavior remain unchanged.
+- Mavyy completed direct Android/player acceptance after Run #238 and confirmed the revised College works. Location #15's tactile/device gate is closed.
+
+### Certification
+
+- Run #237 (`35397095829`, job `105768329701`) certified initial College expanded source `598323a465d1d27c5b15a95558ed257899ba46dd` from wrapper `6d0fd1eecf5b29a8a1660efcc0639e413af44b3b`.
+- Run #238 (`35403599984`, job `105788599762`) certified the campus-life/dorm revision on expanded source `1f3786df83a37a4756a2da670566b0ceeb5fc2b3` from wrapper `9b4fde8a1010a4f22efc01b9b5f11b1908cbd03a`. Persistent diff from Run #237 is exactly **58 files** (1 added, 57 modified), zero deletions.
+- Location Scene passed **205/205**; Residential Life **90/90**; Living Map Projection **55/55**; Working Everthread **51/51**; People/Threadspace **57/57**; Cross-World Chemistry **43/43**; Ownership/Work **35/35**; Town Map **46/46**; Institution Routing **42/42**; Commitment Exclusivity **10/10**; Integrated Long-Life **105/105**.
+- QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`. Canonical Run #238 preflight passed **6/6**; production transformed **239 modules**.
+- Certified source SHA-256 `a06549bfe0f53d4749128f8d34d2f32346ce7c61649dfe5a49a536c7b48aeeaa`; dependency SHA-256 `d75d57d2143b206b7371fa404027476d85e690579b2582334478e6be0c84b713`; lock SHA-256 `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10571625481`; Pages artifact `10572155105`; deployment Green.
+- Certified scene totals are now **15 scenes / 46 semantic groups / 89 scene action bindings / 28 selected Astra runtime assets**. After this documentation-only synchronization certifies, Location #16 remains deliberately unchosen; **10** Astra-backed source scenes remain.
+
 ## Loomworks Business District device acceptance + physical workplace routing closeout — CI Green Runs #234–#235 — 2026-09-18
 
 ### Added / changed

@@ -29,14 +29,14 @@ These source counts are **not** runtime content counts. Only assets explicitly c
 - Location #12: **Everthread City Hall** (`everthread-city-hall`) — Run #230
 - Location #13: **Everthread Courthouse** (`everthread-courthouse`) — Run #232
 - Location #14: **Loomworks Business District** (`loomworks-business-district`) — Run #234; physical-workplace correction Run #235
+- Location #15: **Everthread College** (`everthread-college`) — Run #237; campus-life/dorm revision Run #238
 
 ## Remaining Astra-backed candidates
 
-Exactly **11** source scenes remain unshipped. Do not preselect one from this list; perform a fresh owner/source/test audit against the newest certified repository first.
+Exactly **10** source scenes remain unshipped. Do not preselect one from this list; perform a fresh owner/source/test audit against the newest certified repository first.
 
 - `blackline-freight-yard`
 - `everthread-air-terminal`
-- `everthread-college`
 - `everthread-correctional`
 - `everthread-defense-garrison`
 - `everthread-general-hospital`
@@ -46,4 +46,4 @@ Exactly **11** source scenes remain unshipped. Do not preselect one from this li
 - `public-safety-center`
 - `silverframe-studios`
 
-The original action map for any remaining candidate is advisory. If it requests gameplay Everthread does not currently own, narrow or reinterpret the scene around real owners rather than inventing a parallel system. Hearthline (no fake tenant lease-signing), Nightjar (no fake food/nourishment economy), Pulseworks (no scene-local combat challenge/lifecycle authority), School (no duplicate enrollment/peer truth or College locality leakage), Market (no hunger/consumable-grocery/pantry-budget shadow state), City Hall (no municipal ledger/permit-fee/election-scheduler or duplicate company authority), Courthouse (no shadow docket/lawyer inventory/sentencing ledger/legal wallet or prison/appeal leakage), and Loomworks (employment/application hub only; real jobs use conditional workplace UI at suitable real venues, unmapped work stays district-level) are precedent.
+The original action map for any remaining candidate is advisory. If it requests gameplay Everthread does not currently own, narrow or reinterpret the scene around real owners rather than inventing a parallel system. Hearthline (no fake tenant lease-signing), Nightjar (no fake food/nourishment economy), Pulseworks (no scene-local combat challenge/lifecycle authority), School (no duplicate enrollment/peer truth or College locality leakage), Market (no hunger/consumable-grocery/pantry-budget shadow state), City Hall (no municipal ledger/permit-fee/election-scheduler or duplicate company authority), Courthouse (no shadow docket/lawyer inventory/sentencing ledger/legal wallet or prison/appeal leakage), Loomworks (employment/application hub only; real jobs use conditional workplace UI at suitable real venues, unmapped work stays district-level), and College (one admissions surface; Library reuses real classmates/groups; optional dorm residency belongs to ResidentialLife rather than Property/rent/loan truth) are precedent.

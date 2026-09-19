@@ -1,12 +1,12 @@
 # Everthread Astra location implementation playbook
 
-This is the method that produced the certified location-scene chain through Nightjar Diner. It exists so a fresh chat can continue without reverse-engineering eight prior slices or accidentally creating parallel truth.
+This is the method that produced the certified location-scene chain through Everthread College Location #15. It exists so a fresh chat can continue without reverse-engineering eight prior slices or accidentally creating parallel truth.
 
 ## 1. Start from certification, never memory
 
 Before choosing a location, identify the newest genuinely certified expanded source and restore/read that source. Read `CURRENT_STATE.md`, `ROADMAP.md`, `DEVELOPMENT.md`, recent `CHANGELOG.md`, the latest successful GitHub Actions run, and the current location-scene source/tests.
 
-At this handoff checkpoint the certified gameplay/source is Run #212 / `7dde94325f56a2f44172b5de65709700b5ad73ea`, but a future chat must verify whether a newer certified expanded source exists and use it instead.
+At this handoff checkpoint the certified gameplay/source is Run #238 / `1f3786df83a37a4756a2da670566b0ceeb5fc2b3`, save schema 18, but a future chat must still verify whether a newer certified expanded source exists and use it instead.
 
 Do not begin implementation from an upload wrapper commit, an older artifact, or a local candidate directory.
 
@@ -28,6 +28,7 @@ Examples already established:
 - Hearthline artwork suggested leasing breadth, but certified Everthread did not own tenant lease-signing; the scene reused real property/mortgage/residence/landlord owners instead.
 - Nightjar's broad counter concept was narrowed to six real Nightjar personal items because Everthread did not own a food/nourishment economy.
 - Crossroads collectible browsing shows a read-only base estimate and never consumes RNG; the existing `PropertySystem` purchase action remains the only place that rolls price/authenticity/condition/value.
+- College initially duplicated Admissions across two hotspots; player review consolidated admission at the kiosk, made the Library a real study/social/group surface, and repurposed the office as Residence Life. The dorm required legitimate durable state, so `ResidentialLifeSystem` owns one schema-18 campus-housing assignment while Education, Property, finance, SchoolWorld, and relationships keep their existing authority. Do not represent dorm residency as a property, rental loan, tuition duplicate, or scene-local flag.
 
 ## 3. Runtime art import is intentionally tiny
 

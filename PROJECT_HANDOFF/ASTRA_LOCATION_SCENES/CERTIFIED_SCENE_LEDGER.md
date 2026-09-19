@@ -18,6 +18,7 @@ These are the Astra-backed scenes already integrated into runtime. Do not re-imp
 | 12 | Everthread City Hall | #230 | `f1c211013444c122f62553178e1fe23502db79fc` | `assets/backgrounds/everthread-city-hall.png` · `ca1cb5e57fec…` | `assets/props/records-desk.png` · `28451aee2ec0…` |
 | 13 | Everthread Courthouse | #232 | `1ba66017ccbb21211e5c307d630ef72cf1e20346` | `assets/backgrounds/everthread-courthouse.png` · `a39e8ea80321…` | `assets/props/records-desk.png` · `28451aee2ec0…` (reused) |
 | 14 | Loomworks Business District | #234 + #235 correction | `a1cfded8bc8453e16af955f3297bd2b8285ad3bf` | `assets/backgrounds/loomworks-business-district.png` · `cccebd85f2b7…` | `assets/props/work-desk.png` · `1bc8355394e8…` |
+| 15 | Everthread College | #237 + #238 revision | `1f3786df83a37a4756a2da670566b0ceeb5fc2b3` | `assets/backgrounds/everthread-college.png` · `343f7132849a…` | `assets/props/service-kiosk.png` · `f2c1753dab0e…` (reused) |
 
 Run #210 is a cross-scene dating-navigation hotfix rather than a new location. It made accepted `relationship.romance.pendingDate` plans consumable by every compatible scene action through declarative `companionPlan` metadata. Nightjar immediately reuses that contract for `date.diner`.
 
@@ -37,4 +38,8 @@ Run #234 adds Loomworks Business District as the employment/application and comp
 The workplace-location catalogue is presentation/routing metadata, not durable employment truth. Existing save keys are not rewritten, location projection is deterministic/RNG-neutral, and jobs without a suitable implemented venue remain district-level rather than fabricating Loomworks as a workplace. This actual-location workplace contract is now precedent for future scenes.
 
 After Run #235 the certified scene totals are **14 / 43 / 83 / 27** (scenes / semantic groups / action bindings / selected Astra runtime assets).
+
+Run #237 adds Everthread College over existing Education/SchoolWorld/Working owners. Run #238 applies the accepted campus-life revision: Admissions is consolidated at the kiosk, Library routes study + real-classmate socializing + persistent groups, and Residence Life adds optional durable campus housing owned by ResidentialLife. Campus housing is not a property, rent, mortgage, financing, or debt record; schema 18 migration initializes old saves with no assignment and consumes no gameplay RNG/runtime IDs.
+
+After Run #238 the certified scene totals are **15 / 46 / 89 / 28** (scenes / semantic groups / action bindings / selected Astra runtime assets).
 
