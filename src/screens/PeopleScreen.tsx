@@ -1,6 +1,7 @@
 import './NpcProfile.css';
 import { relationshipTypeLabel } from '../core/familyRelations';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { EngineResult, GameState } from '../types/game';
 import { BottomSheet } from '../components/BottomSheet';
 import { PeopleWorkspace } from '../components/PeopleWorkspace';
@@ -85,7 +86,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
       <div><p className="eyebrow">{relationshipTypeLabel(selected.type)}</p><h3>{npc.firstName}</h3><p className="muted">Age {npc.age} · {npc.alive?(careerProjection?.career??lifeSummary?.career??'Getting to know each other'):'Remembered'}</p>{portraitMode!=='portrait'&&<small>Get to know them to reveal their portrait.</small>}</div>
     </div>
     <div className="npc-relationship-summary"><span>Relationship <strong>{Math.round(selected.score)}</strong></span><span>Compatibility <strong>{Math.round(selected.compatibility)}</strong></span></div>
-    <nav className="npc-profile-nav" aria-label="Profile sections">{(['interact','about','memories'] as const).map(view=><button type="button" key={view} aria-pressed={profileView===view} onClick={()=>{setProfileView(view);setGiftPickerOpen(false);}}>{view==='interact'?'Interact':view==='about'?'About':'Memories'}</button>)}</nav>
+    <nav className="npc-profile-nav" aria-label="Profile sections">{(['interact','about','memories'] as const).map(view=><button type="button" key={view} aria-pressed={profileView===view} onClick={event=>{setProfileView(view);setGiftPickerOpen(false);const body=event.currentTarget.closest('.sheet-body');if(body)body.scrollTop=0;}}>{view==='interact'?'Interact':view==='about'?'About':'Memories'}</button>)}</nav>
     {profileView==='interact'&&<section className="npc-profile-panel" aria-label="Interactions">
     <div className="action-grid">{['conversation','compliment','spend_time'].map(a=>{const gate=actionGateStatus(state,[{policy:'social.npc.total',target:npc.id},{policy:'social.npc.action',target:`${npc.id}:${a}`}]);return <button key={a} disabled={!npc.alive||!gate.allowed} title={!npc.alive?'This person has passed away.':gate.message} onClick={()=>feedback(gameEngine.interactWithCharacter(npc.id,a))}>{a==='conversation'?'Talk':a==='spend_time'?'Spend time':'Compliment'}{npc.alive&&!gate.allowed&&<small>Used this year</small>}</button>;})}</div>
     {!npc.alive&&<p className="muted">Their story lives on in your memories.</p>}
@@ -141,6 +142,7 @@ export function PeopleScreen({state,onResult,onOpenPlayerProfile}:{state:GameSta
   return <main className="screen people-workspace-screen">
     <PeopleWorkspace state={state} revision={gameEngine.getRevision()} onSelect={id=>{setSelectedNpcId(id);setProfileView('interact');setGiftPickerOpen(false);setShowYukiDetails(false);}} onSelectPlayer={onOpenPlayerProfile} floatingActions={floatingActions}/>
     {selected&&npc&&selectedIsSecretYuki&&!showYukiDetails&&<YukiThreadroom state={state} npc={npc} relationship={selected} onClose={()=>{setSelectedNpcId(undefined);setGiftPickerOpen(false);}} onResult={onResult} onOpenDetails={()=>setShowYukiDetails(true)}/>}
-    {personSheet}
+    {/* Escape Threadspace's fixed, clipped stacking context so the modal covers navigation. */}
+    {typeof document==='undefined'?personSheet:createPortal(personSheet,document.body)}
   </main>;
 }

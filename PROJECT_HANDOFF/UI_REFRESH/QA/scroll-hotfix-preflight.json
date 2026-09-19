@@ -1,0 +1,189 @@
+{
+  "format": 1,
+  "product": "Everthread",
+  "mode": "standard",
+  "status": "passed",
+  "packageVersion": "0.12.0",
+  "commit": "8a560ee15514425a85cca7b5973f89df246ffe8e",
+  "sourceState": {
+    "commit": "8a560ee15514425a85cca7b5973f89df246ffe8e",
+    "dirty": true,
+    "statusSha256": "ef6b125148a233ae4b5c36cc413fcbd9c9a42f3f735674bc0f7f7269fbe5be5a",
+    "cacheReusable": false
+  },
+  "nodeVersion": "v24.19.0",
+  "platform": "linux-x64",
+  "selectedStage": null,
+  "startedAt": "2026-09-19T05:49:20.380Z",
+  "finishedAt": "2026-09-19T05:49:57.325Z",
+  "durationMs": 36945,
+  "failedStage": null,
+  "stages": [
+    {
+      "id": "typecheck-engine",
+      "label": "Engine TypeScript",
+      "command": "npm run typecheck:engine",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-19T05:49:20.779Z",
+      "finishedAt": "2026-09-19T05:49:23.495Z",
+      "durationMs": 2716,
+      "inputs": [
+        {
+          "path": "package.json",
+          "sha256": "62717d07b0f02bb5a09f670fbf1879f5c81d670625fcfecfa999fc47f23218a8"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886"
+        },
+        {
+          "path": "tsconfig.engine.json",
+          "sha256": "1bddb09f763b0ce13ad2ddd9e0709de2b83931bd9fb46a971b1395fe1053cc76"
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "typecheck-tests",
+      "label": "Test TypeScript",
+      "command": "npm run typecheck:tests",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-19T05:49:23.496Z",
+      "finishedAt": "2026-09-19T05:49:27.683Z",
+      "durationMs": 4187,
+      "inputs": [
+        {
+          "path": "package.json",
+          "sha256": "62717d07b0f02bb5a09f670fbf1879f5c81d670625fcfecfa999fc47f23218a8"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886"
+        },
+        {
+          "path": "tsconfig.tests.json",
+          "sha256": "3086734e941f4dd0da29088ca80f58ec644305419144b0ada69c054b0116ae57"
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "typecheck-app",
+      "label": "App TypeScript",
+      "command": "npm run typecheck:app",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-19T05:49:27.684Z",
+      "finishedAt": "2026-09-19T05:49:35.089Z",
+      "durationMs": 7405,
+      "inputs": [
+        {
+          "path": "package.json",
+          "sha256": "62717d07b0f02bb5a09f670fbf1879f5c81d670625fcfecfa999fc47f23218a8"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886"
+        },
+        {
+          "path": "tsconfig.app.json",
+          "sha256": "49aaeb74855b24441bc2901d8c3fd574f98aeff116f57a126d4a8ccd8ef1a4c4"
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "typecheck-node",
+      "label": "Node / Vite Config TypeScript",
+      "command": "npm run typecheck:node",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-19T05:49:35.089Z",
+      "finishedAt": "2026-09-19T05:49:35.758Z",
+      "durationMs": 669,
+      "inputs": [
+        {
+          "path": "package.json",
+          "sha256": "62717d07b0f02bb5a09f670fbf1879f5c81d670625fcfecfa999fc47f23218a8"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886"
+        },
+        {
+          "path": "tsconfig.node.json",
+          "sha256": "f08d33457fe4c71b2cd0aac534bf59acd68c769447eb175ef3d471ae12de1a14"
+        },
+        {
+          "path": "vite.config.ts",
+          "sha256": "a69693592a4cae103b224c0a4a97f1099cb3282b51ca31644dcacb1171ba226a"
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "regressions",
+      "label": "Complete Regression Wall",
+      "command": "npm test",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-19T05:49:35.759Z",
+      "finishedAt": "2026-09-19T05:49:53.147Z",
+      "durationMs": 17388,
+      "inputs": [
+        {
+          "path": "package.json",
+          "sha256": "62717d07b0f02bb5a09f670fbf1879f5c81d670625fcfecfa999fc47f23218a8"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886"
+        },
+        {
+          "path": "tsconfig.tests.json",
+          "sha256": "3086734e941f4dd0da29088ca80f58ec644305419144b0ada69c054b0116ae57"
+        }
+      ],
+      "error": null
+    },
+    {
+      "id": "production-build",
+      "label": "Production Build",
+      "command": "npm run build",
+      "status": "passed",
+      "exitCode": 0,
+      "startedAt": "2026-09-19T05:49:53.148Z",
+      "finishedAt": "2026-09-19T05:49:57.324Z",
+      "durationMs": 4176,
+      "inputs": [
+        {
+          "path": "package.json",
+          "sha256": "62717d07b0f02bb5a09f670fbf1879f5c81d670625fcfecfa999fc47f23218a8"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886"
+        },
+        {
+          "path": "tsconfig.json",
+          "sha256": "770b4140bbb581e2dfd9ea9946ffc9c75a1d86ba7d2db5f77c83e37cbdf9d808"
+        },
+        {
+          "path": "tsconfig.app.json",
+          "sha256": "49aaeb74855b24441bc2901d8c3fd574f98aeff116f57a126d4a8ccd8ef1a4c4"
+        },
+        {
+          "path": "tsconfig.node.json",
+          "sha256": "f08d33457fe4c71b2cd0aac534bf59acd68c769447eb175ef3d471ae12de1a14"
+        },
+        {
+          "path": "vite.config.ts",
+          "sha256": "a69693592a4cae103b224c0a4a97f1099cb3282b51ca31644dcacb1171ba226a"
+        }
+      ],
+      "error": null
+    }
+  ]
+}

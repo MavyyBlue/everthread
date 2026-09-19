@@ -1,5 +1,10 @@
 # Everthread — Roadmap
 
+## Active correction — NPC profile scroll overlap — 2026-09-19
+
+Run #240 (`35424360146`) certified the UI refresh on expanded source `8a560ee15514425a85cca7b5973f89df246ffe8e`. Mavyy's Android feedback identified NPC profile content covered by bottom navigation; player acceptance is therefore still open. This bounded hotfix moves the ordinary profile sheet to document.body via the existing React portal pattern and resets section scroll on navigation. Schedule a Date is retained under Interact → Dating for eligible NPCs; the parent in the report correctly has no dating action. See `PROJECT_HANDOFF/UI_REFRESH/SCROLL_HOTFIX.md` and its QA evidence. This correction is not yet CI-certified or player-accepted. Location #16 remains paused. Earlier pending-refresh/Run #239 labels below are historical and superseded by this status.
+
+
 ## Active candidate — Life journal and NPC profile refresh — 2026-09-19
 
 Mavyy explicitly prioritized a sleeker player-facing UI over selecting Location #16. This presentation-only candidate makes **Your Life Timeline** the Life page focal point while retaining the player profile, four primary stats, finances/banking and Persistent Worlds. Ordinary NPC profiles use Interact / About / Memories with expandable action groups. No new gameplay, persistence, RNG, location, or character-portrait authority is introduced; schema remains 18.

@@ -1,3 +1,10 @@
+## Pending certification — NPC profile scroll hotfix — 2026-09-19
+
+- Corrected the ordinary NPC sheet's DOM placement: a body-level React portal escapes the clipped People screen stacking context so bottom navigation cannot cover the sheet footer.
+- Switching Interact / About / Memories resets the profile scroll to its top.
+- Verified retained Schedule a Date routing and eligibility, including parent exclusion, eligible-friend invitations and accepted plans. No dating, save or simulation behavior changed.
+- Baseline: certified UI refresh Run #240 / `8a560ee15514425a85cca7b5973f89df246ffe8e`. See `PROJECT_HANDOFF/UI_REFRESH/SCROLL_HOTFIX.md` for evidence and remaining device acceptance.
+
 ## Pending certification — Life journal + NPC profile refresh — 2026-09-19
 
 - Made Your Life Timeline the Life page headline and primary reading surface, with a compact linked player identity, primary stats, expandable Life & finances, and Persistent Worlds summary.
