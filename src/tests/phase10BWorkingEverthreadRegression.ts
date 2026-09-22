@@ -1,6 +1,7 @@
 import { enforceStateInvariants, validateState } from '../core/invariants';
 import { CURRENT_SAVE_VERSION } from '../core/saveVersion';
 import { EVERTHREAD_CITY, EVERTHREAD_COUNTRY_ID } from '../data/countries';
+import { workplaceVenuesForIndustry } from '../data/workplaceLocations';
 import { exportSave, importSave } from '../services/SaveSystem';
 import { rewindToAge } from '../systems/AgingSystem';
 import { startBusiness } from '../systems/BusinessSystem';
@@ -97,6 +98,14 @@ export function runPhase10BWorkingEverthreadRegression(){
 
   const deterministicA=state('10b-determinism');deterministicA.socialWorlds.push(schoolWorld('det-school','secondary'),workWorld('det-work','Technology'));deterministicA.businesses.push(businessFixture({id:'det-company',industryId:'logistics'}));const deterministicB=clone(deterministicA);verify(JSON.stringify(workingEverthreadProjection(deterministicA))===JSON.stringify(workingEverthreadProjection(deterministicB))&&JSON.stringify(deterministicA)===JSON.stringify(deterministicB),'49 identical state must produce byte-identical Working Everthread projections without state mutation');
   const issues=[...validateState(founded),...validateState(externalFounder),...validateState(legacy),...validateState(npcState),...validateState(restored),...validateState(rewind),...validateState(combined)];verify(issues.length===0,`50 Working Everthread states must remain invariant-clean (${issues.join(' | ')})`);
+
+
+  const medicineVenues=workplaceVenuesForIndustry('Medicine'),nursingVenues=workplaceVenuesForIndustry('Nursing'),dentistryVenues=workplaceVenuesForIndustry('Dentistry');
+  verify(medicineVenues.map(item=>item.placeId).join('|')==='everthread-general-hospital'&&nursingVenues.map(item=>item.placeId).join('|')==='everthread-general-hospital'&&dentistryVenues.map(item=>item.placeId).join('|')==='everthread-general-hospital','51 implemented medical ordinary-work industries must now resolve to the single real Hospital venue without changing their Working Everthread owner');
+  verify(workplaceVenuesForIndustry('Mental Wellness').length===0&&workplaceVenuesForIndustry('Pharmaceutical Research').length===0&&workplaceVenuesForIndustry('Emergency Services').length===0,'52 Hospital venue implementation must not opportunistically absorb adjacent Central Weave industries whose real places are not this scene');
+  const hospitalSave=state('10b-hospital-save');hospitalSave.employment.current={jobId:'medicine_1',title:'Medical Resident',company:'Medicine Works',startAge:24,salary:72_000,performance:60,level:1};hospitalSave.socialWorlds.push(workWorld('hospital-save-world','Medicine'));hospitalSave.health.conditions.push({id:'hospital-save-condition',illnessId:'seasonal_cold',name:'Seasonal Cold',severity:20,diagnosedAge:30,chronic:false,treated:false});const hospitalSaved=exportSave(hospitalSave),hospitalRestored=importSave(hospitalSaved);const restoredHospitalWorld=hospitalRestored.socialWorlds.find(world=>world.id==='hospital-save-world')!;
+  verify(hospitalRestored.health.conditions.some(condition=>condition.id==='hospital-save-condition')&&hospitalRestored.employment.current?.jobId==='medicine_1'&&workplaceWorldLocation(restoredHospitalWorld,hospitalRestored)?.anchorPlaceId==='everthread-general-hospital','53 schema-18 save round-trip must preserve existing patient and medical-work records while deriving Hospital location rather than persisting new Hospital state');
+  const healthcareBusiness=businessFixture({id:'hospital-business-control',industryId:'healthcare'});verify(businessWorkLocation(hospitalRestored,healthcareBusiness).districtId==='central-weave'&&!businessWorkLocation(hospitalRestored,healthcareBusiness).anchorPlaceId,'54 a generic healthcare company must remain district-level and must not be fabricated into the Hospital workplace scene');
 
   return checks;
 }

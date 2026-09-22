@@ -1,9 +1,10 @@
 import { actionGateStatus } from '../core/actionEconomy';
 import { LOCATION_SCENE_ACTIONS, type LocationSceneActionId, type LocationSceneCompanionPlanDefinition, type LocationSceneRect } from '../data/locationScenes';
 import { crimeById } from '../data/crimes';
+import { illnessById } from '../data/illnesses';
 import { collectibleDefinitions, propertyDefinitions, vehicleDefinitions, luxuryVehicleDefinitions } from '../data/assets';
 import { MUSIC_RELEASE_MIN_AGE, SPECIAL_CAREER_MIN_AGES } from './SpecialCareerSystem';
-import { WELLNESS_MIN_AGES } from './HealthSystem';
+import { REHAB_COST, TREATMENT_COST_MULTIPLIERS, WELLNESS_MIN_AGES } from './HealthSystem';
 import { specialCareerStartGate } from './CommitmentSystem';
 import { specialCareerExitGate } from './SpecialCareerExitSystem';
 import { specialCareerLifecycleView, specialCareerRetirementGate } from './SpecialCareerLifecycleSystem';
@@ -21,6 +22,7 @@ import { sharedExperienceAvailability } from './SharedExperienceSystem';
 import { campusHousingAvailability } from './ResidentialLifeSystem';
 import { npcHouseholdResidenceProjection, playerResidenceProjection, projectResidentialPlans } from './ResidentialLifeSystem';
 import { personalInventoryCatalogForPlace, personalInventoryOwnedFromPlace } from './PersonalInventorySystem';
+import { THERAPY_ADULT_COST, THERAPY_MIN_AGE } from './StressConsequenceSystem';
 import type { GameState } from '../types/game';
 
 export interface LocationSceneAvailability{available:boolean;reason?:string}
@@ -68,6 +70,52 @@ export function locationSceneLegalProjection(state:GameState){
   const fugitive=state.flags.fugitive===true;
   const statusLabel=state.legal.imprisoned?'In custody':fugitive?'Fugitive':pendingCrimeId?'Pending case':state.legal.investigationHeat>0?'Under scrutiny':'No active proceeding';
   return{pendingCrimeId,pendingCrime:pendingCrimeId?crimeById[pendingCrimeId]:undefined,history,convictions:history.filter(entry=>entry.record.convicted).length,fugitive,statusLabel};
+}
+
+export type LocationSceneHospitalTreatmentKind='general'|'specialist';
+
+function hospitalTreatmentAvailability(state:GameState,conditionId:string,kind:LocationSceneHospitalTreatmentKind){
+  const condition=state.health.conditions.find(item=>item.id===conditionId);
+  const definition=condition?illnessById[condition.illnessId]:undefined;
+  if(!condition||!definition)return{available:false,reason:'Treatment data is unavailable.',cost:0};
+  const listedCost=Math.round(definition.treatmentCost*TREATMENT_COST_MULTIPLIERS[kind]);
+  const cost=state.character.age>=18?listedCost:0;
+  if(cost>0&&state.finances.cash<cost)return{available:false,reason:`Treatment would cost ${cost.toLocaleString()} in game currency.`,cost};
+  const gate=actionGateStatus(state,[{policy:'health.treatment.condition',target:conditionId},{policy:'health.treatment.kind',target:`${conditionId}:${kind}`}]);
+  return gate.allowed?{available:true,cost}:{available:false,reason:gate.message,cost};
+}
+
+function hospitalRehabAvailability(state:GameState,kind:string){
+  const addiction=state.health.addictions.find(item=>item.kind===kind);
+  if(!addiction)return{available:false,reason:'No matching addiction is active.',cost:REHAB_COST};
+  if(state.finances.cash<REHAB_COST)return{available:false,reason:`Rehabilitation costs ${REHAB_COST.toLocaleString()} in game currency.`,cost:REHAB_COST};
+  const gate=actionGateStatus(state,{policy:'health.rehab',target:kind});
+  return gate.allowed?{available:true,cost:REHAB_COST}:{available:false,reason:gate.message,cost:REHAB_COST};
+}
+
+function hospitalTherapyAvailability(state:GameState){
+  const cost=state.character.age>=18?THERAPY_ADULT_COST:0;
+  if(state.character.age<THERAPY_MIN_AGE)return{available:false,reason:'Therapy becomes available in the teen years.',cost};
+  if(cost>0&&state.finances.cash<cost)return{available:false,reason:`A therapy session costs ${cost.toLocaleString()} in game currency.`,cost};
+  const gate=actionGateStatus(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:'therapy'}]);
+  return gate.allowed?{available:true,cost}:{available:false,reason:gate.message,cost};
+}
+
+export function locationSceneHospitalProjection(state:GameState){
+  return{
+    health:state.character.stats.health,
+    wellness:state.health.wellness,
+    fitness:state.health.fitness,
+    stress:state.character.secondary.stress,
+    conditions:state.health.conditions.map(condition=>({
+      condition,
+      definition:illnessById[condition.illnessId],
+      general:hospitalTreatmentAvailability(state,condition.id,'general'),
+      specialist:hospitalTreatmentAvailability(state,condition.id,'specialist'),
+    })),
+    addictions:state.health.addictions.map(addiction=>({addiction,rehab:hospitalRehabAvailability(state,addiction.kind)})),
+    therapy:hospitalTherapyAvailability(state),
+  };
 }
 
 export function locationSceneBusinessDistrictProjection(state:GameState){
@@ -295,6 +343,7 @@ export function locationSceneActionAvailability(state:GameState,actionId:Locatio
     if(state.character.age<FREELANCE_MIN_AGE)return{available:false,reason:`Freelance work becomes available at age ${FREELANCE_MIN_AGE}.`};
     const gate=actionGateStatus(state,{policy:'career.freelance'});return gate.allowed?{available:true}:{available:false,reason:gate.message};
   }
+  if(actionId==='health.status'||actionId==='health.conditions'||actionId==='health.therapy'||actionId==='health.rehab')return{available:true};
   if(actionId==='legal.case'||actionId==='legal.status'||actionId==='legal.history')return{available:true};
   if(actionId==='politics.leave'){const gate=specialCareerExitGate(state,'politics');return gate.allowed?{available:true}:{available:false,reason:gate.message};}
   const campaignLevel=politicsCampaignLevel(actionId);

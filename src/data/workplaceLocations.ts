@@ -26,6 +26,7 @@ export const WORKPLACE_VENUES: readonly WorkplaceVenueDefinition[] = [
   {placeId:'everthread-market',label:'Everthread Market',districtId:'market-row',fullTimeIndustries:['Retail'],partTimeJobIds:['pt_shop']},
   {placeId:'everthread-city-hall',label:'Everthread City Hall',districtId:'central-weave',fullTimeIndustries:['Government','Office Administration'],partTimeJobIds:['pt_office','pt_admin']},
   {placeId:'everthread-courthouse',label:'Everthread Courthouse',districtId:'central-weave',fullTimeIndustries:['Law'],partTimeJobIds:['pt_admin']},
+  {placeId:'everthread-general-hospital',label:'Everthread General Hospital',districtId:'central-weave',fullTimeIndustries:['Medicine','Nursing','Dentistry'],partTimeJobIds:[]},
 ] as const;
 
 const venueByPlaceId=new Map(WORKPLACE_VENUES.map(venue=>[venue.placeId,venue] as const));

@@ -1,4 +1,4 @@
-export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-college'|'everthread-market'|'everthread-city-hall'|'everthread-courthouse'|'loomworks-business-district';
+export type LocationScenePlaceId='weaver-park'|'threadtone-music-studio'|'central-everthread-bank'|'loomline-motors'|'hearthline-realty'|'threadwell-residential'|'crossroads-mall'|'nightjar-diner'|'pulseworks-gym'|'everthread-school'|'everthread-college'|'everthread-market'|'everthread-city-hall'|'everthread-courthouse'|'loomworks-business-district'|'everthread-general-hospital';
 export type LocationSceneBankActionId=
   |'bank.summary'|'bank.payments'|'bank.accounts'|'bank.offers'|'bank.borrowing'|'bank.invest'|'bank.history';
 export type LocationSceneMotorsActionId='motors.catalog'|'motors.owned'|'motors.finance'|'license.driving';
@@ -13,6 +13,7 @@ export type LocationSceneBusinessPanelActionId='business.start'|'business.manage
 export type LocationSceneCityHallPanelActionId='politics.record'|LocationSceneBusinessPanelActionId;
 export type LocationSceneBusinessDistrictPanelActionId='work.role'|'work.jobs'|'work.parttime'|LocationSceneBusinessPanelActionId;
 export type LocationSceneCourthouseActionId='legal.case'|'legal.status'|'legal.history';
+export type LocationSceneHospitalActionId='health.status'|'health.conditions'|'health.therapy'|'health.rehab';
 export type LocationSceneActionId=
   |'wellness.walk'|'wellness.run'|'wellness.meditate'|'wellness.gym'|'wellness.martial'|'wellness.diet'
   |'shared.park.walk'|'shared.park.play'|'date.park'|'date.home'
@@ -21,7 +22,7 @@ export type LocationSceneActionId=
   |'school.study'|'school.skip'|'school.dropout'|'school.volunteer'|LocationSceneSchoolPanelActionId
   |'college.study'|'college.dropout'|LocationSceneCollegePanelActionId
   |'politics.local'|'politics.regional'|'politics.national'|'politics.speech'|'politics.leave'|LocationSceneCityHallPanelActionId
-  |LocationSceneCourthouseActionId|LocationSceneBusinessDistrictPanelActionId
+  |LocationSceneCourthouseActionId|LocationSceneHospitalActionId|LocationSceneBusinessDistrictPanelActionId
   |LocationSceneResidentialActionId|LocationSceneMallActionId|LocationSceneDinerActionId|LocationSceneMarketActionId
   |'work.freelance.writing'|'work.freelance.programming'|'work.freelance.design'
   |'music.leave'|'music.retire'|'music.practice'|'music.tour'|'music.song'|'music.album'|'music.catalog'|'music.partnership'
@@ -129,6 +130,10 @@ export const LOCATION_SCENE_ACTIONS:Readonly<Record<LocationSceneActionId,Locati
   'legal.case':{id:'legal.case',label:'Your case',description:'Review a pending criminal case, representation, and plea choices through the existing legal owner.',kind:'panel',risk:'normal'},
   'legal.status':{id:'legal.status',label:'Legal status',description:'Review current legal heat, pending proceedings, custody, and fugitive status without creating a new legal ledger.',kind:'panel',risk:'normal'},
   'legal.history':{id:'legal.history',label:'Legal record',description:'Review the criminal record already stored by the existing CrimeSystem.',kind:'panel',risk:'normal'},
+  'health.status':{id:'health.status',label:'Health overview',description:'Review your current health, wellness, stress, conditions, and recovery state without changing gameplay state.',kind:'panel',risk:'normal'},
+  'health.conditions':{id:'health.conditions',label:'Conditions & treatment',description:'Review active conditions and use the existing general or specialist treatment routes.',kind:'panel',risk:'normal'},
+  'health.therapy':{id:'health.therapy',label:'Therapy',description:'Use the existing therapy session for stress and strain recovery when its age, cost, and action gates allow.',kind:'panel',risk:'normal'},
+  'health.rehab':{id:'health.rehab',label:'Recovery support',description:'Review active addictions and enter the existing rehabilitation path when eligible.',kind:'panel',risk:'normal'},
 };
 
 export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
@@ -281,6 +286,16 @@ export const LOCATION_SCENES:readonly LocationSceneDefinition[]=[
       {id:'desk',label:'Work desk',description:'Your local workplace',actionIds:['work.role'],order:1,hitRect:[.2609765625,.58,.478037109375,.32]},
       {id:'jobs',label:'Employment office',description:'Jobs & flexible work',actionIds:['work.jobs','work.parttime','work.freelance.writing','work.freelance.programming','work.freelance.design'],order:2,hitRect:[.02,.335,.28,.19]},
       {id:'companies',label:'Company office',description:'Your companies',actionIds:['business.start','business.manage'],order:3,hitRect:[.67,.365,.28,.19]},
+    ],
+  },
+  {
+    id:'everthread-general-hospital',label:'Everthread General Hospital',tagline:'Care, one step at a time.',
+    background:'./location-scenes/backgrounds/everthread-general-hospital.png',propFile:'./location-scenes/props/medical-trolley.png',canvas:[1024,1536],
+    propAlphaBounds:[73,21,1149,1203],propPlacement:{baseline:.90,width:.62,maxHeight:.32},
+    groups:[
+      {id:'trolley',label:'Care station',description:'Health overview',actionIds:['health.status','health.conditions'],order:1,hitRect:[.27077,.58,.45845,.32]},
+      {id:'consultation',label:'Consultation rooms',description:'Treatment',actionIds:['health.conditions'],order:2,hitRect:[.02,.365,.28,.19]},
+      {id:'support',label:'Support rooms',description:'Recovery & wellbeing',actionIds:['health.therapy','health.rehab'],order:3,hitRect:[.69,.385,.28,.19]},
     ],
   },
 ] as const;

@@ -103,5 +103,12 @@ export function runPhase10DLivingMapProjectionRegression(){
   const dormMapSearch=buildTownMapProjection(dorm,{query:'you live here'});verify(dormMapSearch.places.some(item=>item.id==='everthread-college')&&!dormMapSearch.places.some(item=>item.id==='threadwell-residential'),'54 Town Map search follows the derived campus residence instead of leaving a stale Threadwell home result');
   const dormBefore=JSON.stringify(dorm),dormRng=dorm.rngCounter,dormId=dorm.idCounter,dormRevision=dorm.actionLedger.revision;livingMapProjection(dorm);buildTownMapProjection(dorm);verify(JSON.stringify(dorm)===dormBefore&&dorm.rngCounter===dormRng&&dorm.idCounter===dormId&&dorm.actionLedger.revision===dormRevision,'55 campus-residence Living Map/Town Map browsing remains strictly read-only and RNG/runtime-ID/action-ledger neutral');
 
+
+  const hospitalWork=state('10d-hospital-work');hospitalWork.socialWorlds.push(workWorld('hospital-medical-work','Medicine'));const hospitalLiving=livingMapProjection(hospitalWork);const hospitalPlace=livingMapPlaceContext(hospitalLiving,'everthread-general-hospital');
+  verify(hospitalPlace?.contexts.some(item=>item.kind==='work'&&item.label==='You work here'&&item.sourceIds.includes('hospital-medical-work'))===true,'56 local Medicine work must decorate the existing Hospital marker through the certified Living Map workplace projection');
+  verify(!hospitalLiving.districts.some(item=>item.contexts.some(context=>context.sourceIds.includes('hospital-medical-work'))),'57 an exact Hospital workplace anchor must not duplicate the same work source as a Central Weave district badge');
+  const hospitalSearch=buildTownMapProjection(hospitalWork,{query:'you work here'});verify(hospitalSearch.places.some(item=>item.id==='everthread-general-hospital'),'58 Town Map search must find the real Hospital marker from derived medical-work context without creating a second pin');
+  const awayHospitalWork=state('10d-hospital-away');awayHospitalWork.socialWorlds.push({...workWorld('hospital-away-medical','Medicine'),countryId:'us',city:'Chicago'});verify(!livingMapProjection(awayHospitalWork).places.some(item=>item.contexts.some(context=>context.sourceIds.includes('hospital-away-medical'))),'59 medical work outside Everthread must remain external and never decorate the hometown Hospital marker');
+
   return checks;
 }

@@ -42,9 +42,12 @@ export function processHealthYear(state:GameState) {
   state.rngCounter=rng.counter();
 }
 
+export const TREATMENT_COST_MULTIPLIERS={general:1,specialist:2.2,emergency:4} as const;
+export const REHAB_COST=3200;
+
 export function seekTreatment(state:GameState,conditionId:string,kind:'general'|'specialist'|'emergency'='general'):EngineResult {
   const condition=state.health.conditions.find(c=>c.id===conditionId);if(!condition)return{success:false,messages:[{text:'Condition not found.'}]};const def=illnessById[condition.illnessId];if(!def)return{success:false,messages:[{text:'Treatment data unavailable.'}]};
-  const mult={general:1,specialist:2.2,emergency:4}[kind];const cost=Math.round(def.treatmentCost*mult);if(state.finances.cash<cost&&state.character.age>=18)return{success:false,messages:[{text:`Treatment would cost ${cost.toLocaleString()} in game currency.`}]};
+  const cost=Math.round(def.treatmentCost*TREATMENT_COST_MULTIPLIERS[kind]);if(state.finances.cash<cost&&state.character.age>=18)return{success:false,messages:[{text:`Treatment would cost ${cost.toLocaleString()} in game currency.`}]};
   const gate=consumeAction(state,[{policy:'health.treatment.condition',target:conditionId},{policy:'health.treatment.kind',target:`${conditionId}:${kind}`}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   if(state.character.age>=18)state.finances.cash-=cost;
   const rng=createRng(state.seed,state.rngCounter);const effectiveness=Math.min(.95,def.treatmentEffectiveness+(kind==='specialist'?.14:kind==='emergency'?.08:0));condition.treated=true;
@@ -73,5 +76,5 @@ export function riskyHabit(state:GameState,kind:'alcohol'|'gambling'|'smoking'|'
 }
 
 export function enterRehab(state:GameState,kind:string):EngineResult {
-  const addiction=state.health.addictions.find(a=>a.kind===kind);if(!addiction)return{success:false,messages:[{text:'No matching addiction is active.'}]};const cost=3200;if(state.finances.cash<cost)return{success:false,messages:[{text:`Rehabilitation costs ${cost.toLocaleString()} in game currency.`}]};const gate=consumeAction(state,{policy:'health.rehab',target:kind});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=cost;addiction.recovering=true;state.character.secondary.stress=clamp(state.character.secondary.stress+4);return{success:true,messages:[{text:'You entered rehabilitation. Recovery will progress over future years.'}]};
+  const addiction=state.health.addictions.find(a=>a.kind===kind);if(!addiction)return{success:false,messages:[{text:'No matching addiction is active.'}]};const cost=REHAB_COST;if(state.finances.cash<cost)return{success:false,messages:[{text:`Rehabilitation costs ${cost.toLocaleString()} in game currency.`}]};const gate=consumeAction(state,{policy:'health.rehab',target:kind});if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};state.finances.cash-=cost;addiction.recovering=true;state.character.secondary.stress=clamp(state.character.secondary.stress+4);return{success:true,messages:[{text:'You entered rehabilitation. Recovery will progress over future years.'}]};
 }

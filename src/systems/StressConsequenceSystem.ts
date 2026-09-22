@@ -9,6 +9,7 @@ import { employmentRecordKey, syncWorkplaceWorlds } from './WorkplaceSystem';
 
 type Track = Record<string, number | string | boolean>;
 export const THERAPY_MIN_AGE=13;
+export const THERAPY_ADULT_COST=600;
 
 export type StrainKind = 'Burnout' | 'Emotional Volatility' | 'Chronic Strain';
 
@@ -47,7 +48,7 @@ function reduceStrain(state:GameState,amount:number){const current=stressStrainV
 
 export function therapySession(state:GameState):EngineResult{
   if(state.character.age<THERAPY_MIN_AGE)return{success:false,messages:[{text:'Therapy becomes available in the teen years.'}]};
-  const cost=state.character.age>=18?600:0;if(cost>0&&state.finances.cash<cost)return{success:false,messages:[{text:`A therapy session costs ${cost.toLocaleString()} in game currency.`}]};
+  const cost=state.character.age>=18?THERAPY_ADULT_COST:0;if(cost>0&&state.finances.cash<cost)return{success:false,messages:[{text:`A therapy session costs ${cost.toLocaleString()} in game currency.`}]};
   const gate=consumeAction(state,[{policy:'wellness.total'},{policy:'wellness.activity',target:'therapy'}]);if(!gate.allowed)return{success:false,messages:[{text:gate.message!}]};
   if(cost>0)state.finances.cash-=cost;const before=state.character.secondary.stress;state.character.secondary.stress=clamp(before-24);state.health.wellness=clamp(state.health.wellness+7);state.character.stats.happiness=clamp(state.character.stats.happiness+3);reduceStrain(state,28);
   const relief=Math.round(before-state.character.secondary.stress);return{success:true,messages:[{text:`You attended therapy and reduced stress by ${relief} points.${cost===0?' A guardian-supported session covered the in-game cost.':''}`}]};
