@@ -1,22 +1,18 @@
 # Everthread — Current State
 
-## Active correction — NPC profile scroll overlap — 2026-09-19
+## Current certified gameplay source — Run #242 — Everthread General Hospital — 2026-09-22
 
-Run #240 (`35424360146`) certified the UI refresh on expanded source `8a560ee15514425a85cca7b5973f89df246ffe8e`. Mavyy's Android feedback identified NPC profile content covered by bottom navigation; player acceptance is therefore still open. This bounded hotfix moves the ordinary profile sheet to document.body via the existing React portal pattern and resets section scroll on navigation. Schedule a Date is retained under Interact → Dating for eligible NPCs; the parent in the report correctly has no dating action. See `PROJECT_HANDOFF/UI_REFRESH/SCROLL_HOTFIX.md` and its QA evidence. This correction is not yet CI-certified or player-accepted. Location #16 remains paused. Earlier pending-refresh/Run #239 labels below are historical and superseded by this status.
+Location #16 is **Everthread General Hospital**. Upload wrapper `83f8ce021abbd4a2f364b5a6af06e7c0699133d4` carried the reviewed source bundle; GitHub Actions **Run #242** (`35796139062`) imported it and certified expanded source **`d5d755762e8f33238a779d28cc47e67314169f0a`**. Canonical preflight, certified-baseline artifact publication, Pages artifact upload, and deployment all succeeded. Save schema remains **18**.
 
+Mavyy completed direct Android/player acceptance on 2026-09-22 and confirmed the Hospital UX and behavior work. Location #16's tactile/device gate is closed. This documentation synchronization is closeout-only and changes no gameplay.
 
-## Active candidate — Life journal and NPC profile refresh — 2026-09-19
+The Hospital remains a thin location adapter. HealthSystem owns treatment and rehabilitation; StressConsequenceSystem owns therapy; CareerSystem/WorkplaceSystem own ordinary employment and persistent workplace people. The Hospital adds no patient ledger, appointment system, medical wallet, duplicate workplace state, Hospital-specific persistent state, migration, or new gameplay RNG authority. Loomworks remains the application/company hub; **Your Workplace** appears at the Hospital only for authoritative active local Medicine, Nursing, or Dentistry work.
 
-Mavyy explicitly prioritized a sleeker player-facing UI over selecting Location #16. This presentation-only candidate makes **Your Life Timeline** the Life page focal point while retaining the player profile, four primary stats, finances/banking and Persistent Worlds. Ordinary NPC profiles use Interact / About / Memories with expandable action groups. No new gameplay, persistence, RNG, location, or character-portrait authority is introduced; schema remains 18.
+## UI refresh + NPC profile scroll hotfix — source certified and player accepted
 
-Baseline verified live: GitHub Actions **Run #239** (`35415723021`) completed successfully, including the certified artifact named for expanded source **`cd6d115c0db5b6a1513e5209976dafb999797c5a`**. That exact commit was cloned; Run #238 remains the latest gameplay baseline before this UI candidate. The earlier documentation-only closeout is complete. This candidate is **not yet CI-certified or Android/player-accepted**. See `PROJECT_HANDOFF/UI_REFRESH/README.md` for scope, verification evidence, environment limitations and review steps. Do not label it Run #240 or promote it before fresh CI evidence.
+Run #240 certified the Life journal / ordinary NPC profile refresh. Run #241 (`35425053632`) certified the bounded ordinary-profile scroll hotfix on expanded source **`e4bb671fcfb42f447b7029b898b6bbdd847f6eb4`**. Mavyy has now confirmed the NPC profile scroll issue is fixed on Android, so that separate tactile/device gate is also closed. Schedule a Date remains retained under Interact → Dating for eligible NPCs. This UI history remains distinct from the Hospital Run #242 certification.
 
-Location #16 remains unchosen and paused behind this user-requested UI review. Existing location, QA-4, Yuki Threadroom, Career/Workplace, saves and deterministic simulation boundaries are preserved.
-
-
-The newest certified expanded **gameplay source** is **GitHub Actions Run #238** (`35403599984`) on expanded commit **`1f3786df83a37a4756a2da670566b0ceeb5fc2b3`**, save schema **18**. Run #237 introduced **Everthread College as dedicated Location #15**; Run #238 certified Mavyy's player-driven campus-life revision: Admissions is consolidated at the kiosk, the College Library exposes Study Harder plus real current-classmate socializing and persistent SchoolWorld groups, and Residence Life provides optional campus housing through a new durable ResidentialLife-owned assignment rather than Property, Education, or scene-local flags. Campus housing adds no rent/mortgage/financing/debt authority, owned homes remain distinct assets, Living Map derives the current home through `playerResidenceProjection`, and schema-17 saves migrate deterministically to empty campus-housing state. Mavyy completed direct Android/player acceptance after Run #238 and confirmed the revised College works. QA-4 remains unchanged with all 82 core cases and 77 specialized suites mandatory and exact handshake `core=81+1/82 specialized=76+1/77 overlap=0`; Location Scene is **205/205**, Residential Life **90/90**, Living Map **55/55**, production is **239 modules**, and the temporary QA optimization program remains closed at QA-4. **The current task is documentation-only synchronization of accepted Location #15 / Run #238. After this synchronization certifies, Location #16 remains deliberately unchosen and must be selected from the remaining 10 Astra-backed candidates after the normal fresh repository audit.** Phase 10 and the Living World Program remain closed/certified; this rollout is not Phase 11.
-
-- Package: `everthread-life-unwritten@0.12.0`
+- Package: `everthread-life-unwritten@0.12.0`- Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **18**
 - Phases 4–7: **CLOSED / preserved**
 - Phase 8 — Everthread: Home: **CLOSED / CERTIFIED**
@@ -29,19 +25,19 @@ The newest certified expanded **gameplay source** is **GitHub Actions Run #238**
 - Phase 10E — Program Closeout: **CERTIFIED / CLOSED in Runs #165–#166**
 - Final Phase-10 feedback polish: **CERTIFIED / CLOSED in Run #166**
 - Feedback Inbox last verified **5 total / 0 unresolved by triage**; durable review-state still points to gameplay source `1f5c8d598b6f277f26ffda5d7683d7474141200e` at `2026-09-17 03:49:20.500943+00`, reviewed count **5**. This location rollout does not invent a newer feedback checkpoint.
-- Direct Android/player-side QA has confirmed the Map/navigation foundations plus Locations #4–#15 through the revised Everthread College campus-life/dorm flow.
-- The temporary **QA infrastructure optimization sequence remains complete**: QA-1 through QA-4 are certified, with no QA-5 planned without new measured evidence. Run #238 is the newest gameplay baseline and closes the player-accepted College revision on schema 18. **After this documentation-only synchronization certifies, select exactly one Location #16 only after revalidating current owners/routing against repository truth.** No Phase 11 label is implied.
+- Direct Android/player-side QA has confirmed the Map/navigation foundations plus Locations #4–#16 through the Everthread General Hospital care/workplace flow.
+- The temporary **QA infrastructure optimization sequence remains complete**: QA-1 through QA-4 remain certified and unchanged. Run #242 is the newest gameplay baseline and closes the player-accepted Hospital slice on schema 18. **After this documentation-only synchronization certifies, choose exactly one Location #17 only after revalidating current owners/routing against repository truth.** No Phase 11 label is implied.
 
 If memory, an older handoff, or a historical chat conflicts with this status, the certified repository wins. Read `LIVING_WORLD_PROGRAM.md` before designing the next macro direction so closed authority boundaries are preserved.
 
-Last handoff synchronization: 2026-09-18
+Last handoff synchronization: 2026-09-22
 Repository: `MavyyBlue/everthread`
 Default branch: `main`
 Public build line: `0.12.0 pre-release`
 Certified save schema: `18`
 Candidate save schema: none
 
-## Newest certified gameplay source — Run #238 — Everthread College campus life + dorm residency
+## Prior certified gameplay source — Run #238 — Everthread College campus life + dorm residency
 
 - Run #237: wrapper `6d0fd1eecf5b29a8a1660efcc0639e413af44b3b`, expanded source `598323a465d1d27c5b15a95558ed257899ba46dd`, Actions Run `35397095829`, job `105768329701`. It adds Everthread College as Location #15 using Astra-derived `everthread-college.png` while reusing the already-certified `service-kiosk.png`. Initial College semantics were Admissions, Library, and Admissions Office, with University/Library/tutoring workplace locality integrated through the existing physical-workplace catalogue.
 - Run #238: wrapper `9b4fde8a1010a4f22efc01b9b5f11b1908cbd03a`, expanded source `1f3786df83a37a4756a2da670566b0ceeb5fc2b3`, Actions Run `35403599984`, job `105788599762`. Persistent revision diff from Run #237 is exactly **58 files** (1 added, 57 modified), zero deletions. It consolidates admissions at the kiosk, turns Library into the campus social/group surface, and changes the right-side office to Residence Life.
@@ -52,7 +48,7 @@ Candidate save schema: none
 - Certified CI: Location Scene **205/205**, Residential Life **90/90**, Living Map Projection **55/55**, Working Everthread **51/51**, People/Threadspace **57/57**, Cross-World Chemistry **43/43**, Ownership/Work **35/35**, Town Map **46/46**, Institution Routing **42/42**, Commitment **10/10**, Integrated Long-Life **105/105**. QA-4 exact `core=81+1/82 specialized=76+1/77 overlap=0`.
 - Canonical Run #238 preflight passed **6/6**; production transformed **239 modules**. Certified source SHA `a06549bfe0f53d4749128f8d34d2f32346ce7c61649dfe5a49a536c7b48aeeaa`; dependency SHA `d75d57d2143b206b7371fa404027476d85e690579b2582334478e6be0c84b713`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10571625481`; Pages artifact `10572155105`; deployment Green.
 - **Player acceptance:** Mavyy validated the revised College on Android after Run #238 and confirmed it works. Treat Location #15's tactile/device gate as closed.
-- **Next gate after docs certification:** choose exactly one Location #16 from the remaining **10** Astra-backed candidates and run the standard owner/source/test audit before implementation.
+- **Historical sequencing note:** this gate led to Location #16 Everthread General Hospital, now CI-certified in Run #242 and player-accepted; see current status above.
 
 ## Prior certified gameplay source — Run #235 — Loomworks Business District + physical workplace routing
 

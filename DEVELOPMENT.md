@@ -1,19 +1,23 @@
 # Everthread — Development Status
 
-Last updated: 2026-09-18
+Last updated: 2026-09-22
 Current build line: 0.12.0 pre-release
 Certified save schema: 18
-Newest certified expanded source: Run #238 / `1f3786df83a37a4756a2da670566b0ceeb5fc2b3`
-Certified gameplay baseline: Run #238 / `1f3786df83a37a4756a2da670566b0ceeb5fc2b3`
+Newest certified expanded source: Run #242 / `d5d755762e8f33238a779d28cc47e67314169f0a`
+Certified gameplay baseline: Run #242 / `d5d755762e8f33238a779d28cc47e67314169f0a`
 Certified QA infrastructure baseline: Run #201 / `1a252744d9659328d7f66a2169271b70d9c0018a`
 
-## Current UI candidate — journal / ordinary NPC profiles
+## Current certified location closeout — Location #16 Everthread General Hospital
 
-Mavyy requested a bounded Life-page and NPC-profile makeover on the Run #239 source. `LifeScreen.tsx` and its scoped `LifeScreen.css` own the compact overview / journal hierarchy. `PeopleScreen.tsx` and `NpcProfile.css` own profile-section and disclosure presentation; they delegate all real actions to unchanged existing owners. Section state and native disclosure state are ephemeral UI state. `Timeline` retains its bounded render window, ordering and Show older entries behavior. Profile identity remains linked to the existing player sheet and inventory. `YukiThreadroom` routing stays intact.
+GitHub Actions Run #242 (`35796139062`) imported wrapper `83f8ce021abbd4a2f364b5a6af06e7c0699133d4` and certified expanded source `d5d755762e8f33238a779d28cc47e67314169f0a`. Canonical preflight, certified baseline artifact, Pages artifact, and deployment succeeded. Mavyy then completed direct Android/player acceptance and confirmed the Hospital UX and behavior work.
 
-See `PROJECT_HANDOFF/UI_REFRESH/README.md` before integrating. This is a pending-certification candidate, not an already released change. The preceding baseline labels remain historical certification facts.
+Hospital is a location adapter only. HealthSystem owns treatment/rehab; StressConsequenceSystem owns therapy; CareerSystem/WorkplaceSystem own ordinary work and persistent workplace people. Loomworks remains the application/company hub. Hospital adds no appointment/patient/medical-wallet state, no duplicate workplace truth, no migration, and no schema bump; save schema remains 18.
 
-## Product direction
+## UI refresh + NPC profile scroll closeout
+
+Run #240 certified the Life journal / ordinary NPC profile refresh. Run #241 (`35425053632`) certified the bounded ordinary-profile scroll hotfix on expanded source `e4bb671fcfb42f447b7029b898b6bbdd847f6eb4`. Mavyy has now confirmed the NPC profile scroll issue is fixed on Android, closing that separate device gate. Schedule a Date remains preserved for eligible NPCs.
+
+## Product direction## Product direction
 
 Everthread: Life Unwritten is an original, mobile-first procedural life simulator. The central interaction is Age Up: one year advances the world, connected systems process in a deterministic order, events may interrupt for a decision, consequences persist, and death can hand the family thread to a descendant.
 
@@ -33,7 +37,7 @@ The project is intentionally data-driven. React renders and requests actions; si
 - `src/feedback/` — report catalog/schema plus local-first central-inbox transport, bounded safe diagnostics, withdrawal, retry, copy/share/export; all deliberately outside `GameState`.
 - `supabase/` — versioned central Feedback Inbox migrations and Edge Function source. Supabase is an online-services layer only; it owns no simulation truth.
 
-## Newest certified location-scene slice — Runs #237–#238 — Everthread College campus life + dorm residency
+## Prior certified location-scene slice — Runs #237–#238 — Everthread College campus life + dorm residency
 
 Run #237 adds Everthread College as dedicated Location #15; Run #238 certifies Mavyy's player-driven campus-life revision that removes duplicate admissions, makes the Library social/group space, and adds optional real campus housing through ResidentialLife rather than Property or a scene-local flag.
 
@@ -45,7 +49,7 @@ Run #237 adds Everthread College as dedicated Location #15; Run #238 certifies M
 - Run #238 certified coverage: Location Scene **205/205**, Residential Life **90/90**, Living Map Projection **55/55**, Working Everthread **51/51**, People/Threadspace **57/57**, Cross-World Chemistry **43/43**, Ownership/Work **35/35**, Town Map **46/46**, Institution Routing **42/42**, Commitment **10/10**, Integrated Long-Life **105/105**. QA-4 remains exact at `core=81+1/82 specialized=76+1/77 overlap=0`.
 - Canonical Run #238 preflight passed **6/6**; production transformed **239 modules**. Certified source SHA `a06549bfe0f53d4749128f8d34d2f32346ce7c61649dfe5a49a536c7b48aeeaa`; dependency SHA `d75d57d2143b206b7371fa404027476d85e690579b2582334478e6be0c84b713`; lock `da0cd3cd1a975e0d7d6a8466d55826bc8277dc35f55e7685be85d7ecf11f2886`; certified artifact `10571625481`; Pages artifact `10572155105`; deployment Green.
 - Direct Android/player acceptance passed after Run #238. Mavyy confirmed the revised College works. Location #15's device gate is closed.
-- After this documentation-only synchronization certifies, select exactly one **Location #16** from the remaining **10** Astra-backed candidates after the normal fresh owner/source/test audit.
+- **Historical sequencing note:** this gate led to Location #16 Everthread General Hospital, now CI-certified in Run #242 and player-accepted; see current status above.
 
 ## Prior certified location-scene/workplace slice — Runs #234–#235 — Loomworks Business District
 

@@ -1,19 +1,27 @@
-## Pending certification — NPC profile scroll hotfix — 2026-09-19
+## Everthread General Hospital — Location #16 closeout — CI Green Run #242 — 2026-09-22
 
-- Corrected the ordinary NPC sheet's DOM placement: a body-level React portal escapes the clipped People screen stacking context so bottom navigation cannot cover the sheet footer.
-- Switching Interact / About / Memories resets the profile scroll to its top.
-- Verified retained Schedule a Date routing and eligibility, including parent exclusion, eligible-friend invitations and accepted plans. No dating, save or simulation behavior changed.
-- Baseline: certified UI refresh Run #240 / `8a560ee15514425a85cca7b5973f89df246ffe8e`. See `PROJECT_HANDOFF/UI_REFRESH/SCROLL_HOTFIX.md` for evidence and remaining device acceptance.
+### Added / changed
 
-## Pending certification — Life journal + NPC profile refresh — 2026-09-19
+- Added **Everthread General Hospital as dedicated Location #16** using the authored Hospital scene and medical-trolley presentation while keeping the location layer presentation/routing-only.
+- Care Station, Consultation Rooms, and Support Rooms project existing health truth. Treatment and rehabilitation remain HealthSystem-owned; therapy remains StressConsequenceSystem-owned. The slice introduces no patient ledger, appointment system, medical wallet, duplicate action ledger, or Hospital-specific gameplay state.
+- The conditional **Your Workplace** layer appears only for authoritative active local Medicine, Nursing, or Dentistry employment. CareerSystem/WorkplaceSystem retain employment and persistent workplace people; Loomworks remains the application/company hub.
+- Save schema remains **18**. No Hospital-specific persistent state, migration, gameplay RNG stream, or duplicate medical/workplace authority was introduced.
+- Mavyy completed direct Android/player acceptance after Run #242 and confirmed the Hospital UX and behavior work. Location #16's tactile/device gate is closed.
 
-- Made Your Life Timeline the Life page headline and primary reading surface, with a compact linked player identity, primary stats, expandable Life & finances, and Persistent Worlds summary.
-- Grouped ordinary NPC profiles into Interact, About and Memories. Kept Talk / Compliment / Spend time up front; retained gifts, home visits, shared outings, dating, relationship choices, family planning and workplace actions in expandable groups.
-- Preserved portrait reveal/aging and all action eligibility/owner calls. Replaced technical portrait copy with player-facing identity text. Exhausted social actions show a short visible explanation. Pending dates remain visible in the Dating summary.
-- Reused teal/gold and user appearance tokens; scoped styles to Life and ordinary NPC sheets. No save, engine, schema, dependency, map or QA-runner source changes.
-- Baseline: CI Green #239 / `cd6d115c0db5b6a1513e5209976dafb999797c5a`. Candidate validation and limitations are recorded in `PROJECT_HANDOFF/UI_REFRESH/README.md`; CI and Android acceptance remain pending.
+### Certification
 
-## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18
+- Upload wrapper `83f8ce021abbd4a2f364b5a6af06e7c0699133d4` carried the reviewed source bundle. GitHub Actions Run #242 (`35796139062`) imported it and certified expanded source `d5d755762e8f33238a779d28cc47e67314169f0a`.
+- Canonical preflight, certified-preflight-baseline publication, Pages artifact upload, and deployment all succeeded.
+- The workflow-expanded diff is the intended Hospital slice; the upload wrapper ZIP is removed after import.
+
+## Life journal + ordinary NPC profile refresh and scroll closeout — CI Green Runs #240–#241 — 2026-09-22
+
+- Run #240 certified the Life journal / ordinary NPC profile refresh while preserving existing action, portrait, dating, save, and simulation owners.
+- Run #241 (`35425053632`) certified the bounded ordinary-profile scroll hotfix on expanded source `e4bb671fcfb42f447b7029b898b6bbdd847f6eb4`.
+- The hotfix portals the ordinary profile sheet outside the clipped People-screen stacking context and resets section scroll on navigation; Schedule a Date remains under Interact → Dating for eligible NPCs.
+- Mavyy has now confirmed the NPC profile scroll issue is fixed on Android, so this UI device-acceptance gate is closed.
+
+## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18
 
 ### Added / changed
 
