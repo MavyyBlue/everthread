@@ -21,7 +21,7 @@
 - The hotfix portals the ordinary profile sheet outside the clipped People-screen stacking context and resets section scroll on navigation; Schedule a Date remains under Interact → Dating for eligible NPCs.
 - Mavyy has now confirmed the NPC profile scroll issue is fixed on Android, so this UI device-acceptance gate is closed.
 
-## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18
+## Everthread College campus-life + dorm residency closeout — CI Green Runs #237–#238 — 2026-09-18
 
 ### Added / changed
 

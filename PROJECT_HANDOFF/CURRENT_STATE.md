@@ -12,7 +12,7 @@ The Hospital remains a thin location adapter. HealthSystem owns treatment and re
 
 Run #240 certified the Life journal / ordinary NPC profile refresh. Run #241 (`35425053632`) certified the bounded ordinary-profile scroll hotfix on expanded source **`e4bb671fcfb42f447b7029b898b6bbdd847f6eb4`**. Mavyy has now confirmed the NPC profile scroll issue is fixed on Android, so that separate tactile/device gate is also closed. Schedule a Date remains retained under Interact → Dating for eligible NPCs. This UI history remains distinct from the Hospital Run #242 certification.
 
-- Package: `everthread-life-unwritten@0.12.0`- Package: `everthread-life-unwritten@0.12.0`
+- Package: `everthread-life-unwritten@0.12.0`
 - Certified save schema: **18**
 - Phases 4–7: **CLOSED / preserved**
 - Phase 8 — Everthread: Home: **CLOSED / CERTIFIED**

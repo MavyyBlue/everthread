@@ -17,7 +17,7 @@ Hospital is a location adapter only. HealthSystem owns treatment/rehab; StressCo
 
 Run #240 certified the Life journal / ordinary NPC profile refresh. Run #241 (`35425053632`) certified the bounded ordinary-profile scroll hotfix on expanded source `e4bb671fcfb42f447b7029b898b6bbdd847f6eb4`. Mavyy has now confirmed the NPC profile scroll issue is fixed on Android, closing that separate device gate. Schedule a Date remains preserved for eligible NPCs.
 
-## Product direction## Product direction
+## Product direction
 
 Everthread: Life Unwritten is an original, mobile-first procedural life simulator. The central interaction is Age Up: one year advances the world, connected systems process in a deterministic order, events may interrupt for a decision, consequences persist, and death can hand the family thread to a descendant.
 

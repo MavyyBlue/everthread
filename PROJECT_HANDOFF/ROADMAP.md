@@ -8,7 +8,7 @@ Hospital remains a location adapter over HealthSystem treatment/rehab, StressCon
 
 Run #241 separately certified the ordinary NPC-profile scroll hotfix on expanded source `e4bb671fcfb42f447b7029b898b6bbdd847f6eb4`. Mavyy has now confirmed that scroll issue is fixed on Android as well, so the UI device gate is closed independently of Hospital.
 
-This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
+This is sequencing guidance, not a rigid promise. Mavyy controls creative direction.
 
 ## Closed macro program — Living World Program
 
